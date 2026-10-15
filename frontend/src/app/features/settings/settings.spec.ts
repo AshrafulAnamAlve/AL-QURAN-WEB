@@ -110,4 +110,22 @@ describe('SettingsPage', () => {
 
     expect((fixture.nativeElement as HTMLElement).querySelector('.city-modal')).toBeNull();
   });
+
+  it('closes dialogs when escape key is pressed', () => {
+    component.promptClearBookmarks();
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).querySelector('.modal-dialog')).toBeTruthy();
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).querySelector('.modal-dialog')).toBeNull();
+
+    component.openCityModal();
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).querySelector('.city-modal')).toBeTruthy();
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).querySelector('.city-modal')).toBeNull();
+  });
 });

@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import {
   PLAYBACK_RATES,
   REPEAT_COUNT,
@@ -59,6 +66,13 @@ export class AudioPlayerComponent {
 
   /** Whether the speed / repeat / reciter panel is open. */
   protected readonly panelOpen = signal(false);
+
+  @HostListener('window:keydown.escape')
+  onEscape(): void {
+    if (this.panelOpen()) {
+      this.panelOpen.set(false);
+    }
+  }
 
   /** "2:255 · Al-Baqarah", the line naming what is being recited. */
   protected readonly title = computed(() => {

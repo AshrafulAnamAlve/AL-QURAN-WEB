@@ -15,7 +15,7 @@ before the next one starts, so nothing is left half-working underneath.
 | [08](PHASE-08.md) | Islamic Calendar, Ramadan and Ayah of the Day | ✅ **Complete** |
 | [09](PHASE-09.md) | Nearby Mosques Map | ✅ **Complete** |
 | [10](PHASE-10.md) | Settings, Theme and Responsive Polish | ✅ **Complete** |
-| [11](PHASE-11.md) | PWA, SEO and Accessibility | ⬜ Not started |
+| [11](PHASE-11.md) | PWA, SEO and Accessibility | ✅ **Complete** |
 | [12](PHASE-12.md) | Testing, Bug Fixing and Release Preparation | ⬜ Not started |
 
 ## How a phase is closed

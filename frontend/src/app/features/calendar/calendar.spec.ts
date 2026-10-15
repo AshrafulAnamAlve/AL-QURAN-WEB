@@ -6,6 +6,7 @@ import { DateConversion, HijriMonth, HijriMonthName, IslamicEvents } from '../..
 import { PrayerDay, PrayerTime } from '../../core/models/prayer';
 import { CalendarApiService } from '../../core/services/calendar-api';
 import { CalendarService } from '../../core/services/calendar';
+import { LanguageService } from '../../core/services/language';
 import { LocationApiService } from '../../core/services/location-api';
 import { PrayerApiService } from '../../core/services/prayer-api';
 import { CalendarPage } from './calendar';
@@ -14,6 +15,7 @@ describe('CalendarPage', () => {
   let fixture: ComponentFixture<CalendarPage>;
   let component: CalendarPage;
   let calendarService: CalendarService;
+  let languageService: LanguageService;
 
   const mockConversion: DateConversion = {
     gregorian: {
@@ -147,10 +149,18 @@ describe('CalendarPage', () => {
       ],
     }).compileComponents();
 
+    localStorage.clear();
     calendarService = TestBed.inject(CalendarService);
+    languageService = TestBed.inject(LanguageService);
+    languageService.setLanguage('en');
+
     fixture = TestBed.createComponent(CalendarPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    localStorage.clear();
   });
 
   it('renders moon sighting advisory note prominently', () => {

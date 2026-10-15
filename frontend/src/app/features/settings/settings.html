@@ -512,6 +512,33 @@
         </div>
       </div>
 
+      <!-- Device & PWA Status -->
+      <div class="settings-card">
+        <h3 class="card-subtitle">{{ isBn() ? 'ডিভাইস ও অফলাইন ব্যবহার (PWA)' : 'Device & Offline App (PWA)' }}</h3>
+        <p class="card-desc">
+          {{ isBn() ? 'আল-কুরআন অ্যাপটি ব্রাউজারের পাশাপাশি ডিভাইসে ইনস্টল করে দ্রুত ও অফলাইনেও পড়তে পারবেন।' : 'Install Al-Quran on your device for fast, full-screen offline reading and quick home screen access.' }}
+        </p>
+
+        <div class="backup-actions">
+          @if (pwa.canInstall()) {
+            <button type="button" class="aq-btn aq-btn--primary" (click)="installApp()">
+              <aq-icon name="download" [size]="18" />
+              <span>{{ language.translate('pwa.install') }}</span>
+            </button>
+          } @else if (pwa.isInstalled()) {
+            <span class="preview-header__badge">
+              <aq-icon name="check" [size]="16" />
+              <span>{{ language.translate('pwa.installed') }}</span>
+            </span>
+          } @else {
+            <span class="preview-header__badge">
+              <aq-icon name="info" [size]="16" />
+              <span>{{ isBn() ? 'ব্রাউজার মোডে সক্রিয়' : 'Active in Web Browser' }}</span>
+            </span>
+          }
+        </div>
+      </div>
+
       <!-- Danger Zone -->
       <div class="settings-card settings-card--danger">
         <h3 class="card-subtitle card-subtitle--danger">

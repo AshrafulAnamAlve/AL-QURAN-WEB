@@ -1,7 +1,9 @@
 import {
   ApplicationConfig,
+  isDevMode,
   provideBrowserGlobalErrorListeners,
 } from '@angular/core';
+import { provideServiceWorker } from '@angular/service-worker';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import {
   provideRouter,
@@ -40,5 +42,11 @@ export const appConfig: ApplicationConfig = {
 
     // Applies per-route title and SEO metadata on every navigation.
     { provide: TitleStrategy, useClass: PageTitleStrategy },
+
+    // Progressive Web App service worker for offline shell and Quran text caching.
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
   ],
 };

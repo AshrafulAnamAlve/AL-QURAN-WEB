@@ -74,6 +74,17 @@ export class SeoService {
     }
   }
 
+  setJsonLd(schema: object): void {
+    let script = this.document.querySelector<HTMLScriptElement>('script#schema-json-ld');
+    if (!script) {
+      script = this.document.createElement('script');
+      script.id = 'schema-json-ld';
+      script.type = 'application/ld+json';
+      this.document.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify(schema);
+  }
+
   private setCanonical(url: string): void {
     let link = this.document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
 

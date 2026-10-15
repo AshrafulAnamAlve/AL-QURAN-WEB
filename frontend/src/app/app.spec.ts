@@ -33,4 +33,20 @@ describe('App shell', () => {
     const skip = fixture.nativeElement.querySelector('.aq-skip-link') as HTMLAnchorElement | null;
     expect(skip?.getAttribute('href')).toBe('#main-content');
   });
+
+  it('renders offline banner when network goes offline', () => {
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    window.dispatchEvent(new Event('offline'));
+    fixture.detectChanges();
+
+    const banner = fixture.nativeElement.querySelector('.network-banner--offline');
+    expect(banner).toBeTruthy();
+
+    window.dispatchEvent(new Event('online'));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.network-banner--offline')).toBeFalsy();
+  });
 });
+

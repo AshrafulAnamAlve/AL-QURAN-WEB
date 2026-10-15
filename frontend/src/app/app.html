@@ -2,6 +2,23 @@
 
 <aq-header />
 
+@if (isOffline()) {
+  <aside class="network-banner network-banner--offline" role="status" aria-live="polite">
+    <aq-icon name="wifiOff" [size]="18" />
+    <span>{{ language.translate('pwa.offline') }}</span>
+  </aside>
+}
+
+@if (hasUpdate()) {
+  <aside class="network-banner network-banner--update" role="alert">
+    <aq-icon name="refresh" [size]="18" />
+    <span>{{ language.translate('pwa.updateAvailable') }}</span>
+    <button type="button" class="network-banner__btn" (click)="updateApp()">
+      {{ language.translate('pwa.updateAction') }}
+    </button>
+  </aside>
+}
+
 <main id="main-content" class="main" tabindex="-1">
   <router-outlet />
 </main>
@@ -9,3 +26,4 @@
 <aq-footer />
 <aq-mini-player />
 <aq-bottom-nav />
+

@@ -1,0 +1,62 @@
+{
+  "$schema": "./node_modules/@angular/service-worker/config/schema.json",
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.html",
+          "/manifest.webmanifest",
+          "/robots.txt",
+          "/sitemap.xml",
+          "/*.css",
+          "/*.js"
+        ]
+      }
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/icons/**",
+          "/*.(svg|cur|jpg|jpeg|png|apng|webp|avif|gif|otf|ttf|woff|woff2)"
+        ]
+      }
+    }
+  ],
+  "dataGroups": [
+    {
+      "name": "quran-text-api",
+      "urls": [
+        "/api/quran/surahs",
+        "/api/quran/surah/**",
+        "/api/quran/juz/**",
+        "/api/meta/**",
+        "/api/quran/reciters"
+      ],
+      "cacheConfig": {
+        "maxSize": 150,
+        "maxAge": "30d",
+        "strategy": "performance"
+      }
+    },
+    {
+      "name": "prayer-and-calendar-api",
+      "urls": [
+        "/api/prayer/**",
+        "/api/calendar/**"
+      ],
+      "cacheConfig": {
+        "maxSize": 50,
+        "maxAge": "1d",
+        "strategy": "freshness",
+        "timeout": "3s"
+      }
+    }
+  ]
+}

@@ -1,9 +1,12 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { BottomNavComponent } from './layout/bottom-nav/bottom-nav';
 import { FooterComponent } from './layout/footer/footer';
 import { HeaderComponent } from './layout/header/header';
 import { MiniPlayerComponent } from './layout/mini-player/mini-player';
+import { IconComponent } from './shared/components/icon/icon';
+import { PwaService } from './core/services/pwa';
+import { LanguageService } from './core/services/language';
 
 /**
  * Application shell: the chrome that stays put while routes change.
@@ -21,8 +24,19 @@ import { MiniPlayerComponent } from './layout/mini-player/mini-player';
     FooterComponent,
     BottomNavComponent,
     MiniPlayerComponent,
+    IconComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {}
+export class App {
+  protected readonly pwa = inject(PwaService);
+  protected readonly language = inject(LanguageService);
+
+  readonly isOffline = this.pwa.isOffline;
+  readonly hasUpdate = this.pwa.hasUpdate;
+
+  async updateApp(): Promise<void> {
+    await this.pwa.activateUpdate();
+  }
+}

@@ -316,25 +316,28 @@ them live without a rebuild.
 
 ## 8. Current Progress
 
-**Phase 10 of 12 complete.** The Quran is readable, recitation audio is fully
+**Phase 11 of 12 complete.** The Quran is readable, recitation audio is fully
 playable, personal features are live (search, bookmarks, continue reading, progress tracker),
 prayer times and location are live, the Islamic Calendar and Ramadan Dashboard are live,
-Nearby Mosques (`/mosques`) is live with OpenStreetMap Leaflet integration, and
-Settings, Preferences and Data Management (`/settings`) is fully live.
-The Settings page provides grouped controls for reading preferences with a live Ayat al-Kursi
-visual preview (Arabic font size, translation size, line height, column width, translation mode),
-appearance theme toggle (Light / Dark / System), interface language switcher (English / authentic Bangla),
-reciter and playback speed selector, location & prayer calculation method / Asr jurisprudence school selector,
-storage usage inspector, JSON backup file export & import restore, and safe destructive reset modals.
+Nearby Mosques (`/mosques`) is live with OpenStreetMap Leaflet integration,
+Settings and Preferences (`/settings`) is live, and PWA, Offline Caching, SEO and Accessibility
+are fully implemented and verified.
+The PWA configuration provides offline caching for app shell and Quran text (`/api/quran/**`)
+with strict audio exclusion (`*.mp3` is never cached in the worker), Web App Manifest (`manifest.webmanifest`),
+comprehensive maskable icon sets (SVG, 192x192, 512x512), sticky offline warning banners, update alerts,
+install prompts in the header and settings, `robots.txt`, dynamic Schema.org JSON-LD structured data,
+a full sitemap covering all routes, all 114 surahs and 30 juz, and full keyboard accessibility (Escape to close modals/drawers).
 
 Verified on 2026-10-15:
 
 ```
 Backend build                       0 warnings, 0 errors
-Backend suites                      39 / 39 and 48 / 48
-Frontend unit tests                 210 passed (30 suites)
-Frontend production build           382.59 kB raw / 103.01 kB gzipped initial (0 warnings, 0 errors)
+Frontend unit tests                 222 passed (33 test files)
+Frontend production build           397.89 kB raw / 106.45 kB gzipped initial (0 warnings, 0 errors)
 Component style budgets             All < 8.00 kB (0 budget violations)
+Service Worker generation           ngsw-worker.js & ngsw.json generated
+PWA Manifest & Icons                192x192, 512x512, maskable, SVG icons present
+SEO Artifacts                       robots.txt, sitemap.xml (114 surahs, 30 juz), JSON-LD WebSite & Chapter
 Frontend dev server                 Running on http://localhost:4300
 Backend API server                  Running on http://localhost:5050
 ```
@@ -491,6 +494,24 @@ Arabic. The juz list. Skeletons, error states and empty states throughout.
 - **Responsive Polish** — all interactive elements provide touch targets $\ge 44\text{px}$ and screens adapt cleanly
   down to 320px with zero horizontal scrolling.
 
+### Phase 11 — PWA, offline caching, SEO and accessibility
+
+- **Angular Service Worker (`@angular/service-worker`)** — production service worker with `ngsw-config.json`
+  caching app shell, static assets, and Quran data endpoints (`/api/quran/**`, `/api/prayer/**`, `/api/calendar/**`)
+  with strict exclusion of external recitation audio (`*.mp3`) to prevent quota bloat.
+- **PWA Service (`PwaService`)** — reactive network status monitoring (`isOnline`, `isOffline`), install prompt
+  coordination (`canInstall`, `promptInstall`), standalone detection, and version update management (`hasUpdate`, `activateUpdate`).
+- **Web App Manifest & Icons** — `manifest.webmanifest` configured with emerald theme color (`#0f5132`),
+  standalone display mode, SVG vector icon, and PNG icons (192x192, 512x512, maskable variants).
+- **Network & Install UI** — sticky offline indicator banner rendered below header when disconnected,
+  one-click update banner with reload trigger, header install pill button, drawer install action,
+  and dedicated PWA / device status card in Settings.
+- **SEO & Search Indexing** — production `robots.txt`, comprehensive `sitemap.xml` listing static routes,
+  all 114 surahs and 30 juz, plus Schema.org JSON-LD structured data for `WebSite` and `Chapter`.
+- **Accessibility (a11y) & Keyboard Navigation** — WCAG AA compliance across light and dark modes,
+  $\ge 44\text{px}$ touch targets, ARIA landmarks, `role="status"` live regions, and global `Escape` key handling
+  to dismiss modal dialogs, mobile navigation drawer, and audio playback options panel.
+
 ---
 
 ## 10. Known Issues
@@ -498,28 +519,27 @@ Arabic. The juz list. Skeletons, error states and empty states throughout.
 | # | Issue | Impact | Plan |
 |---|---|---|---|
 | 1 | Public Overpass instances intermittently return busy or 429 | Mosque search can be slow | **Mitigated in Phase 2**: failover across three endpoints, verified |
-| 2 | No SSR or prerendering | Meta tags are set by JavaScript. Google runs JS; simpler crawlers and some link unfurlers will not see them | Revisit in Phase 11; `ng build --prerender` is the documented path |
-| 3 | Fonts load from the Google Fonts CDN | A blocked CDN falls back to system fonts | Self-hosting is a Phase 11 option |
+| 2 | No SSR or prerendering | Meta tags are set by JavaScript. Google runs JS; simpler crawlers and some link unfurlers will not see them | **Addressed in Phase 11**: Schema.org JSON-LD, sitemap.xml, robots.txt and runtime SeoService |
+| 3 | Fonts load from the Google Fonts CDN | A blocked CDN falls back to system fonts | Self-hosting is an option |
 | 4 | Port 4200 is occupied by another project on this machine | `ng serve` fails on the default port | Use `ng serve --port 4300` |
 | 5 | Hijri dates and prayer times are calculated | May differ from local moon sighting | Every affected response carries a `notice` field saying so |
 | 6 | Bangla surah transliterations are curated in-repo | A name could be spelled unusually | Corrections need only `SurahNames.cs` |
 | 7 | `/calendar/events` makes ten upstream conversions on a cold cache | First call takes about 900 ms | Cached for a day afterwards |
 | 8 | The surah filter matches substrings, so short queries are broad | "nas" returns Yunus, An-Nas and others | Acceptable for 114 items; Phase 6 search ranks properly |
-| 9 | Al-Baqarah is a 130 kB gzipped download | Slow on a poor connection | Deliberate: it buys instant translation switching. Revisit if Phase 11 offline caching makes a lighter first load worthwhile |
+| 9 | Al-Baqarah is a 130 kB gzipped download | Slow on a poor connection | Deliberate: it buys instant translation switching. Cached by Service Worker in Phase 11 |
 | 10 | Playback stops when leaving the reading page | No background listening yet | **Resolved in Phase 5**: MiniPlayerComponent lives in the app shell and outlives navigation |
 
 ---
 
 ## 11. Next Phase
 
-**Phase 11 — PWA, Offline Caching, SEO and Accessibility.**
+**Phase 12 — Testing, Bug Fixing and Release Preparation.**
 
-Phase 11 builds:
-- Service worker caching with workbox / @angular/service-worker (offline reading for cached surahs).
-- Web App Manifest (`manifest.webmanifest`) with icons and maskable assets.
-- Accessibility audit (WCAG AA compliance, ARIA landmarks, keyboard navigation pass).
-- Prerendering or meta tags enhancement for rich social sharing.
-See [docs/phases/PHASE-11.md](docs/phases/PHASE-11.md).
+Phase 12 builds:
+- Comprehensive regression testing across all routes, features, and screen sizes.
+- Cross-browser verification (Chrome, Firefox, Safari, Edge, Mobile Safari, Chrome Android).
+- Release readiness, documentation updates, and deployment configuration.
+See [docs/phases/PHASE-12.md](docs/phases/PHASE-12.md).
 
 ---
 

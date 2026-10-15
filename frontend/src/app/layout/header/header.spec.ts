@@ -42,4 +42,15 @@ describe('HeaderComponent', () => {
     expect(el.querySelector('.lang-pill--active')?.textContent).toBe('বাং');
     expect(el.querySelector('.brand__tag')?.textContent).toContain('পড়ুন · শুনুন · অনুধাবন করুন');
   });
+
+  it('closes mobile drawer when escape key is pressed', () => {
+    component.toggleDrawer();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.drawer--open')).toBeTruthy();
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.drawer--open')).toBeFalsy();
+  });
 });
+

@@ -183,6 +183,40 @@ export const TRANSLATIONS = {
     en: 'Invalid backup file. Please select a valid Al-Quran backup JSON file.',
     bn: 'অকার্যকর ব্যাকআপ ফাইল। দয়া করে সঠিক আল-কুরআন ব্যাকআপ ফাইল নির্বাচন করুন।',
   },
+
+  // PWA & Offline
+  'pwa.offline': {
+    en: 'You are currently offline. Cached Quran text, prayer times and bookmarks remain available.',
+    bn: 'আপনি অফলাইনে আছেন। সংরক্ষিত কুরআন তিলাওয়াত পাতা, নামাজের সময় ও বুকমার্ক ব্যবহার করতে পারেন।',
+  },
+  'pwa.online': {
+    en: 'You are back online.',
+    bn: 'ইন্টারনেট সংযোগ পুনরায় সক্রিয় হয়েছে।',
+  },
+  'pwa.updateAvailable': {
+    en: 'A new update of Al-Quran is ready.',
+    bn: 'আল-কুরআন অ্যাপের নতুন সংস্করণ প্রস্তুত।',
+  },
+  'pwa.updateAction': {
+    en: 'Update Now',
+    bn: 'হালনাগাদ করুন',
+  },
+  'pwa.install': {
+    en: 'Install App',
+    bn: 'অ্যাপ ইনস্টল করুন',
+  },
+  'pwa.installDesc': {
+    en: 'Install Al-Quran on your device for fast, distraction-free offline access.',
+    bn: 'অফলাইন ও দ্রুত ব্যবহারের জন্য আপনার ডিভাইসে আল-কুরআন ইনস্টল করুন।',
+  },
+  'pwa.installed': {
+    en: 'App Installed',
+    bn: 'অ্যাপটি ইনস্টল রয়েছে',
+  },
+  'pwa.installSuccess': {
+    en: 'Application installed successfully!',
+    bn: 'অ্যাপটি সফলভাবে ইনস্টল করা হয়েছে!',
+  },
 } as const;
 
 export type TranslationKey = keyof typeof TRANSLATIONS;

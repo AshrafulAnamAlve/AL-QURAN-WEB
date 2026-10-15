@@ -24,9 +24,37 @@
       property="og:description"
       content="Read the complete Quran in Arabic with Bangla translation, listen to recitation, check prayer times and find nearby mosques."
     />
-    <meta name="twitter:card" content="summary_large_image" />
-
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png" />
+
+    <!-- PWA & Mobile Web App -->
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Al-Quran" />
+    <meta name="application-name" content="Al-Quran" />
+
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Al-Quran",
+        "alternateName": ["আল-কুরআন", "Al-Quran App"],
+        "url": "https://alquran.app",
+        "description": "Read the complete Quran in Arabic with Bangla translation, listen to recitation, follow prayer times and find nearby mosques.",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://alquran.app/search?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      }
+    </script>
 
     <!-- Fonts. preconnect shaves a round trip off the first paint. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

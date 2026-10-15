@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  HostListener,
   OnInit,
   computed,
   inject,
@@ -11,6 +12,7 @@ import { READING_LIMITS, TranslationMode } from '../../core/models/reading-setti
 import { ThemePreference } from '../../core/models/theme';
 import { LanguageService } from '../../core/services/language';
 import { LocationService } from '../../core/services/location';
+import { PwaService } from '../../core/services/pwa';
 import { ReciterService } from '../../core/services/reciter';
 import { SettingsService } from '../../core/services/settings';
 import { POPULAR_CITIES } from '../prayer/prayer';
@@ -39,6 +41,7 @@ export class SettingsPage implements OnInit {
   protected readonly language = inject(LanguageService);
   protected readonly locationService = inject(LocationService);
   protected readonly reciterService = inject(ReciterService);
+  protected readonly pwa = inject(PwaService);
   private readonly seo = inject(SeoService);
 
   // Constants
@@ -81,6 +84,15 @@ export class SettingsPage implements OnInit {
     if (bytes < 1024) return `${bytes} B`;
     return `${(bytes / 1024).toFixed(1)} KB`;
   });
+
+  @HostListener('window:keydown.escape')
+  onEscape(): void {
+    if (this.confirmDialog().open) {
+      this.closeConfirmDialog();
+    } else if (this.showCityModal()) {
+      this.closeCityModal();
+    }
+  }
 
   ngOnInit(): void {
     this.reciterService.loadList();
@@ -311,6 +323,13 @@ export class SettingsPage implements OnInit {
           'success',
         );
         break;
+    }
+  }
+
+  async installApp(): Promise<void> {
+    const accepted = await this.pwa.promptInstall();
+    if (accepted) {
+      this.showToast(this.language.translate('pwa.installSuccess'), 'success');
     }
   }
 

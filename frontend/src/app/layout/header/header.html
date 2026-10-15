@@ -29,6 +29,19 @@
     </nav>
 
     <div class="actions">
+      @if (pwa.canInstall()) {
+        <button
+          type="button"
+          class="install-pill-btn"
+          (click)="installApp()"
+          [attr.aria-label]="isBn() ? 'অ্যাপ ইনস্টল করুন' : 'Install Al-Quran App'"
+          title="Install App / অ্যাপ ইনস্টল"
+        >
+          <aq-icon name="download" [size]="16" />
+          <span class="install-pill-label">{{ isBn() ? 'ইনস্টল' : 'Install' }}</span>
+        </button>
+      }
+
       <!-- Language Toggle Switch (EN / বাং) -->
       <button
         type="button"
@@ -101,6 +114,19 @@
           <span>{{ isBn() ? item.labelBn : item.label }}</span>
           <aq-icon name="chevronRight" [size]="16" />
         </a>
+      </li>
+    }
+
+    @if (pwa.canInstall()) {
+      <li class="drawer__install-item">
+        <button
+          type="button"
+          class="drawer__install-btn"
+          (click)="installApp(); closeDrawer()"
+        >
+          <aq-icon name="download" [size]="20" />
+          <span>{{ isBn() ? 'অ্যাপ ইনস্টল করুন' : 'Install Al-Quran App' }}</span>
+        </button>
       </li>
     }
   </ul>
