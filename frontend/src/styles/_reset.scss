@@ -1,0 +1,87 @@
+// ---------------------------------------------------------------------------
+// A small, opinionated reset. Nothing here is theme-specific.
+// ---------------------------------------------------------------------------
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+  // Anchors and route changes should not hide content under the sticky header.
+  scroll-padding-top: calc(var(--aq-header-height) + 1rem);
+}
+
+body {
+  background-color: var(--aq-bg);
+  color: var(--aq-text);
+  // The single most important responsive rule in the app.
+  overflow-x: hidden;
+  transition: background-color var(--aq-duration) var(--aq-ease),
+              color var(--aq-duration) var(--aq-ease);
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+a {
+  color: var(--aq-primary);
+  text-decoration: none;
+  transition: color var(--aq-duration-fast) var(--aq-ease);
+
+  &:hover {
+    color: var(--aq-primary-hover);
+    text-decoration: underline;
+  }
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+:target {
+  scroll-margin-top: calc(var(--aq-header-height) + 1rem);
+}
+
+::selection {
+  background: var(--aq-primary-soft);
+  color: var(--aq-text);
+}

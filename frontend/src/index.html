@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+    <title>Al-Quran — Read the Quran with Bangla Translation</title>
+    <meta
+      name="description"
+      content="Read the complete Quran in Arabic with Bangla translation, listen to recitation, check prayer times, view the Islamic calendar and find nearby mosques."
+    />
+
+    <!-- Painted by the browser chrome; kept in step with the active theme by ThemeService. -->
+    <meta name="theme-color" content="#0f5132" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f1513" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
+
+    <!-- Open Graph / social preview. Route-level values are set at runtime by SeoService. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Al-Quran" />
+    <meta property="og:title" content="Al-Quran — Read the Quran with Bangla Translation" />
+    <meta
+      property="og:description"
+      content="Read the complete Quran in Arabic with Bangla translation, listen to recitation, check prayer times and find nearby mosques."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <!-- Fonts. preconnect shaves a round trip off the first paint. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Inter:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600&family=Noto+Sans+Bengali:wght@400;500;600&display=swap"
+    />
+
+    <!--
+      Applies the saved theme before Angular boots so the page never flashes
+      light before switching to dark. Keep this tiny and dependency free.
+    -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('alquran.theme');
+          if (saved === 'dark' || saved === 'light') {
+            document.documentElement.setAttribute('data-theme', saved);
+          }
+        } catch (e) {
+          /* private mode or storage disabled - fall back to the system theme */
+        }
+      })();
+    </script>
+  </head>
+
+  <body>
+    <aq-root></aq-root>
+    <noscript>
+      This application needs JavaScript enabled to read the Quran, play recitation and
+      calculate prayer times.
+    </noscript>
+  </body>
+</html>

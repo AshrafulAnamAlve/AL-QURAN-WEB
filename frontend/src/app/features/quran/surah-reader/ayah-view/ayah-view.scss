@@ -1,0 +1,99 @@
+@use 'mixins' as m;
+
+:host {
+  display: block;
+}
+
+.ayah {
+  padding: 1.25rem 0 1.5rem;
+  border-bottom: 1px solid var(--aq-border);
+  scroll-margin-top: calc(var(--aq-header-height) + 5rem);
+  transition: background-color var(--aq-duration) var(--aq-ease);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  // A soft tint on the ayah the player is on, so it stays findable while the
+  // recitation auto-advances - including when it is paused part-way through.
+  &--current {
+    background: var(--aq-primary-soft);
+    box-shadow: 0 0 0 100vmax var(--aq-primary-soft);
+    clip-path: inset(0 -100vmax);
+  }
+
+  // The bar marks the one actually being recited, not merely loaded.
+  &--playing {
+    box-shadow:
+      inset 3px 0 0 var(--aq-primary),
+      0 0 0 100vmax var(--aq-primary-soft);
+  }
+}
+
+// --- Toolbar --------------------------------------------------------------
+.ayah__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.875rem;
+}
+
+.ayah__spacer {
+  flex: 1 1 auto;
+}
+
+.ayah__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.ayah__sajda {
+  font-size: 0.6875rem;
+}
+
+// A small ring that spins while the audio buffers.
+.ayah__spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--aq-border-strong);
+  border-top-color: var(--aq-primary);
+  animation: ayah-spin 700ms linear infinite;
+}
+
+@keyframes ayah-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// --- Text -----------------------------------------------------------------
+.ayah__arabic {
+  margin: 0;
+  // Sizes come from the CSS variables the reading controls write, so moving a
+  // slider restyles every ayah in one repaint instead of re-rendering them.
+  color: var(--aq-text);
+  // Long ayahs must wrap inside the column, never widen the page.
+  overflow-wrap: break-word;
+}
+
+.ayah__translation {
+  margin: 0.875rem 0 0;
+  color: var(--aq-text-muted);
+  text-wrap: pretty;
+  overflow-wrap: break-word;
+}
+
+.ayah__translation--english {
+  font-family: var(--aq-font-ui);
+  font-size: calc(var(--aq-translation-size) * 0.96);
+  line-height: var(--aq-translation-line-height);
+  color: var(--aq-text-subtle);
+}
+
+@include m.up(md) {
+  .ayah {
+    padding: 1.5rem 0 1.75rem;
+  }
+}

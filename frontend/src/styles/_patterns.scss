@@ -1,0 +1,72 @@
+// ---------------------------------------------------------------------------
+// Islamic geometric ornament.
+//
+// Used sparingly and always behind content, never under Quran text. The pattern
+// is applied as a CSS mask so its colour comes from a theme token, which keeps
+// it correct in both light and dark mode and lets us hold it at a very low
+// opacity - decoration must never compete with readability.
+// ---------------------------------------------------------------------------
+
+:root {
+  --aq-pattern-star: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='black' stroke-width='1.25'%3E%3Crect x='18' y='18' width='28' height='28'/%3E%3Crect x='18' y='18' width='28' height='28' transform='rotate%2845 32 32%29'/%3E%3Ccircle cx='32' cy='32' r='3'/%3E%3C/g%3E%3C/svg%3E");
+  --aq-pattern-arch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='24' viewBox='0 0 48 24'%3E%3Cg fill='none' stroke='black' stroke-width='1.25'%3E%3Cpath d='M0 24 A12 12 0 0 1 24 24 A12 12 0 0 1 48 24'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+// Put this on a positioned container.
+.aq-pattern {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--aq-primary);
+    opacity: 0.05;
+    mask-image: var(--aq-pattern-star);
+    mask-size: 64px 64px;
+    mask-repeat: repeat;
+    -webkit-mask-image: var(--aq-pattern-star);
+    -webkit-mask-size: 64px 64px;
+    -webkit-mask-repeat: repeat;
+    pointer-events: none;
+  }
+
+  // Fade the ornament out towards the content so nothing reads as busy.
+  &--fade::before {
+    mask-composite: intersect;
+    -webkit-mask-composite: source-in;
+  }
+}
+
+// A 1px gold hairline used to separate major sections.
+.aq-rule-gold {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--aq-accent) 20%,
+    var(--aq-accent) 80%,
+    transparent
+  );
+  opacity: 0.4;
+}
+
+// Decorative ayah number badge, shaped like a Quranic ayah marker.
+.aq-ayah-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.25rem;
+  height: 2.25rem;
+  padding-inline: 0.4rem;
+  border-radius: var(--aq-radius-pill);
+  background: var(--aq-primary-soft);
+  border: 1px solid var(--aq-primary-border);
+  color: var(--aq-primary);
+  font-size: 0.8125rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}

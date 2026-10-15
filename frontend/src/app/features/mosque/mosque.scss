@@ -1,0 +1,471 @@
+.mosque-page {
+  padding-block: var(--aq-space-6) var(--aq-space-12);
+}
+
+// --- Advisory Banner -------------------------------------------------------
+.advisory-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--aq-space-3);
+  padding: 0.875rem 1.25rem;
+  margin-bottom: var(--aq-space-6);
+  background: color-mix(in srgb, var(--aq-accent) 12%, var(--aq-surface));
+  border: 1px solid color-mix(in srgb, var(--aq-accent) 35%, var(--aq-border));
+  border-radius: var(--aq-radius-lg);
+
+  &__icon {
+    display: flex;
+    color: var(--aq-gold-600, #b45309);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  &__title {
+    margin: 0 0 0.25rem;
+    font-size: var(--aq-text-sm);
+    font-weight: 700;
+    color: var(--aq-text);
+  }
+
+  &__text {
+    margin: 0;
+    font-size: var(--aq-text-xs);
+    color: var(--aq-text-subtle);
+    line-height: 1.5;
+  }
+}
+
+// --- Mosque Header ---------------------------------------------------------
+.mosque-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aq-space-4);
+  margin-bottom: var(--aq-space-6);
+  padding-bottom: var(--aq-space-4);
+  border-bottom: 1px solid var(--aq-border);
+
+  &__title {
+    margin: 0 0 0.4rem;
+    font-size: var(--aq-text-2xl);
+    font-weight: 700;
+  }
+}
+
+.location-badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aq-space-2);
+}
+
+.location-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--aq-radius-pill);
+  background: var(--aq-surface-2);
+  border: 1px solid var(--aq-border);
+  font-size: var(--aq-text-xs);
+  font-weight: 600;
+  color: var(--aq-text);
+}
+
+.radius-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--aq-space-2);
+}
+
+.radius-label {
+  font-size: var(--aq-text-xs);
+  font-weight: 600;
+  color: var(--aq-text-subtle);
+}
+
+.radius-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.radius-pill {
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--aq-radius-pill);
+  border: 1px solid var(--aq-border);
+  background: var(--aq-surface);
+  color: var(--aq-text-muted);
+  font-size: var(--aq-text-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--aq-duration-fast) var(--aq-ease);
+
+  &:hover {
+    border-color: var(--aq-primary);
+    color: var(--aq-primary);
+  }
+
+  &.is-active {
+    background: var(--aq-primary);
+    border-color: var(--aq-primary);
+    color: var(--aq-on-primary);
+  }
+}
+
+.mosque-error {
+  margin-bottom: var(--aq-space-6);
+}
+
+// --- Mosque Layout: Map & List --------------------------------------------
+.mosque-layout {
+  display: grid;
+  gap: var(--aq-space-6);
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .mosque-layout {
+    grid-template-columns: 1.1fr 1fr;
+  }
+}
+
+// --- Map View Card ---------------------------------------------------------
+.map-card {
+  position: sticky;
+  top: 5rem;
+  border-radius: var(--aq-radius-xl);
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+    background: var(--aq-surface);
+    border-bottom: 1px solid var(--aq-border);
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--aq-text-sm);
+    font-weight: 700;
+    color: var(--aq-text);
+  }
+
+  &__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    background: var(--aq-surface-2);
+    border-top: 1px solid var(--aq-border);
+    font-size: 0.7rem;
+    color: var(--aq-text-subtle);
+  }
+}
+
+.map-canvas {
+  width: 100%;
+  height: 480px;
+  background: var(--aq-surface-2);
+  z-index: 1;
+
+  @media (max-width: 600px) {
+    height: 320px;
+  }
+}
+
+.osm-credit a {
+  color: var(--aq-primary);
+  text-decoration: underline;
+}
+
+// --- Mosque List -----------------------------------------------------------
+.mosque-skeletons,
+.mosque-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aq-space-3);
+}
+
+.mosque-card-skeleton {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-radius: var(--aq-radius-lg);
+}
+
+.mosque-card {
+  padding: 1.15rem 1.25rem;
+  border-radius: var(--aq-radius-lg);
+  border: 1px solid var(--aq-border);
+  background: var(--aq-surface);
+  transition: border-color var(--aq-duration-fast) var(--aq-ease), box-shadow var(--aq-duration-fast) var(--aq-ease);
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--aq-primary) 60%, var(--aq-border));
+  }
+
+  &.is-selected {
+    border-color: var(--aq-primary);
+    box-shadow: 0 0 0 2px var(--aq-primary-soft, rgba(15, 81, 50, 0.15));
+    background: color-mix(in srgb, var(--aq-primary) 3%, var(--aq-surface));
+  }
+
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+  }
+
+  &__title-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__name {
+    margin: 0;
+    font-size: var(--aq-text-base);
+    font-weight: 700;
+    color: var(--aq-text);
+  }
+
+  &__distance {
+    font-size: var(--aq-text-xs);
+    font-weight: 700;
+    color: var(--aq-primary);
+    white-space: nowrap;
+  }
+
+  &__address {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.35rem;
+    margin: 0 0 0.5rem;
+    font-size: var(--aq-text-xs);
+    color: var(--aq-text-subtle);
+    line-height: 1.4;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.85rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid color-mix(in srgb, var(--aq-border) 60%, transparent);
+  }
+}
+
+.unnamed-badge {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--aq-radius-pill);
+  background: var(--aq-surface-2);
+  border: 1px solid var(--aq-border);
+  color: var(--aq-text-subtle);
+}
+
+.denomination-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--aq-radius-pill);
+  background: var(--aq-primary-soft);
+  color: var(--aq-primary);
+  margin-bottom: 0.5rem;
+}
+
+// --- Leaflet Custom Markers & Popups ---------------------------------------
+:host ::ng-deep {
+  .aq-map-marker {
+    background: transparent;
+    border: none;
+  }
+
+  .user-marker-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #0284c7;
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 6px rgba(2, 132, 199, 0.6);
+    position: absolute;
+    top: 5px;
+    left: 5px;
+  }
+
+  .user-marker-pulse {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(2, 132, 199, 0.3);
+    animation: userPulse 2s infinite ease-out;
+  }
+
+  @keyframes userPulse {
+    0% { transform: scale(0.5); opacity: 1; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+
+  .map-popup-card {
+    padding: 0.25rem;
+    min-width: 180px;
+  }
+
+  .map-popup-title {
+    margin: 0 0 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--aq-text, #111827);
+  }
+
+  .map-popup-dist {
+    margin: 0 0 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--aq-primary, #0f5132);
+  }
+
+  .map-popup-addr {
+    margin: 0 0 0.5rem;
+    font-size: 0.7rem;
+    color: var(--aq-text-muted, #4b5563);
+  }
+
+  .map-popup-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    background: #0f5132;
+    color: #ffffff !important;
+    text-decoration: none !important;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+}
+
+// --- City Search Modal ----------------------------------------------------
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-dialog {
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: var(--aq-radius-xl);
+  padding: 1.5rem;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: var(--aq-text-lg);
+  font-weight: 700;
+}
+
+.gps-btn {
+  margin-bottom: 1.25rem;
+  width: 100%;
+}
+
+.popular-cities-section {
+  margin-bottom: 1rem;
+}
+
+.popular-label {
+  margin: 0 0 0.4rem;
+  font-size: var(--aq-text-xs);
+  font-weight: 600;
+  color: var(--aq-text-subtle);
+}
+
+.popular-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.city-pill {
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--aq-radius-pill);
+  border: 1px solid var(--aq-border);
+  background: var(--aq-surface-2);
+  color: var(--aq-text);
+  font-size: var(--aq-text-xs);
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--aq-primary);
+    color: var(--aq-primary);
+  }
+}
+
+.city-search-box {
+  margin-block: 1rem;
+}
+
+.city-results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.city-result-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--aq-radius-md);
+  border: 1px solid var(--aq-border);
+  background: var(--aq-surface);
+  color: var(--aq-text);
+  text-align: left;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--aq-primary);
+    background: var(--aq-surface-2);
+  }
+}
+
+.city-result-text {
+  font-size: var(--aq-text-xs);
+  line-height: 1.3;
+}

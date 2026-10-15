@@ -1,0 +1,51 @@
+@use 'mixins' as m;
+@use 'reader';
+
+@include reader.chrome;
+
+.reader__number {
+  margin: 0 0 0.5rem;
+}
+
+.reader__arabic-name {
+  // Fixed size: this is a title, so it should not move with the reading slider.
+  font-size: clamp(1.75rem, 1.3rem + 2.2vw, 2.5rem);
+  line-height: 1.9;
+  text-align: center;
+  margin: 0;
+  color: var(--aq-primary);
+}
+
+.reader__english-name {
+  margin: 0.25rem 0 0;
+  font-size: 1.25rem;
+  font-weight: 650;
+}
+
+.reader__bangla-name {
+  margin: 0.1rem 0 0;
+  font-size: 1rem;
+}
+
+.reader__meaning {
+  margin: 0.15rem 0 0;
+  font-size: 0.875rem;
+  color: var(--aq-text-subtle);
+}
+
+.reader__facts {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.reader__bismillah {
+  margin: 1rem 0 0.5rem;
+  padding-block: 1.25rem;
+  text-align: center;
+  color: var(--aq-primary);
+  border-bottom: 1px solid var(--aq-border);
+  // Slightly smaller than the ayah text, so it reads as a heading not a verse.
+  font-size: calc(var(--aq-arabic-size) * 0.85);
+}

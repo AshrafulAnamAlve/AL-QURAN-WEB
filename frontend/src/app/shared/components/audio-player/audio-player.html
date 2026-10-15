@@ -1,0 +1,214 @@
+<div class="player">
+  <!-- What is playing ---------------------------------------------------- -->
+  <div class="player__now">
+    <span class="player__reference aq-numeral">{{ title() }}</span>
+    <span class="player__names">
+      <span class="player__surah">{{ subtitle() }}</span>
+      <span class="player__reciter">{{ reciterName() }}</span>
+    </span>
+  </div>
+
+  <!-- Transport ------------------------------------------------------------ -->
+  <div class="player__transport">
+    <button
+      type="button"
+      class="aq-icon-btn"
+      [disabled]="!hasPrevious() && position() === 0"
+      aria-label="Previous ayah"
+      (click)="previous()"
+    >
+      <aq-icon name="skipBack" [size]="18" />
+    </button>
+
+    <button
+      type="button"
+      class="player__play"
+      [attr.aria-label]="playLabel()"
+      (click)="togglePlay()"
+    >
+      @if (isBuffering()) {
+        <span class="player__spinner" aria-hidden="true"></span>
+      } @else {
+        <aq-icon [name]="isPlaying() ? 'pause' : 'play'" [size]="20" />
+      }
+    </button>
+
+    <button
+      type="button"
+      class="aq-icon-btn"
+      [disabled]="!hasNext()"
+      aria-label="Next ayah"
+      (click)="next()"
+    >
+      <aq-icon name="skipForward" [size]="18" />
+    </button>
+  </div>
+
+  <!-- Seek ----------------------------------------------------------------- -->
+  <div class="player__seek">
+    <span class="player__time aq-numeral">{{ elapsed() }}</span>
+    <input
+      class="player__scrub"
+      type="range"
+      min="0"
+      [max]="seekMax()"
+      step="1"
+      [value]="position()"
+      [disabled]="seekMax() === 0"
+      aria-label="Seek within this ayah"
+      [attr.aria-valuetext]="elapsed() + ' of ' + total()"
+      (input)="onSeek($event)"
+    />
+    <span class="player__time aq-numeral">{{ total() }}</span>
+  </div>
+
+  <!-- Volume (pointer devices only; phones have hardware keys) -------------- -->
+  <div class="player__volume">
+    <button
+      type="button"
+      class="aq-icon-btn"
+      [attr.aria-label]="muteLabel()"
+      [attr.aria-pressed]="muted()"
+      (click)="toggleMute()"
+    >
+      <aq-icon [name]="muted() || volume() === 0 ? 'volumeOff' : 'volume'" [size]="17" />
+    </button>
+    <input
+      class="player__volume-slider"
+      type="range"
+      min="0"
+      max="100"
+      step="1"
+      [value]="muted() ? 0 : volume() * 100"
+      aria-label="Volume"
+      (input)="onVolume($event)"
+    />
+  </div>
+
+  <!-- Panel toggle --------------------------------------------------------- -->
+  <button
+    type="button"
+    class="aq-icon-btn player__more"
+    [class.aq-icon-btn--active]="panelOpen()"
+    [attr.aria-expanded]="panelOpen()"
+    aria-controls="audio-player-panel"
+    aria-label="Playback options: reciter, speed and repeat"
+    (click)="togglePanel()"
+  >
+    <aq-icon [name]="panelOpen() ? 'chevronDown' : 'chevronUp'" [size]="16" />
+  </button>
+
+  <!-- Status line ---------------------------------------------------------- -->
+  <p class="player__status" role="status">
+    <span class="aq-visually-hidden">{{ positionLabel() }}.</span>
+    @if (repeatProgress()) {
+      <span class="player__repeat-progress aq-chip">Repeat {{ repeatProgress() }}</span>
+    }
+  </p>
+</div>
+
+<!-- A failed load, with the one action that can help ------------------------ -->
+@if (error(); as message) {
+  <p class="player__error" role="alert">
+    <aq-icon name="alert" [size]="16" />
+    <span>{{ message }}</span>
+    <button type="button" class="aq-btn aq-btn--secondary aq-btn--sm" (click)="retry()">
+      <aq-icon name="refresh" [size]="14" />
+      Try again
+    </button>
+  </p>
+}
+
+<!-- Options panel ----------------------------------------------------------- -->
+<div
+  id="audio-player-panel"
+  class="panel"
+  [hidden]="!panelOpen()"
+  [attr.inert]="panelOpen() ? null : ''"
+>
+  <div class="panel__grid">
+    <!-- Reciter -->
+    <div class="panel__field">
+      <label class="panel__label" for="reciter-select">Reciter</label>
+
+      @if (reciterStatus() === 'failed') {
+        <p class="panel__note">
+          The reciter list could not be loaded.
+          <button type="button" class="panel__link" (click)="retryReciters()">Try again</button>
+        </p>
+      }
+
+      <select
+        id="reciter-select"
+        class="panel__select"
+        [value]="selectedReciterId()"
+        [disabled]="reciterStatus() === 'loading'"
+        (change)="onReciter($event)"
+      >
+        @for (reciter of reciters(); track reciter.identifier) {
+          <option [value]="reciter.identifier" [selected]="reciter.identifier === selectedReciterId()">
+            {{ label(reciter.identifier) }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <!-- Speed -->
+    <div class="panel__field">
+      <span class="panel__label" id="speed-label">Speed</span>
+      <div class="panel__choices" role="group" aria-labelledby="speed-label">
+        @for (value of rates; track value) {
+          <button
+            type="button"
+            class="panel__choice aq-numeral"
+            [class.is-active]="rate() === value"
+            [attr.aria-pressed]="rate() === value"
+            (click)="setRate(value)"
+          >
+            {{ value }}&times;
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Repeat -->
+    <div class="panel__field">
+      <span class="panel__label" id="repeat-label">Repeat</span>
+      <div class="panel__choices" role="group" aria-labelledby="repeat-label">
+        @for (mode of repeatModes; track mode.value) {
+          <button
+            type="button"
+            class="panel__choice"
+            [class.is-active]="repeatMode() === mode.value"
+            [attr.aria-pressed]="repeatMode() === mode.value"
+            (click)="setRepeatMode(mode.value)"
+          >
+            {{ mode.value === 'queue' ? repeatAllLabel() : mode.label }}
+          </button>
+        }
+      </div>
+
+      @if (repeatMode() === 'ayah') {
+        <label class="panel__count">
+          <span>
+            Times
+            <span class="panel__count-value aq-numeral">{{ repeatCount() }}</span>
+          </span>
+          <input
+            type="range"
+            [min]="repeatLimits.min"
+            [max]="repeatLimits.max"
+            step="1"
+            [value]="repeatCount()"
+            (input)="onRepeatCount($event)"
+          />
+        </label>
+      }
+    </div>
+  </div>
+
+  <p class="panel__hint">
+    {{ repeatSummary() }}. Recitation streams one ayah at a time and is saved on this device
+    only as a preference.
+  </p>
+</div>

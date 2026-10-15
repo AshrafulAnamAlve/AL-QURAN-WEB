@@ -1,0 +1,299 @@
+<section class="hero aq-pattern">
+  <div class="aq-container hero__inner">
+    <p class="hero__salaam">
+      <span class="hero__arabic aq-arabic">ٱلسَّلَامُ عَلَيْكُمْ</span>
+      <span class="hero__translit">Assalamu Alaikum</span>
+    </p>
+
+    <h1 class="hero__title">
+      {{ isBn() ? 'কুরআন তিলাওয়াত করুন, শুনুন এবং অনুধাবন করুন' : 'Read, listen to and reflect on the Quran' }}
+    </h1>
+
+    <p class="hero__date">
+      <aq-icon name="calendar" [size]="16" />
+      <span>{{ today() }}</span>
+    </p>
+
+    <div class="hero__actions">
+      <a routerLink="/quran" class="aq-btn aq-btn--primary aq-btn--lg">
+        <aq-icon name="bookOpen" [size]="18" />
+        {{ isBn() ? 'কুরআন তিলাওয়াত' : 'Read Quran' }}
+      </a>
+      <a routerLink="/prayer" class="aq-btn aq-btn--secondary aq-btn--lg">
+        <aq-icon name="clock" [size]="18" />
+        {{ isBn() ? 'নামাজের সময়সূচি' : 'Prayer Times' }}
+      </a>
+      <a routerLink="/mosques" class="aq-btn aq-btn--secondary aq-btn--lg">
+        <aq-icon name="mapPin" [size]="18" />
+        {{ isBn() ? 'নিকটস্থ মসজিদ' : 'Find a Mosque' }}
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="aq-container sections">
+  @if (nextPrayer(); as next) {
+    <section class="panel prayer-home-card" aria-labelledby="prayer-home-heading">
+      <div class="prayer-home-card__header">
+        <div>
+          <p class="aq-eyebrow">{{ isBn() ? 'নামাজের সময়সূচি' : 'Prayer Times' }} &middot; {{ currentLocation().displayName }}</p>
+          <h2 id="prayer-home-heading" class="prayer-home-card__title">
+            <span>{{ isBn() ? 'পরবর্তী ওয়াক্ত: ' : 'Next: ' }}{{ next.isTomorrow ? (isBn() ? 'আগামীকালের ফজর' : "Tomorrow's Fajr") : (isBn() ? next.prayer.banglaName : next.prayer.name) }}</span>
+            @if (!isBn()) {
+              <span class="prayer-home-card__bn aq-bangla">({{ next.prayer.banglaName }})</span>
+            }
+            <span class="prayer-home-card__time aq-numeral">{{ formatTime12h(next.prayer.time) }}</span>
+          </h2>
+        </div>
+
+        <div class="prayer-home-card__actions">
+          <div class="prayer-home-card__timer aq-numeral" role="timer" aria-live="off">
+            {{ isBn() ? toBnDigits(next.formattedCountdown) : next.formattedCountdown }}
+          </div>
+          <a routerLink="/prayer" class="aq-btn aq-btn--secondary aq-btn--sm">
+            <aq-icon name="clock" [size]="16" />
+            {{ isBn() ? 'পূর্ণ সময়সূচি' : 'Timetable' }}
+          </a>
+        </div>
+      </div>
+
+      <div class="prayer-home-card__strip" role="list">
+        @for (item of prayerTimes.coreTimings(); track item.key) {
+          <div
+            class="prayer-home-strip-item"
+            [class.is-active]="item.key === prayerTimes.currentPrayer()?.key"
+            [class.is-next]="item.key === next.prayer.key"
+            role="listitem"
+          >
+            <span class="prayer-home-strip-item__name">{{ isBn() ? item.banglaName : item.name }}</span>
+            <span class="prayer-home-strip-item__time aq-numeral">{{ formatTime12h(item.time) }}</span>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  @if (hasLastRead()) {
+    <section class="panel continue-card" aria-labelledby="continue-heading">
+      <div class="continue-card__header">
+        <div>
+          <p class="aq-eyebrow">{{ isBn() ? 'পড়া চালিয়ে যান' : 'Continue Reading' }}</p>
+          <h2 id="continue-heading" class="continue-card__title">
+            {{ isBn() ? 'সূরা ' + (lastRead()?.surahBanglaName || lastRead()?.surahEnglishName) : 'Surah ' + lastRead()?.surahEnglishName }}
+            @if (!isBn() && lastRead()?.surahBanglaName) {
+              <span class="continue-card__bn">({{ lastRead()?.surahBanglaName }})</span>
+            }
+            &middot; {{ isBn() ? 'আয়াত ' + lastRead()?.ayahNumber : 'Ayah ' + lastRead()?.ayahNumber }}
+          </h2>
+        </div>
+        <a
+          class="aq-btn aq-btn--primary"
+          [routerLink]="['/quran', lastRead()?.surahNumber]"
+          [fragment]="'ayah-' + lastRead()?.ayahNumber"
+        >
+          <aq-icon name="bookOpen" [size]="16" />
+          {{ isBn() ? 'পড়ুন' : 'Resume' }}
+        </a>
+      </div>
+
+      <div class="continue-card__progress">
+        <div class="continue-card__progress-info">
+          <span>{{ isBn() ? 'কুরআন পড়ার অগ্রগতি' : 'Quran Reading Progress' }}</span>
+          <span class="aq-numeral">{{ progressPercentage() }}%</span>
+        </div>
+        <div class="continue-card__bar-wrap">
+          <div
+            class="continue-card__bar"
+            role="progressbar"
+            [attr.aria-valuenow]="progressPercentage()"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [style.width.%]="progressPercentage()"
+          ></div>
+        </div>
+        <p class="continue-card__stats aq-numeral">
+          {{ readCount() }} / {{ totalAyahs }} {{ isBn() ? 'আয়াত সম্পন্ন' : 'ayahs read' }}
+        </p>
+      </div>
+    </section>
+  }
+
+  <!-- Ayah of the Day Card (Phase 8) -->
+  @if (dailyAyah(); as ayah) {
+    <section class="panel daily-ayah-card" aria-labelledby="daily-ayah-heading">
+      <div class="daily-ayah-card__header">
+        <div class="daily-ayah-card__title-row">
+          <p class="aq-eyebrow">{{ isBn() ? 'আজকের আয়াত' : 'Ayah of the Day' }}</p>
+          <h2 id="daily-ayah-heading" class="daily-ayah-card__title">
+            <a
+              [routerLink]="['/quran', ayah.surahNumber]"
+              [fragment]="'ayah-' + ayah.numberInSurah"
+              class="daily-ayah-card__link"
+            >
+              {{ isBn() ? 'সূরা ' + (dailySurah()?.banglaName || dailySurah()?.englishName) + ' (' + toBnDigits(ayah.surahNumber) + ':' + toBnDigits(ayah.numberInSurah) + ')' : 'Surah ' + dailySurah()?.englishName + ' (' + ayah.surahNumber + ':' + ayah.numberInSurah + ')' }}
+            </a>
+          </h2>
+        </div>
+
+        <div class="daily-ayah-card__actions">
+          <button
+            type="button"
+            class="aq-btn aq-btn--secondary aq-btn--sm"
+            (click)="playDailyAyah()"
+            [attr.aria-label]="isDailyPlaying() ? (isBn() ? 'তেলাওয়াত বন্ধ করুন' : 'Pause recitation') : (isBn() ? 'তেলাওয়াত শুনুন' : 'Listen to recitation')"
+          >
+            <aq-icon [name]="isDailyPlaying() ? 'pause' : 'play'" [size]="16" />
+            <span>{{ isDailyPlaying() ? (isBn() ? 'বিরতি' : 'Pause') : (isBn() ? 'শুনুন' : 'Recite') }}</span>
+          </button>
+
+          <button
+            type="button"
+            class="aq-icon-btn"
+            (click)="toggleDailyBookmark()"
+            [class.is-bookmarked]="isDailyBookmarked()"
+            [attr.aria-label]="isDailyBookmarked() ? (isBn() ? 'বুকমার্ক সরানো' : 'Remove bookmark') : (isBn() ? 'বুকমার্ক করুন' : 'Bookmark ayah')"
+            [title]="isDailyBookmarked() ? (isBn() ? 'বুকমার্ক সরানো' : 'Bookmarked') : (isBn() ? 'বুকমার্ক' : 'Bookmark')"
+          >
+            <aq-icon name="bookmark" [size]="18" />
+          </button>
+
+          <button
+            type="button"
+            class="aq-icon-btn"
+            (click)="shareDailyAyah()"
+            [attr.aria-label]="isBn() ? 'আয়াত শেয়ার করুন' : 'Share ayah'"
+            title="Share / অনুলিপি"
+          >
+            <aq-icon name="share" [size]="18" />
+          </button>
+        </div>
+      </div>
+
+      @if (shareOutcome(); as msg) {
+        <div class="share-toast aq-card" role="status">
+          <aq-icon name="check" [size]="14" />
+          <span>{{ msg }}</span>
+        </div>
+      }
+
+      <!-- Arabic Ayah Text -->
+      <div class="daily-ayah-card__arabic aq-arabic" dir="rtl">
+        {{ ayah.arabic }}
+      </div>
+
+      <!-- Translation Text -->
+      <div class="daily-ayah-card__translation">
+        @if (isBn()) {
+          <p class="aq-bangla">
+            {{ ayah.translations[0]?.text || '' }}
+          </p>
+        } @else {
+          <p class="aq-translation">
+            {{ ayah.translations[1]?.text || ayah.translations[0]?.text || '' }}
+          </p>
+        }
+      </div>
+    </section>
+  }
+
+  <!--
+    Setup check. This panel exists so you can confirm, from the browser, that
+    the frontend reaches the backend and the backend reaches every free API.
+    It is replaced by prayer times and Ayah of the Day in later phases.
+  -->
+  <section class="panel" aria-labelledby="setup-check-heading">
+    <header class="panel__head">
+      <div>
+        <p class="aq-eyebrow">Phase 1</p>
+        <h2 id="setup-check-heading">Setup check</h2>
+      </div>
+
+      @if (report()) {
+        <span class="aq-chip" [class.aq-chip--primary]="allHealthy()">
+          {{ healthyCount() }} / {{ totalCount() }} reachable
+        </span>
+      }
+    </header>
+
+    <p class="panel__lead">
+      Every data source below is free and needs no API key. If one shows as unreachable it is
+      usually a temporary outage at the provider, not a problem with your setup.
+    </p>
+
+    @if (busy()) {
+      <ul class="providers">
+        @for (row of skeletonRows; track row) {
+          <li class="provider">
+            <aq-skeleton width="9rem" height="0.95rem" />
+            <aq-skeleton width="4rem" height="0.8rem" />
+          </li>
+        }
+      </ul>
+    }
+
+    @if (error(); as failure) {
+      <aq-error-state
+        [error]="failure"
+        title="Cannot reach the backend"
+        (retry)="retry()"
+      />
+      <p class="panel__hint">
+        Start the API with <code>dotnet run</code> inside
+        <code>backend/AlQuran.Api</code>, then press Retry.
+      </p>
+    }
+
+    @if (report(); as report) {
+      <ul class="providers">
+        @for (provider of report.upstreams; track provider.key) {
+          <li class="provider">
+            <span class="provider__name">
+              <span
+                class="dot"
+                [class.dot--ok]="provider.healthy"
+                [class.dot--bad]="!provider.healthy"
+                aria-hidden="true"
+              ></span>
+              {{ provider.displayName }}
+            </span>
+
+            <span class="provider__status" [class.provider__status--bad]="!provider.healthy">
+              @if (provider.healthy) {
+                {{ provider.latencyMs }} ms
+              } @else {
+                {{ provider.message }}
+              }
+            </span>
+          </li>
+        }
+      </ul>
+
+      <button type="button" class="aq-btn aq-btn--ghost aq-btn--sm" (click)="retry()">
+        <aq-icon name="refresh" [size]="16" />
+        Check again
+      </button>
+    }
+
+  </section>
+
+  <section class="panel" aria-labelledby="next-heading">
+    <h2 id="next-heading">What is coming next</h2>
+    <p class="panel__lead">
+      The project is built in phases so each part can be tested before the next one starts.
+    </p>
+
+    <ol class="roadmap">
+      <li><span class="aq-chip aq-chip--primary">Done</span> Phase 1 — project structure, design system, API layer</li>
+      <li><span class="aq-chip aq-chip--primary">Done</span> Phase 2 — Quran, prayer, calendar and mosque APIs</li>
+      <li><span class="aq-chip aq-chip--primary">Done</span> Phase 3 — surah list and juz list, with filtering</li>
+      <li><span class="aq-chip aq-chip--primary">Done</span> Phase 4 — the reading view with Arabic and Bangla</li>
+      <li><span class="aq-chip aq-chip--primary">Done</span> Phase 5 — recitation audio player</li>
+      <li><span class="aq-chip aq-chip--primary">Done</span> Phase 6 — search, bookmarks, continue reading and progress</li>
+      <li><span class="aq-chip aq-chip--primary">Done</span> Phase 7 — prayer times and location</li>
+      <li><span class="aq-chip aq-chip--primary">Done</span> Phase 8 — Islamic calendar, Ramadan and Ayah of the Day</li>
+      <li><span class="aq-chip aq-chip--primary">Done</span> Phase 9 — nearby mosques map</li>
+      <li><span class="aq-chip aq-chip--primary">Done</span> Phase 10 — settings, preferences and responsive polish</li>
+      <li><span class="aq-chip">Phase 11</span> Offline, PWA, SEO and accessibility</li>
+    </ol>
+  </section>
+</div>

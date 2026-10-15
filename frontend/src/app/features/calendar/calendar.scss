@@ -1,0 +1,459 @@
+.calendar-page {
+  padding-block: var(--aq-space-6) var(--aq-space-12);
+}
+
+// --- Advisory Banner -------------------------------------------------------
+.advisory-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--aq-space-3);
+  padding: 0.875rem 1.25rem;
+  margin-bottom: var(--aq-space-6);
+  background: color-mix(in srgb, var(--aq-accent) 12%, var(--aq-surface));
+  border: 1px solid color-mix(in srgb, var(--aq-accent) 35%, var(--aq-border));
+  border-radius: var(--aq-radius-lg);
+
+  &__icon {
+    display: flex;
+    color: var(--aq-gold-600, #b45309);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  &__title {
+    margin: 0 0 0.25rem;
+    font-size: var(--aq-text-sm);
+    font-weight: 700;
+    color: var(--aq-text);
+  }
+
+  &__text {
+    margin: 0;
+    font-size: var(--aq-text-xs);
+    color: var(--aq-text-subtle);
+    line-height: 1.5;
+  }
+}
+
+// --- Header & Today Hero ---------------------------------------------------
+.calendar-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--aq-space-4);
+  margin-bottom: var(--aq-space-6);
+  padding-bottom: var(--aq-space-4);
+  border-bottom: 1px solid var(--aq-border);
+
+  &__title {
+    margin: 0 0 0.35rem;
+    font-size: var(--aq-text-2xl);
+    font-weight: 700;
+  }
+
+  &__subtitle {
+    margin: 0;
+    font-size: var(--aq-text-sm);
+    color: var(--aq-text-subtle);
+  }
+}
+
+.today-hero {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 1.25rem;
+  background: var(--aq-surface-2);
+  border: 1px solid var(--aq-border);
+  border-radius: var(--aq-radius-lg);
+
+  &__hijri {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin: 0.2rem 0;
+  }
+
+  &__formatted {
+    font-size: var(--aq-text-base);
+    font-weight: 700;
+    color: var(--aq-primary);
+  }
+
+  &__arabic {
+    font-size: 1.15rem;
+    color: var(--aq-text-subtle);
+  }
+
+  &__gregorian {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+    font-size: var(--aq-text-xs);
+    color: var(--aq-text-subtle);
+  }
+}
+
+// --- Ramadan Hero ----------------------------------------------------------
+.ramadan-hero {
+  margin-bottom: var(--aq-space-6);
+  padding: 1.25rem;
+  background: color-mix(in srgb, var(--aq-primary) 8%, var(--aq-surface));
+  border: 1px solid color-mix(in srgb, var(--aq-primary) 30%, var(--aq-border));
+  border-radius: var(--aq-radius-xl);
+
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  &__eyebrow {
+    margin-bottom: 0.25rem;
+  }
+
+  &__title {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin: 0;
+    font-size: var(--aq-text-xl);
+    font-weight: 700;
+  }
+
+  &__ar {
+    font-size: 1.35rem;
+    color: var(--aq-primary);
+  }
+}
+
+.ramadan-progress-box {
+  margin-bottom: 1.25rem;
+}
+
+.ramadan-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: var(--aq-text-xs);
+  font-weight: 600;
+  color: var(--aq-text-subtle);
+  margin-bottom: 0.4rem;
+}
+
+.ramadan-progress-bar-wrap {
+  width: 100%;
+  height: 8px;
+  background: color-mix(in srgb, var(--aq-text) 10%, transparent);
+  border-radius: var(--aq-radius-full);
+  overflow: hidden;
+}
+
+.ramadan-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--aq-primary), var(--aq-accent));
+  border-radius: var(--aq-radius-full);
+  transition: width 0.3s ease;
+}
+
+.ramadan-timings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--aq-space-3);
+}
+
+.ramadan-timing-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0.875rem 1rem;
+  background: var(--aq-surface);
+  border: 1px solid var(--aq-border);
+  border-radius: var(--aq-radius-md);
+
+  &__label {
+    font-size: var(--aq-text-xs);
+    color: var(--aq-text-subtle);
+    font-weight: 600;
+  }
+
+  &__time {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--aq-primary);
+    margin: 0.25rem 0;
+  }
+
+  &__sub {
+    font-size: 0.7rem;
+    color: var(--aq-text-subtle);
+  }
+}
+
+// --- Navigation Controls ---------------------------------------------------
+.calendar-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aq-space-4);
+  padding: 0.875rem 1.25rem;
+  margin-bottom: var(--aq-space-4);
+  border-radius: var(--aq-radius-lg);
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: var(--aq-space-3);
+  }
+
+  &__title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 180px;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--aq-space-3);
+  }
+}
+
+.current-month-heading {
+  margin: 0;
+  font-size: var(--aq-text-lg);
+  font-weight: 700;
+  display: flex;
+  gap: 0.4rem;
+}
+
+.month-name-ar {
+  font-size: 1rem;
+  color: var(--aq-primary);
+}
+
+.select-wrappers {
+  display: flex;
+  align-items: center;
+  gap: var(--aq-space-2);
+}
+
+.aq-select {
+  padding: 0.35rem 0.65rem;
+  border-radius: var(--aq-radius-md);
+  border: 1px solid var(--aq-border);
+  background: var(--aq-surface);
+  color: var(--aq-text);
+  font-size: var(--aq-text-sm);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--aq-primary);
+    outline-offset: 1px;
+  }
+}
+
+// --- Month Grid ------------------------------------------------------------
+.month-grid-section {
+  margin-bottom: var(--aq-space-8);
+}
+
+.month-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.weekday-row,
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.weekday-row {
+  margin-bottom: 4px;
+}
+
+.weekday-cell {
+  text-align: center;
+  padding: 0.5rem 0.25rem;
+  font-size: var(--aq-text-xs);
+  font-weight: 700;
+  color: var(--aq-text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  &--jummah {
+    color: var(--aq-primary);
+  }
+}
+
+.day-cell {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 80px;
+  padding: 0.5rem;
+  border-radius: var(--aq-radius-md);
+  border: 1px solid var(--aq-border);
+  background: var(--aq-surface);
+  transition: border-color var(--aq-duration-fast) var(--aq-ease);
+
+  @media (max-width: 600px) {
+    min-height: 60px;
+    padding: 0.3rem 0.2rem;
+  }
+
+  &--empty {
+    border-color: transparent;
+    background: transparent;
+    min-height: 0;
+  }
+
+  &--friday {
+    background: color-mix(in srgb, var(--aq-primary) 3%, var(--aq-surface));
+  }
+
+  &--today {
+    border-color: var(--aq-primary);
+    background: var(--aq-primary-soft);
+    box-shadow: 0 0 0 2px var(--aq-primary);
+  }
+
+  &--event {
+    border-color: color-mix(in srgb, var(--aq-accent) 50%, var(--aq-border));
+  }
+
+  &__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  &__hijri {
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--aq-text);
+  }
+
+  &__bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: auto;
+  }
+
+  &__gregorian {
+    font-size: 0.7rem;
+    color: var(--aq-text-subtle);
+    line-height: 1;
+  }
+
+  &__events {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin-top: 2px;
+  }
+}
+
+.today-chip {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.1rem 0.35rem;
+  background: var(--aq-primary);
+  color: var(--aq-on-primary);
+  border-radius: var(--aq-radius-full);
+}
+
+.event-pill {
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 0.05rem 0.3rem;
+  border-radius: 4px;
+  background: var(--aq-accent-soft);
+  color: var(--aq-gold-600, #92400e);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+// --- Important Events Section ----------------------------------------------
+.events-section {
+  &__header {
+    margin-bottom: var(--aq-space-4);
+  }
+
+  &__title {
+    margin: 0 0 0.25rem;
+    font-size: var(--aq-text-xl);
+    font-weight: 700;
+  }
+
+  &__subtitle {
+    margin: 0;
+    font-size: var(--aq-text-sm);
+    color: var(--aq-text-subtle);
+  }
+}
+
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--aq-space-3);
+}
+
+.event-card {
+  padding: 1rem;
+  border-radius: var(--aq-radius-lg);
+
+  &__head {
+    margin-bottom: 0.5rem;
+  }
+
+  &__badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+  }
+
+  &__gregorian {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: var(--aq-text-xs);
+    color: var(--aq-text-subtle);
+  }
+
+  &__name {
+    margin: 0;
+    font-size: var(--aq-text-base);
+    font-weight: 700;
+    color: var(--aq-text);
+  }
+
+  &__en {
+    display: block;
+    font-size: var(--aq-text-xs);
+    color: var(--aq-text-subtle);
+    margin-top: 1px;
+  }
+
+  &__desc {
+    margin: 0;
+    font-size: var(--aq-text-xs);
+    color: var(--aq-text-muted);
+    line-height: 1.5;
+  }
+}

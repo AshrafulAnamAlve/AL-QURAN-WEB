@@ -1,0 +1,305 @@
+<div class="aq-container calendar-page">
+  <!-- Advisory Banner (Astronomical Calculation Notice) -->
+  <div class="advisory-banner aq-card" role="note">
+    <div class="advisory-banner__icon">
+      <aq-icon name="moon" [size]="20" />
+    </div>
+    <div class="advisory-banner__body">
+      <p class="advisory-banner__title">
+        {{ isBn() ? 'চাঁদ দেখার ওপর নির্ভরশীলতা' : 'Calculated Dates & Moon Sighting' }}
+      </p>
+      <p class="advisory-banner__text">
+        {{ isBn() ? 'এই হিজরি ক্যালেন্ডারের তারিখসমূহ জ্যোতির্বৈজ্ঞানিক গণনার ওপর ভিত্তি করে তৈরি। স্থানীয় চাঁদ দেখার ওপর নির্ভর করে প্রকৃত ইসলামি তারিখ ১ দিন এদিক-সেদিক হতে পারে।' : 'Islamic dates displayed here are calculated astronomically. The actual observance of Islamic months and festivals depends on the verified sighting of the crescent moon in your region.' }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Page Header -->
+  <header class="calendar-header">
+    <div class="calendar-header__info">
+      <h1 class="calendar-header__title">{{ isBn() ? 'হিজরি ক্যালেন্ডার' : 'Islamic Calendar' }}</h1>
+      <p class="calendar-header__subtitle">
+        {{ isBn() ? 'ইসলামিক তারিখ, গুরুত্বপূর্ণ দিবস ও রমজান সময়সূচি' : 'Hijri dates, significant Islamic events, and Ramadan timetable' }}
+      </p>
+    </div>
+
+    @if (today(); as current) {
+      <div class="today-hero aq-card">
+        <span class="aq-eyebrow">{{ isBn() ? 'আজকের তারিখ' : "Today's Date" }}</span>
+        <div class="today-hero__hijri">
+          <strong class="today-hero__formatted">
+            {{ isBn() ? toBnDigits(current.hijri.day) + ' ' + (selectedMonthName()?.banglaName || current.hijri.monthNameEn) + ' ' + toBnDigits(current.hijri.year) + ' হিজরি' : current.hijri.formatted }}
+          </strong>
+          <span class="today-hero__arabic aq-arabic" dir="rtl">{{ current.hijri.monthNameAr }}</span>
+        </div>
+        <p class="today-hero__gregorian">
+          <aq-icon name="calendar" [size]="15" />
+          <span>{{ current.gregorian.formatted }} ({{ current.gregorian.weekdayEn }})</span>
+        </p>
+      </div>
+    }
+  </header>
+
+  <!-- Ramadan Dashboard Section -->
+  @if (isRamadanSelected() || isRamadan()) {
+    <section class="ramadan-hero aq-card aq-pattern" aria-labelledby="ramadan-heading">
+      <div class="ramadan-hero__header">
+        <div>
+          <span class="aq-eyebrow ramadan-hero__eyebrow">
+            {{ isBn() ? 'পবিত্র মাহে রমজান' : 'Holy Month of Ramadan' }}
+          </span>
+          <h2 id="ramadan-heading" class="ramadan-hero__title">
+            <span>{{ isBn() ? 'রমজানুল মুবারক' : 'Ramadan Kareem' }}</span>
+            <span class="ramadan-hero__ar aq-arabic" dir="rtl">رَمَضان المُبارَك</span>
+          </h2>
+        </div>
+
+        @if (daysUntilRamadan() !== null && daysUntilRamadan()! > 0) {
+          <div class="ramadan-countdown-chip aq-chip aq-chip--gold">
+            <aq-icon name="clock" [size]="14" />
+            <span>{{ isBn() ? 'রমজান শুরু হতে বাকি: ' + toBnDigits(daysUntilRamadan()!) + ' দিন' : daysUntilRamadan() + ' days until Ramadan' }}</span>
+          </div>
+        }
+      </div>
+
+      @if (isRamadan()) {
+        <div class="ramadan-progress-box">
+          <div class="ramadan-progress-info">
+            <span>{{ isBn() ? 'রমজানের দিবস: ' + toBnDigits(ramadanProgress()) + '%' : 'Progress: ' + ramadanProgress() + '%' }}</span>
+            <strong>{{ isBn() ? 'দিবস ' + toBnDigits(today()?.hijri?.day || 1) + ' / ৩০' : 'Day ' + (today()?.hijri?.day || 1) + ' of 30' }}</strong>
+          </div>
+          <div class="ramadan-progress-bar-wrap">
+            <div class="ramadan-progress-bar" [style.width.%]="ramadanProgress()"></div>
+          </div>
+        </div>
+
+        <!-- Suhoor & Iftar Timings for Today -->
+        @if (timetable(); as table) {
+          <div class="ramadan-timings-grid">
+            <div class="ramadan-timing-card aq-card">
+              <span class="ramadan-timing-card__label">
+                {{ isBn() ? 'সাহরির শেষ সময় (ইমসাক)' : 'Suhoor Ends (Imsak)' }}
+              </span>
+              <strong class="ramadan-timing-card__time aq-numeral">
+                {{ formatTime(table.times[0]?.time) }}
+              </strong>
+              <span class="ramadan-timing-card__sub">{{ locationService.location().city || 'Your Location' }}</span>
+            </div>
+
+            <div class="ramadan-timing-card aq-card">
+              <span class="ramadan-timing-card__label">
+                {{ isBn() ? 'ইফতারের সময় (মাগরিব)' : 'Iftar Time (Maghrib)' }}
+              </span>
+              <strong class="ramadan-timing-card__time aq-numeral">
+                {{ formatTime(table.times[5]?.time) }}
+              </strong>
+              <span class="ramadan-timing-card__sub">{{ locationService.location().city || 'Your Location' }}</span>
+            </div>
+          </div>
+        }
+      }
+    </section>
+  }
+
+  <!-- Calendar Navigation Controls -->
+  <section class="calendar-controls aq-card">
+    <div class="calendar-controls__nav">
+      <button
+        type="button"
+        class="aq-icon-btn nav-btn"
+        (click)="prevMonth()"
+        [attr.aria-label]="isBn() ? 'পূর্ববর্তী মাস' : 'Previous month'"
+        title="Previous Month"
+      >
+        <aq-icon name="chevronLeft" [size]="20" />
+      </button>
+
+      <div class="calendar-controls__title">
+        <h2 class="current-month-heading">
+          <span class="month-name-bn">{{ isBn() ? (selectedMonthName()?.banglaName || selectedMonthName()?.nameEn) : selectedMonthName()?.nameEn }}</span>
+          <span class="month-year aq-numeral">{{ isBn() ? toBnDigits(selectedYear()) : selectedYear() }}</span>
+        </h2>
+        @if (selectedMonthName(); as mName) {
+          <span class="month-name-ar aq-arabic" dir="rtl">{{ mName.nameAr }}</span>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="aq-icon-btn nav-btn"
+        (click)="nextMonth()"
+        [attr.aria-label]="isBn() ? 'পরবর্তী মাস' : 'Next month'"
+        title="Next Month"
+      >
+        <aq-icon name="chevronRight" [size]="20" />
+      </button>
+    </div>
+
+    <div class="calendar-controls__actions">
+      @if (!isCurrentMonth()) {
+        <button
+          type="button"
+          class="aq-btn aq-btn--secondary aq-btn--sm"
+          (click)="goToToday()"
+        >
+          <aq-icon name="calendar" [size]="14" />
+          <span>{{ isBn() ? 'বর্তমান মাস' : 'This Month' }}</span>
+        </button>
+      }
+
+      <div class="select-wrappers">
+        <label for="month-select" class="aq-visually-hidden">Month</label>
+        <select
+          id="month-select"
+          class="aq-select"
+          [value]="selectedMonth()"
+          (change)="selectMonth($event)"
+        >
+          @for (m of months(); track m.number) {
+            <option [value]="m.number">
+              {{ isBn() ? m.banglaName + ' (' + m.nameEn + ')' : m.nameEn }}
+            </option>
+          }
+        </select>
+
+        <label for="year-select" class="aq-visually-hidden">Year</label>
+        <select
+          id="year-select"
+          class="aq-select"
+          [value]="selectedYear()"
+          (change)="selectYear($event)"
+        >
+          @for (y of [1445, 1446, 1447, 1448, 1449, 1450]; track y) {
+            <option [value]="y">
+              {{ isBn() ? toBnDigits(y) + ' হিজরি' : y + ' AH' }}
+            </option>
+          }
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- Error State -->
+  @if (error(); as err) {
+    <div class="calendar-error">
+      <aq-error-state
+        [title]="err"
+        (retry)="retry()"
+      />
+    </div>
+  }
+
+  <!-- Loading State -->
+  @if (loading() && !monthData()) {
+    <div class="calendar-loading aq-card">
+      <aq-skeleton width="100%" height="320px" />
+    </div>
+  }
+
+  <!-- Month Grid -->
+  @if (monthData(); as data) {
+    <section class="month-grid-section" aria-labelledby="grid-heading">
+      <h3 id="grid-heading" class="aq-visually-hidden">
+        {{ data.nameEn }} {{ data.year }} AH Calendar Grid
+      </h3>
+
+      <div class="month-grid" role="grid">
+        <!-- Weekday Headers -->
+        <div class="weekday-row" role="row">
+          @for (day of weekdays; track day.en) {
+            <div
+              class="weekday-cell"
+              [class.weekday-cell--jummah]="day.en === 'Fri'"
+              role="columnheader"
+            >
+              <span class="weekday-name">{{ isBn() ? day.bn : day.en }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Month Days Grid -->
+        <div class="days-grid" role="rowgroup">
+          <!-- Leading blank padding cells -->
+          @for (blank of leadingBlanks(); track $index) {
+            <div class="day-cell day-cell--empty" aria-hidden="true"></div>
+          }
+
+          <!-- Actual month days -->
+          @for (day of data.days; track day.hijriDay) {
+            <div
+              class="day-cell aq-card"
+              [class.day-cell--today]="day.isToday"
+              [class.day-cell--event]="day.events.length > 0"
+              [class.day-cell--friday]="day.weekdayEn === 'Friday'"
+              role="gridcell"
+            >
+              <div class="day-cell__top">
+                <span class="day-cell__hijri aq-numeral">
+                  {{ isBn() ? toBnDigits(day.hijriDay) : day.hijriDay }}
+                </span>
+                @if (day.isToday) {
+                  <span class="today-chip">{{ isBn() ? 'আজ' : 'Today' }}</span>
+                }
+              </div>
+
+              <div class="day-cell__bottom">
+                <span class="day-cell__gregorian">
+                  {{ formatDate(day.gregorianDate) }}
+                </span>
+
+                @if (day.events.length > 0) {
+                  <div class="day-cell__events">
+                    @for (ev of day.events; track ev) {
+                      <span class="event-pill" [title]="ev">
+                        {{ ev }}
+                      </span>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- Important Islamic Events Section -->
+  <section class="events-section" aria-labelledby="events-heading">
+    <div class="events-section__header">
+      <h2 id="events-heading" class="events-section__title">
+        {{ isBn() ? 'গুরুত্বপূর্ণ ইসলামি দিন ও দিবসসমূহ (' + toBnDigits(selectedYear()) + ' হিজরি)' : 'Significant Islamic Observances (' + selectedYear() + ' AH)' }}
+      </h2>
+      <p class="events-section__subtitle">
+        {{ isBn() ? 'হিজরি বছরের প্রধান প্রধান ফজিলতপূর্ণ দিবস ও সম্ভাব্য গ্রেগরিয়ান তারিখ' : 'Major Islamic events with estimated Gregorian dates' }}
+      </p>
+    </div>
+
+    <div class="events-grid">
+      @for (item of events(); track item.key) {
+        <div class="event-card aq-card">
+          <div class="event-card__head">
+            <div class="event-card__badge-row">
+              <span class="aq-chip aq-chip--gold">
+                {{ isBn() ? toBnDigits(item.hijriDay) + ' ' + item.hijriMonthName : item.hijriDay + ' ' + item.hijriMonthName }}
+              </span>
+              @if (item.gregorianDate) {
+                <span class="event-card__gregorian">
+                  <aq-icon name="calendar" [size]="13" />
+                  {{ formatDate(item.gregorianDate) }}
+                </span>
+              }
+            </div>
+            <h3 class="event-card__name">
+              {{ isBn() ? item.banglaName : item.name }}
+            </h3>
+            @if (isBn() && item.name !== item.banglaName) {
+              <span class="event-card__en">{{ item.name }}</span>
+            }
+          </div>
+          <p class="event-card__desc">{{ item.description }}</p>
+        </div>
+      }
+    </div>
+  </section>
+</div>

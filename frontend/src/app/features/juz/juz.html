@@ -1,0 +1,46 @@
+<div class="aq-container page">
+  <header class="page__head">
+    <p class="aq-eyebrow">The Noble Quran</p>
+    <h1>Read by Juz</h1>
+    <p class="page__lead">
+      The Quran is divided into {{ totalJuz }} juz, or para — the portions it is
+      traditionally read in, one for each day of Ramadan.
+    </p>
+  </header>
+
+  <nav class="aq-tabs" aria-label="Browse by">
+    <a routerLink="/quran" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">
+      Surahs
+    </a>
+    <a routerLink="/juz" routerLinkActive="is-active">Juz</a>
+  </nav>
+
+  @if (busy()) {
+    <ul class="grid" aria-hidden="true">
+      @for (item of skeletons; track item) {
+        <li class="grid__skeleton">
+          <aq-skeleton width="42px" height="42px" radius="var(--aq-radius-sm)" />
+          <div class="grid__skeleton-text">
+            <aq-skeleton width="35%" height="1rem" />
+            <aq-skeleton width="70%" height="0.8rem" />
+          </div>
+        </li>
+      }
+    </ul>
+    <p class="aq-visually-hidden" role="status">Loading the juz list.</p>
+  }
+
+  @if (error(); as failure) {
+    <aq-error-state [error]="failure" title="Could not load the juz list" (retry)="retry()" />
+  }
+
+  @if (!busy() && !error()) {
+    <ul class="grid">
+      @for (juz of juzList(); track juz.number) {
+        <li>
+          <aq-juz-card [juz]="juz" />
+        </li>
+      }
+    </ul>
+  }
+</div>

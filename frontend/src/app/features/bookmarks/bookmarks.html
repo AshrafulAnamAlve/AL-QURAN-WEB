@@ -1,0 +1,172 @@
+<div class="aq-container bookmarks-page">
+  <header class="bookmarks-page__header">
+    <div class="bookmarks-page__title-row">
+      <div>
+        <h1 class="bookmarks-page__title">Saved Bookmarks</h1>
+        <p class="bookmarks-page__subtitle">
+          Verses you have bookmarked, stored safely on this device.
+        </p>
+      </div>
+
+      @if (count() > 0) {
+        <div class="bookmarks-page__actions">
+          <span class="aq-chip aq-chip--primary">{{ count() }} saved</span>
+          <button
+            type="button"
+            class="aq-btn aq-btn--ghost aq-btn--sm"
+            (click)="askClearAll()"
+            aria-label="Clear all bookmarks"
+          >
+            <aq-icon name="trash" [size]="15" />
+            Clear all
+          </button>
+        </div>
+      }
+    </div>
+
+    @if (count() > 0) {
+      <div class="bookmarks-page__filter">
+        <aq-filter-field
+          label="Search saved bookmarks"
+          placeholder="Filter by surah, reference (e.g. 2:255), or text…"
+          [(value)]="query"
+        />
+      </div>
+    }
+  </header>
+
+  <!-- Clear Confirmation Modal/Banner -->
+  @if (confirmClearOpen()) {
+    <div class="clear-confirm" role="alertdialog" aria-labelledby="clear-title" aria-describedby="clear-desc">
+      <div class="clear-confirm__content">
+        <aq-icon name="alert" [size]="24" class="clear-confirm__icon" />
+        <div>
+          <h2 id="clear-title" class="clear-confirm__heading">Clear all bookmarks?</h2>
+          <p id="clear-desc" class="clear-confirm__text">
+            This will remove all {{ count() }} saved bookmarks from this device. This action cannot be undone.
+          </p>
+        </div>
+      </div>
+      <div class="clear-confirm__buttons">
+        <button type="button" class="aq-btn aq-btn--ghost" (click)="cancelClear()">Cancel</button>
+        <button type="button" class="aq-btn aq-btn--primary" (click)="confirmClear()">Yes, clear all</button>
+      </div>
+    </div>
+  }
+
+  <!-- Empty state: No bookmarks at all -->
+  @if (count() === 0) {
+    <div class="bookmarks-page__empty">
+      <aq-empty-state
+        title="No saved bookmarks"
+        message="You haven't bookmarked any ayahs yet. Tap the bookmark icon on any ayah while reading to save it here for quick access."
+        actionLabel="Read the Quran"
+        actionRoute="/quran"
+      />
+    </div>
+  }
+
+  <!-- Empty state: Filter returns 0 -->
+  @else if (filteredBookmarks().length === 0) {
+    <div class="bookmarks-page__empty">
+      <aq-empty-state
+        title="No matching bookmarks"
+        [message]="'No bookmarks match “' + query() + '”. Try another search term.'"
+      />
+    </div>
+  }
+
+  <!-- Bookmarks list -->
+  @else {
+    <ul class="bookmarks-list" role="list">
+      @for (b of filteredBookmarks(); track b.globalNumber) {
+        <li class="bookmark-card aq-card" [class.bookmark-card--current]="isCurrent(b.globalNumber)">
+          <header class="bookmark-card__head">
+            <div class="bookmark-card__ref-group">
+              <a
+                class="bookmark-card__link"
+                [routerLink]="['/quran', b.surahNumber]"
+                [fragment]="'ayah-' + b.ayahNumber"
+              >
+                <span class="bookmark-card__surah">{{ b.surahEnglishName }}</span>
+                @if (b.surahBanglaName) {
+                  <span class="bookmark-card__surah-bn">({{ b.surahBanglaName }})</span>
+                }
+                <span class="bookmark-card__ref aq-numeral">{{ b.surahNumber }}:{{ b.ayahNumber }}</span>
+              </a>
+              @if (b.savedAt) {
+                <span class="bookmark-card__date">{{ formatDate(b.savedAt) }}</span>
+              }
+            </div>
+
+            <div class="bookmark-card__actions">
+              <button
+                type="button"
+                class="aq-icon-btn"
+                [class.aq-icon-btn--active]="isPlaying(b.globalNumber)"
+                [attr.aria-label]="(isPlaying(b.globalNumber) ? 'Pause' : 'Play') + ' ayah ' + b.surahNumber + ':' + b.ayahNumber"
+                (click)="togglePlay(b)"
+              >
+                <aq-icon [name]="isPlaying(b.globalNumber) ? 'pause' : 'play'" [size]="16" />
+              </button>
+
+              <button
+                type="button"
+                class="aq-icon-btn"
+                [attr.aria-label]="'Copy ayah ' + b.surahNumber + ':' + b.ayahNumber"
+                (click)="copy(b)"
+              >
+                <aq-icon name="copy" [size]="16" />
+              </button>
+
+              <button
+                type="button"
+                class="aq-icon-btn"
+                [attr.aria-label]="'Share ayah ' + b.surahNumber + ':' + b.ayahNumber"
+                (click)="shareAyah(b)"
+              >
+                <aq-icon name="share" [size]="16" />
+              </button>
+
+              <button
+                type="button"
+                class="aq-icon-btn bookmark-card__remove"
+                [attr.aria-label]="'Remove bookmark ' + b.surahNumber + ':' + b.ayahNumber"
+                (click)="remove(b.globalNumber)"
+              >
+                <aq-icon name="trash" [size]="16" />
+              </button>
+            </div>
+          </header>
+
+          @if (feedback()?.id === b.globalNumber) {
+            <p class="bookmark-card__feedback" role="status">
+              {{ feedback()?.msg }}
+            </p>
+          }
+
+          <p class="bookmark-card__arabic aq-arabic" lang="ar" dir="rtl">
+            {{ b.arabic }}
+          </p>
+
+          @if (b.translation) {
+            <p class="bookmark-card__translation aq-bangla">
+              {{ b.translation }}
+            </p>
+          }
+
+          <footer class="bookmark-card__foot">
+            <a
+              class="aq-btn aq-btn--ghost aq-btn--sm"
+              [routerLink]="['/quran', b.surahNumber]"
+              [fragment]="'ayah-' + b.ayahNumber"
+            >
+              <aq-icon name="bookOpen" [size]="14" />
+              Open in reader
+            </a>
+          </footer>
+        </li>
+      }
+    </ul>
+  }
+</div>

@@ -1,0 +1,94 @@
+// ---------------------------------------------------------------------------
+// Typography.
+//
+// Three scripts, three jobs:
+//   Latin   - Inter, for UI chrome
+//   Arabic  - Amiri Quran, a face designed for vowelled Quranic text
+//   Bangla  - Noto Sans Bengali, for the translation
+//
+// Every stack ends in a real system fallback so the page stays readable if the
+// font CDN is blocked or slow.
+// ---------------------------------------------------------------------------
+
+:root {
+  --aq-font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  --aq-font-arabic: 'Amiri Quran', 'Noto Naskh Arabic', 'Traditional Arabic', 'Segoe UI', serif;
+  --aq-font-arabic-alt: 'Noto Naskh Arabic', 'Amiri Quran', 'Segoe UI', serif;
+  --aq-font-bangla: 'Noto Sans Bengali', 'Nirmala UI', 'Vrinda', system-ui, sans-serif;
+}
+
+html {
+  font-size: 100%; // respect the browser's font-size setting; never hard-code 62.5%
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--aq-font-ui);
+  font-size: 1rem;
+  line-height: 1.6;
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: 650;
+  line-height: 1.25;
+  letter-spacing: -0.011em;
+  color: var(--aq-text);
+  text-wrap: balance;
+}
+
+h1 { font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.25rem); }
+h2 { font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem); }
+h3 { font-size: clamp(1.15rem, 1rem + 0.6vw, 1.375rem); }
+h4 { font-size: 1.0625rem; }
+
+p { margin: 0 0 1rem; }
+p:last-child { margin-bottom: 0; }
+
+// --- Quranic Arabic -------------------------------------------------------
+// Sizes come from CSS variables so the Settings page can change them live.
+.aq-arabic {
+  font-family: var(--aq-font-arabic);
+  font-size: var(--aq-arabic-size);
+  line-height: var(--aq-arabic-line-height);
+  direction: rtl;
+  text-align: right;
+  font-weight: 400;
+  letter-spacing: 0;
+  // Arabic diacritics get clipped without a little breathing room.
+  padding-block: 0.15em;
+  // Keep the text selectable and copyable - required for the Copy/Share feature.
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+// --- Bangla / translation -------------------------------------------------
+.aq-bangla {
+  font-family: var(--aq-font-bangla);
+  font-size: var(--aq-translation-size);
+  line-height: var(--aq-translation-line-height);
+  color: var(--aq-text-muted);
+}
+
+.aq-translation {
+  font-size: var(--aq-translation-size);
+  line-height: var(--aq-translation-line-height);
+  color: var(--aq-text-muted);
+}
+
+// Small caps-ish label used above cards and sections.
+.aq-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--aq-text-subtle);
+}
+
+.aq-numeral {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}

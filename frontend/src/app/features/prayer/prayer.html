@@ -1,0 +1,404 @@
+<div class="aq-container prayer-page">
+  <!-- Permission Denied Banner -->
+  @if (permissionDenied()) {
+    <div class="permission-banner aq-card" role="alert">
+      <div class="permission-banner__icon">
+        <aq-icon name="alert" [size]="20" />
+      </div>
+      <div class="permission-banner__body">
+        <p class="permission-banner__title">
+          {{ isBn() ? 'লোকেশন ব্যবহারের অনুমতি পাওয়া যায়নি' : 'Location access is disabled or denied' }}
+        </p>
+        <p class="permission-banner__text">
+          {{ isBn() ? 'আপনার গোপনীয়তা সুরক্ষিত। সঠিক নামাজের সময়সূচি পেতে নিচের বাটন থেকে আপনার শহর নির্বাচন করুন।' : 'We respect your privacy. You can pick your city manually below to get accurate prayer times.' }}
+        </p>
+      </div>
+      <div class="permission-banner__actions">
+        <button
+          type="button"
+          class="aq-btn aq-btn--primary aq-btn--sm"
+          (click)="openLocationPicker()"
+        >
+          <aq-icon name="search" [size]="14" />
+          {{ isBn() ? 'শহর নির্বাচন' : 'Select City' }}
+        </button>
+        <button
+          type="button"
+          class="aq-icon-btn"
+          aria-label="Dismiss alert"
+          (click)="locationService.dismissPermissionPrompt()"
+        >
+          <aq-icon name="close" [size]="16" />
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Header Section -->
+  <header class="prayer-header">
+    <div class="prayer-header__info">
+      <h1 class="prayer-header__title">{{ isBn() ? 'নামাজের সময়সূচি' : 'Prayer Times' }}</h1>
+      <div class="prayer-header__location-row">
+        <button
+          type="button"
+          class="location-btn"
+          (click)="openLocationPicker()"
+          [attr.aria-label]="(isBn() ? 'অবস্থান পরিবর্তন করুন, বর্তমান অবস্থান: ' : 'Change location, current location is ') + location().displayName"
+        >
+          <aq-icon name="mapPin" [size]="18" />
+          <span class="location-btn__name">{{ location().displayName }}</span>
+          <span class="location-btn__sep" aria-hidden="true">&bull;</span>
+          <span class="location-btn__change">{{ isBn() ? 'পরিবর্তন' : 'Change' }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="aq-btn aq-btn--ghost aq-btn--sm gps-btn"
+          [disabled]="isDetectingLocation()"
+          (click)="useMyLocation()"
+          [title]="isBn() ? 'আমার বর্তমান অবস্থান শনাক্ত করুন' : 'Detect my current location'"
+        >
+          <aq-icon name="crosshair" [size]="16" />
+          <span>{{ isDetectingLocation() ? (isBn() ? 'শনাক্ত হচ্ছে…' : 'Locating…') : (isBn() ? 'জিপিএস' : 'Use GPS') }}</span>
+        </button>
+      </div>
+    </div>
+
+    @if (timetable(); as table) {
+      <div class="prayer-header__dates">
+        <p class="gregorian-date">
+          <aq-icon name="calendar" [size]="15" />
+          <span>{{ table.readableDate }}</span>
+        </p>
+        @if (table.hijri; as hijri) {
+          <p class="hijri-date">
+            <span class="aq-chip aq-chip--gold">{{ hijri.formatted }}</span>
+          </p>
+        }
+      </div>
+    }
+  </header>
+
+  <!-- Loading State -->
+  @if (loading() && !timetable()) {
+    <div class="prayer-loading" aria-busy="true" aria-label="Loading prayer times…">
+      <div class="countdown-card countdown-card--skeleton aq-card">
+        <aq-skeleton width="35%" height="1.5rem" />
+        <aq-skeleton width="60%" height="3.5rem" />
+        <aq-skeleton width="40%" height="1rem" />
+      </div>
+      <div class="timings-grid">
+        @for (n of [1, 2, 3, 4, 5, 6]; track n) {
+          <div class="timing-card timing-card--skeleton aq-card">
+            <aq-skeleton width="50%" height="1.2rem" />
+            <aq-skeleton width="70%" height="2rem" />
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error(); as err) {
+    <div class="prayer-error">
+      <aq-error-state
+        [error]="err"
+        title="Could not load prayer times"
+        (retry)="retry()"
+      />
+    </div>
+  }
+
+  <!-- Timetable Content -->
+  @if (timetable(); as table) {
+    <!-- Countdown Hero Card -->
+    @if (nextPrayer(); as next) {
+      <section class="countdown-hero aq-card aq-pattern" aria-labelledby="countdown-heading">
+        <div class="countdown-hero__details">
+          <span class="aq-eyebrow countdown-hero__eyebrow">
+            {{ next.isTomorrow ? (isBn() ? 'আগামীকালের প্রথম ওয়াক্ত' : "Tomorrow's First Prayer") : (isBn() ? 'পরবর্তী ওয়াক্ত' : 'Upcoming Prayer') }}
+          </span>
+          <h2 id="countdown-heading" class="countdown-hero__prayer">
+            <span class="countdown-hero__name">
+              {{ next.isTomorrow ? (isBn() ? 'আগামীকালের ফজর' : "Tomorrow's Fajr") : (isBn() ? next.prayer.banglaName : next.prayer.name) }}
+            </span>
+            @if (!isBn()) {
+              <span class="countdown-hero__bn aq-bangla">({{ next.prayer.banglaName }})</span>
+            }
+            <span class="countdown-hero__ar aq-arabic" dir="rtl">{{ next.prayer.arabicName }}</span>
+          </h2>
+          <p class="countdown-hero__time">
+            <span>{{ isBn() ? 'ওয়াক্তের সময়: ' : 'Time: ' }}</span>
+            <strong class="aq-numeral">{{ formatTime12h(next.prayer.time) }}</strong>
+          </p>
+        </div>
+
+        <div class="countdown-hero__clock">
+          <div class="countdown-hero__digits aq-numeral" role="timer" aria-live="off">
+            {{ isBn() ? toBnDigits(next.formattedCountdown) : next.formattedCountdown }}
+          </div>
+          <p class="countdown-hero__hint">
+            {{ isBn() ? 'বাকি: ' : 'Remaining: ' }}{{ isBn() ? toBnDigits(next.hours) : next.hours }}{{ isBn() ? ' ঘণ্টা ' : 'h ' }}{{ isBn() ? toBnDigits(next.minutes) : next.minutes }}{{ isBn() ? ' মিনিট ' : 'm ' }}{{ isBn() ? toBnDigits(next.seconds) : next.seconds }}{{ isBn() ? ' সেকেন্ড' : 's' }}
+          </p>
+        </div>
+      </section>
+    }
+
+    <!-- 6 Daily Timings Grid -->
+    <section class="timings-section" aria-labelledby="timings-heading">
+      <h2 id="timings-heading" class="aq-visually-hidden">Daily Prayer Timetable</h2>
+      <div class="timings-grid" role="list">
+        @for (item of coreTimings(); track item.key) {
+          <div
+            class="timing-card aq-card"
+            [class.timing-card--active]="item.key === currentPrayer()?.key"
+            [class.timing-card--next]="item.key === nextPrayer()?.prayer?.key"
+            role="listitem"
+          >
+            <div class="timing-card__head">
+              <div class="timing-card__names">
+                <h3 class="timing-card__title">{{ isBn() ? item.banglaName : item.name }}</h3>
+                <span class="timing-card__sub">{{ isBn() ? item.name : item.banglaName }}</span>
+              </div>
+              <span class="timing-card__arabic aq-arabic" dir="rtl">{{ item.arabicName }}</span>
+            </div>
+
+            <div class="timing-card__body">
+              <span class="timing-card__time aq-numeral">{{ formatTime12h(item.time) }}</span>
+
+              <div class="timing-card__status">
+                @if (item.key === currentPrayer()?.key) {
+                  <span class="aq-chip aq-chip--primary timing-card__badge">
+                    {{ isBn() ? 'চলমান ওয়াক্ত' : 'Current Prayer' }}
+                  </span>
+                } @else if (item.key === nextPrayer()?.prayer?.key) {
+                  <span class="aq-chip timing-card__badge timing-card__badge--next">
+                    {{ isBn() ? 'পরবর্তী ওয়াক্ত' : 'Next Prayer' }}
+                  </span>
+                } @else if (!item.isPrayer) {
+                  <span class="timing-card__marker">
+                    {{ isBn() ? 'সূর্যোদয়' : 'Sunrise' }}
+                  </span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Additional times (Imsak & Midnight) -->
+    @if (imsakTime() || midnightTime()) {
+      <div class="secondary-timings">
+        @if (imsakTime(); as imsak) {
+          <div class="secondary-timing-chip aq-card">
+            <span class="secondary-timing-chip__label">
+              {{ isBn() ? 'সাহরির শেষ সময় (ইমসাক):' : 'Imsak (Suhoor ends):' }}
+            </span>
+            <strong class="secondary-timing-chip__time aq-numeral">{{ formatTime12h(imsak.time) }}</strong>
+          </div>
+        }
+        @if (midnightTime(); as midnight) {
+          <div class="secondary-timing-chip aq-card">
+            <span class="secondary-timing-chip__label">
+              {{ isBn() ? 'ইসলামিক মধ্যরাত:' : 'Islamic Midnight:' }}
+            </span>
+            <strong class="secondary-timing-chip__time aq-numeral">{{ formatTime12h(midnight.time) }}</strong>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Calculation Method & Settings Panel -->
+    <section class="calculation-bar aq-card" aria-labelledby="method-heading">
+      <div class="calculation-bar__summary">
+        <h2 id="method-heading" class="calculation-bar__title">
+          {{ isBn() ? 'হিসাব পদ্ধতি ও মাজহাব' : 'Calculation & Jurisprudence' }}
+        </h2>
+        <p class="calculation-bar__active">
+          {{ isBn() ? 'পদ্ধতি: ' : 'Method: ' }}<strong>{{ activeMethodName() }}</strong> &middot;
+          {{ isBn() ? 'আসরের মাজহাব: ' : 'Asr School: ' }}<strong>{{ isBn() ? (isHanafi() ? 'হানাফী' : 'শাফেঈ') : activeSchoolName() }}</strong>
+        </p>
+      </div>
+
+      <div class="calculation-bar__controls">
+        <div class="school-toggle" role="group" aria-label="Jurisprudence school for Asr">
+          <button
+            type="button"
+            class="aq-chip"
+            [class.aq-chip--primary]="!isHanafi()"
+            [attr.aria-pressed]="!isHanafi()"
+            (click)="setSchool(0)"
+          >
+            {{ isBn() ? 'শাফেঈ (প্রমিত)' : 'Shafi / Standard' }}
+          </button>
+          <button
+            type="button"
+            class="aq-chip"
+            [class.aq-chip--primary]="isHanafi()"
+            [attr.aria-pressed]="isHanafi()"
+            (click)="setSchool(1)"
+          >
+            {{ isBn() ? 'হানাফী' : 'Hanafi' }}
+          </button>
+        </div>
+
+        <button
+          type="button"
+          class="aq-btn aq-btn--secondary aq-btn--sm"
+          (click)="openMethodPicker()"
+        >
+          <aq-icon name="settings" [size]="14" />
+          {{ isBn() ? 'পদ্ধতি পরিবর্তন' : 'Change Method' }}
+        </button>
+      </div>
+    </section>
+  }
+</div>
+
+<!-- Location Picker Modal / Drawer -->
+@if (isLocationPickerOpen()) {
+  <div class="aq-modal-backdrop" (click)="closeLocationPicker()">
+    <div
+      class="aq-modal aq-card"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="location-dialog-title"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="aq-modal__header">
+        <h2 id="location-dialog-title" class="aq-modal__title">
+          {{ isBn() ? 'আপনার শহর নির্বাচন করুন' : 'Select Your City' }}
+        </h2>
+        <button
+          type="button"
+          class="aq-icon-btn"
+          aria-label="Close dialog"
+          (click)="closeLocationPicker()"
+        >
+          <aq-icon name="close" [size]="18" />
+        </button>
+      </header>
+
+      <div class="aq-modal__body">
+        <div class="modal-location-actions">
+          <button
+            type="button"
+            class="aq-btn aq-btn--soft aq-btn--block"
+            [disabled]="isDetectingLocation()"
+            (click)="useMyLocation()"
+          >
+            <aq-icon name="crosshair" [size]="16" />
+            {{ isDetectingLocation() ? (isBn() ? 'শনাক্ত করা হচ্ছে…' : 'Detecting GPS…') : (isBn() ? 'আমার বর্তমান অবস্থান শনাক্ত করুন' : 'Use My Current Location') }}
+          </button>
+        </div>
+
+        <div class="search-input-wrap">
+          <aq-filter-field
+            [label]="isBn() ? 'শহর বা দেশ অনুসন্ধান' : 'Search city or country'"
+            [placeholder]="isBn() ? 'শহরের নাম লিখুন (যেমন: ঢাকা, মক্কা, লন্ডন)…' : 'Search city (e.g. Dhaka, London, Makkah)…'"
+            [(value)]="searchQuery"
+          />
+        </div>
+
+        <!-- Search Results -->
+        @if (isSearching()) {
+          <div class="modal-search-loading" aria-busy="true">
+            <aq-skeleton width="80%" height="2rem" />
+            <aq-skeleton width="90%" height="2rem" />
+          </div>
+        }
+
+        @if (searchResults().length > 0) {
+          <div class="search-results-list" role="list">
+            @for (place of searchResults(); track place.displayName) {
+              <button
+                type="button"
+                class="place-item"
+                (click)="selectCity(place)"
+              >
+                <aq-icon name="mapPin" [size]="16" />
+                <div class="place-item__info">
+                  <strong class="place-item__name">{{ place.name }}</strong>
+                  <span class="place-item__sub">{{ place.displayName }}</span>
+                </div>
+              </button>
+            }
+          </div>
+        }
+
+        <!-- Popular Cities -->
+        <div class="popular-cities">
+          <p class="popular-cities__title">{{ isBn() ? 'জনপ্রিয় শহরসমূহ:' : 'Popular Cities:' }}</p>
+          <div class="popular-cities__chips">
+            @for (city of popularCities; track city.name) {
+              <button
+                type="button"
+                class="aq-chip aq-chip--ghost"
+                (click)="selectCity(city)"
+              >
+                {{ city.name }}
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Calculation Method Modal -->
+@if (isMethodPickerOpen()) {
+  <div class="aq-modal-backdrop" (click)="closeMethodPicker()">
+    <div
+      class="aq-modal aq-card"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="method-dialog-title"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="aq-modal__header">
+        <h2 id="method-dialog-title" class="aq-modal__title">
+          {{ isBn() ? 'নামাজের হিসাব পদ্ধতি নির্বাচন' : 'Choose Calculation Method' }}
+        </h2>
+        <button
+          type="button"
+          class="aq-icon-btn"
+          aria-label="Close dialog"
+          (click)="closeMethodPicker()"
+        >
+          <aq-icon name="close" [size]="18" />
+        </button>
+      </header>
+
+      <div class="aq-modal__body">
+        <p class="method-dialog-intro">
+          {{ isBn() ? 'ভৌগোলিক অবস্থান ও বিভিন্ন ইসলামিক গবেষণা সংস্থার নিয়মানুযায়ী ফজর ও এশার কোণ নির্ধারণ করা হয়।' : 'Different Islamic authorities calculate Fajr and Isha using slightly different solar twilight angles.' }}
+        </p>
+
+        <div class="methods-list" role="list">
+          @for (method of methods(); track method.id) {
+            <button
+              type="button"
+              class="method-item"
+              [class.method-item--active]="(timetable()?.method?.id ?? calculationSettings().methodId) === method.id"
+              (click)="setMethod(method.id)"
+            >
+              <div class="method-item__info">
+                <strong class="method-item__name">{{ method.name }}</strong>
+                @if (method.parameters) {
+                  <span class="method-item__params">{{ method.parameters }}</span>
+                }
+              </div>
+              @if ((timetable()?.method?.id ?? calculationSettings().methodId) === method.id) {
+                <span class="method-item__check">
+                  <aq-icon name="check" [size]="18" />
+                </span>
+              }
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}

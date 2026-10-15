@@ -1,0 +1,125 @@
+<div class="reader">
+  @if (parsed() === null) {
+    <div class="aq-container">
+      <aq-error-state
+        [error]="{
+          code: 'not_found',
+          message: 'There is no juz ' + juzNumber() + '. The Quran has 30 juz, numbered 1 to 30.',
+          status: 404,
+          retryable: false
+        }"
+        title="Juz not found"
+      />
+      <p class="reader__back">
+        <a routerLink="/juz" class="aq-btn aq-btn--secondary">
+          <aq-icon name="chevronLeft" [size]="16" />
+          Back to all juz
+        </a>
+      </p>
+    </div>
+  }
+
+  @if (error(); as failure) {
+    <div class="aq-container">
+      <aq-error-state [error]="failure" title="Could not load this juz" (retry)="retry()" />
+    </div>
+  }
+
+  @if (busy()) {
+    <div class="aq-container reader__loading">
+      <aq-skeleton width="45%" height="2rem" />
+      <aq-skeleton width="30%" height="1rem" />
+      <div class="reader__loading-ayahs">
+        @for (item of skeletons; track item) {
+          <div class="reader__loading-ayah">
+            <aq-skeleton width="2.25rem" height="2.25rem" radius="var(--aq-radius-pill)" />
+            <aq-skeleton width="100%" height="2.25rem" />
+            <aq-skeleton width="85%" height="1.1rem" />
+          </div>
+        }
+      </div>
+    </div>
+    <p class="aq-visually-hidden" role="status">Loading the juz.</p>
+  }
+
+  @if (detail(); as data) {
+    <header class="reader__head aq-pattern">
+      <div class="reader__head-inner">
+        <a routerLink="/juz" class="reader__back-link">
+          <aq-icon name="chevronLeft" [size]="16" />
+          {{ isBn() ? 'সকল পারা' : 'All juz' }}
+        </a>
+
+        <p class="aq-eyebrow">{{ isBn() ? ('৩০ পারার মধ্যে ' + data.number + ' নম্বর পারা') : ('Part ' + data.number + ' of 30') }}</p>
+        <h1 class="reader__title">{{ isBn() ? ('পারা ' + data.number) : ('Juz ' + data.number) }}</h1>
+
+        <p class="reader__spans">
+          {{ data.surahs.length }} {{ isBn() ? 'টি সূরা' : 'surahs' }} ·
+          <span class="aq-numeral">{{ ayahCount() }} {{ isBn() ? 'আয়াত' : 'ayahs' }}</span>
+        </p>
+      </div>
+    </header>
+
+    <div class="reader__controls">
+      <aq-reading-controls />
+    </div>
+
+    <div class="reader__body">
+      @for (item of visibleItems(); track $index) {
+        @if (item.kind === 'heading') {
+          <h2 class="reader__surah-heading">
+            <span class="reader__surah-number">{{ item.surah.number }}</span>
+            <span class="reader__surah-names">
+              <span class="reader__surah-english">{{ item.surah.englishName }}</span>
+              <span class="reader__surah-bangla aq-bangla" lang="bn">{{ item.surah.banglaName }}</span>
+            </span>
+            <a
+              class="reader__surah-link"
+              [routerLink]="['/quran', item.surah.number]"
+              [attr.aria-label]="'Open Surah ' + item.surah.englishName + ' on its own page'"
+            >
+              <aq-icon name="externalLink" [size]="15" />
+            </a>
+          </h2>
+        } @else {
+          <!-- Keyed by surah too: a juz crosses surah boundaries, so ayah
+               numbers repeat and `ayah-1` alone would not be unique. -->
+          <aq-ayah-view
+            [ayah]="item.ayah"
+            [elementId]="'ayah-' + item.ayah.surahNumber + '-' + item.ayah.numberInSurah"
+            [surahEnglishName]="item.surah.englishName"
+            [surahBanglaName]="item.surah.banglaName"
+          />
+        }
+      }
+
+      @if (!isFullyRendered()) {
+        <p class="reader__more" role="status">Loading the rest of the juz…</p>
+      }
+
+      <nav class="reader__nav" aria-label="Nearby juz">
+        @if (previousJuz(); as previous) {
+          <a class="reader__nav-link" [routerLink]="['/juz', previous]">
+            <aq-icon name="chevronLeft" [size]="16" />
+            <span class="reader__nav-text">
+              <span class="reader__nav-label">Previous</span>
+              <span class="reader__nav-name">Juz {{ previous }}</span>
+            </span>
+          </a>
+        } @else {
+          <span></span>
+        }
+
+        @if (nextJuz(); as next) {
+          <a class="reader__nav-link reader__nav-link--next" [routerLink]="['/juz', next]">
+            <span class="reader__nav-text">
+              <span class="reader__nav-label">Next</span>
+              <span class="reader__nav-name">Juz {{ next }}</span>
+            </span>
+            <aq-icon name="chevronRight" [size]="16" />
+          </a>
+        }
+      </nav>
+    </div>
+  }
+</div>

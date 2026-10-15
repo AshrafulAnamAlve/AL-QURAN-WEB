@@ -1,0 +1,127 @@
+<div class="reader">
+  @if (parsed() === null) {
+    <div class="aq-container">
+      <aq-error-state
+        [error]="{
+          code: 'not_found',
+          message:
+            'There is no surah ' + surahNumber() + '. The Quran has 114 surahs, numbered 1 to 114.',
+          status: 404,
+          retryable: false
+        }"
+        title="Surah not found"
+      />
+      <p class="reader__back">
+        <a routerLink="/quran" class="aq-btn aq-btn--secondary">
+          <aq-icon name="chevronLeft" [size]="16" />
+          Back to all surahs
+        </a>
+      </p>
+    </div>
+  }
+
+  @if (error(); as failure) {
+    <div class="aq-container">
+      <aq-error-state [error]="failure" title="Could not load this surah" (retry)="retry()" />
+    </div>
+  }
+
+  @if (busy()) {
+    <div class="aq-container reader__loading">
+      <aq-skeleton width="60%" height="2rem" />
+      <aq-skeleton width="40%" height="1rem" />
+      <div class="reader__loading-ayahs">
+        @for (item of skeletons; track item) {
+          <div class="reader__loading-ayah">
+            <aq-skeleton width="2.25rem" height="2.25rem" radius="var(--aq-radius-pill)" />
+            <aq-skeleton width="100%" height="2.25rem" />
+            <aq-skeleton width="85%" height="1.1rem" />
+          </div>
+        }
+      </div>
+    </div>
+    <p class="aq-visually-hidden" role="status">Loading the surah.</p>
+  }
+
+  @if (detail(); as data) {
+    <!-- Header ---------------------------------------------------------- -->
+    <header class="reader__head aq-pattern">
+      <div class="reader__head-inner">
+        <a routerLink="/quran" class="reader__back-link">
+          <aq-icon name="chevronLeft" [size]="16" />
+          {{ isBn() ? 'সকল সূরা' : 'All surahs' }}
+        </a>
+
+        <p class="reader__number aq-eyebrow">{{ isBn() ? 'সূরা ' + data.surah.number : 'Surah ' + data.surah.number }}</p>
+
+        <h1 class="reader__arabic-name aq-arabic" lang="ar" dir="rtl">
+          {{ data.surah.arabicName }}
+        </h1>
+
+        <p class="reader__english-name">{{ data.surah.englishName }}</p>
+        <p class="reader__bangla-name aq-bangla" lang="bn">{{ data.surah.banglaName }}</p>
+        <p class="reader__meaning">{{ data.surah.englishMeaning }}</p>
+
+        <div class="reader__facts">
+          <span class="aq-chip" [class.aq-chip--gold]="data.surah.revelationType === 'Meccan'">
+            {{ data.surah.revelationType === 'Meccan' ? (isBn() ? 'মাক্কী' : 'Meccan') : (isBn() ? 'মাদানী' : 'Medinan') }}
+          </span>
+          <span class="aq-chip aq-numeral">{{ data.surah.ayahCount }} {{ isBn() ? 'আয়াত' : 'ayahs' }}</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Reading controls ------------------------------------------------ -->
+    <div class="reader__controls">
+      <aq-reading-controls />
+    </div>
+
+    <!-- Ayahs ------------------------------------------------------------ -->
+    <div class="reader__body">
+      @if (data.bismillahArabic) {
+        <p class="reader__bismillah aq-arabic" lang="ar" dir="rtl">{{ data.bismillahArabic }}</p>
+      }
+
+      <div class="reader__ayahs">
+        @for (ayah of visibleAyahs(); track ayah.globalNumber) {
+          <aq-ayah-view
+            [ayah]="ayah"
+            [surahEnglishName]="data.surah.englishName"
+            [surahBanglaName]="data.surah.banglaName"
+          />
+        }
+      </div>
+
+      @if (!isFullyRendered()) {
+        <p class="reader__more" role="status">
+          {{ isBn() ? (visibleAyahs().length + ' / ' + ayahCount() + ' আয়াত প্রদর্শিত…') : ('Showing ' + visibleAyahs().length + ' of ' + ayahCount() + ' ayahs…') }}
+        </p>
+      }
+
+      <!-- Previous / next -------------------------------------------------- -->
+      <nav class="reader__nav" aria-label="Nearby surahs">
+        @if (data.previous; as previous) {
+          <a class="reader__nav-link" [routerLink]="['/quran', previous.number]">
+            <aq-icon name="chevronLeft" [size]="16" />
+            <span class="reader__nav-text">
+              <span class="reader__nav-label">{{ isBn() ? 'পূর্ববর্তী' : 'Previous' }}</span>
+              <span class="reader__nav-name">{{ isBn() ? previous.banglaName : previous.englishName }}</span>
+            </span>
+          </a>
+        } @else {
+          <span></span>
+        }
+
+        @if (data.next; as next) {
+          <a class="reader__nav-link reader__nav-link--next" [routerLink]="['/quran', next.number]">
+            <span class="reader__nav-text">
+              <span class="reader__nav-label">{{ isBn() ? 'পরবর্তী' : 'Next' }}</span>
+              <span class="reader__nav-name">{{ isBn() ? next.banglaName : next.englishName }}</span>
+            </span>
+            <aq-icon name="chevronRight" [size]="16" />
+          </a>
+        }
+      </nav>
+    </div>
+  }
+</div>

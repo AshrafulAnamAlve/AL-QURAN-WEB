@@ -1,0 +1,79 @@
+<div class="aq-container page">
+  <header class="page__head">
+    <p class="aq-eyebrow">The Noble Quran</p>
+    <h1>Browse all 114 surahs</h1>
+    <p class="page__lead">
+      Read in Arabic with Bangla translation. Choose a surah to begin, or browse by juz.
+    </p>
+  </header>
+
+  <nav class="aq-tabs" aria-label="Browse by">
+    <a routerLink="/quran" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: true }">
+      Surahs
+    </a>
+    <a routerLink="/juz" routerLinkActive="is-active">Juz</a>
+  </nav>
+
+  <div class="page__filter">
+    <aq-filter-field
+      [(value)]="filter"
+      inputId="surah-filter"
+      label="Filter surahs by name or number"
+      placeholder="Search by name or number — try 18, Kahf or কাহফ"
+      describedBy="surah-count"
+    />
+
+    <!-- Announced to screen readers as the count changes while typing. -->
+    <p id="surah-count" class="page__count" role="status" aria-live="polite">
+      @if (!busy() && !error()) {
+        {{ resultLabel() }}
+      }
+    </p>
+  </div>
+
+  @if (busy()) {
+    <ul class="grid" aria-hidden="true">
+      @for (item of skeletons; track item) {
+        <li class="grid__skeleton">
+          <aq-skeleton width="42px" height="42px" radius="var(--aq-radius-sm)" />
+          <div class="grid__skeleton-text">
+            <aq-skeleton width="55%" height="1rem" />
+            <aq-skeleton width="40%" height="0.8rem" />
+          </div>
+          <aq-skeleton width="100%" height="1.6rem" />
+        </li>
+      }
+    </ul>
+    <p class="aq-visually-hidden" role="status">Loading the surah list.</p>
+  }
+
+  @if (error(); as failure) {
+    <aq-error-state
+      [error]="failure"
+      title="Could not load the surah list"
+      (retry)="retry()"
+    />
+  }
+
+  @if (!busy() && !error()) {
+    @if (filtered().length > 0) {
+      <ul class="grid">
+        @for (surah of filtered(); track surah.number) {
+          <li>
+            <aq-surah-card [surah]="surah" />
+          </li>
+        }
+      </ul>
+    } @else {
+      <aq-empty-state
+        icon="search"
+        title="No surah matches that"
+        [message]="'Nothing found for “' + filter() + '”. Try a surah number, an English name such as Kahf, or a Bangla name.'"
+      >
+        <button type="button" class="aq-btn aq-btn--secondary aq-btn--sm" (click)="clearFilter()">
+          Clear the filter
+        </button>
+      </aq-empty-state>
+    }
+  }
+</div>

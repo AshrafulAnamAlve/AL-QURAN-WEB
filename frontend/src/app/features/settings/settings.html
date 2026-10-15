@@ -1,0 +1,622 @@
+<div class="settings-page aq-container">
+  <!-- Toast Notification -->
+  @if (toastMessage(); as msg) {
+    <div class="toast-banner" [class.toast-banner--error]="toastType() === 'error'" role="status" aria-live="polite">
+      <aq-icon [name]="toastType() === 'error' ? 'alert' : 'check'" [size]="20" />
+      <span>{{ msg }}</span>
+    </div>
+  }
+
+  <!-- Header -->
+  <header class="settings-header">
+    <div class="settings-header__title-row">
+      <div class="settings-header__icon" aria-hidden="true">
+        <aq-icon name="settings" [size]="28" />
+      </div>
+      <div>
+        <h1 class="settings-header__title">{{ language.translate('settings.title') }}</h1>
+        <p class="settings-header__subtitle">{{ language.translate('settings.subtitle') }}</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="settings-grid">
+    <!-- SECTION 1: READING PREFERENCES -->
+    <section class="settings-section" id="reading" aria-labelledby="heading-reading">
+      <div class="section-header">
+        <div class="section-header__icon" aria-hidden="true">
+          <aq-icon name="bookOpen" [size]="22" />
+        </div>
+        <div>
+          <h2 id="heading-reading" class="section-header__title">
+            {{ language.translate('settings.reading') }}
+          </h2>
+          <p class="section-header__desc">
+            {{ isBn() ? 'আরবি হরফ, অনুবাদ ও পৃষ্ঠার আকার নিজের সুবিধামতো নির্ধারণ করুন।' : 'Fine-tune Quran typography, spacing, width and translation display.' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Controls Card -->
+      <div class="settings-card">
+        <!-- Arabic Font Size -->
+        <div class="control-group">
+          <div class="control-header">
+            <label for="arabic-size" class="control-label">
+              {{ language.translate('settings.reading.arabicSize') }}
+            </label>
+            <span class="control-value">{{ settings.arabicSize() }} rem</span>
+          </div>
+          <input
+            id="arabic-size"
+            type="range"
+            class="range-slider"
+            [min]="limits.arabicSize.min"
+            [max]="limits.arabicSize.max"
+            [step]="limits.arabicSize.step"
+            [value]="settings.arabicSize()"
+            (input)="onArabicSizeInput($event)"
+            aria-label="Arabic font size"
+          />
+        </div>
+
+        <!-- Translation Font Size -->
+        <div class="control-group">
+          <div class="control-header">
+            <label for="translation-size" class="control-label">
+              {{ language.translate('settings.reading.translationSize') }}
+            </label>
+            <span class="control-value">{{ settings.translationSize() }} rem</span>
+          </div>
+          <input
+            id="translation-size"
+            type="range"
+            class="range-slider"
+            [min]="limits.translationSize.min"
+            [max]="limits.translationSize.max"
+            [step]="limits.translationSize.step"
+            [value]="settings.translationSize()"
+            (input)="onTranslationSizeInput($event)"
+            aria-label="Translation font size"
+          />
+        </div>
+
+        <!-- Line Height -->
+        <div class="control-group">
+          <div class="control-header">
+            <label for="line-height" class="control-label">
+              {{ language.translate('settings.reading.lineHeight') }}
+            </label>
+            <span class="control-value">{{ settings.lineHeight() }}</span>
+          </div>
+          <input
+            id="line-height"
+            type="range"
+            class="range-slider"
+            [min]="limits.lineHeight.min"
+            [max]="limits.lineHeight.max"
+            [step]="limits.lineHeight.step"
+            [value]="settings.lineHeight()"
+            (input)="onLineHeightInput($event)"
+            aria-label="Arabic line spacing"
+          />
+        </div>
+
+        <!-- Reading Width -->
+        <div class="control-group">
+          <div class="control-header">
+            <label for="reading-width" class="control-label">
+              {{ language.translate('settings.reading.readingWidth') }}
+            </label>
+            <span class="control-value">{{ settings.readingWidth() }} px</span>
+          </div>
+          <input
+            id="reading-width"
+            type="range"
+            class="range-slider"
+            [min]="limits.readingWidth.min"
+            [max]="limits.readingWidth.max"
+            [step]="limits.readingWidth.step"
+            [value]="settings.readingWidth()"
+            (input)="onReadingWidthInput($event)"
+            aria-label="Reading column width"
+          />
+        </div>
+
+        <!-- Translation Mode Switcher -->
+        <div class="control-group">
+          <span class="control-label">{{ language.translate('settings.reading.translationMode') }}</span>
+          <div class="pills-group" role="radiogroup" aria-label="Translation mode">
+            <button
+              type="button"
+              class="pill-btn"
+              [class.pill-btn--active]="settings.translationMode() === 'bangla'"
+              (click)="setTranslationMode('bangla')"
+            >
+              {{ isBn() ? 'বাংলা' : 'Bangla' }}
+            </button>
+            <button
+              type="button"
+              class="pill-btn"
+              [class.pill-btn--active]="settings.translationMode() === 'english'"
+              (click)="setTranslationMode('english')"
+            >
+              {{ isBn() ? 'ইংরেজি' : 'English' }}
+            </button>
+            <button
+              type="button"
+              class="pill-btn"
+              [class.pill-btn--active]="settings.translationMode() === 'both'"
+              (click)="setTranslationMode('both')"
+            >
+              {{ isBn() ? 'উভয়' : 'Both' }}
+            </button>
+            <button
+              type="button"
+              class="pill-btn"
+              [class.pill-btn--active]="settings.translationMode() === 'arabic'"
+              (click)="setTranslationMode('arabic')"
+            >
+              {{ isBn() ? 'শুধু আরবি' : 'Arabic Only' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Reset Reading Layout Button -->
+        @if (!settings.isDefaultReadingSettings()) {
+          <div class="control-footer">
+            <button type="button" class="aq-btn aq-btn--ghost" (click)="resetReadingLayout()">
+              <aq-icon name="refresh" [size]="16" />
+              <span>{{ language.translate('settings.reading.resetLayout') }}</span>
+            </button>
+          </div>
+        }
+      </div>
+
+      <!-- Live Preview Card -->
+      <div class="preview-card" aria-label="Live preview">
+        <div class="preview-header">
+          <div class="preview-header__badge">
+            <aq-icon name="check" [size]="14" />
+            <span>{{ language.translate('settings.reading.previewTitle') }}</span>
+          </div>
+          <span class="preview-ref">{{ language.translate('settings.reading.previewRef') }}</span>
+        </div>
+
+        <div class="preview-body" [style.max-width.px]="settings.readingWidth()">
+          <!-- Arabic Verse -->
+          <p
+            class="preview-arabic"
+            lang="ar"
+            dir="rtl"
+            [style.font-size.rem]="settings.arabicSize()"
+            [style.line-height]="settings.lineHeight()"
+          >
+            ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلۡحَىُّ ٱلۡقَيُّومُ ۚ لَا تَأۡخُذُهُۥ سِنَةٞ وَلَا نَوۡمٞ ۚ لَّهُۥ مَا فِي ٱلسَّمَٰوَٰتِ وَمَا فِي ٱلۡأَرۡضِ ۗ
+          </p>
+
+          <!-- Bangla Translation -->
+          @if (settings.translationMode() === 'bangla' || settings.translationMode() === 'both') {
+            <p
+              class="preview-translation preview-translation--bn"
+              [style.font-size.rem]="settings.translationSize()"
+            >
+              আল্লাহ, যিনি ছাড়া কোনো সত্য ইলাহ নেই; তিনি চিরঞ্জীব, সর্বসত্তার ধারক। তন্দ্রা বা নিদ্রা তাঁকে স্পর্শ করে না। আসমান ও জমিনে যা কিছু আছে, সবই তাঁর মালিকানাধীন।
+            </p>
+          }
+
+          <!-- English Translation -->
+          @if (settings.translationMode() === 'english' || settings.translationMode() === 'both') {
+            <p
+              class="preview-translation preview-translation--en"
+              [style.font-size.rem]="settings.translationSize()"
+            >
+              Allah - there is no deity except Him, the Ever-Living, the Sustainer of [all] existence. Neither drowsiness overtakes Him nor sleep. To Him belongs whatever is in the heavens and whatever is on the earth.
+            </p>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: APPEARANCE & THEME -->
+    <section class="settings-section" id="appearance" aria-labelledby="heading-appearance">
+      <div class="section-header">
+        <div class="section-header__icon" aria-hidden="true">
+          <aq-icon name="sun" [size]="22" />
+        </div>
+        <div>
+          <h2 id="heading-appearance" class="section-header__title">
+            {{ language.translate('settings.appearance') }}
+          </h2>
+          <p class="section-header__desc">{{ language.translate('settings.theme.desc') }}</p>
+        </div>
+      </div>
+
+      <div class="selection-grid">
+        <button
+          type="button"
+          class="selection-card"
+          [class.selection-card--active]="settings.themePreference() === 'light'"
+          (click)="setTheme('light')"
+        >
+          <div class="selection-card__icon" aria-hidden="true">
+            <aq-icon name="sun" [size]="24" />
+          </div>
+          <span class="selection-card__label">{{ language.translate('settings.theme.light') }}</span>
+          @if (settings.themePreference() === 'light') {
+            <span class="selection-card__check" aria-hidden="true"><aq-icon name="check" [size]="16" /></span>
+          }
+        </button>
+
+        <button
+          type="button"
+          class="selection-card"
+          [class.selection-card--active]="settings.themePreference() === 'dark'"
+          (click)="setTheme('dark')"
+        >
+          <div class="selection-card__icon" aria-hidden="true">
+            <aq-icon name="moon" [size]="24" />
+          </div>
+          <span class="selection-card__label">{{ language.translate('settings.theme.dark') }}</span>
+          @if (settings.themePreference() === 'dark') {
+            <span class="selection-card__check" aria-hidden="true"><aq-icon name="check" [size]="16" /></span>
+          }
+        </button>
+
+        <button
+          type="button"
+          class="selection-card"
+          [class.selection-card--active]="settings.themePreference() === 'system'"
+          (click)="setTheme('system')"
+        >
+          <div class="selection-card__icon" aria-hidden="true">
+            <aq-icon name="monitor" [size]="24" />
+          </div>
+          <span class="selection-card__label">{{ language.translate('settings.theme.system') }}</span>
+          @if (settings.themePreference() === 'system') {
+            <span class="selection-card__check" aria-hidden="true"><aq-icon name="check" [size]="16" /></span>
+          }
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 3: INTERFACE LANGUAGE -->
+    <section class="settings-section" id="language" aria-labelledby="heading-language">
+      <div class="section-header">
+        <div class="section-header__icon" aria-hidden="true">
+          <aq-icon name="bookmark" [size]="22" />
+        </div>
+        <div>
+          <h2 id="heading-language" class="section-header__title">
+            {{ language.translate('settings.language') }}
+          </h2>
+          <p class="section-header__desc">{{ language.translate('settings.lang.desc') }}</p>
+        </div>
+      </div>
+
+      <div class="selection-grid selection-grid--2col">
+        <button
+          type="button"
+          class="selection-card"
+          [class.selection-card--active]="!settings.isBn()"
+          (click)="setLanguage('en')"
+        >
+          <span class="selection-card__badge">EN</span>
+          <span class="selection-card__label">{{ language.translate('settings.lang.english') }}</span>
+          @if (!settings.isBn()) {
+            <span class="selection-card__check" aria-hidden="true"><aq-icon name="check" [size]="16" /></span>
+          }
+        </button>
+
+        <button
+          type="button"
+          class="selection-card"
+          [class.selection-card--active]="settings.isBn()"
+          (click)="setLanguage('bn')"
+        >
+          <span class="selection-card__badge">বাং</span>
+          <span class="selection-card__label">{{ language.translate('settings.lang.bangla') }}</span>
+          @if (settings.isBn()) {
+            <span class="selection-card__check" aria-hidden="true"><aq-icon name="check" [size]="16" /></span>
+          }
+        </button>
+      </div>
+    </section>
+
+    <!-- SECTION 4: RECITATION & AUDIO -->
+    <section class="settings-section" id="audio" aria-labelledby="heading-audio">
+      <div class="section-header">
+        <div class="section-header__icon" aria-hidden="true">
+          <aq-icon name="headphones" [size]="22" />
+        </div>
+        <div>
+          <h2 id="heading-audio" class="section-header__title">
+            {{ language.translate('settings.audio') }}
+          </h2>
+          <p class="section-header__desc">{{ language.translate('settings.audio.desc') }}</p>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <!-- Reciter Selection -->
+        <div class="control-group">
+          <label for="reciter-picker" class="control-label">
+            {{ language.translate('settings.audio.reciter') }}
+          </label>
+          <select
+            id="reciter-picker"
+            class="aq-select"
+            [value]="settings.selectedReciter().identifier"
+            (change)="onReciterSelected($event)"
+          >
+            @for (reciter of settings.reciters(); track reciter.identifier) {
+              <option [value]="reciter.identifier">
+                {{ reciter.englishName }} {{ reciter.style ? '(' + reciter.style + ')' : '' }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <!-- Playback Speed -->
+        <div class="control-group">
+          <span class="control-label">{{ language.translate('settings.audio.speed') }}</span>
+          <div class="pills-group" role="radiogroup" aria-label="Playback speed">
+            @for (speed of playbackSpeeds; track speed) {
+              <button
+                type="button"
+                class="pill-btn"
+                [class.pill-btn--active]="settings.playbackRate() === speed"
+                (click)="setPlaybackSpeed(speed)"
+              >
+                {{ speed === 1 ? (isBn() ? '১.০× (স্বাভাবিক)' : '1.0× (Normal)') : speed + '×' }}
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: LOCATION & PRAYER -->
+    <section class="settings-section" id="location" aria-labelledby="heading-location">
+      <div class="section-header">
+        <div class="section-header__icon" aria-hidden="true">
+          <aq-icon name="mapPin" [size]="22" />
+        </div>
+        <div>
+          <h2 id="heading-location" class="section-header__title">
+            {{ language.translate('settings.location') }}
+          </h2>
+          <p class="section-header__desc">
+            {{ isBn() ? 'নামাজের সঠিক ওয়াক্ত ও সেহরি-ইফতারের সময়সূচির জন্য অবস্থান ও মাজহাব নির্ধারণ করুন।' : 'Configure location detection, Asr jurisprudence school and prayer calculation method.' }}
+          </p>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <!-- Active City -->
+        <div class="location-banner">
+          <div class="location-banner__info">
+            <span class="location-banner__label">{{ language.translate('settings.location.current') }}</span>
+            <span class="location-banner__name">{{ settings.location().displayName }}</span>
+          </div>
+          <div class="location-banner__actions">
+            <button type="button" class="aq-btn aq-btn--secondary" (click)="useGps()" [disabled]="locationService.isDetecting()">
+              <aq-icon name="crosshair" [size]="16" />
+              <span>{{ locationService.isDetecting() ? (isBn() ? 'শনাক্ত হচ্ছে…' : 'Locating…') : language.translate('settings.location.gps') }}</span>
+            </button>
+            <button type="button" class="aq-btn aq-btn--primary" (click)="openCityModal()">
+              <aq-icon name="mapPin" [size]="16" />
+              <span>{{ language.translate('settings.location.change') }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Asr Jurisprudence School -->
+        <div class="control-group">
+          <span class="control-label">{{ language.translate('settings.location.school') }}</span>
+          <div class="pills-group" role="radiogroup" aria-label="Asr calculation school">
+            <button
+              type="button"
+              class="pill-btn"
+              [class.pill-btn--active]="settings.calculationSettings().school !== 1"
+              (click)="setAsrSchool(0)"
+            >
+              {{ isBn() ? 'শাফেঈ / প্রমিত (প্রমিত আসর)' : 'Shafi / Standard (Standard Asr)' }}
+            </button>
+            <button
+              type="button"
+              class="pill-btn"
+              [class.pill-btn--active]="settings.calculationSettings().school === 1"
+              (click)="setAsrSchool(1)"
+            >
+              {{ isBn() ? 'হানাফী (বিলম্বিত আসর)' : 'Hanafi (Later Asr)' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Calculation Method -->
+        @if (settings.prayerMethods().length > 0) {
+          <div class="control-group">
+            <label for="method-picker" class="control-label">
+              {{ language.translate('settings.location.method') }}
+            </label>
+            <select
+              id="method-picker"
+              class="aq-select"
+              [value]="settings.calculationSettings().methodId ?? settings.prayerMethods()[0].id"
+              (change)="onCalculationMethodChange($event)"
+            >
+              @for (method of settings.prayerMethods(); track method.id) {
+                <option [value]="method.id">
+                  {{ method.name }}
+                </option>
+              }
+            </select>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- SECTION 6: DATA & STORAGE MANAGEMENT -->
+    <section class="settings-section" id="data" aria-labelledby="heading-data">
+      <div class="section-header">
+        <div class="section-header__icon" aria-hidden="true">
+          <aq-icon name="layers" [size]="22" />
+        </div>
+        <div>
+          <h2 id="heading-data" class="section-header__title">
+            {{ language.translate('settings.data') }}
+          </h2>
+          <p class="section-header__desc">
+            {{ isBn() ? 'আপনার ব্রাউজারে সংরক্ষিত সমস্ত ডাটা নিরাপদে সংরক্ষণ বা মুছে ফেলুন।' : 'View storage footprint, download a JSON backup or safely clear device storage.' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Storage Metrics Cards -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-card__label">{{ language.translate('settings.data.storageUsed') }}</span>
+          <span class="metric-card__value">{{ formattedStorageSize() }}</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-card__label">{{ language.translate('settings.data.bookmarksCount') }}</span>
+          <span class="metric-card__value">{{ settings.bookmarksCount() }}</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-card__label">{{ language.translate('settings.data.progressCount') }}</span>
+          <span class="metric-card__value">{{ settings.ayahsReadCount() }} / 6,236</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-card__label">{{ language.translate('settings.data.lastRead') }}</span>
+          <span class="metric-card__value metric-card__value--sm">{{ lastReadLabel() }}</span>
+        </div>
+      </div>
+
+      <!-- Backup & Restore -->
+      <div class="settings-card">
+        <h3 class="card-subtitle">{{ language.translate('settings.data.backupTitle') }}</h3>
+        <p class="card-desc">{{ language.translate('settings.data.backupDesc') }}</p>
+
+        <div class="backup-actions">
+          <button type="button" class="aq-btn aq-btn--secondary" (click)="exportBackup()">
+            <aq-icon name="download" [size]="18" />
+            <span>{{ language.translate('settings.data.export') }}</span>
+          </button>
+
+          <label class="aq-btn aq-btn--ghost file-btn">
+            <aq-icon name="upload" [size]="18" />
+            <span>{{ language.translate('settings.data.import') }}</span>
+            <input type="file" accept=".json" (change)="onFileSelected($event)" class="visually-hidden" />
+          </label>
+        </div>
+      </div>
+
+      <!-- Danger Zone -->
+      <div class="settings-card settings-card--danger">
+        <h3 class="card-subtitle card-subtitle--danger">
+          {{ isBn() ? 'সতর্কতা অঞ্চল (ডাটা মুছে ফেলা)' : 'Danger Zone (Data Reset)' }}
+        </h3>
+        <p class="card-desc">
+          {{ isBn() ? 'নিচের যেকোনো ক্রিয়া ব্রাউজারের সংরক্ষিত তথ্য স্থায়ীভাবে মুছে ফেলবে।' : 'The following actions permanently remove your stored reading records and settings from this browser.' }}
+        </p>
+
+        <div class="danger-actions">
+          <button type="button" class="aq-btn aq-btn--danger-outline" (click)="promptClearBookmarks()">
+            <aq-icon name="trash" [size]="16" />
+            <span>{{ language.translate('settings.data.clearBookmarks') }}</span>
+          </button>
+
+          <button type="button" class="aq-btn aq-btn--danger-outline" (click)="promptClearProgress()">
+            <aq-icon name="refresh" [size]="16" />
+            <span>{{ language.translate('settings.data.clearProgress') }}</span>
+          </button>
+
+          <button type="button" class="aq-btn aq-btn--danger-outline" (click)="promptResetSettings()">
+            <aq-icon name="settings" [size]="16" />
+            <span>{{ language.translate('settings.data.resetSettings') }}</span>
+          </button>
+
+          <button type="button" class="aq-btn aq-btn--danger" (click)="promptResetAll()">
+            <aq-icon name="trash" [size]="16" />
+            <span>{{ language.translate('settings.data.resetAll') }}</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- CONFIRMATION MODAL -->
+@if (confirmDialog().open) {
+  <div class="modal-backdrop" (click)="closeConfirmDialog()" aria-hidden="true"></div>
+  <div class="modal-dialog" role="alertdialog" aria-modal="true" [attr.aria-labelledby]="'confirm-title'">
+    <div class="modal-dialog__icon" aria-hidden="true">
+      <aq-icon name="alert" [size]="28" />
+    </div>
+    <h2 id="confirm-title" class="modal-dialog__title">{{ confirmDialog().title }}</h2>
+    <p class="modal-dialog__msg">{{ confirmDialog().message }}</p>
+
+    <div class="modal-dialog__actions">
+      <button type="button" class="aq-btn aq-btn--ghost" (click)="closeConfirmDialog()">
+        {{ language.translate('settings.data.cancel') }}
+      </button>
+      <button type="button" class="aq-btn aq-btn--danger" (click)="executeConfirmedAction()">
+        {{ language.translate('settings.data.confirm') }}
+      </button>
+    </div>
+  </div>
+}
+
+<!-- CITY SWITCHER MODAL -->
+@if (showCityModal()) {
+  <div class="modal-backdrop" (click)="closeCityModal()" aria-hidden="true"></div>
+  <div class="city-modal" role="dialog" aria-modal="true" aria-label="Select City">
+    <div class="city-modal__header">
+      <h2 class="city-modal__title">{{ language.translate('prayer.selectCity') }}</h2>
+      <button type="button" class="aq-icon-btn" (click)="closeCityModal()" aria-label="Close">
+        <aq-icon name="close" [size]="20" />
+      </button>
+    </div>
+
+    <!-- Quick Popular Cities -->
+    <div class="city-modal__popular">
+      <span class="city-modal__sub">{{ language.translate('prayer.popularCities') }}</span>
+      <div class="popular-pills">
+        @for (city of popularCities; track city.displayName) {
+          <button type="button" class="popular-pill" (click)="selectPlace(city)">
+            {{ city.name }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Search Input -->
+    <div class="city-modal__search">
+      <aq-filter-field
+        [placeholder]="language.translate('prayer.searchPlaceholder')"
+        (valueChange)="onCitySearchChange($event)"
+      />
+    </div>
+
+    <!-- Results List -->
+    <div class="city-modal__results">
+      @if (isSearchingCities()) {
+        <p class="city-modal__status">{{ isBn() ? 'শহর খোঁজা হচ্ছে…' : 'Searching cities…' }}</p>
+      } @else if (searchResults().length > 0) {
+        <ul class="places-list">
+          @for (place of searchResults(); track place.displayName) {
+            <li>
+              <button type="button" class="place-item" (click)="selectPlace(place)">
+                <aq-icon name="mapPin" [size]="18" />
+                <span>{{ place.displayName }}</span>
+              </button>
+            </li>
+          }
+        </ul>
+      } @else if (citySearchQuery().trim().length >= 2) {
+        <p class="city-modal__status">{{ isBn() ? 'কোনো শহর পাওয়া যায়নি।' : 'No matching cities found.' }}</p>
+      }
+    </div>
+  </div>
+}

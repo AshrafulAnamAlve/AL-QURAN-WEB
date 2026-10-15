@@ -1,0 +1,224 @@
+<div class="aq-container search-page">
+  <header class="search-page__header">
+    <h1 class="search-page__title">Search the Quran</h1>
+    <p class="search-page__subtitle">
+      Search across Arabic text, Bangla and English translations, surah names and ayah references.
+    </p>
+
+    <!-- Search Input Field -->
+    <div class="search-page__input-box">
+      <aq-filter-field
+        label="Search the Quran"
+        placeholder="Search keywords (e.g. 'রহমান', 'mercy'), surah names, or '2:255'…"
+        [(value)]="query"
+      />
+    </div>
+
+    <!-- Edition selector pills -->
+    <div class="search-page__editions" role="group" aria-label="Search translation edition">
+      <span class="search-page__editions-label">Search in:</span>
+      <div class="search-page__editions-list">
+        @for (item of editions; track item.id) {
+          <button
+            type="button"
+            class="aq-chip search-page__edition-btn"
+            [class.aq-chip--primary]="selectedEdition() === item.id"
+            [attr.aria-pressed]="selectedEdition() === item.id"
+            (click)="setEdition(item.id)"
+          >
+            {{ item.label }}
+          </button>
+        }
+      </div>
+    </div>
+  </header>
+
+  <!-- Idle state: Suggestions and search tips -->
+  @if (isIdle()) {
+    <div class="search-page__idle">
+      <div class="search-tips aq-card">
+        <h2 class="search-tips__heading">
+          <aq-icon name="info" [size]="18" />
+          Search tips
+        </h2>
+        <ul class="search-tips__list">
+          <li><strong>Direct verse references:</strong> Type <code>2:255</code>, <code>2.255</code>, or <code>1:1</code> to jump straight to an ayah.</li>
+          <li><strong>Surah names:</strong> Search in English (e.g. <code>Kahf</code>, <code>Fatihah</code>) or Bangla (e.g. <code>কাহফ</code>).</li>
+          <li><strong>Text search:</strong> Find words and topics in your selected translation edition.</li>
+        </ul>
+
+        <div class="search-suggestions">
+          <span class="search-suggestions__label">Quick searches:</span>
+          <div class="search-suggestions__chips">
+            @for (s of suggestions; track s.query) {
+              <button
+                type="button"
+                class="aq-chip aq-chip--ghost"
+                (click)="applySuggestion(s.query)"
+              >
+                {{ s.label }}
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Loading Skeletons -->
+  @if (isLoading()) {
+    <div class="search-page__loading" aria-busy="true" aria-label="Searching…">
+      <div class="search-results__count-skeleton">
+        <aq-skeleton width="12rem" height="1.25rem" />
+      </div>
+      <div class="search-results__list">
+        @for (n of [1, 2, 3, 4]; track n) {
+          <div class="match-card match-card--skeleton aq-card">
+            <aq-skeleton width="30%" height="1.2rem" />
+            <aq-skeleton width="100%" height="2rem" />
+            <aq-skeleton width="80%" height="1rem" />
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (hasError(); as err) {
+    <div class="search-page__error">
+      <aq-error-state
+        [error]="error()"
+        title="Search failed"
+        (retry)="retry()"
+      />
+    </div>
+  }
+
+  <!-- Empty Results -->
+  @if (hasNoResults()) {
+    <div class="search-page__empty">
+      <aq-empty-state
+        title="No results found"
+        [message]="'No verses or surahs matched “' + query() + '” in this edition. Try switching language or trying another spelling.'"
+      />
+    </div>
+  }
+
+  <!-- Success Results -->
+  @if (response(); as res) {
+    <div class="search-results">
+      <!-- Direct Reference Match (e.g. 2:255) -->
+      @if (res.directReference; as direct) {
+        <div class="direct-match aq-card">
+          <div class="direct-match__info">
+            <span class="aq-chip aq-chip--primary">Direct Reference</span>
+            <h2 class="direct-match__title">
+              Surah {{ direct.surahEnglishName }} &middot; Ayah {{ direct.surahNumber }}:{{ direct.ayahNumber }}
+            </h2>
+          </div>
+          <a
+            class="aq-btn aq-btn--primary"
+            [routerLink]="['/quran', direct.surahNumber]"
+            [fragment]="'ayah-' + direct.ayahNumber"
+          >
+            <aq-icon name="bookOpen" [size]="16" />
+            Go to Ayah
+          </a>
+        </div>
+      }
+
+      <!-- Surah Name Matches -->
+      @if (res.surahMatches.length > 0) {
+        <div class="surah-matches">
+          <h2 class="surah-matches__title">Matching Surahs</h2>
+          <div class="surah-matches__chips">
+            @for (s of res.surahMatches; track s.number) {
+              <a class="surah-chip aq-card" [routerLink]="['/quran', s.number]">
+                <span class="surah-chip__num aq-numeral">{{ s.number }}</span>
+                <span class="surah-chip__name">{{ s.englishName }}</span>
+                <span class="surah-chip__bangla aq-bangla">{{ s.banglaName }}</span>
+              </a>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Verses Text Matches -->
+      @if (res.matches.length > 0) {
+        <div class="verses-results">
+          <header class="verses-results__header">
+            <h2 class="verses-results__count">
+              Found {{ res.totalMatches }} {{ res.totalMatches === 1 ? 'ayah' : 'ayahs' }} for “{{ res.query }}”
+            </h2>
+          </header>
+
+          <ul class="matches-list" role="list">
+            @for (m of res.matches; track m.globalNumber) {
+              <li class="match-card aq-card">
+                <header class="match-card__head">
+                  <a
+                    class="match-card__link"
+                    [routerLink]="['/quran', m.surahNumber]"
+                    [fragment]="'ayah-' + m.numberInSurah"
+                  >
+                    <span class="match-card__surah">{{ m.surahEnglishName }}</span>
+                    @if (m.surahBanglaName) {
+                      <span class="match-card__surah-bn">({{ m.surahBanglaName }})</span>
+                    }
+                    <span class="match-card__ref aq-numeral">{{ m.surahNumber }}:{{ m.numberInSurah }}</span>
+                  </a>
+
+                  <div class="match-card__actions">
+                    <button
+                      type="button"
+                      class="aq-icon-btn"
+                      [attr.aria-label]="'Copy ayah ' + m.surahNumber + ':' + m.numberInSurah"
+                      (click)="copyMatch(m)"
+                    >
+                      <aq-icon name="copy" [size]="16" />
+                    </button>
+                    <button
+                      type="button"
+                      class="aq-icon-btn"
+                      [attr.aria-label]="'Share ayah ' + m.surahNumber + ':' + m.numberInSurah"
+                      (click)="shareMatch(m)"
+                    >
+                      <aq-icon name="share" [size]="16" />
+                    </button>
+                  </div>
+                </header>
+
+                @if (feedback()?.id === m.globalNumber) {
+                  <p class="match-card__feedback" role="status">
+                    {{ feedback()?.msg }}
+                  </p>
+                }
+
+                <p
+                  class="match-card__text"
+                  [class.aq-arabic]="m.language === 'ar'"
+                  [class.aq-bangla]="m.language === 'bn'"
+                  [attr.lang]="m.language"
+                  [attr.dir]="m.language === 'ar' ? 'rtl' : 'ltr'"
+                >
+                  {{ m.text }}
+                </p>
+
+                <footer class="match-card__foot">
+                  <a
+                    class="aq-btn aq-btn--ghost aq-btn--sm"
+                    [routerLink]="['/quran', m.surahNumber]"
+                    [fragment]="'ayah-' + m.numberInSurah"
+                  >
+                    <aq-icon name="bookOpen" [size]="14" />
+                    Open in context
+                  </a>
+                </footer>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,22 @@
+@use 'mixins' as m;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.main {
+  flex: 1 1 auto;
+  // Leaves room for the fixed bottom navigation on phones, and for the mini
+  // player when something is playing. --aq-player-height is 0 until then, so
+  // nothing is reserved for a reader who never presses play.
+  padding-bottom: calc(
+    var(--aq-bottom-nav-height) + var(--aq-player-height, 0px) + 1rem
+  );
+  outline: none;
+
+  @include m.up(lg) {
+    padding-bottom: var(--aq-player-height, 0px);
+  }
+}

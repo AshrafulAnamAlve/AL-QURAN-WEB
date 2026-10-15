@@ -1,0 +1,158 @@
+// ---------------------------------------------------------------------------
+// Design tokens.
+//
+// Colours live as CSS custom properties so the theme can be swapped at runtime
+// without rebuilding. Everything else (spacing, breakpoints) stays as Sass
+// variables because it never changes per theme.
+//
+// Palette brief: deep green + emerald, warm off-white paper, gold accent,
+// dark charcoal for night reading. Nothing is pure black or pure white.
+// ---------------------------------------------------------------------------
+
+:root {
+  // --- Brand -------------------------------------------------------------
+  --aq-green-900: #08301e;
+  --aq-green-800: #0b3d26;
+  --aq-green-700: #0f5132;
+  --aq-green-600: #14683f;
+  --aq-green-500: #0e7c5a;
+  --aq-green-400: #2fa37a;
+  --aq-green-300: #6cc0a1;
+  --aq-green-100: #d8ece2;
+  --aq-green-50:  #eef7f2;
+
+  --aq-gold-600: #a8851d;
+  --aq-gold-500: #c9a227;
+  --aq-gold-400: #d9b84a;
+  --aq-gold-300: #e3c36a;
+  --aq-gold-100: #f6ecd0;
+
+  // --- Semantic surfaces (light theme is the default) --------------------
+  --aq-bg:            #faf7f0; // warm off-white "paper"
+  --aq-bg-subtle:     #f3efe6;
+  --aq-surface:       #ffffff;
+  --aq-surface-2:     #f7f4ed;
+  --aq-surface-3:     #efeadf;
+  --aq-overlay:       rgba(16, 22, 20, 0.55);
+
+  --aq-border:        #e4ddcf;
+  --aq-border-strong: #d2c8b4;
+
+  --aq-text:          #1b2a23;
+  --aq-text-muted:    #5c6b63;
+  --aq-text-subtle:   #8a978f;
+  --aq-text-inverse:  #f7f4ed;
+
+  --aq-primary:        var(--aq-green-700);
+  --aq-primary-hover:  var(--aq-green-800);
+  --aq-primary-soft:   var(--aq-green-50);
+  --aq-primary-border: var(--aq-green-100);
+  --aq-on-primary:     #ffffff;
+
+  --aq-accent:      var(--aq-gold-500);
+  --aq-accent-soft: var(--aq-gold-100);
+
+  --aq-success: #157347;
+  --aq-warning: #a5730a;
+  --aq-danger:  #b02a2a;
+  --aq-danger-soft: #fbeaea;
+  --aq-info:    #1c6b8c;
+
+  // --- Elevation ---------------------------------------------------------
+  --aq-shadow-xs: 0 1px 2px rgba(16, 32, 24, 0.05);
+  --aq-shadow-sm: 0 1px 3px rgba(16, 32, 24, 0.07), 0 1px 2px rgba(16, 32, 24, 0.04);
+  --aq-shadow-md: 0 4px 12px rgba(16, 32, 24, 0.08), 0 2px 4px rgba(16, 32, 24, 0.04);
+  --aq-shadow-lg: 0 12px 32px rgba(16, 32, 24, 0.12), 0 4px 8px rgba(16, 32, 24, 0.05);
+  --aq-ring: 0 0 0 3px rgba(15, 81, 50, 0.28);
+
+  --aq-error: var(--aq-danger);
+
+  // --- Spacing scale -----------------------------------------------------
+  --aq-space-0: 0;
+  --aq-space-1: 0.25rem;
+  --aq-space-2: 0.5rem;
+  --aq-space-3: 0.75rem;
+  --aq-space-4: 1rem;
+  --aq-space-5: 1.25rem;
+  --aq-space-6: 1.5rem;
+  --aq-space-8: 2rem;
+  --aq-space-10: 2.5rem;
+  --aq-space-12: 3rem;
+  --aq-space-16: 4rem;
+
+  // --- Type scale --------------------------------------------------------
+  --aq-text-xs: 0.75rem;
+  --aq-text-sm: 0.875rem;
+  --aq-text-base: 1rem;
+  --aq-text-md: 1.125rem;
+  --aq-text-lg: 1.25rem;
+  --aq-text-xl: 1.5rem;
+  --aq-text-2xl: 1.875rem;
+  --aq-text-3xl: 2.25rem;
+
+  // --- Radii -------------------------------------------------------------
+  --aq-radius-xs: 4px;
+  --aq-radius-sm: 8px;
+  --aq-radius-md: 12px;
+  --aq-radius-lg: 18px;
+  --aq-radius-xl: 26px;
+  --aq-radius-pill: 999px;
+  --aq-radius-full: 9999px;
+
+  // --- Motion ------------------------------------------------------------
+  --aq-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --aq-duration-fast: 120ms;
+  --aq-duration: 200ms;
+  --aq-duration-slow: 320ms;
+  --aq-transition-fast: var(--aq-duration-fast) var(--aq-ease);
+  --aq-transition: var(--aq-duration) var(--aq-ease);
+
+  // --- Layout ------------------------------------------------------------
+  --aq-header-height: 64px;
+  --aq-bottom-nav-height: 62px;
+  --aq-player-height: 0px;
+  --aq-container: 1200px;
+  --aq-container-narrow: 780px;
+
+  // --- Reading preferences -----------------------------------------------
+  // Overwritten at runtime by the Settings page (Phase 10).
+  --aq-arabic-size: 2rem;
+  --aq-arabic-line-height: 2.15;
+  --aq-translation-size: 1.0625rem;
+  --aq-translation-line-height: 1.85;
+  --aq-reading-width: 760px;
+}
+
+// --- Sass-side scale (compile-time only) ----------------------------------
+$space: (
+  0: 0,
+  1: 0.25rem,
+  2: 0.5rem,
+  3: 0.75rem,
+  4: 1rem,
+  5: 1.25rem,
+  6: 1.5rem,
+  8: 2rem,
+  10: 2.5rem,
+  12: 3rem,
+  16: 4rem,
+);
+
+$breakpoints: (
+  xs: 420px,
+  sm: 576px,
+  md: 768px,
+  lg: 1024px,
+  xl: 1280px,
+);
+
+$z: (
+  base: 1,
+  sticky: 100,
+  header: 200,
+  drawer: 300,
+  overlay: 400,
+  player: 500,
+  modal: 600,
+  toast: 700,
+);

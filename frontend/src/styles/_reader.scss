@@ -1,0 +1,174 @@
+@use 'mixins' as m;
+
+// ---------------------------------------------------------------------------
+// Chrome shared by the surah reader and the juz reader.
+//
+// Both screens are the same thing - a column of ayahs with a header, a sticky
+// controls bar and previous/next links - so the layout lives here once and each
+// component includes it. Angular scopes the result to its own component, so
+// they stay independent.
+// ---------------------------------------------------------------------------
+
+@mixin chrome {
+  // The column width is a CSS variable the reading controls write to, so
+  // dragging the slider reflows the page without Angular re-rendering anything.
+  .reader__head-inner,
+  .reader__body {
+    width: 100%;
+    max-width: var(--aq-reading-width);
+    margin-inline: auto;
+    padding-inline: 1rem;
+
+    @include m.up(md) {
+      padding-inline: 1.5rem;
+    }
+  }
+
+  .reader__head {
+    padding-block: 1.25rem 2rem;
+    text-align: center;
+    background: linear-gradient(180deg, var(--aq-primary-soft) 0%, var(--aq-bg) 100%);
+    border-bottom: 1px solid var(--aq-border);
+  }
+
+  .reader__back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--aq-text-muted);
+    text-decoration: none;
+
+    @include m.focus-visible;
+
+    &:hover {
+      color: var(--aq-primary);
+      text-decoration: none;
+    }
+  }
+
+  .reader__controls {
+    position: sticky;
+    top: var(--aq-header-height);
+    z-index: 20;
+    width: 100%;
+    background: color-mix(in srgb, var(--aq-surface) 96%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--aq-border);
+    padding-block: 0.625rem;
+
+    aq-reading-controls {
+      display: block;
+      width: 100%;
+      max-width: var(--aq-reading-width);
+      margin-inline: auto;
+      padding-inline: 1rem;
+
+      @include m.up(md) {
+        padding-inline: 1.5rem;
+      }
+    }
+  }
+
+  .reader__body {
+    padding-bottom: 3rem;
+  }
+
+  .reader__more {
+    margin: 1rem 0 0;
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--aq-text-subtle);
+  }
+
+  // --- Previous / next ----------------------------------------------------
+  .reader__nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+  }
+
+  .reader__nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.875rem 1rem;
+    min-height: 60px;
+    background: var(--aq-surface);
+    border: 1px solid var(--aq-border);
+    border-radius: var(--aq-radius-lg);
+    color: var(--aq-text);
+    text-decoration: none;
+    transition:
+      border-color var(--aq-duration-fast) var(--aq-ease),
+      box-shadow var(--aq-duration-fast) var(--aq-ease);
+
+    @include m.focus-visible;
+
+    &:hover {
+      border-color: var(--aq-primary-border);
+      box-shadow: var(--aq-shadow-sm);
+      text-decoration: none;
+      color: var(--aq-text);
+    }
+
+    &--next {
+      margin-left: auto;
+      text-align: right;
+    }
+
+    aq-icon {
+      color: var(--aq-text-subtle);
+      flex: 0 0 auto;
+    }
+  }
+
+  .reader__nav-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .reader__nav-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--aq-text-subtle);
+  }
+
+  .reader__nav-name {
+    font-weight: 650;
+    @include m.truncate;
+  }
+
+  // --- Loading and not-found ----------------------------------------------
+  .reader__loading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-block: 2rem;
+    max-width: var(--aq-reading-width);
+  }
+
+  .reader__loading-ayahs {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    margin-top: 1.5rem;
+  }
+
+  .reader__loading-ayah {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .reader__back {
+    margin: 1.25rem 0 3rem;
+    text-align: center;
+  }
+}

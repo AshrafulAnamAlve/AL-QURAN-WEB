@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/backend/">
+    <Project Path="backend/AlQuran.Api/AlQuran.Api.csproj" />
+  </Folder>
+</Solution>

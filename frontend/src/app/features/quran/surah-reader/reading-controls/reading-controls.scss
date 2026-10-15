@@ -1,0 +1,137 @@
+@use 'mixins' as m;
+
+:host {
+  display: block;
+}
+
+.controls {
+  background: var(--aq-surface);
+  border: 1px solid var(--aq-border);
+  border-radius: var(--aq-radius-lg);
+}
+
+.controls__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem;
+}
+
+// --- Translation mode -----------------------------------------------------
+.controls__modes {
+  display: flex;
+  gap: 0.125rem;
+  padding: 0.2rem;
+  background: var(--aq-surface-2);
+  border-radius: var(--aq-radius-sm);
+  // Four options can overflow a 320px screen; scroll the strip, not the page.
+  @include m.scroll-x;
+}
+
+.controls__mode {
+  padding: 0.35rem 0.7rem;
+  min-height: 34px;
+  border-radius: var(--aq-radius-xs);
+  color: var(--aq-text-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background-color var(--aq-duration-fast) var(--aq-ease),
+    color var(--aq-duration-fast) var(--aq-ease);
+
+  @include m.focus-visible;
+
+  &:hover {
+    color: var(--aq-text);
+  }
+
+  &.is-active {
+    background: var(--aq-surface);
+    color: var(--aq-primary);
+    box-shadow: var(--aq-shadow-xs);
+  }
+}
+
+.controls__toggle {
+  flex: 0 0 auto;
+
+  aq-icon.is-open {
+    transform: rotate(180deg);
+  }
+
+  aq-icon {
+    transition: transform var(--aq-duration-fast) var(--aq-ease);
+  }
+}
+
+.controls__toggle-text {
+  @include m.down(sm) {
+    display: none;
+  }
+}
+
+// --- Panel ----------------------------------------------------------------
+.controls__panel {
+  padding: 0.25rem 1rem 1rem;
+  border-top: 1px solid var(--aq-border);
+}
+
+.controls__grid {
+  display: grid;
+  gap: 1rem 1.75rem;
+  padding-top: 1rem;
+
+  @include m.up(sm) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.control__label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--aq-text-muted);
+}
+
+.control__value {
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--aq-text-subtle);
+}
+
+input[type='range'] {
+  width: 100%;
+  height: 24px;
+  accent-color: var(--aq-primary);
+  cursor: pointer;
+
+  @include m.focus-visible;
+}
+
+.controls__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding-top: 0.875rem;
+  border-top: 1px solid var(--aq-border);
+}
+
+.controls__hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--aq-text-subtle);
+}

@@ -1,0 +1,118 @@
+<div class="controls">
+  <div class="controls__row">
+    <!-- Translation choice stays visible: it is the setting readers change most. -->
+    <div class="controls__modes" role="group" aria-label="Which translations to show">
+      @for (mode of modes; track mode.value) {
+        <button
+          type="button"
+          class="controls__mode"
+          [class.is-active]="translationMode() === mode.value"
+          [attr.aria-pressed]="translationMode() === mode.value"
+          (click)="setMode(mode.value)"
+        >
+          @switch (mode.value) {
+            @case ('bangla') { {{ isBn() ? 'বাংলা' : 'Bangla' }} }
+            @case ('english') { {{ isBn() ? 'ইংরেজি' : 'English' }} }
+            @case ('both') { {{ isBn() ? 'উভয়' : 'Both' }} }
+            @case ('arabic') { {{ isBn() ? 'শুধু আরবি' : 'Arabic only' }} }
+            @default { {{ mode.label }} }
+          }
+        </button>
+      }
+    </div>
+
+    <button
+      type="button"
+      class="aq-btn aq-btn--ghost aq-btn--sm controls__toggle"
+      (click)="toggle()"
+      [attr.aria-expanded]="open()"
+      aria-controls="reading-settings-panel"
+    >
+      <aq-icon name="settings" [size]="16" />
+      <span class="controls__toggle-text">{{ isBn() ? 'পঠন শৈলী' : 'Reading' }}</span>
+      <aq-icon name="chevronDown" [size]="14" [class.is-open]="open()" />
+    </button>
+  </div>
+
+  <div
+    id="reading-settings-panel"
+    class="controls__panel"
+    [hidden]="!open()"
+    [attr.inert]="open() ? null : ''"
+  >
+    <div class="controls__grid">
+      <label class="control">
+        <span class="control__label">
+          {{ isBn() ? 'আরবি ফন্ট সাইজ' : 'Arabic size' }}
+          <span class="control__value">{{ arabicSize().toFixed(3) }}rem</span>
+        </span>
+        <input
+          type="range"
+          [min]="limits.arabicSize.min"
+          [max]="limits.arabicSize.max"
+          [step]="limits.arabicSize.step"
+          [value]="arabicSize()"
+          (input)="onArabicSize($event)"
+        />
+      </label>
+
+      <label class="control">
+        <span class="control__label">
+          {{ isBn() ? 'অনুবাদ ফন্ট সাইজ' : 'Translation size' }}
+          <span class="control__value">{{ translationSize().toFixed(4) }}rem</span>
+        </span>
+        <input
+          type="range"
+          [min]="limits.translationSize.min"
+          [max]="limits.translationSize.max"
+          [step]="limits.translationSize.step"
+          [value]="translationSize()"
+          (input)="onTranslationSize($event)"
+        />
+      </label>
+
+      <label class="control">
+        <span class="control__label">
+          {{ isBn() ? 'লাইনের ফাঁক' : 'Line spacing' }}
+          <span class="control__value">{{ lineHeight().toFixed(2) }}</span>
+        </span>
+        <input
+          type="range"
+          [min]="limits.lineHeight.min"
+          [max]="limits.lineHeight.max"
+          [step]="limits.lineHeight.step"
+          [value]="lineHeight()"
+          (input)="onLineHeight($event)"
+        />
+      </label>
+
+      <label class="control">
+        <span class="control__label">
+          {{ isBn() ? 'পঠন প্রস্থ' : 'Reading width' }}
+          <span class="control__value">{{ readingWidth() }}px</span>
+        </span>
+        <input
+          type="range"
+          [min]="limits.readingWidth.min"
+          [max]="limits.readingWidth.max"
+          [step]="limits.readingWidth.step"
+          [value]="readingWidth()"
+          (input)="onReadingWidth($event)"
+        />
+      </label>
+    </div>
+
+    <div class="controls__footer">
+      <p class="controls__hint">{{ isBn() ? 'এই সেটিংসগুলো আপনার ডিভাইসে সংরক্ষিত থাকবে।' : 'These settings are saved on this device.' }}</p>
+      <button
+        type="button"
+        class="aq-btn aq-btn--secondary aq-btn--sm"
+        (click)="reset()"
+        [disabled]="isDefault()"
+      >
+        <aq-icon name="refresh" [size]="14" />
+        {{ isBn() ? 'রিসেট' : 'Reset' }}
+      </button>
+    </div>
+  </div>
+</div>

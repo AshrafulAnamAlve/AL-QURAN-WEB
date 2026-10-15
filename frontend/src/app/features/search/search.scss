@@ -1,0 +1,299 @@
+@use 'mixins' as m;
+
+.search-page {
+  padding-block: var(--aq-space-6) var(--aq-space-12);
+}
+
+.search-page__header {
+  margin-bottom: var(--aq-space-6);
+}
+
+.search-page__title {
+  margin: 0 0 var(--aq-space-1);
+  font-size: var(--aq-text-2xl);
+  font-weight: 700;
+  color: var(--aq-text);
+}
+
+.search-page__subtitle {
+  margin: 0 0 var(--aq-space-4);
+  color: var(--aq-text-subtle);
+  font-size: var(--aq-text-sm);
+}
+
+.search-page__input-box {
+  margin-bottom: var(--aq-space-3);
+}
+
+.search-page__editions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aq-space-2) var(--aq-space-3);
+  font-size: var(--aq-text-xs);
+}
+
+.search-page__editions-label {
+  color: var(--aq-text-subtle);
+}
+
+.search-page__editions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aq-space-2);
+}
+
+.search-page__edition-btn {
+  cursor: pointer;
+  border: 1px solid var(--aq-border);
+  background: var(--aq-surface);
+  color: var(--aq-text);
+  font-size: var(--aq-text-xs);
+  padding: 0.35rem 0.75rem;
+
+  &:hover {
+    border-color: var(--aq-primary);
+  }
+
+  &.aq-chip--primary {
+    background: var(--aq-primary);
+    color: var(--aq-surface);
+    border-color: var(--aq-primary);
+  }
+}
+
+.search-tips {
+  padding: var(--aq-space-6);
+  background: var(--aq-surface);
+  border-radius: var(--aq-radius-lg);
+}
+
+.search-tips__heading {
+  display: flex;
+  align-items: center;
+  gap: var(--aq-space-2);
+  margin: 0 0 var(--aq-space-3);
+  font-size: var(--aq-text-base);
+  font-weight: 600;
+  color: var(--aq-text);
+}
+
+.search-tips__list {
+  margin: 0 0 var(--aq-space-4);
+  padding-left: var(--aq-space-4);
+  font-size: var(--aq-text-sm);
+  color: var(--aq-text-subtle);
+  line-height: 1.6;
+
+  li {
+    margin-bottom: var(--aq-space-2);
+  }
+
+  code {
+    background: var(--aq-surface-2, color-mix(in srgb, var(--aq-surface) 90%, black 10%));
+    padding: 0.1rem 0.3rem;
+    border-radius: var(--aq-radius-sm);
+    font-size: 0.85em;
+  }
+}
+
+.search-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--aq-space-2);
+}
+
+.search-suggestions__label {
+  font-size: var(--aq-text-xs);
+  color: var(--aq-text-subtle);
+  font-weight: 500;
+}
+
+.search-suggestions__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--aq-space-2);
+
+  button {
+    cursor: pointer;
+    background: color-mix(in srgb, var(--aq-primary) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--aq-primary) 20%, transparent);
+    color: var(--aq-text);
+    font-size: var(--aq-text-xs);
+
+    &:hover {
+      background: color-mix(in srgb, var(--aq-primary) 15%, transparent);
+      border-color: var(--aq-primary);
+    }
+  }
+}
+
+.direct-match {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aq-space-4);
+  padding: var(--aq-space-4);
+  margin-bottom: var(--aq-space-6);
+  background: color-mix(in srgb, var(--aq-primary) 8%, var(--aq-surface));
+  border: 1px solid color-mix(in srgb, var(--aq-primary) 30%, transparent);
+}
+
+.direct-match__title {
+  margin: var(--aq-space-1) 0 0;
+  font-size: var(--aq-text-lg);
+  font-weight: 600;
+  color: var(--aq-text);
+}
+
+.surah-matches {
+  margin-bottom: var(--aq-space-6);
+}
+
+.surah-matches__title {
+  margin: 0 0 var(--aq-space-3);
+  font-size: var(--aq-text-base);
+  font-weight: 600;
+  color: var(--aq-text);
+}
+
+.surah-matches__chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--aq-space-3);
+}
+
+.surah-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--aq-space-3);
+  padding: var(--aq-space-3);
+  text-decoration: none;
+  color: var(--aq-text);
+  transition: transform var(--aq-transition-fast), border-color var(--aq-transition-fast);
+
+  &:hover {
+    border-color: var(--aq-primary);
+    transform: translateY(-2px);
+  }
+}
+
+.surah-chip__num {
+  font-weight: 700;
+  color: var(--aq-primary);
+  font-size: var(--aq-text-sm);
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--aq-radius-sm);
+  background: color-mix(in srgb, var(--aq-primary) 10%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.surah-chip__name {
+  font-weight: 600;
+  flex: 1 1 auto;
+}
+
+.surah-chip__arabic {
+  font-size: 1.15rem;
+  color: var(--aq-text-subtle);
+}
+
+.verses-results__header {
+  margin-bottom: var(--aq-space-4);
+}
+
+.verses-results__count {
+  margin: 0;
+  font-size: var(--aq-text-base);
+  font-weight: 600;
+  color: var(--aq-text-subtle);
+}
+
+.matches-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aq-space-4);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.match-card {
+  padding: var(--aq-space-4);
+}
+
+.match-card--skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aq-space-2);
+}
+
+.match-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aq-space-2);
+  margin-bottom: var(--aq-space-3);
+  padding-bottom: var(--aq-space-2);
+  border-bottom: 1px solid color-mix(in srgb, var(--aq-border) 60%, transparent);
+}
+
+.match-card__link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: var(--aq-text);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--aq-primary);
+    text-decoration: underline;
+  }
+}
+
+.match-card__surah-bn {
+  font-weight: normal;
+  color: var(--aq-text-subtle);
+  font-size: var(--aq-text-sm);
+}
+
+.match-card__ref {
+  color: var(--aq-primary);
+}
+
+.match-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.match-card__feedback {
+  margin: 0 0 var(--aq-space-2);
+  font-size: var(--aq-text-xs);
+  color: var(--aq-primary);
+  font-weight: 500;
+}
+
+.match-card__text {
+  margin: 0 0 var(--aq-space-3);
+  font-size: var(--aq-text-base);
+  line-height: 1.8;
+  color: var(--aq-text);
+
+  &.aq-arabic {
+    font-size: 1.35rem;
+    line-height: 2;
+    text-align: right;
+  }
+}
+
+.match-card__foot {
+  display: flex;
+  justify-content: flex-end;
+}

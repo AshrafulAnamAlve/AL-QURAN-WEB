@@ -1,0 +1,195 @@
+@use 'mixins' as m;
+
+.bookmarks-page {
+  padding-block: var(--aq-space-6) var(--aq-space-12);
+}
+
+.bookmarks-page__header {
+  margin-bottom: var(--aq-space-6);
+}
+
+.bookmarks-page__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--aq-space-4);
+  margin-bottom: var(--aq-space-4);
+}
+
+.bookmarks-page__title {
+  margin: 0 0 var(--aq-space-1);
+  font-size: var(--aq-text-2xl);
+  font-weight: 700;
+  color: var(--aq-text);
+}
+
+.bookmarks-page__subtitle {
+  margin: 0;
+  color: var(--aq-text-subtle);
+  font-size: var(--aq-text-sm);
+}
+
+.bookmarks-page__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--aq-space-3);
+}
+
+.bookmarks-page__filter {
+  margin-top: var(--aq-space-4);
+}
+
+.clear-confirm {
+  margin-bottom: var(--aq-space-6);
+  padding: var(--aq-space-4);
+  background: color-mix(in srgb, var(--aq-surface) 90%, var(--aq-error, #b91c1c) 10%);
+  border: 1px solid color-mix(in srgb, var(--aq-border) 80%, var(--aq-error, #b91c1c) 20%);
+  border-radius: var(--aq-radius-lg);
+
+  @include m.up(md) {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--aq-space-4);
+  }
+}
+
+.clear-confirm__content {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--aq-space-3);
+  margin-bottom: var(--aq-space-3);
+
+  @include m.up(md) {
+    margin-bottom: 0;
+  }
+}
+
+.clear-confirm__icon {
+  color: var(--aq-error, #b91c1c);
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.clear-confirm__heading {
+  margin: 0 0 var(--aq-space-1);
+  font-size: var(--aq-text-base);
+  font-weight: 600;
+  color: var(--aq-text);
+}
+
+.clear-confirm__text {
+  margin: 0;
+  font-size: var(--aq-text-sm);
+  color: var(--aq-text-subtle);
+}
+
+.clear-confirm__buttons {
+  display: flex;
+  gap: var(--aq-space-2);
+  justify-content: flex-end;
+}
+
+.bookmarks-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--aq-space-4);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bookmark-card {
+  padding: var(--aq-space-4);
+  transition: border-color var(--aq-transition-fast);
+
+  &--current {
+    border-color: var(--aq-primary);
+  }
+}
+
+.bookmark-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--aq-space-2);
+  margin-bottom: var(--aq-space-3);
+  padding-bottom: var(--aq-space-2);
+  border-bottom: 1px solid color-mix(in srgb, var(--aq-border) 60%, transparent);
+}
+
+.bookmark-card__ref-group {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--aq-space-2);
+}
+
+.bookmark-card__link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: var(--aq-text);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--aq-primary);
+    text-decoration: underline;
+  }
+}
+
+.bookmark-card__surah-bn {
+  font-weight: normal;
+  color: var(--aq-text-subtle);
+  font-size: var(--aq-text-sm);
+}
+
+.bookmark-card__ref {
+  color: var(--aq-primary);
+}
+
+.bookmark-card__date {
+  font-size: var(--aq-text-xs);
+  color: var(--aq-text-subtle);
+}
+
+.bookmark-card__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.bookmark-card__remove {
+  &:hover {
+    color: var(--aq-error, #b91c1c);
+  }
+}
+
+.bookmark-card__feedback {
+  margin: 0 0 var(--aq-space-2);
+  font-size: var(--aq-text-xs);
+  color: var(--aq-primary);
+  font-weight: 500;
+}
+
+.bookmark-card__arabic {
+  margin: 0 0 var(--aq-space-3);
+  font-size: 1.35rem;
+  line-height: 2;
+  text-align: right;
+  color: var(--aq-text);
+}
+
+.bookmark-card__translation {
+  margin: 0 0 var(--aq-space-3);
+  font-size: var(--aq-text-sm);
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--aq-text) 85%, transparent);
+}
+
+.bookmark-card__foot {
+  display: flex;
+  justify-content: flex-end;
+}

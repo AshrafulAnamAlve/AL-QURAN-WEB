@@ -1,0 +1,266 @@
+<div class="aq-container mosque-page">
+  <!-- OSM Advisory Banner -->
+  <div class="advisory-banner aq-card" role="note">
+    <div class="advisory-banner__icon">
+      <aq-icon name="mapPin" [size]="20" />
+    </div>
+    <div class="advisory-banner__body">
+      <p class="advisory-banner__title">
+        {{ isBn() ? 'ওপেনস্ট্রিটম্যাপ তথ্য নির্দেশিকা' : 'OpenStreetMap Community Data' }}
+      </p>
+      <p class="advisory-banner__text">
+        {{ isBn() ? 'মসজিদের অবস্থানসমূহ ওপেনস্ট্রিটম্যাপ (OSM) এর উন্মুক্ত তথ্য থেকে সংগৃহীত। কোনো কোনো মসজিদের পূর্ণ নাম বা সঠিক ঠিকানা না থাকতে পারে।' : 'Mosque locations are powered by OpenStreetMap community data. Some volunteer-mapped entries may carry generic labels or partial addresses.' }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Page Header -->
+  <header class="mosque-header">
+    <div class="mosque-header__info">
+      <h1 class="mosque-header__title">
+        {{ isBn() ? 'নিকটবর্তী মসজিদ' : 'Nearby Mosques' }}
+      </h1>
+      <div class="location-badge-row">
+        <span class="location-tag">
+          <aq-icon name="mapPin" [size]="14" />
+          <span>{{ userLocation().displayName || userLocation().city || 'Your Location' }}</span>
+        </span>
+        <button
+          type="button"
+          class="aq-btn aq-btn--secondary aq-btn--sm"
+          (click)="openCityModal()"
+        >
+          <aq-icon name="search" [size]="14" />
+          <span>{{ isBn() ? 'শহর পরিবর্তন' : 'Change City' }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Radius Selector Pills -->
+    <div class="radius-controls" role="group" [attr.aria-label]="isBn() ? 'অনুসন্ধান ব্যাসার্ধ' : 'Search radius'">
+      <span class="radius-label">{{ isBn() ? 'ব্যাসার্ধ:' : 'Radius:' }}</span>
+      <div class="radius-pills">
+        @for (opt of radiusOptions; track opt.meters) {
+          <button
+            type="button"
+            class="radius-pill"
+            [class.is-active]="radius() === opt.meters"
+            (click)="setRadius(opt.meters)"
+          >
+            {{ isBn() ? opt.labelBn : opt.labelEn }}
+          </button>
+        }
+      </div>
+    </div>
+  </header>
+
+  <!-- Error State -->
+  @if (error(); as err) {
+    <div class="mosque-error">
+      <aq-error-state
+        [error]="err"
+        (retry)="retry()"
+      />
+    </div>
+  }
+
+  <!-- Main Grid: Map & List -->
+  <div class="mosque-layout">
+    <!-- Map Column -->
+    <section class="map-section" aria-label="Interactive Mosque Map">
+      <div class="map-card aq-card">
+        <div class="map-card__header">
+          <div class="map-card__title">
+            <aq-icon name="mapPin" [size]="16" />
+            <span>{{ isBn() ? 'মানচিত্রে মসজিদের অবস্থান' : 'Interactive Map View' }}</span>
+          </div>
+          @if (!loading() && mosques().length > 0) {
+            <span class="aq-chip aq-chip--primary aq-numeral">
+              {{ isBn() ? prayerTimes.toBnDigits(mosques().length) : mosques().length }} {{ isBn() ? 'টি মসজিদ' : 'mosques' }}
+            </span>
+          }
+        </div>
+
+        <div #mapContainer class="map-canvas" id="mosque-map"></div>
+
+        <div class="map-card__footer">
+          <span class="osm-credit">
+            &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors
+          </span>
+          <span class="map-hint">
+            {{ isBn() ? 'মার্কারে ক্লিক করে দিকনির্দেশনা দেখুন' : 'Click a marker for directions' }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- List Column -->
+    <section class="list-section" aria-labelledby="mosque-list-heading">
+      <h2 id="mosque-list-heading" class="visually-hidden">
+        {{ isBn() ? 'মসজিদের তালিকা' : 'Mosque List' }}
+      </h2>
+
+      <!-- Loading State -->
+      @if (loading() && mosques().length === 0) {
+        <div class="mosque-skeletons">
+          @for (n of [1, 2, 3, 4]; track n) {
+            <div class="mosque-card-skeleton aq-card">
+              <aq-skeleton width="60%" height="20px" />
+              <aq-skeleton width="40%" height="14px" />
+              <aq-skeleton width="80%" height="14px" />
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Empty State -->
+      @if (!loading() && mosques().length === 0 && !error()) {
+        <div class="mosque-empty aq-card">
+          <aq-empty-state
+            [title]="isBn() ? 'কোনো মসজিদ পাওয়া যায়নি' : 'No Mosques Found'"
+            [message]="isBn() ? 'বর্তমান ব্যাসার্ধের মধ্যে কোনো মসজিদ পাওয়া যায়নি। ব্যাসার্ধ বৃদ্ধি করুন অথবা অন্য কোনো শহর বেছে নিন।' : 'No mosques were found within this search radius. Try increasing the radius or selecting a different area.'"
+          />
+        </div>
+      }
+
+      <!-- Mosque Cards -->
+      <div class="mosque-cards-grid" role="list">
+        @for (m of mosques(); track m.id) {
+          <article
+            class="mosque-card aq-card"
+            [class.is-selected]="selectedMosque()?.id === m.id"
+            role="listitem"
+          >
+            <div class="mosque-card__head">
+              <div class="mosque-card__title-row">
+                <h3 class="mosque-card__name">{{ m.name }}</h3>
+                @if (!m.hasName) {
+                  <span class="unnamed-badge">
+                    {{ isBn() ? 'নামহীন' : 'Unverified name' }}
+                  </span>
+                }
+              </div>
+              <span class="mosque-card__distance aq-numeral">
+                📍 {{ formatDistance(m.distanceMeters) }}
+              </span>
+            </div>
+
+            @if (m.address) {
+              <p class="mosque-card__address">
+                <aq-icon name="mapPin" [size]="14" />
+                <span>{{ m.address }}</span>
+              </p>
+            }
+
+            @if (m.denomination) {
+              <span class="denomination-tag">{{ m.denomination }}</span>
+            }
+
+            <div class="mosque-card__actions">
+              <button
+                type="button"
+                class="aq-btn aq-btn--secondary aq-btn--sm"
+                (click)="focusMosqueOnMap(m)"
+              >
+                <aq-icon name="mapPin" [size]="14" />
+                <span>{{ isBn() ? 'মানচিত্রে দেখুন' : 'Show on Map' }}</span>
+              </button>
+
+              <a
+                [href]="m.directionsUrl"
+                target="_blank"
+                rel="noopener"
+                class="aq-btn aq-btn--primary aq-btn--sm directions-link"
+              >
+                <aq-icon name="share" [size]="14" />
+                <span>{{ isBn() ? 'দিকনির্দেশনা' : 'Directions' }}</span>
+              </a>
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- City Search Modal -->
+@if (isCityModalOpen()) {
+  <div class="modal-backdrop" (click)="closeCityModal()">
+    <div
+      class="modal-dialog aq-card"
+      (click)="$event.stopPropagation()"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-city-title"
+    >
+      <div class="modal-header">
+        <h2 id="modal-city-title" class="modal-title">
+          {{ isBn() ? 'অবস্থান নির্বাচন করুন' : 'Select Location' }}
+        </h2>
+        <button
+          type="button"
+          class="aq-icon-btn"
+          (click)="closeCityModal()"
+          aria-label="Close"
+        >
+          <aq-icon name="close" [size]="18" />
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <button
+          type="button"
+          class="aq-btn aq-btn--primary aq-btn--full gps-btn"
+          (click)="useCurrentLocation()"
+        >
+          <aq-icon name="crosshair" [size]="16" />
+          <span>{{ isBn() ? 'বর্তমান জিপিএস অবস্থান ব্যবহার করুন' : 'Use Current Device Location (GPS)' }}</span>
+        </button>
+
+        <div class="popular-cities-section">
+          <p class="popular-label">{{ isBn() ? 'জনপ্রিয় শহর:' : 'Popular Cities:' }}</p>
+          <div class="popular-pills">
+            @for (city of popularCities; track city.name) {
+              <button
+                type="button"
+                class="city-pill"
+                (click)="selectPopularCity(city)"
+              >
+                {{ city.name }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="city-search-box">
+          <aq-filter-field
+            [value]="cityQuery()"
+            [placeholder]="isBn() ? 'শহরের নাম লিখুন (যেমন: Chittagong, Sylhet)...' : 'Type city name (e.g. Chittagong, London)...'"
+            (valueChange)="onSearchCity($event)"
+          />
+        </div>
+
+        @if (isSearchingCity()) {
+          <div class="searching-spinner">
+            <aq-skeleton width="100%" height="40px" />
+          </div>
+        }
+
+        @if (cityResults().length > 0) {
+          <div class="city-results-list" role="list">
+            @for (place of cityResults(); track place.displayName) {
+              <button
+                type="button"
+                class="city-result-item"
+                (click)="selectCityResult(place)"
+              >
+                <aq-icon name="mapPin" [size]="16" />
+                <span class="city-result-text">{{ place.displayName }}</span>
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

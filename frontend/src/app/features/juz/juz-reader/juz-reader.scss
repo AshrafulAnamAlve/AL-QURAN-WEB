@@ -1,0 +1,84 @@
+@use 'mixins' as m;
+@use 'reader';
+
+@include reader.chrome;
+
+.reader__title {
+  margin: 0.35rem 0 0;
+}
+
+.reader__spans {
+  margin: 0.5rem 0 0;
+  font-size: 0.9375rem;
+  color: var(--aq-text-muted);
+}
+
+// --- Surah heading inside a juz -------------------------------------------
+// A juz crosses surah boundaries, so it needs a marker the surah reader does not.
+.reader__surah-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 2rem 0 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--aq-surface-2);
+  border: 1px solid var(--aq-border);
+  border-radius: var(--aq-radius-md);
+  font-size: 1rem;
+
+  &:first-child {
+    margin-top: 1rem;
+  }
+}
+
+.reader__surah-number {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--aq-radius-xs);
+  background: var(--aq-primary-soft);
+  border: 1px solid var(--aq-primary-border);
+  color: var(--aq-primary);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.reader__surah-names {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1 1 auto;
+  line-height: 1.3;
+}
+
+.reader__surah-english {
+  font-weight: 650;
+  @include m.truncate;
+}
+
+.reader__surah-bangla {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--aq-text-muted);
+  @include m.truncate;
+}
+
+.reader__surah-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  @include m.touch-target(36px);
+  flex: 0 0 auto;
+  border-radius: var(--aq-radius-sm);
+  color: var(--aq-text-subtle);
+
+  @include m.focus-visible;
+
+  &:hover {
+    color: var(--aq-primary);
+    background: var(--aq-surface);
+  }
+}

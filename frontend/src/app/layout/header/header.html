@@ -1,0 +1,107 @@
+<header class="header">
+  <div class="header__inner aq-container">
+    <a class="brand" routerLink="/" (click)="closeDrawer()" aria-label="Al-Quran, go to home">
+      <span class="brand__mark" aria-hidden="true">
+        <span class="brand__glyph">۩</span>
+      </span>
+      <span class="brand__text">
+        <span class="brand__name">Al-Quran</span>
+        <span class="brand__tag">
+          {{ isBn() ? 'পড়ুন · শুনুন · অনুধাবন করুন' : 'Read · Listen · Reflect' }}
+        </span>
+      </span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <ul>
+        @for (item of navItems; track item.path) {
+          <li>
+            <a
+              [routerLink]="item.path"
+              routerLinkActive="is-active"
+              [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+            >
+              {{ isBn() ? item.labelBn : item.label }}
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+
+    <div class="actions">
+      <!-- Language Toggle Switch (EN / বাং) -->
+      <button
+        type="button"
+        class="lang-pill-btn"
+        (click)="toggleLanguage()"
+        [attr.aria-label]="isBn() ? 'Switch to English' : 'বাংলা ভাষায় পরিবর্তন করুন'"
+        title="Switch Language / ভাষা পরিবর্তন"
+      >
+        <span class="lang-pill" [class.lang-pill--active]="!isBn()">EN</span>
+        <span class="lang-pill" [class.lang-pill--active]="isBn()">বাং</span>
+      </button>
+
+      <button
+        type="button"
+        class="aq-icon-btn"
+        (click)="openSearch()"
+        [attr.aria-label]="isBn() ? 'কুরআনে অনুসন্ধান' : 'Search the Quran'"
+        title="Search / অনুসন্ধান"
+      >
+        <aq-icon name="search" [size]="20" />
+      </button>
+
+      <button
+        type="button"
+        class="aq-icon-btn"
+        (click)="toggleTheme()"
+        [attr.aria-label]="themeLabel()"
+        [attr.aria-pressed]="isDark()"
+        title="Theme / থিম"
+      >
+        <aq-icon [name]="isDark() ? 'sun' : 'moon'" [size]="20" />
+      </button>
+
+      <button
+        type="button"
+        class="aq-icon-btn menu-btn"
+        (click)="toggleDrawer()"
+        [attr.aria-expanded]="drawerOpen()"
+        aria-controls="aq-mobile-drawer"
+        [attr.aria-label]="drawerOpen() ? 'Close menu' : 'Open menu'"
+      >
+        <aq-icon [name]="drawerOpen() ? 'close' : 'menu'" [size]="22" />
+      </button>
+    </div>
+  </div>
+</header>
+
+@if (drawerOpen()) {
+  <div class="drawer-backdrop" (click)="closeDrawer()" aria-hidden="true"></div>
+}
+
+<nav
+  id="aq-mobile-drawer"
+  class="drawer"
+  [class.drawer--open]="drawerOpen()"
+  [attr.aria-hidden]="!drawerOpen()"
+  [attr.inert]="drawerOpen() ? null : ''"
+  aria-label="Mobile navigation"
+>
+  <ul>
+    @for (item of navItems; track item.path) {
+      <li>
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+          (click)="closeDrawer()"
+        >
+          <aq-icon [name]="item.icon" [size]="20" />
+          <span>{{ isBn() ? item.labelBn : item.label }}</span>
+          <aq-icon name="chevronRight" [size]="16" />
+        </a>
+      </li>
+    }
+  </ul>
+</nav>

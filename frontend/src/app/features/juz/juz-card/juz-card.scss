@@ -1,0 +1,113 @@
+@use 'mixins' as m;
+
+:host {
+  display: block;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  height: 100%;
+  padding: 1rem;
+  background: var(--aq-surface);
+  border: 1px solid var(--aq-border);
+  border-radius: var(--aq-radius-lg);
+  color: var(--aq-text);
+  text-decoration: none;
+  transition:
+    border-color var(--aq-duration-fast) var(--aq-ease),
+    box-shadow var(--aq-duration-fast) var(--aq-ease),
+    transform var(--aq-duration-fast) var(--aq-ease);
+
+  @include m.focus-visible;
+
+  &:hover {
+    border-color: var(--aq-primary-border);
+    box-shadow: var(--aq-shadow-md);
+    transform: translateY(-2px);
+    text-decoration: none;
+    color: var(--aq-text);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.card__badge {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--aq-radius-sm);
+  background: var(--aq-primary-soft);
+  border: 1px solid var(--aq-primary-border);
+  transform: rotate(45deg);
+}
+
+.card__badge-inner {
+  transform: rotate(-45deg);
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--aq-primary);
+}
+
+.card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.card__title {
+  font-weight: 650;
+  font-size: 1rem;
+}
+
+.card__range {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-width: 0;
+  font-size: 0.8125rem;
+  color: var(--aq-text-muted);
+
+  aq-icon {
+    flex: 0 0 auto;
+    color: var(--aq-text-subtle);
+  }
+}
+
+.card__ref {
+  @include m.truncate;
+}
+
+.card__bangla {
+  font-family: var(--aq-font-bangla);
+  font-size: 0.75rem;
+  color: var(--aq-text-subtle);
+  @include m.truncate;
+}
+
+.card__count {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex: 0 0 auto;
+  font-size: 1.0625rem;
+  font-weight: 650;
+  line-height: 1.2;
+  color: var(--aq-primary);
+}
+
+.card__count-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--aq-text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}

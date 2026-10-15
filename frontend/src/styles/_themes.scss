@@ -1,0 +1,73 @@
+// ---------------------------------------------------------------------------
+// Dark theme.
+//
+// Two selectors, on purpose:
+//   [data-theme='dark']  -> the user explicitly chose dark in Settings
+//   prefers-color-scheme -> the user chose "System" (no attribute is set)
+//
+// The light values stay in _tokens.scss on bare :root so a colour is never
+// defined *only* inside a media query.
+//
+// Deliberately not pure black: long Quran reading sessions are more comfortable
+// on a very dark charcoal-green than on #000.
+// ---------------------------------------------------------------------------
+
+@mixin dark-palette {
+  --aq-bg:            #0f1513;
+  --aq-bg-subtle:     #131b18;
+  --aq-surface:       #17201d;
+  --aq-surface-2:     #1d2825;
+  --aq-surface-3:     #24312d;
+  --aq-overlay:       rgba(0, 0, 0, 0.66);
+
+  --aq-border:        #2a3733;
+  --aq-border-strong: #3a4a45;
+
+  --aq-text:          #e7ede9;
+  --aq-text-muted:    #a3b3ab;
+  --aq-text-subtle:   #7c8c85;
+  --aq-text-inverse:  #10201a;
+
+  --aq-primary:        var(--aq-green-400);
+  --aq-primary-hover:  var(--aq-green-300);
+  --aq-primary-soft:   rgba(47, 163, 122, 0.14);
+  --aq-primary-border: rgba(47, 163, 122, 0.32);
+  --aq-on-primary:     #06231a;
+
+  --aq-accent:      var(--aq-gold-300);
+  --aq-accent-soft: rgba(227, 195, 106, 0.15);
+
+  --aq-success: #4cb98a;
+  --aq-warning: #d9b84a;
+  --aq-danger:  #e08585;
+  --aq-danger-soft: rgba(224, 133, 133, 0.14);
+  --aq-info:    #6bb6d4;
+
+  --aq-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --aq-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --aq-shadow-md: 0 4px 14px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3);
+  --aq-shadow-lg: 0 14px 36px rgba(0, 0, 0, 0.58), 0 4px 8px rgba(0, 0, 0, 0.34);
+  --aq-ring: 0 0 0 3px rgba(47, 163, 122, 0.4);
+}
+
+:root[data-theme='dark'] {
+  @include dark-palette;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark-palette;
+  }
+}
+
+// Honour the OS "reduce motion" setting everywhere.
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

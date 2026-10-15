@@ -1,0 +1,98 @@
+@use 'mixins' as m;
+
+.page {
+  padding-block: 1.75rem 2.5rem;
+
+  @include m.up(md) {
+    padding-block: 2.5rem 3rem;
+  }
+}
+
+.page__head {
+  max-width: 60ch;
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin-top: 0.35rem;
+  }
+}
+
+.page__lead {
+  margin: 0.625rem 0 0;
+  color: var(--aq-text-muted);
+  text-wrap: pretty;
+}
+
+.page__filter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+
+  @include m.up(md) {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+
+    aq-filter-field {
+      flex: 1 1 auto;
+      max-width: 520px;
+    }
+  }
+}
+
+.page__count {
+  margin: 0;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--aq-text-subtle);
+  // Reserve the line so the grid does not jump when the count appears.
+  min-height: 1.25rem;
+}
+
+// --- Grid -----------------------------------------------------------------
+.grid {
+  display: grid;
+  gap: 0.875rem;
+  margin: 0;
+  grid-template-columns: 1fr;
+
+  @include m.up(sm) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include m.up(lg) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @include m.up(xl) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  > li {
+    min-width: 0;
+  }
+}
+
+.grid__skeleton {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 0.875rem;
+  padding: 1rem;
+  background: var(--aq-surface);
+  border: 1px solid var(--aq-border);
+  border-radius: var(--aq-radius-lg);
+
+  aq-skeleton:last-child {
+    grid-column: 1 / -1;
+    margin-top: 0.5rem;
+  }
+}
+
+.grid__skeleton-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  justify-content: center;
+  min-width: 0;
+}

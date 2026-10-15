@@ -1,0 +1,83 @@
+<article
+  class="ayah"
+  [id]="domId()"
+  [class.ayah--current]="isCurrent()"
+  [class.ayah--playing]="isPlaying()"
+  [attr.aria-label]="'Ayah ' + reference()"
+>
+  <header class="ayah__bar">
+    <span class="aq-ayah-marker" aria-hidden="true">{{ ayah().numberInSurah }}</span>
+
+    @if (ayah().isSajda) {
+      <span class="aq-chip aq-chip--gold ayah__sajda" title="A verse of prostration">
+        Sajda
+      </span>
+    }
+
+    <span class="ayah__spacer"></span>
+
+    <span class="ayah__actions">
+      <button
+        type="button"
+        class="aq-icon-btn"
+        [class.aq-icon-btn--active]="isPlaying()"
+        [attr.aria-label]="playLabel()"
+        (click)="togglePlay()"
+      >
+        @if (isBuffering()) {
+          <span class="ayah__spinner" aria-hidden="true"></span>
+        } @else {
+          <aq-icon [name]="isPlaying() ? 'pause' : 'play'" [size]="17" />
+        }
+      </button>
+
+      <button
+        type="button"
+        class="aq-icon-btn"
+        [class.aq-icon-btn--active]="isBookmarked()"
+        [attr.aria-label]="bookmarkLabel()"
+        [attr.aria-pressed]="isBookmarked()"
+        (click)="toggleBookmark()"
+      >
+        <aq-icon name="bookmark" [size]="17" />
+      </button>
+
+      <button
+        type="button"
+        class="aq-icon-btn"
+        [attr.aria-label]="'Copy ayah ' + reference()"
+        (click)="copy()"
+      >
+        <aq-icon [name]="feedback() === 'copied' ? 'check' : 'copy'" [size]="17" />
+      </button>
+
+      <button
+        type="button"
+        class="aq-icon-btn"
+        [attr.aria-label]="'Share ayah ' + reference()"
+        (click)="shareAyah()"
+      >
+        <aq-icon [name]="feedback() === 'shared' ? 'check' : 'share'" [size]="17" />
+      </button>
+    </span>
+  </header>
+
+  <!-- Announced only when it changes, so the confirmation is not read on load. -->
+  <p class="aq-visually-hidden" role="status" aria-live="polite">
+    @switch (feedback()) {
+      @case ('copied') { Ayah {{ reference() }} copied to the clipboard. }
+      @case ('shared') { Ayah {{ reference() }} shared. }
+      @case ('failed') { Could not copy ayah {{ reference() }}. }
+    }
+  </p>
+
+  <p class="ayah__arabic aq-arabic" lang="ar" dir="rtl">{{ ayah().arabic }}</p>
+
+  @if (showsBangla() && banglaText()) {
+    <p class="ayah__translation aq-bangla" lang="bn">{{ banglaText() }}</p>
+  }
+
+  @if (showsEnglish() && englishText()) {
+    <p class="ayah__translation ayah__translation--english" lang="en">{{ englishText() }}</p>
+  }
+</article>
