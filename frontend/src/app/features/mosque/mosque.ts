@@ -62,6 +62,7 @@ export class MosquePage implements OnInit, AfterViewInit, OnDestroy {
   readonly radius = this.mosqueService.radius;
   readonly selectedMosque = this.mosqueService.selectedMosque;
   readonly userLocation = this.locationService.location;
+  readonly isDetecting = this.locationService.isDetecting;
 
   // City Search Modal State
   readonly isCityModalOpen = signal(false);

@@ -38,9 +38,9 @@ public static class HttpClientRegistration
 
         // Overpass is volunteer-run and goes busy under load. Retrying the same
         // instance rarely helps, so we keep it at the Polly minimum of 1 and let the
-        // service layer fail over to a mirror instead.
+        // service layer fail over to a mirror instead, with circuit breaker disabled so failover is never blocked.
         services.AddExternalApiClient<OverpassApiOptions>(
-            configuration, ExternalApiRegistry.OverpassApi, OverpassApiOptions.SectionName, retries: 1);
+            configuration, ExternalApiRegistry.OverpassApi, OverpassApiOptions.SectionName, retries: 1, enableCircuitBreaker: false);
 
         return services;
     }
@@ -50,7 +50,8 @@ public static class HttpClientRegistration
         IConfiguration configuration,
         string clientName,
         string sectionName,
-        int retries)
+        int retries,
+        bool enableCircuitBreaker = true)
         where TOptions : ExternalApiOptions
     {
         // Polly rejects a retry count below 1, so 1 is the floor everywhere.
@@ -96,10 +97,20 @@ public static class HttpClientRegistration
                 resilience.Retry.MaxRetryAttempts = retries;
                 resilience.Retry.UseJitter = true;
 
-                // Polly requires the sampling window to be at least twice the attempt timeout.
-                resilience.CircuitBreaker.SamplingDuration = attemptTimeout * 2;
-                resilience.CircuitBreaker.MinimumThroughput = 10;
-                resilience.CircuitBreaker.FailureRatio = 0.9;
+                if (enableCircuitBreaker)
+                {
+                    // Polly requires the sampling window to be at least twice the attempt timeout.
+                    resilience.CircuitBreaker.SamplingDuration = attemptTimeout * 2;
+                    resilience.CircuitBreaker.MinimumThroughput = 10;
+                    resilience.CircuitBreaker.FailureRatio = 0.9;
+                }
+                else
+                {
+                    // Set throughput to int.MaxValue so the circuit breaker never opens and blocks mirror failover.
+                    resilience.CircuitBreaker.SamplingDuration = attemptTimeout * 2;
+                    resilience.CircuitBreaker.MinimumThroughput = int.MaxValue;
+                    resilience.CircuitBreaker.FailureRatio = 1.0;
+                }
             });
     }
 

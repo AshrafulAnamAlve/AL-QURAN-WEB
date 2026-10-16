@@ -27,6 +27,16 @@
         </span>
         <button
           type="button"
+          class="aq-btn aq-btn--primary aq-btn--sm gps-quick-btn"
+          [disabled]="isDetecting()"
+          (click)="useCurrentLocation()"
+          [attr.aria-label]="isBn() ? 'বর্তমান জিপিএস অবস্থান সনাক্ত করুন' : 'Detect current GPS location'"
+        >
+          <aq-icon name="crosshair" [size]="14" />
+          <span>{{ isDetecting() ? (isBn() ? 'শনাক্ত হচ্ছে...' : 'Locating...') : (isBn() ? 'আমার অবস্থান' : 'My Location') }}</span>
+        </button>
+        <button
+          type="button"
           class="aq-btn aq-btn--secondary aq-btn--sm"
           (click)="openCityModal()"
         >

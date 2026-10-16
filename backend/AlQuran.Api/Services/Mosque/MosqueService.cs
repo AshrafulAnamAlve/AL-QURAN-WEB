@@ -125,13 +125,14 @@ public sealed class MosqueService : ExternalApiClientBase, IMosqueService
 
                 return new QueryResult(endpoint, response);
             }
-            catch (ExternalApiException ex)
+            catch (Exception ex)
             {
                 Logger.LogWarning(
                     "Overpass endpoint {Endpoint} failed ({Message}); trying the next one",
                     endpoint, ex.Message);
 
-                lastFailure = ex;
+                lastFailure = ex as ExternalApiException
+                    ?? new ExternalApiException(ServiceName, ex.Message, innerException: ex);
             }
         }
 
