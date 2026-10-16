@@ -8,16 +8,15 @@
 
 .main {
   flex: 1 1 auto;
-  // Leaves room for the fixed bottom navigation on phones, and for the mini
-  // player when something is playing. --aq-player-height is 0 until then, so
-  // nothing is reserved for a reader who never presses play.
+  // Leaves ample room for the fixed bottom navigation on phones, and for the mini
+  // player when recitation is active, plus safe area inset on modern phones.
   padding-bottom: calc(
-    var(--aq-bottom-nav-height) + var(--aq-player-height, 0px) + 1rem
+    var(--aq-bottom-nav-height) + var(--aq-player-height, 0px) + 2.5rem + env(safe-area-inset-bottom, 0)
   );
   outline: none;
 
   @include m.up(lg) {
-    padding-bottom: var(--aq-player-height, 0px);
+    padding-bottom: calc(var(--aq-player-height, 0px) + 2rem);
   }
 }
 

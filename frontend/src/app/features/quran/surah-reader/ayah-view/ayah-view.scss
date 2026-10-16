@@ -8,6 +8,9 @@
   padding: 1.25rem 0 1.5rem;
   border-bottom: 1px solid var(--aq-border);
   scroll-margin-top: calc(var(--aq-header-height) + 5rem);
+  scroll-margin-bottom: calc(
+    var(--aq-bottom-nav-height) + var(--aq-player-height, 0px) + 2.5rem + env(safe-area-inset-bottom, 0)
+  );
   transition: background-color var(--aq-duration) var(--aq-ease);
 
   &:last-child {

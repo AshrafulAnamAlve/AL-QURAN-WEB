@@ -73,7 +73,7 @@
   }
 
   .reader__body {
-    padding-bottom: 3rem;
+    padding-bottom: calc(var(--aq-player-height, 0px) + 3.5rem);
   }
 
   .reader__more {

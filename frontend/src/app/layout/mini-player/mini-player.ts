@@ -135,15 +135,31 @@ export class MiniPlayerComponent {
   protected readonly isActive = this.player.isActive;
 
   constructor() {
-    // The bar is fixed, so the page needs matching padding or the last ayah and
-    // the footer end up underneath it. A custom property lets the shell reserve
-    // the space without this component knowing anything about the layout.
+    const updateHeight = (active: boolean) => {
+      if (active) {
+        this.document.documentElement.setAttribute('data-player-active', 'true');
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 992;
+        this.document.documentElement.style.setProperty(
+          '--aq-player-height',
+          isMobile ? '5.75rem' : '4.5rem',
+        );
+      } else {
+        this.document.documentElement.removeAttribute('data-player-active');
+        this.document.documentElement.style.setProperty('--aq-player-height', '0px');
+      }
+    };
+
     effect(() => {
-      this.document.documentElement.style.setProperty(
-        '--aq-player-height',
-        this.isActive() ? '4.5rem' : '0px',
-      );
+      updateHeight(this.isActive());
     });
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', () => {
+        if (this.isActive()) {
+          updateHeight(true);
+        }
+      });
+    }
   }
 
   close(): void {
