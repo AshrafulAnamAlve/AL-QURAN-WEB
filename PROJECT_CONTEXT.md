@@ -545,12 +545,14 @@ Arabic. The juz list. Skeletons, error states and empty states throughout.
 
 ## 11. Next Steps & Post-Release Roadmap
 
-**All 12 Core Phases are 100% COMPLETE.**
+**Core Phases 1 to 12 are 100% COMPLETE.**
+Live deployment is active on RunASP.NET (backend) and GitHub Pages (frontend).
 
-The application is fully built, tested, and ready for deployment. Potential post-v1 enhancements:
-- Self-hosted Amiri Quran web fonts for fully offline typography.
-- Background sync for reading progress and settings when multi-device accounts are introduced.
-- Additional Bengali tafsir editions (e.g. Tafsir Ibn Kathir, Ahsanul Bayaan) if public APIs become available.
+### New Features Roadmap (Phases 13 – 16):
+- **[Phase 13](docs/phases/PHASE-13.md) — Daily Quran Task Tracker, Reminders & Habit Calendar**: User-defined daily reading/listening goals, scheduled browser reminders, automatic & manual completion tracking, and habit calendar streak matrix.
+- **[Phase 14](docs/phases/PHASE-14.md) — Prayer Time Notifications & In-App Adhan Player Modal**: Desktop/PWA notifications for all five daily prayers, plus an interactive in-app Adhan player that starts muted by default with an instant one-tap unmute button.
+- **[Phase 15](docs/phases/PHASE-15.md) — Asma-ul-Husna (99 Beautiful Names of Allah)**: Dedicated section featuring a prominent hero calligraphy display of the Supreme Name "الله" (#1), followed by all 99 names with Arabic calligraphy, transliteration, Bengali/English meanings, spiritual reflection notes, and audio pronunciation.
+- **[Phase 16](docs/phases/PHASE-16.md) — Daily Dhikr Rotational Advice Modal & Digital Tasbih**: Rotational spiritual deed prompt on the home page (e.g. Surah An-Nas 3x, Astaghfirullah 3x, Durood 3x) with "Done" and "Skip" actions, alongside a full Digital Tasbih counter with haptic feedback and categorized Adhkar.
 
 ---
 
