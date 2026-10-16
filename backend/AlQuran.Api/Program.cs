@@ -12,7 +12,9 @@ using AlQuran.Api.Services.Meta;
 using AlQuran.Api.Services.Mosque;
 using AlQuran.Api.Services.Prayer;
 using AlQuran.Api.Services.Quran;
+using AlQuran.Api.Data;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +27,19 @@ builder.Services.AddAlQuranOptions(builder.Configuration);
 var cacheOptions = builder.Configuration
     .GetSection(CacheOptions.SectionName)
     .Get<CacheOptions>() ?? new CacheOptions();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (!string.IsNullOrWhiteSpace(connectionString))
+{
+    builder.Services.AddDbContext<AlQuranDbContext>(options =>
+        options.UseSqlServer(connectionString, sqlServerOptions =>
+        {
+            sqlServerOptions.EnableRetryOnFailure(
+                maxRetryCount: 3,
+                maxRetryDelay: TimeSpan.FromSeconds(5),
+                errorNumbersToAdd: null);
+        }));
+}
 
 // ---------------------------------------------------------------------------
 // Cross-cutting services
@@ -87,6 +102,27 @@ builder.Services.AddOpenApi();
 var app = builder.Build();
 
 // ---------------------------------------------------------------------------
+// Database migration & table initialization (runs in background to ensure instant startup)
+// ---------------------------------------------------------------------------
+if (!string.IsNullOrWhiteSpace(connectionString))
+{
+    _ = Task.Run(() =>
+    {
+        try
+        {
+            using var scope = app.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<AlQuranDbContext>();
+            db.Database.Migrate();
+            app.Logger.LogInformation("Database migration executed successfully.");
+        }
+        catch (Exception ex)
+        {
+            app.Logger.LogWarning(ex, "Background database migration note: {Message}", ex.Message);
+        }
+    });
+}
+
+// ---------------------------------------------------------------------------
 // HTTP pipeline. Order matters.
 // ---------------------------------------------------------------------------
 app.UseResponseCompression();
@@ -94,17 +130,14 @@ app.UseResponseCompression();
 // Sits as early as possible so every downstream failure becomes ProblemDetails.
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-if (app.Environment.IsDevelopment())
+// Interactive API explorer accessible in dev and production
+app.MapOpenApi();
+app.MapScalarApiReference(options => options
+    .WithTitle("Al-Quran Web API")
+    .WithTheme(ScalarTheme.Purple));
+
+if (!app.Environment.IsDevelopment())
 {
-    // Interactive API explorer: http://localhost:5050/scalar
-    app.MapOpenApi();
-    app.MapScalarApiReference(options => options
-        .WithTitle("Al-Quran Web API")
-        .WithTheme(ScalarTheme.Purple));
-}
-else
-{
-    // Only meaningful once a TLS certificate is configured by the host.
     app.UseHttpsRedirection();
     app.UseHsts();
 }
@@ -121,9 +154,10 @@ app.MapGet("/", (IHostEnvironment env) => Results.Ok(new
     name = "Al-Quran Web API",
     status = "running",
     environment = env.EnvironmentName,
-    docs = env.IsDevelopment() ? "/scalar" : null,
+    docs = "/scalar",
     health = "/api/health",
     meta = "/api/meta",
+    database = !string.IsNullOrWhiteSpace(connectionString) ? "Configured" : "None",
 })).ExcludeFromDescription();
 
 app.Run();

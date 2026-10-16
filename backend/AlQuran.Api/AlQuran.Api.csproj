@@ -17,6 +17,11 @@
          Kept at 10.0.11 deliberately: the 10.0.7 the template ships with drags in
          Microsoft.OpenApi 2.0.0, which carries advisory GHSA-v5pm-xwqc-g5wc. -->
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.13">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.13" />
     <!-- Retry + circuit breaker + timeout for the free upstream APIs we depend on. -->
     <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.9.0" />
     <!-- Browsable API explorer at /scalar (development only). -->

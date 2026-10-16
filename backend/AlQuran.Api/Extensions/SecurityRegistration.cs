@@ -26,12 +26,24 @@ public static class SecurityRegistration
         {
             options.AddPolicy(CorsOptions.PolicyName, policy =>
             {
-                policy
-                    .WithOrigins([.. allowedOrigins])
-                    .WithHeaders("Content-Type", "Accept", "X-Correlation-Id")
-                    .WithMethods("GET", "POST", "OPTIONS")
-                    .WithExposedHeaders("X-Correlation-Id")
-                    .SetPreflightMaxAge(TimeSpan.FromHours(1));
+                if (allowedOrigins.Contains("*") || allowedOrigins.Count == 0)
+                {
+                    policy
+                        .AllowAnyOrigin()
+                        .WithHeaders("Content-Type", "Accept", "X-Correlation-Id")
+                        .WithMethods("GET", "POST", "OPTIONS")
+                        .WithExposedHeaders("X-Correlation-Id")
+                        .SetPreflightMaxAge(TimeSpan.FromHours(1));
+                }
+                else
+                {
+                    policy
+                        .WithOrigins([.. allowedOrigins])
+                        .WithHeaders("Content-Type", "Accept", "X-Correlation-Id")
+                        .WithMethods("GET", "POST", "OPTIONS")
+                        .WithExposedHeaders("X-Correlation-Id")
+                        .SetPreflightMaxAge(TimeSpan.FromHours(1));
+                }
             });
         });
 

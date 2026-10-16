@@ -43,4 +43,30 @@ public sealed class HealthController : ControllerBase
             ? Ok(report)
             : StatusCode(StatusCodes.Status503ServiceUnavailable, report);
     }
+
+    /// <summary>Checks database connectivity.</summary>
+    [HttpGet("database")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+    public async Task<IActionResult> GetDatabaseHealth(
+        [FromServices] AlQuran.Api.Data.AlQuranDbContext? dbContext,
+        CancellationToken cancellationToken)
+    {
+        if (dbContext is null)
+        {
+            return Ok(new { status = "NotConfigured", message = "No database connection string configured." });
+        }
+
+        try
+        {
+            var canConnect = await dbContext.Database.CanConnectAsync(cancellationToken);
+            return canConnect
+                ? Ok(new { status = "Healthy", database = "db73976", server = "db73976.public.databaseasp.net" })
+                : StatusCode(StatusCodes.Status503ServiceUnavailable, new { status = "Unhealthy", error = "Cannot connect to database" });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status503ServiceUnavailable, new { status = "Unhealthy", error = ex.Message });
+        }
+    }
 }
