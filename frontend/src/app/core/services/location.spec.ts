@@ -60,8 +60,8 @@ describe('LocationService', () => {
     storage.write(STORAGE_KEYS.location, saved);
 
     service = TestBed.inject(LocationService);
-    expect(service.location().latitude).toBe(23.81);
-    expect(service.location().longitude).toBe(90.41);
+    expect(service.location().latitude).toBe(23.8103);
+    expect(service.location().longitude).toBe(90.4125);
     expect(service.location().displayName).toBe('Dhaka, Bangladesh');
   });
 
@@ -76,14 +76,24 @@ describe('LocationService', () => {
     service.setManualLocation(mockDhakaPlace);
 
     const current = service.location();
-    expect(current.latitude).toBe(23.81);
-    expect(current.longitude).toBe(90.41);
+    expect(current.latitude).toBe(23.8103);
+    expect(current.longitude).toBe(90.4125);
     expect(current.displayName).toBe('Dhaka, Bangladesh');
     expect(current.source).toBe('manual');
 
     const stored = storage.read<UserLocation>(STORAGE_KEYS.location, DEFAULT_LOCATION);
-    expect(stored.latitude).toBe(23.81);
-    expect(stored.longitude).toBe(90.41);
+    expect(stored.latitude).toBe(23.8103);
+    expect(stored.longitude).toBe(90.4125);
+  });
+
+  it('sets coordinates directly via setCoordinates', async () => {
+    service = TestBed.inject(LocationService);
+    await service.setCoordinates(23.75489, 90.38923);
+
+    const current = service.location();
+    expect(current.latitude).toBe(23.7549);
+    expect(current.longitude).toBe(90.3892);
+    expect(current.source).toBe('manual');
   });
 
   it('searches cities when query has at least 2 characters', async () => {
@@ -153,9 +163,9 @@ describe('LocationService', () => {
     const success = await service.requestGeolocation();
     expect(success).toBe(true);
     expect(service.permissionDenied()).toBe(false);
-    expect(locationApi.reverse).toHaveBeenCalledWith(23.81, 90.41);
-    expect(service.location().latitude).toBe(23.81);
-    expect(service.location().longitude).toBe(90.41);
+    expect(locationApi.reverse).toHaveBeenCalledWith(23.8123, 90.4146);
+    expect(service.location().latitude).toBe(23.8123);
+    expect(service.location().longitude).toBe(90.4146);
     expect(service.location().source).toBe('geolocation');
   });
 

@@ -146,8 +146,8 @@ export class LocationService {
 
   /**
    * Requests geolocation from the browser.
-   * On success: coordinates are rounded to 2 decimal places for privacy and reverse geocoded.
-   * On failure/denial: permissionDenied signal is set and false is returned gracefully.
+   * Tries high-accuracy GPS/Wi-Fi triangulation first for precise street location.
+   * If high accuracy times out (e.g. desktop PC without Wi-Fi), falls back to standard accuracy.
    */
   async requestGeolocation(): Promise<boolean> {
     if (typeof navigator === 'undefined' || !navigator.geolocation) {
@@ -159,14 +159,44 @@ export class LocationService {
     this._isDetecting.set(true);
     this._error.set(null);
 
+    // 1. Try high accuracy (hardware GPS / Wi-Fi trilateration) with an 8-second timeout
+    const highAccuracySuccess = await this.queryBrowserPosition({
+      enableHighAccuracy: true,
+      timeout: 8000,
+      maximumAge: 0,
+    });
+
+    if (highAccuracySuccess) {
+      this._isDetecting.set(false);
+      return true;
+    }
+
+    // 2. If user denied permission explicitly, stop
+    if (this._permissionDenied()) {
+      this._isDetecting.set(false);
+      return false;
+    }
+
+    // 3. Fallback to standard network geolocation for devices without GPS hardware or Wi-Fi
+    const fallbackSuccess = await this.queryBrowserPosition({
+      enableHighAccuracy: false,
+      timeout: 10000,
+      maximumAge: 60000,
+    });
+
+    this._isDetecting.set(false);
+    return fallbackSuccess;
+  }
+
+  private queryBrowserPosition(options: PositionOptions): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           try {
             const rawLat = position.coords.latitude;
             const rawLng = position.coords.longitude;
-            const latitude = roundCoordinate(rawLat, 2);
-            const longitude = roundCoordinate(rawLng, 2);
+            const latitude = roundCoordinate(rawLat, 4);
+            const longitude = roundCoordinate(rawLng, 4);
 
             let displayName = `Coordinates: ${latitude}, ${longitude}`;
             let city: string | null = null;
@@ -198,33 +228,66 @@ export class LocationService {
             this.storage.write(STORAGE_KEYS.location, detectedLocation);
             this._permissionDenied.set(false);
             this._error.set(null);
-            this._isDetecting.set(false);
             resolve(true);
-          } catch (err) {
+          } catch {
             this._error.set('Failed to resolve location coordinates.');
-            this._isDetecting.set(false);
             resolve(false);
           }
         },
         (error) => {
-          this._isDetecting.set(false);
           if (error.code === error.PERMISSION_DENIED) {
             this._permissionDenied.set(true);
             this._error.set('Location permission was denied.');
-          } else {
+          } else if (error.code !== error.TIMEOUT) {
             this._error.set(error.message || 'Unable to retrieve your location.');
           }
           resolve(false);
         },
-        { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
+        options,
       );
     });
   }
 
+  /** Sets user location directly from map click or pin drag. */
+  async setCoordinates(latitude: number, longitude: number, displayName?: string): Promise<void> {
+    const lat = roundCoordinate(latitude, 4);
+    const lng = roundCoordinate(longitude, 4);
+    let name = displayName || `Coordinates: ${lat}, ${lng}`;
+    let city: string | null = null;
+    let country: string | null = null;
+
+    try {
+      const place = await firstValueFrom(
+        this.locationApi.reverse(lat, lng).pipe(catchError(() => of(null))),
+      );
+      if (place) {
+        name = place.displayName || `${place.city || place.name}, ${place.country || ''}`;
+        city = place.city || place.name || null;
+        country = place.country || null;
+      }
+    } catch {
+      // Non-critical reverse geocoding
+    }
+
+    const manualLocation: UserLocation = {
+      latitude: lat,
+      longitude: lng,
+      city,
+      country,
+      displayName: name,
+      source: 'manual',
+    };
+
+    this._location.set(manualLocation);
+    this.storage.write(STORAGE_KEYS.location, manualLocation);
+    this._permissionDenied.set(false);
+    this._error.set(null);
+  }
+
   /** Sets a user-selected place from manual search. */
   setManualLocation(place: Place): void {
-    const latitude = roundCoordinate(place.latitude, 2);
-    const longitude = roundCoordinate(place.longitude, 2);
+    const latitude = roundCoordinate(place.latitude, 4);
+    const longitude = roundCoordinate(place.longitude, 4);
 
     const manualLocation: UserLocation = {
       latitude,
@@ -252,8 +315,8 @@ export class LocationService {
       if (saved.source !== 'default') {
         return {
           ...saved,
-          latitude: roundCoordinate(saved.latitude, 2),
-          longitude: roundCoordinate(saved.longitude, 2),
+          latitude: roundCoordinate(saved.latitude, 4),
+          longitude: roundCoordinate(saved.longitude, 4),
         };
       }
     }

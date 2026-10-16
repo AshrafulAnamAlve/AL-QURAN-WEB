@@ -20,8 +20,8 @@ export interface UserLocation {
   source: 'geolocation' | 'manual' | 'default';
 }
 
-/** Round coordinates to avoid storing or sending hyper-precise GPS locations. */
-export function roundCoordinate(coord: number, decimals = 2): number {
+/** Round coordinates to avoid storing or sending hyper-precise GPS locations (~1.1m precision at 5 decimals). */
+export function roundCoordinate(coord: number, decimals = 5): number {
   const factor = Math.pow(10, decimals);
   return Math.round(coord * factor) / factor;
 }

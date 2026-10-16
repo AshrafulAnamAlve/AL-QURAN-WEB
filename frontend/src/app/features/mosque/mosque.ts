@@ -27,6 +27,21 @@ import { IconComponent } from '../../shared/components/icon/icon';
 import { SkeletonComponent } from '../../shared/components/skeleton/skeleton';
 import { POPULAR_CITIES } from '../prayer/prayer';
 
+export const POPULAR_MOSQUE_LOCATIONS: Place[] = [
+  { name: 'Dhaka', displayName: 'Dhaka, Bangladesh', latitude: 23.8103, longitude: 90.4125, city: 'Dhaka', country: 'Bangladesh', countryCode: 'bd' },
+  { name: 'Chittagong', displayName: 'Chittagong, Bangladesh', latitude: 22.3569, longitude: 91.7832, city: 'Chittagong', country: 'Bangladesh', countryCode: 'bd' },
+  { name: 'Sylhet', displayName: 'Sylhet, Bangladesh', latitude: 24.8949, longitude: 91.8687, city: 'Sylhet', country: 'Bangladesh', countryCode: 'bd' },
+  { name: 'Rajshahi', displayName: 'Rajshahi, Bangladesh', latitude: 24.3745, longitude: 88.6042, city: 'Rajshahi', country: 'Bangladesh', countryCode: 'bd' },
+  { name: 'Khulna', displayName: 'Khulna, Bangladesh', latitude: 22.8456, longitude: 89.5403, city: 'Khulna', country: 'Bangladesh', countryCode: 'bd' },
+  { name: 'Dhanmondi', displayName: 'Dhanmondi, Dhaka', latitude: 23.7461, longitude: 90.3742, city: 'Dhaka', country: 'Bangladesh', countryCode: 'bd' },
+  { name: 'Mirpur', displayName: 'Mirpur, Dhaka', latitude: 23.8071, longitude: 90.3686, city: 'Dhaka', country: 'Bangladesh', countryCode: 'bd' },
+  { name: 'Uttara', displayName: 'Uttara, Dhaka', latitude: 23.8759, longitude: 90.3795, city: 'Dhaka', country: 'Bangladesh', countryCode: 'bd' },
+  { name: 'Gulshan', displayName: 'Gulshan, Dhaka', latitude: 23.7925, longitude: 90.4078, city: 'Dhaka', country: 'Bangladesh', countryCode: 'bd' },
+  { name: 'Mohammadpur', displayName: 'Mohammadpur, Dhaka', latitude: 23.7658, longitude: 90.3585, city: 'Dhaka', country: 'Bangladesh', countryCode: 'bd' },
+  { name: 'Makkah', displayName: 'Makkah, Saudi Arabia', latitude: 21.4225, longitude: 39.8262, city: 'Makkah', country: 'Saudi Arabia', countryCode: 'sa' },
+  { name: 'Madinah', displayName: 'Madinah, Saudi Arabia', latitude: 24.4672, longitude: 39.6111, city: 'Madinah', country: 'Saudi Arabia', countryCode: 'sa' },
+];
+
 @Component({
   selector: 'aq-mosque-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -52,7 +67,7 @@ export class MosquePage implements OnInit, AfterViewInit, OnDestroy {
 
   readonly isBn = this.language.isBn;
   readonly radiusOptions = SEARCH_RADIUS_OPTIONS;
-  readonly popularCities = POPULAR_CITIES;
+  readonly popularCities = POPULAR_MOSQUE_LOCATIONS;
 
   // Signals from MosqueService
   readonly searchResult = this.mosqueService.searchResult;
@@ -158,6 +173,13 @@ export class MosquePage implements OnInit, AfterViewInit, OnDestroy {
 
     this.updateUserMarker(lat, lng);
 
+    // Allow user to click anywhere on the map to set their precise location
+    this.map.on('click', (e: any) => {
+      if (e?.latlng) {
+        this.setUserCoordinates(e.latlng.lat, e.latlng.lng);
+      }
+    });
+
     // Initial markers if already loaded
     if (this.mosques().length > 0) {
       this.updateMapMarkers(this.mosques());
@@ -167,6 +189,13 @@ export class MosquePage implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       this.map?.invalidateSize();
     }, 200);
+  }
+
+  async setUserCoordinates(lat: number, lng: number): Promise<void> {
+    await this.locationService.setCoordinates(lat, lng);
+    if (this.userMarker) {
+      this.userMarker.setLatLng([lat, lng]);
+    }
   }
 
   private updateUserMarker(lat: number, lng: number): void {
@@ -184,10 +213,30 @@ export class MosquePage implements OnInit, AfterViewInit, OnDestroy {
       iconAnchor: [12, 12],
     });
 
+    const popupHtml = `
+      <div style="text-align: center; font-size: 13px; line-height: 1.4;">
+        <strong>${this.isBn() ? '📍 আপনার অবস্থান' : '📍 Your Location'}</strong><br>
+        <span style="font-size: 11px; color: #0f5132;">
+          ${this.isBn() ? 'পিনটি টেনে বা মানচিত্রে ক্লিক করে সঠিক অবস্থান পরিবর্তন করুন' : 'Drag pin or click map to set exact location'}
+        </span>
+      </div>
+    `;
+
     this.userMarker = this.leaflet
-      .marker([lat, lng], { icon: userIcon, zIndexOffset: 1000 })
+      .marker([lat, lng], {
+        icon: userIcon,
+        zIndexOffset: 1000,
+        draggable: true,
+      })
       .addTo(this.map)
-      .bindPopup(`<strong>${this.isBn() ? 'আপনার অবস্থান' : 'Your Location'}</strong>`);
+      .bindPopup(popupHtml);
+
+    this.userMarker.on('dragend', (e: any) => {
+      const pos = e.target.getLatLng();
+      if (pos) {
+        this.setUserCoordinates(pos.lat, pos.lng);
+      }
+    });
   }
 
   private updateMapMarkers(mosques: Mosque[]): void {

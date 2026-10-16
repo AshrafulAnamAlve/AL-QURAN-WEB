@@ -41,7 +41,7 @@
           (click)="openCityModal()"
         >
           <aq-icon name="search" [size]="14" />
-          <span>{{ isBn() ? 'শহর পরিবর্তন' : 'Change City' }}</span>
+          <span>{{ isBn() ? 'অবস্থান পরিবর্তন' : 'Change Location' }}</span>
         </button>
       </div>
     </div>
@@ -98,7 +98,8 @@
             &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors
           </span>
           <span class="map-hint">
-            {{ isBn() ? 'মার্কারে ক্লিক করে দিকনির্দেশনা দেখুন' : 'Click a marker for directions' }}
+            <aq-icon name="mapPin" [size]="14" />
+            <span>{{ isBn() ? 'মানচিত্রে ক্লিক করে বা নীল পিনটি টেনে আপনার সঠিক অবস্থান নির্ধারণ করুন' : 'Click map or drag the blue pin to adjust your location' }}</span>
           </span>
         </div>
       </div>
@@ -205,7 +206,7 @@
     >
       <div class="modal-header">
         <h2 id="modal-city-title" class="modal-title">
-          {{ isBn() ? 'অবস্থান নির্বাচন করুন' : 'Select Location' }}
+          {{ isBn() ? 'অবস্থান বা এলাকা নির্বাচন করুন' : 'Select Location or Area' }}
         </h2>
         <button
           type="button"
@@ -224,11 +225,11 @@
           (click)="useCurrentLocation()"
         >
           <aq-icon name="crosshair" [size]="16" />
-          <span>{{ isBn() ? 'বর্তমান জিপিএস অবস্থান ব্যবহার করুন' : 'Use Current Device Location (GPS)' }}</span>
+          <span>{{ isBn() ? 'সঠিক জিপিএস অবস্থান সনাক্ত করুন' : 'Detect High-Accuracy GPS Location' }}</span>
         </button>
 
         <div class="popular-cities-section">
-          <p class="popular-label">{{ isBn() ? 'জনপ্রিয় শহর:' : 'Popular Cities:' }}</p>
+          <p class="popular-label">{{ isBn() ? 'জনপ্রিয় এলাকা ও শহর:' : 'Popular Areas & Cities:' }}</p>
           <div class="popular-pills">
             @for (city of popularCities; track city.name) {
               <button
@@ -245,7 +246,7 @@
         <div class="city-search-box">
           <aq-filter-field
             [value]="cityQuery()"
-            [placeholder]="isBn() ? 'শহরের নাম লিখুন (যেমন: Chittagong, Sylhet)...' : 'Type city name (e.g. Chittagong, London)...'"
+            [placeholder]="isBn() ? 'এলাকা বা শহরের নাম লিখুন (যেমন: Mirpur, Dhanmondi, Uttara, Chittagong)...' : 'Type area or city (e.g. Mirpur, Dhanmondi, Chittagong)...'"
             (valueChange)="onSearchCity($event)"
           />
         </div>
