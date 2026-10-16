@@ -113,6 +113,20 @@ export class SurahReaderPage {
   protected readonly surah = computed(() => this.detail()?.surah ?? null);
   protected readonly ayahCount = computed(() => this.detail()?.ayahs.length ?? 0);
 
+  protected readonly isSurahLoaded = computed(() => {
+    const detail = this.detail();
+    return !!(detail && this.audio.current()?.surahNumber === detail.surah.number);
+  });
+
+  protected readonly isSurahPlaying = computed(() => {
+    const detail = this.detail();
+    return !!(
+      detail &&
+      this.audio.isPlaying() &&
+      this.audio.current()?.surahNumber === detail.surah.number
+    );
+  });
+
   /** How many ayahs are currently in the DOM. */
   private readonly renderCount = signal(INITIAL_CHUNK);
 
@@ -248,6 +262,28 @@ export class SurahReaderPage {
         });
       }
     });
+  }
+
+  async toggleSurahPlay(): Promise<void> {
+    const detail = this.detail();
+    const queue = this.playbackQueue();
+    if (!detail || !queue || detail.ayahs.length === 0) return;
+
+    this.resumePrompt.set(null);
+
+    const isThisSurah = this.audio.current()?.surahNumber === detail.surah.number;
+    if (isThisSurah) {
+      await this.audio.toggle();
+      return;
+    }
+
+    const saved = this.history.getHistory(detail.surah.number);
+    let targetIndex = 0;
+    if (saved && saved.lastAyahNumber >= 1 && saved.lastAyahNumber <= queue.ayahs.length) {
+      targetIndex = saved.lastAyahNumber - 1;
+    }
+
+    await this.audio.playFrom(queue, targetIndex);
   }
 
   async continueFromHistory(): Promise<void> {

@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { Ayah, Surah, SurahDetail } from '../../../core/models/quran';
+import { AudioPlayerService } from '../../../core/services/audio-player';
 import { QuranApiService } from '../../../core/services/quran-api';
 import { ReadingSettingsService } from '../../../core/services/reading-settings';
 import { SurahHistoryService } from '../../../core/services/surah-history';
@@ -285,5 +286,23 @@ describe('SurahReaderPage', () => {
 
     // Modal is dismissed
     expect(fixture.nativeElement.querySelector('.resume-dialog')).toBeNull();
+  });
+
+  it('renders a prominent audio play button and toggles playback', async () => {
+    localStorage.clear();
+    const fixture = await setup('1', {
+      getSurah: () => of(makeDetail(1, 'Al-Fatihah', 7, null)),
+    });
+
+    const playBtn = fixture.nativeElement.querySelector('.reader__listen-btn') as HTMLButtonElement;
+    expect(playBtn).toBeTruthy();
+    expect(playBtn.textContent).toContain('Play Surah Recitation');
+
+    // Click play button
+    playBtn.click();
+    fixture.detectChanges();
+
+    const audio = TestBed.inject(AudioPlayerService);
+    expect(audio.current()?.surahNumber).toBe(1);
   });
 });

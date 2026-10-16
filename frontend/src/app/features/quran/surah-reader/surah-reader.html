@@ -68,6 +68,34 @@
           </span>
           <span class="aq-chip aq-numeral">{{ data.surah.ayahCount }} {{ isBn() ? 'আয়াত' : 'ayahs' }}</span>
         </div>
+
+        <div class="reader__listen-action">
+          <button
+            type="button"
+            class="reader__listen-btn"
+            [class.reader__listen-btn--playing]="isSurahPlaying()"
+            (click)="toggleSurahPlay()"
+            [attr.aria-label]="isSurahPlaying() ? (isBn() ? 'তিলাওয়াত বিরতি দিন' : 'Pause Recitation') : (isBn() ? 'সূরা তিলাওয়াত শুনুন' : 'Play Surah Recitation')"
+          >
+            <span class="reader__listen-btn__icon">
+              <aq-icon [name]="isSurahPlaying() ? 'pause' : 'play'" [size]="20" />
+            </span>
+            <span class="reader__listen-btn__content">
+              <span class="reader__listen-btn__title">
+                @if (isSurahPlaying()) {
+                  {{ isBn() ? 'তিলাওয়াত চলছে (বিরতি দিন)' : 'Playing Recitation (Pause)' }}
+                } @else if (isSurahLoaded()) {
+                  {{ isBn() ? 'তিলাওয়াত চালু করুন' : 'Resume Recitation' }}
+                } @else {
+                  {{ isBn() ? 'সূরা তিলাওয়াত শুনুন' : 'Play Surah Recitation' }}
+                }
+              </span>
+              <span class="reader__listen-btn__sub">
+                {{ isBn() ? 'সম্পূর্ণ সূরা অডিও শুনুন' : 'Listen to full audio recitation' }}
+              </span>
+            </span>
+          </button>
+        </div>
       </div>
     </header>
 
