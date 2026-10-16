@@ -11,8 +11,20 @@ nearby mosques on a map.
 
 ---
 
+## 🌐 Live URLs
+
+| Service | Live URL | Description |
+| :--- | :--- | :--- |
+| **Frontend Application** | [https://ashrafulanamalve.github.io/AL-QURAN-WEB/](https://ashrafulanamalve.github.io/AL-QURAN-WEB/) | Angular 21 PWA deployed on GitHub Pages |
+| **Backend API** | [https://sirajworld.runasp.net/](https://sirajworld.runasp.net/) | ASP.NET Core Web API on RunASP.NET |
+| **Interactive API Docs (Scalar)** | [https://sirajworld.runasp.net/scalar](https://sirajworld.runasp.net/scalar) | Interactive API explorer & OpenAPI specs |
+| **Database Status** | [https://sirajworld.runasp.net/api/health/database](https://sirajworld.runasp.net/api/health/database) | MS SQL Server health check & EF Core migrations |
+
+---
+
 ## Table of contents
 
+0. [Live URLs](#-live-urls)
 1. [Project overview](#1-project-overview)
 2. [Technology used](#2-technology-used)
 3. [Required software](#3-required-software)
@@ -359,7 +371,7 @@ The build output is static files, so all of these work and have free tiers:
 | **Netlify** | Drag `dist/frontend/browser` onto the dashboard, or connect the repo |
 | **Vercel** | Import the repo, build command `npm run build`, output `dist/frontend/browser` |
 | **Cloudflare Pages** | Same settings as Vercel |
-| **GitHub Pages** | Push the build output; add a `404.html` SPA redirect |
+| **GitHub Pages (Active)** | Run `npm run deploy` inside `frontend/` (or push to `main` via GitHub Actions) |
 
 **Important for any static host:** this is a single-page app, so every unknown
 path must serve `index.html`. On Netlify, add a `_redirects` file containing:
