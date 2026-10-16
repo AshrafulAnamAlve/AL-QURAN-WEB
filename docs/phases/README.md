@@ -1,6 +1,6 @@
 # Development Phases
 
-The project is organized in sixteen phases. Each phase is specified, built and tested
+The project is organized in seventeen phases. Each phase is specified, built and tested
 before the next one starts, so nothing is left half-working underneath.
 
 | Phase | Title | Status |
@@ -21,6 +21,7 @@ before the next one starts, so nothing is left half-working underneath.
 | [14](PHASE-14.md) | Prayer Time Notifications & In-App Adhan Player Modal | ⬜ **Not started** |
 | [15](PHASE-15.md) | Asma-ul-Husna (99 Beautiful Names of Allah) | ⬜ **Not started** |
 | [16](PHASE-16.md) | Daily Dhikr Rotational Advice Modal & Digital Tasbih | ⬜ **Not started** |
+| [17](PHASE-17.md) | Quran Ayah Bangla Pronunciation (উচ্চারণ) | ⬜ **Not started** |
 
 ## How a phase is closed
 
