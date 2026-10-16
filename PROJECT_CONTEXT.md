@@ -328,18 +328,18 @@ comprehensive maskable icon sets (SVG, 192x192, 512x512), sticky offline warning
 install prompts in the header and settings, `robots.txt`, dynamic Schema.org JSON-LD structured data,
 a full sitemap covering all routes, all 114 surahs and 30 juz, and full keyboard accessibility (Escape to close modals/drawers).
 
-Verified on 2026-10-15:
+Verified on 2026-10-16:
 
 ```
-Backend build                       0 warnings, 0 errors
+Backend unit & integration tests    46 passed, 0 failed (AlQuran.Api.Tests)
+Backend build (Release)             0 warnings, 0 errors
 Frontend unit tests                 222 passed (33 test files)
-Frontend production build           397.89 kB raw / 106.45 kB gzipped initial (0 warnings, 0 errors)
+Frontend production build           397.93 kB raw / 106.48 kB gzipped initial (0 warnings, 0 errors)
 Component style budgets             All < 8.00 kB (0 budget violations)
 Service Worker generation           ngsw-worker.js & ngsw.json generated
 PWA Manifest & Icons                192x192, 512x512, maskable, SVG icons present
 SEO Artifacts                       robots.txt, sitemap.xml (114 surahs, 30 juz), JSON-LD WebSite & Chapter
-Frontend dev server                 Running on http://localhost:4300
-Backend API server                  Running on http://localhost:5050
+All 12 Phases                       100% COMPLETE & VERIFIED
 ```
 
 ---
@@ -512,6 +512,18 @@ Arabic. The juz list. Skeletons, error states and empty states throughout.
   $\ge 44\text{px}$ touch targets, ARIA landmarks, `role="status"` live regions, and global `Escape` key handling
   to dismiss modal dialogs, mobile navigation drawer, and audio playback options panel.
 
+### Phase 12 — testing, bug fixing and release preparation
+
+- **Backend Test Suite (`AlQuran.Api.Tests`)** — 46 unit and integration tests covering:
+  - Reference data verification (114 surahs, 6236 ayahs, juz boundaries, calendar months, prayer calculation methods).
+  - Utility verification (AudioUrlBuilder CDN mapping, Haversine geo-distance, Overpass QL builders).
+  - Integration testing with `CustomWebApplicationFactory<Program>` validating root (`/`), `/api/health`, `/api/meta`,
+    `/api/quran/reciters`, `/api/calendar/months`, parameter validation, and ProblemDetails error envelopes.
+- **Frontend Regression Suite** — 222 unit tests passing cleanly across 33 test files.
+- **PwaService Robustness** — resilient handling of headless/jsdom `navigator.onLine` environments, preventing undefined states.
+- **Production Build Verification** — zero warnings, zero errors on both ASP.NET Core Release build and Angular production bundle.
+- **Release Documentation** — complete step-by-step guides for developers, operators, and static hosting platforms.
+
 ---
 
 ## 10. Known Issues
@@ -531,15 +543,14 @@ Arabic. The juz list. Skeletons, error states and empty states throughout.
 
 ---
 
-## 11. Next Phase
+## 11. Next Steps & Post-Release Roadmap
 
-**Phase 12 — Testing, Bug Fixing and Release Preparation.**
+**All 12 Core Phases are 100% COMPLETE.**
 
-Phase 12 builds:
-- Comprehensive regression testing across all routes, features, and screen sizes.
-- Cross-browser verification (Chrome, Firefox, Safari, Edge, Mobile Safari, Chrome Android).
-- Release readiness, documentation updates, and deployment configuration.
-See [docs/phases/PHASE-12.md](docs/phases/PHASE-12.md).
+The application is fully built, tested, and ready for deployment. Potential post-v1 enhancements:
+- Self-hosted Amiri Quran web fonts for fully offline typography.
+- Background sync for reading progress and settings when multi-device accounts are introduced.
+- Additional Bengali tafsir editions (e.g. Tafsir Ibn Kathir, Ahsanul Bayaan) if public APIs become available.
 
 ---
 

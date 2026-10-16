@@ -16,7 +16,7 @@ before the next one starts, so nothing is left half-working underneath.
 | [09](PHASE-09.md) | Nearby Mosques Map | ✅ **Complete** |
 | [10](PHASE-10.md) | Settings, Theme and Responsive Polish | ✅ **Complete** |
 | [11](PHASE-11.md) | PWA, SEO and Accessibility | ✅ **Complete** |
-| [12](PHASE-12.md) | Testing, Bug Fixing and Release Preparation | ⬜ Not started |
+| [12](PHASE-12.md) | Testing, Bug Fixing and Release Preparation | ✅ **Complete** |
 
 ## How a phase is closed
 

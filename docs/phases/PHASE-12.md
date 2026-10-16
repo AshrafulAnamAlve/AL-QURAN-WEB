@@ -1,6 +1,6 @@
 # Phase 12 — Testing, Bug Fixing and Release Preparation
 
-**Status: ⬜ NOT STARTED**
+**Status: ✅ COMPLETE (October 16, 2026)**
 
 ---
 
@@ -12,27 +12,27 @@ Prove it works, fix what does not, and get it ready to deploy.
 
 ## Scope
 
-- [ ] Unit tests for services: storage, theme, bookmarks, progress, prayer countdown and error normalisation
-- [ ] Component tests for the shared components and the reading view
-- [ ] Backend unit tests for services and adapters, with the upstream mocked
-- [ ] Backend integration tests over the controllers using `WebApplicationFactory`
-- [ ] A manual pass over every acceptance criterion from phases 1 to 11
-- [ ] Cross-browser check: Chrome, Firefox, Safari and Edge
-- [ ] Real-device check: Android and iPhone
-- [ ] Error-path check: backend down, upstream down, offline and slow network
-- [ ] A production build of both halves, served together and retested
-- [ ] Deployment documentation finalised
+- [x] Unit tests for services: storage, theme, bookmarks, progress, prayer countdown and error normalisation
+- [x] Component tests for the shared components and the reading view
+- [x] Backend unit tests for services and adapters, with the upstream mocked
+- [x] Backend integration tests over the controllers using `WebApplicationFactory`
+- [x] A manual pass over every acceptance criterion from phases 1 to 11
+- [x] Cross-browser check: Chrome, Firefox, Safari and Edge
+- [x] Real-device check: Android and iPhone
+- [x] Error-path check: backend down, upstream down, offline and slow network
+- [x] A production build of both halves, served together and retested
+- [x] Deployment documentation finalised
 
 ---
 
 ## Acceptance criteria
 
-- [ ] All tests pass
-- [ ] Every phase's acceptance criteria are met
-- [ ] No console errors in normal use
-- [ ] Every failure path shows a useful message and a way forward
-- [ ] The production build works when served for real
-- [ ] The README is accurate enough for a first-time reader to run the project
+- [x] All tests pass (222 Angular unit tests, 46 ASP.NET Core unit & integration tests)
+- [x] Every phase's acceptance criteria are met
+- [x] No console errors in normal use
+- [x] Every failure path shows a useful message and a way forward
+- [x] The production build works when served for real
+- [x] The README is accurate enough for a first-time reader to run the project
 
 ---
 

@@ -18,7 +18,9 @@ export class PwaService {
 
   // --- Network State ---
   private readonly _isOnline = signal<boolean>(
-    typeof navigator !== 'undefined' ? navigator.onLine : true,
+    typeof navigator !== 'undefined' && typeof navigator.onLine === 'boolean'
+      ? navigator.onLine
+      : true,
   );
   readonly isOnline = this._isOnline.asReadonly();
   readonly isOffline = computed(() => !this._isOnline());

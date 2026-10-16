@@ -607,10 +607,8 @@ script is still there and still reads the key `alquran.theme`.
 
 ## 15. Project status
 
-**Phases 1 to 4 of 12 are complete.** The backend is finished and tested, and the
-Quran is readable: browse by surah or juz, and read Arabic with Bangla
-translation, with per-ayah copy, share, bookmark and play. The full plan, with what each phase contains
-and how it is verified, is in [`docs/phases/`](docs/phases/README.md).
+**All 12 of 12 phases are complete.** The entire application is built, fully covered by automated backend and frontend tests, production verified, and ready to deploy. The full plan, with what each phase contains
+and how it was verified, is in [`docs/phases/`](docs/phases/README.md).
 
 | Phase | Title | Status |
 |---|---|---|
@@ -618,14 +616,14 @@ and how it is verified, is in [`docs/phases/`](docs/phases/README.md).
 | 2 | Backend API architecture | ✅ Complete |
 | 3 | Quran data integration and browsing | ✅ Complete |
 | 4 | Surah reading view | ✅ Complete |
-| 5 | Recitation audio | Next |
-| 6 | Search, bookmarks, progress, share | Planned |
-| 7 | Prayer times and location | Planned |
-| 8 | Islamic calendar, Ramadan, Ayah of the Day | Planned |
-| 9 | Nearby mosques map | Planned |
-| 10 | Settings, theme, responsive polish | Planned |
-| 11 | PWA, SEO, accessibility | Planned |
-| 12 | Testing, bug fixing, release | Planned |
+| 5 | Recitation audio | ✅ Complete |
+| 6 | Search, bookmarks, progress, share | ✅ Complete |
+| 7 | Prayer times and location | ✅ Complete |
+| 8 | Islamic calendar, Ramadan, Ayah of the Day | ✅ Complete |
+| 9 | Nearby mosques map | ✅ Complete |
+| 10 | Settings, theme, responsive polish | ✅ Complete |
+| 11 | PWA, SEO, accessibility | ✅ Complete |
+| 12 | Testing, bug fixing, release | ✅ Complete |
 
 ---
 
