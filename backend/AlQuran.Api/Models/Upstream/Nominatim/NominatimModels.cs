@@ -12,6 +12,12 @@ public sealed class NominatimPlace
     [JsonPropertyName("place_id")]
     public long PlaceId { get; set; }
 
+    [JsonPropertyName("osm_type")]
+    public string? OsmType { get; set; }
+
+    [JsonPropertyName("osm_id")]
+    public long? OsmId { get; set; }
+
     /// <summary>Latitude, sent as a string by the provider.</summary>
     [JsonPropertyName("lat")]
     public string Latitude { get; set; } = string.Empty;
@@ -49,6 +55,15 @@ public sealed class NominatimPlace
 /// <summary>Structured address parts. Every field is optional in practice.</summary>
 public sealed class NominatimAddress
 {
+    [JsonPropertyName("road")]
+    public string? Road { get; set; }
+
+    [JsonPropertyName("neighbourhood")]
+    public string? Neighbourhood { get; set; }
+
+    [JsonPropertyName("suburb")]
+    public string? Suburb { get; set; }
+
     [JsonPropertyName("city")]
     public string? City { get; set; }
 
