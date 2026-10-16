@@ -47,12 +47,13 @@ import { PRIMARY_NAV_ITEMS } from '../nav-items';
       bottom: 0;
       left: 0;
       right: 0;
-      @include m.z(sticky);
-      background: color-mix(in srgb, var(--aq-surface) 94%, transparent);
-      backdrop-filter: blur(10px);
+      z-index: 500;
+      background: color-mix(in srgb, var(--aq-surface) 96%, transparent);
+      backdrop-filter: blur(12px);
       border-top: 1px solid var(--aq-border);
       // Clears the iPhone home indicator.
       padding-bottom: env(safe-area-inset-bottom, 0);
+      pointer-events: auto;
     }
 
     ul {
@@ -60,6 +61,8 @@ import { PRIMARY_NAV_ITEMS } from '../nav-items';
       grid-auto-flow: column;
       grid-auto-columns: 1fr;
       margin: 0;
+      padding: 0;
+      list-style: none;
     }
 
     a {
@@ -74,6 +77,10 @@ import { PRIMARY_NAV_ITEMS } from '../nav-items';
       font-size: 0.6875rem;
       font-weight: 600;
       text-decoration: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      pointer-events: auto;
+      cursor: pointer;
       transition: color var(--aq-duration-fast) var(--aq-ease);
 
       @include m.focus-visible(-2px);

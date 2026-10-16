@@ -208,7 +208,7 @@
   position: fixed;
   inset: 0;
   background: var(--aq-overlay);
-  @include m.z(overlay);
+  z-index: 540;
   animation: fade-in var(--aq-duration) var(--aq-ease);
 
   @include m.up(lg) {
@@ -233,7 +233,8 @@
   transition:
     transform var(--aq-duration) var(--aq-ease),
     visibility var(--aq-duration) var(--aq-ease);
-  @include m.z(drawer);
+  z-index: 550;
+  pointer-events: auto;
 
   &--open {
     transform: translateX(0);

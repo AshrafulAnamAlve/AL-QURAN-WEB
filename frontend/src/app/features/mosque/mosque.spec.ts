@@ -8,6 +8,7 @@ import { LocationApiService } from '../../core/services/location-api';
 import { MosqueApiService } from '../../core/services/mosque-api';
 import { MosqueService } from '../../core/services/mosque';
 import { PrayerApiService } from '../../core/services/prayer-api';
+import { LanguageService } from '../../core/services/language';
 import { MosquePage } from './mosque';
 
 describe('MosquePage', () => {
@@ -67,6 +68,8 @@ describe('MosquePage', () => {
       ],
     }).compileComponents();
 
+    const langService = TestBed.inject(LanguageService);
+    langService.setLanguage('en');
     mosqueService = TestBed.inject(MosqueService);
     fixture = TestBed.createComponent(MosquePage);
     component = fixture.componentInstance;

@@ -164,8 +164,10 @@ export class MosquePage implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.leaflet
-      .tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      .tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        subdomains: ['a', 'b', 'c'],
         maxZoom: 19,
+        crossOrigin: true,
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
       })
@@ -185,10 +187,10 @@ export class MosquePage implements OnInit, AfterViewInit, OnDestroy {
       this.updateMapMarkers(this.mosques());
     }
 
-    // Invalidate size once rendered
-    setTimeout(() => {
-      this.map?.invalidateSize();
-    }, 200);
+    // Invalidate size once rendered and after layout stabilizes
+    setTimeout(() => this.map?.invalidateSize(), 100);
+    setTimeout(() => this.map?.invalidateSize(), 300);
+    setTimeout(() => this.map?.invalidateSize(), 800);
   }
 
   async setUserCoordinates(lat: number, lng: number): Promise<void> {

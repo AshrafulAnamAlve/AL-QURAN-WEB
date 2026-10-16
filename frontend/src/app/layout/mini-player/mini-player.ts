@@ -55,27 +55,31 @@ import { IconComponent } from '../../shared/components/icon/icon';
       position: fixed;
       left: 0;
       right: 0;
-      // Clears the bottom navigation on phones; sits on the floor from lg up,
-      // where the bottom navigation is hidden.
-      bottom: var(--aq-bottom-nav-height);
-      @include m.z(player);
-      background: color-mix(in srgb, var(--aq-surface) 96%, transparent);
-      backdrop-filter: blur(12px);
+      bottom: calc(var(--aq-bottom-nav-height) + env(safe-area-inset-bottom, 0));
+      z-index: 520;
+      background: color-mix(in srgb, var(--aq-surface) 97%, transparent);
+      backdrop-filter: blur(14px);
       border-top: 1px solid var(--aq-border);
-      box-shadow: var(--aq-shadow-lg);
-      padding-bottom: env(safe-area-inset-bottom, 0);
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
 
       @include m.up(lg) {
         bottom: 0;
+        padding-bottom: env(safe-area-inset-bottom, 0);
       }
     }
 
     .mini__inner {
       @include m.container;
+      position: relative;
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       gap: 0.5rem;
       padding-block: 0.5rem;
+      padding-right: 3rem; // Always reserves space for the close button on phones
+
+      @include m.up(md) {
+        padding-right: 1.5rem;
+      }
 
       aq-audio-player {
         flex: 1 1 auto;
@@ -84,8 +88,31 @@ import { IconComponent } from '../../shared/components/icon/icon';
     }
 
     .mini__close {
-      flex: 0 0 auto;
-      margin-top: 0.125rem;
+      position: absolute;
+      top: 0.5rem;
+      right: 0.625rem;
+      z-index: 10;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      min-height: 32px;
+      border-radius: var(--aq-radius-pill);
+      background: color-mix(in srgb, var(--aq-surface-2) 90%, transparent);
+      border: 1px solid var(--aq-border);
+      color: var(--aq-text);
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: all var(--aq-duration-fast) var(--aq-ease);
+
+      &:hover,
+      &:focus-visible {
+        background: var(--aq-danger-soft);
+        color: var(--aq-danger);
+        border-color: var(--aq-danger);
+      }
     }
 
     // Holds the bar's height for the moment the controls take to arrive, so the
