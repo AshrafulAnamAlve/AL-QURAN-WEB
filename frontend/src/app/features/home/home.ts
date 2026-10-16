@@ -1,40 +1,27 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { UpstreamHealthReport } from '../../core/models/app-info';
-import { dataOf, errorOf } from '../../core/models/async-state';
 import { LocationService } from '../../core/services/location';
-import { MetaApiService } from '../../core/services/meta-api';
 import { PrayerTimesService } from '../../core/services/prayer';
 import { DailyAyahService } from '../../core/services/daily-ayah';
 import { LanguageService } from '../../core/services/language';
 import { ReadingPositionService } from '../../core/services/reading-position';
 import { ReadingProgressService } from '../../core/services/reading-progress';
-import { createAsyncResource } from '../../core/utils/async-resource';
-import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 import { IconComponent } from '../../shared/components/icon/icon';
-import { SkeletonComponent } from '../../shared/components/skeleton/skeleton';
 
 /**
  * Landing page.
  *
- * Phase 1 ships the greeting, the date and the quick actions, plus a setup
- * check that calls the backend so the whole Angular -> ASP.NET Core -> external
- * API chain is verifiable from the browser. Prayer times, the Hijri date,
- * Continue Reading and Ayah of the Day arrive in phases 6 to 8 and take the
- * place of the setup check.
- *
- * The three derived signals below (busy / error / report) are the pattern every
- * data-driven screen in this app follows: one resource, three views of it.
+ * Displays the greeting, today's date, quick action links, next prayer countdown,
+ * resume reading progress, Ayah of the Day, and the full Islamic features showcase.
  */
 @Component({
   selector: 'aq-home-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IconComponent, ErrorStateComponent, SkeletonComponent],
+  imports: [RouterLink, IconComponent],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
 export class HomePage {
-  private readonly metaApi = inject(MetaApiService);
   private readonly readingPosition = inject(ReadingPositionService);
   private readonly readingProgress = inject(ReadingProgressService);
   protected readonly prayerTimes = inject(PrayerTimesService);
@@ -61,31 +48,6 @@ export class HomePage {
   readonly isDailyBookmarked = this.dailyAyahService.isBookmarked;
   readonly shareOutcome = signal<string | null>(null);
 
-  private readonly upstreams = createAsyncResource<UpstreamHealthReport>(() =>
-    this.metaApi.getUpstreamHealth(),
-  );
-
-  protected readonly busy = computed(() => {
-    const status = this.upstreams.state().status;
-    return status === 'idle' || status === 'loading';
-  });
-
-  protected readonly error = computed(() => errorOf(this.upstreams.state()));
-  protected readonly report = computed(() => dataOf(this.upstreams.state()));
-
-  /** Placeholder rows rendered while the check runs. */
-  protected readonly skeletonRows = [1, 2, 3, 4, 5];
-
-  protected readonly healthyCount = computed(
-    () => this.report()?.upstreams.filter((u) => u.healthy).length ?? 0,
-  );
-
-  protected readonly totalCount = computed(() => this.report()?.upstreams.length ?? 0);
-
-  protected readonly allHealthy = computed(
-    () => this.totalCount() > 0 && this.healthyCount() === this.totalCount(),
-  );
-
   /** Today's date, formatted in the browser's own locale. */
   protected readonly today = computed(() =>
     new Intl.DateTimeFormat(undefined, {
@@ -95,10 +57,6 @@ export class HomePage {
       year: 'numeric',
     }).format(new Date()),
   );
-
-  retry(): void {
-    this.upstreams.reload();
-  }
 
   formatTime12h(time24: string | undefined): string {
     return this.prayerTimes.format12h(time24, this.isBn());

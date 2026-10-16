@@ -197,4 +197,12 @@ describe('HomePage', () => {
     expect(dailyCard?.textContent).toContain('Al-Baqarah');
     expect(dailyCard?.textContent).toContain('255');
   });
+
+  it('renders explore features grid with navigation cards', () => {
+    const el: HTMLElement = fixture.nativeElement;
+    const exploreSection = el.querySelector('.explore-section');
+    expect(exploreSection).not.toBeNull();
+    const cards = el.querySelectorAll('.explore-card');
+    expect(cards.length).toBe(6);
+  });
 });
