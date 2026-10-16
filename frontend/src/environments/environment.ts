@@ -17,10 +17,10 @@ export const environment = {
    * 'https://alquran-api.example.com/api', and add that frontend origin to
    * Cors:AllowedOrigins in the backend appsettings.json.
    */
-  apiBaseUrl: '/api',
+  apiBaseUrl: 'https://sirajworld.runasp.net/api',
 
   appName: 'Al-Quran',
-  appUrl: 'https://alquran.example.com',
+  appUrl: 'https://ashrafulanamalve.github.io/AL-QURAN-WEB',
 
   /**
    * Recitation audio is streamed straight from the public CDN to the browser.
