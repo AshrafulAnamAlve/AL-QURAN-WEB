@@ -252,6 +252,9 @@ export const STORAGE_KEYS = {
   language: 'language',
   reciter: 'reciter',
   audio: 'audio',
+  surahHistory: 'surahHistory',
+  dailyTasks: 'dailyTasks',
+  habitHistory: 'habitHistory',
 } as const;
 
 export interface StorageUsage {

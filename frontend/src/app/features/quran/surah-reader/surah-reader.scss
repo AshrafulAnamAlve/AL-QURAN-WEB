@@ -49,3 +49,63 @@
   // Slightly smaller than the ayah text, so it reads as a heading not a verse.
   font-size: calc(var(--aq-arabic-size) * 0.85);
 }
+
+// --- Resume Prompt Modal ---------------------------------------------------
+.resume-backdrop {
+  z-index: 650;
+  animation: fade-in var(--aq-duration) var(--aq-ease);
+}
+
+.resume-dialog {
+  max-width: 440px;
+  animation: slide-up var(--aq-duration) var(--aq-ease);
+
+  &__title-box {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    color: var(--aq-primary);
+  }
+
+  &__message {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--aq-text);
+
+    strong {
+      color: var(--aq-primary);
+      font-weight: 700;
+    }
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-block: 0.25rem 0.5rem;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    margin-top: 0.5rem;
+  }
+}
+
+// Visual flash highlight when scrolling to resumed ayah
+:global(.ayah--resumed) {
+  animation: aq-resume-flash 2.5s ease-out;
+}
+
+@keyframes aq-resume-flash {
+  0% {
+    background-color: color-mix(in srgb, var(--aq-accent) 40%, transparent);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+

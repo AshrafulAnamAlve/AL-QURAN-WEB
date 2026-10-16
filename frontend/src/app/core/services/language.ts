@@ -217,6 +217,32 @@ export const TRANSLATIONS = {
     en: 'Application installed successfully!',
     bn: 'অ্যাপটি সফলভাবে ইনস্টল করা হয়েছে!',
   },
+
+  // Resume Surah Reading / Listening Prompt Modal
+  'resume.title': {
+    en: 'Resume Reading or Listening?',
+    bn: 'পড়া বা শোনা চালিয়ে যাবেন?',
+  },
+  'resume.readingPrompt': {
+    en: 'You were previously reading this Surah at Ayah',
+    bn: 'আপনি পূর্বে এই সূরার আয়াত নম্বর',
+  },
+  'resume.listeningPrompt': {
+    en: 'You were previously listening to this Surah at Ayah',
+    bn: 'আপনি পূর্বে এই সূরার তিলাওয়াত শুনছিলেন আয়াত নম্বর',
+  },
+  'resume.continueAction': {
+    en: 'Continue from Ayah',
+    bn: 'নম্বর আয়াত থেকে শুরু করুন',
+  },
+  'resume.restartAction': {
+    en: 'Start from Beginning',
+    bn: 'প্রথম থেকে শুরু করুন',
+  },
+  'resume.dismiss': {
+    en: 'Dismiss',
+    bn: 'বন্ধ করুন',
+  },
 } as const;
 
 export type TranslationKey = keyof typeof TRANSLATIONS;

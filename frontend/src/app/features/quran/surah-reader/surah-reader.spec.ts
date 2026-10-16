@@ -5,6 +5,7 @@ import { of, throwError } from 'rxjs';
 import { Ayah, Surah, SurahDetail } from '../../../core/models/quran';
 import { QuranApiService } from '../../../core/services/quran-api';
 import { ReadingSettingsService } from '../../../core/services/reading-settings';
+import { SurahHistoryService } from '../../../core/services/surah-history';
 import { SurahReaderPage } from './surah-reader';
 
 const BISMILLAH = 'بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ';
@@ -250,5 +251,39 @@ describe('SurahReaderPage', () => {
     });
 
     expect(fixture.nativeElement.textContent).toContain('Sajda');
+  });
+
+  it('shows resume prompt when returning to a surah with existing progress', async () => {
+    localStorage.setItem(
+      'alquran.surahHistory',
+      JSON.stringify({
+        1: {
+          surahNumber: 1,
+          surahEnglishName: 'Al-Fatihah',
+          surahBanglaName: 'আল-ফাতিহা',
+          lastAyahNumber: 5,
+          totalAyahs: 7,
+          lastMode: 'listen',
+          updatedAt: new Date().toISOString(),
+        },
+      }),
+    );
+
+    const fixture = await setup('1', {
+      getSurah: () => of(makeDetail(1, 'Al-Fatihah', 7, null)),
+    });
+
+    const modal = fixture.nativeElement.querySelector('.resume-dialog');
+    expect(modal).not.toBeNull();
+    expect(modal.textContent).toContain('5');
+
+    // Click continue button
+    const continueBtn = modal.querySelector('.aq-btn--primary') as HTMLButtonElement;
+    expect(continueBtn).not.toBeNull();
+    continueBtn.click();
+    fixture.detectChanges();
+
+    // Modal is dismissed
+    expect(fixture.nativeElement.querySelector('.resume-dialog')).toBeNull();
   });
 });

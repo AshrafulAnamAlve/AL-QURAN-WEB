@@ -18,6 +18,8 @@ import { QURAN_TOTALS } from '../../../core/models/quran';
 import { QuranApiService } from '../../../core/services/quran-api';
 import { ReadingPositionService } from '../../../core/services/reading-position';
 import { ReadingProgressService } from '../../../core/services/reading-progress';
+import { AudioPlayerService } from '../../../core/services/audio-player';
+import { SurahHistoryItem, SurahHistoryService } from '../../../core/services/surah-history';
 import { LanguageService } from '../../../core/services/language';
 import { SeoService } from '../../../core/services/seo';
 import { createDependentAsyncResource } from '../../../core/utils/async-resource';
@@ -65,9 +67,12 @@ export class SurahReaderPage {
   private readonly seo = inject(SeoService);
   private readonly readingPosition = inject(ReadingPositionService);
   private readonly readingProgress = inject(ReadingProgressService);
+  private readonly history = inject(SurahHistoryService);
+  private readonly audio = inject(AudioPlayerService);
   private readonly lang = inject(LanguageService);
 
   protected readonly isBn = this.lang.isBn;
+  readonly resumePrompt = signal<SurahHistoryItem | null>(null);
 
   /** Bound from the :surahNumber route parameter. */
   readonly surahNumber = input.required<string>();
@@ -206,6 +211,92 @@ export class SurahReaderPage {
         });
       }
     });
+
+    // Check for previous reading or listening progress to offer resume prompt
+    effect(() => {
+      const detail = this.detail();
+      if (!detail) return;
+
+      untracked(() => {
+        const frag = this.route.snapshot.fragment;
+        // Do not prompt if arrived with an explicit deep link fragment
+        if (frag && frag.startsWith('ayah-')) {
+          return;
+        }
+
+        const saved = this.history.getHistory(detail.surah.number);
+        if (saved && saved.lastAyahNumber > 1 && saved.lastAyahNumber <= detail.surah.ayahCount) {
+          this.resumePrompt.set(saved);
+        }
+      });
+    });
+
+    // Automatically track audio recitation playback into history
+    effect(() => {
+      const current = this.audio.current();
+      const detail = this.detail();
+      if (current && detail && current.surahNumber === detail.surah.number) {
+        untracked(() => {
+          this.history.record(
+            detail.surah.number,
+            detail.surah.englishName,
+            detail.surah.banglaName,
+            current.numberInSurah,
+            detail.surah.ayahCount,
+            'listen',
+          );
+        });
+      }
+    });
+  }
+
+  async continueFromHistory(): Promise<void> {
+    const prompt = this.resumePrompt();
+    if (!prompt) return;
+
+    const ayahNum = prompt.lastAyahNumber;
+    const isListen = prompt.lastMode === 'listen';
+    this.resumePrompt.set(null);
+
+    requestAnimationFrame(() => {
+      const target = this.document.getElementById(`ayah-${ayahNum}`);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        target.classList.add('ayah--resumed');
+        setTimeout(() => target.classList.remove('ayah--resumed'), 2500);
+      }
+    });
+
+    if (isListen) {
+      const globalNumber = this.detail()?.ayahs.find((a) => a.numberInSurah === ayahNum)?.globalNumber;
+      if (globalNumber) {
+        await this.audio.toggleAyah(globalNumber);
+      }
+    }
+  }
+
+  startFromBeginning(): void {
+    const detail = this.detail();
+    this.resumePrompt.set(null);
+    if (detail) {
+      this.history.record(
+        detail.surah.number,
+        detail.surah.englishName,
+        detail.surah.banglaName,
+        1,
+        detail.surah.ayahCount,
+        'read',
+      );
+    }
+    this.document.getElementById('ayah-1')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  dismissResumePrompt(): void {
+    this.resumePrompt.set(null);
+  }
+
+  toBnDigits(val: string | number): string {
+    return String(val).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[parseInt(d, 10)]);
   }
 
   retry(): void {

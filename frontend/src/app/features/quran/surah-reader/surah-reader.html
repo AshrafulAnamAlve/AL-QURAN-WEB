@@ -124,4 +124,80 @@
       </nav>
     </div>
   }
+
+  <!-- Resume Reading / Listening Prompt Modal -->
+  @if (resumePrompt(); as resume) {
+    <div
+      class="aq-modal-backdrop resume-backdrop"
+      (click)="dismissResumePrompt()"
+      role="presentation"
+    >
+      <div
+        class="aq-modal resume-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="resume-title"
+        (click)="$event.stopPropagation()"
+      >
+        <header class="aq-modal__header">
+          <div class="resume-dialog__title-box">
+            <aq-icon [name]="resume.lastMode === 'listen' ? 'volume' : 'bookOpen'" [size]="20" />
+            <h2 id="resume-title" class="aq-modal__title">
+              {{ isBn() ? 'পড়া বা শোনা চালিয়ে যান' : 'Resume Where You Left Off' }}
+            </h2>
+          </div>
+          <button
+            type="button"
+            class="aq-icon-btn"
+            [attr.aria-label]="isBn() ? 'বন্ধ করুন' : 'Dismiss'"
+            (click)="dismissResumePrompt()"
+          >
+            <aq-icon name="close" [size]="18" />
+          </button>
+        </header>
+
+        <div class="aq-modal__body">
+          <p class="resume-dialog__message">
+            @if (isBn()) {
+              আপনি পূর্বে এই সূরার <strong>{{ toBnDigits(resume.lastAyahNumber) }}</strong> নম্বর আয়াত পর্যন্ত {{ resume.lastMode === 'listen' ? 'তিলাওয়াত শুনছিলেন' : 'পড়ছিলেন' }}। আপনি কি সেখান থেকেই শুরু করবেন, নাকি প্রথম থেকে শুরু করবেন?
+            } @else {
+              You were previously {{ resume.lastMode === 'listen' ? 'listening to' : 'reading' }} this Surah at Ayah <strong>{{ resume.lastAyahNumber }}</strong>. Would you like to continue from there or start from the beginning?
+            }
+          </p>
+
+          <div class="resume-dialog__meta">
+            <span class="aq-chip aq-chip--primary">
+              <aq-icon [name]="resume.lastMode === 'listen' ? 'play' : 'bookOpen'" [size]="14" />
+              <span>{{ isBn() ? (resume.lastMode === 'listen' ? 'পূর্ববর্তী তিলাওয়াত' : 'পূর্ববর্তী পাঠ') : (resume.lastMode === 'listen' ? 'Listening' : 'Reading') }}</span>
+            </span>
+            <span class="aq-chip">
+              <span>{{ isBn() ? 'আয়াত ' + toBnDigits(resume.lastAyahNumber) + ' / ' + toBnDigits(resume.totalAyahs) : 'Ayah ' + resume.lastAyahNumber + ' of ' + resume.totalAyahs }}</span>
+            </span>
+          </div>
+
+          <div class="resume-dialog__actions">
+            <button
+              type="button"
+              class="aq-btn aq-btn--primary aq-btn--block"
+              (click)="continueFromHistory()"
+            >
+              <aq-icon [name]="resume.lastMode === 'listen' ? 'play' : 'chevronRight'" [size]="16" />
+              <span>
+                {{ isBn() ? toBnDigits(resume.lastAyahNumber) + ' নম্বর আয়াত থেকে চালিয়ে যান' : 'Continue from Ayah ' + resume.lastAyahNumber }}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              class="aq-btn aq-btn--secondary aq-btn--block"
+              (click)="startFromBeginning()"
+            >
+              <aq-icon name="refresh" [size]="16" />
+              <span>{{ isBn() ? 'প্রথম থেকে শুরু করুন' : 'Start from Beginning' }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
 </div>

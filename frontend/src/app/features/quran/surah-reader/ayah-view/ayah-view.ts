@@ -5,6 +5,7 @@ import { BookmarkService } from '../../../../core/services/bookmarks';
 import { ReadingPositionService } from '../../../../core/services/reading-position';
 import { ReadingProgressService } from '../../../../core/services/reading-progress';
 import { ReadingSettingsService } from '../../../../core/services/reading-settings';
+import { SurahHistoryService } from '../../../../core/services/surah-history';
 import { ShareService } from '../../../../core/services/share';
 import { IconComponent } from '../../../../shared/components/icon/icon';
 
@@ -29,6 +30,7 @@ export class AyahViewComponent {
   private readonly share = inject(ShareService);
   private readonly readingPosition = inject(ReadingPositionService);
   private readonly readingProgress = inject(ReadingProgressService);
+  private readonly history = inject(SurahHistoryService);
 
   readonly ayah = input.required<Ayah>();
   readonly surahEnglishName = input.required<string>();
@@ -90,7 +92,7 @@ export class AyahViewComponent {
       : `Bookmark ayah ${this.reference()}`,
   );
 
-  recordPosition(): void {
+  recordPosition(mode: 'read' | 'listen' = 'read'): void {
     const a = this.ayah();
     this.readingPosition.save({
       surahNumber: a.surahNumber,
@@ -99,10 +101,18 @@ export class AyahViewComponent {
       ayahNumber: a.numberInSurah,
     });
     this.readingProgress.markRead(a.globalNumber);
+    this.history.record(
+      a.surahNumber,
+      this.surahEnglishName(),
+      this.surahBanglaName() || '',
+      a.numberInSurah,
+      0,
+      mode,
+    );
   }
 
   async togglePlay(): Promise<void> {
-    this.recordPosition();
+    this.recordPosition('listen');
     // The player works on the page's queue, so playing one ayah also sets up
     // auto-advance through the rest of the surah.
     await this.audio.toggleAyah(this.ayah().globalNumber);
