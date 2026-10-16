@@ -1,0 +1,1 @@
+var e=["offline","timeout","rate_limited","upstream_unavailable","upstream_timeout","server_error"];function o(r){return typeof r=="object"&&r!==null&&"code"in r&&"message"in r&&"retryable"in r}export{e as a,o as b};
