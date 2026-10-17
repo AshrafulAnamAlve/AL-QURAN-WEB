@@ -179,16 +179,15 @@
   overflow: hidden;
   z-index: 1;
 
-  :deep(.leaflet-container),
-  .leaflet-container {
+  &.leaflet-container {
     width: 100%;
     height: 100%;
-    background: transparent;
+    background: var(--aq-surface-2);
     font-family: inherit;
   }
 
   @media (max-width: 600px) {
-    height: 320px;
+    height: 340px;
   }
 }
 
@@ -303,9 +302,27 @@
 
 // --- Leaflet Custom Markers & Popups ---------------------------------------
 :host ::ng-deep {
+  .leaflet-tile {
+    max-width: none !important;
+    max-height: none !important;
+  }
+
   .aq-map-marker {
     background: transparent;
     border: none;
+  }
+
+  .mosque-marker-pin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.4));
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.15) translateY(-2px);
+    }
   }
 
   .user-marker-dot {

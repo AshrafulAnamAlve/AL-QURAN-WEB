@@ -90,6 +90,7 @@ export class MosquePage implements OnInit, AfterViewInit, OnDestroy {
   private userMarker: any = null;
   private markersMap = new Map<string, any>();
   private leaflet: any = null;
+  private resizeObserver: ResizeObserver | null = null;
 
   constructor() {
     // When mosques change, update map markers
@@ -134,14 +135,20 @@ export class MosquePage implements OnInit, AfterViewInit, OnDestroy {
     if (typeof window === 'undefined') return;
 
     try {
-      this.leaflet = await import('leaflet');
+      const leafletModule: any = await import('leaflet');
+      // In Angular/esbuild bundle, Leaflet default export contains L (map, tileLayer, divIcon, marker)
+      this.leaflet = leafletModule.default || leafletModule || (window as any).L;
       this.initMap();
-    } catch {
-      /* Graceful fallback if leaflet cannot load */
+    } catch (err) {
+      console.error('Failed to initialize Leaflet map:', err);
     }
   }
 
   ngOnDestroy(): void {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
+    }
     if (this.map) {
       this.map.remove();
       this.map = null;
@@ -164,20 +171,22 @@ export class MosquePage implements OnInit, AfterViewInit, OnDestroy {
     });
 
     const primaryUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-    const fallbackUrl = 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png';
+    const fallbackUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
     const tiles = this.leaflet
       .tileLayer(primaryUrl, {
         subdomains: ['a', 'b', 'c', 'd'],
-        maxZoom: 20,
+        maxZoom: 19,
         crossOrigin: true,
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>',
       })
       .addTo(this.map);
 
+    let errorCount = 0;
     tiles.on('tileerror', () => {
-      if ((tiles as any).setUrl && !(tiles as any)._hasFallenBack) {
+      errorCount++;
+      if (errorCount > 3 && (tiles as any).setUrl && !(tiles as any)._hasFallenBack) {
         (tiles as any)._hasFallenBack = true;
         (tiles as any).setUrl(fallbackUrl);
       }
@@ -195,6 +204,18 @@ export class MosquePage implements OnInit, AfterViewInit, OnDestroy {
     // Initial markers if already loaded
     if (this.mosques().length > 0) {
       this.updateMapMarkers(this.mosques());
+    }
+
+    const selected = this.selectedMosque();
+    if (selected) {
+      this.focusMosqueOnMap(selected);
+    }
+
+    if (typeof ResizeObserver !== 'undefined' && container) {
+      this.resizeObserver = new ResizeObserver(() => {
+        this.map?.invalidateSize();
+      });
+      this.resizeObserver.observe(container);
     }
 
     // Invalidate size once rendered and after layout stabilizes
