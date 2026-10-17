@@ -330,6 +330,10 @@ export class MosquePage implements OnInit, AfterViewInit, OnDestroy {
     if (marker) {
       marker.openPopup();
     }
+    const container = this.mapContainer()?.nativeElement;
+    if (container && typeof window !== 'undefined' && window.innerWidth < 900) {
+      container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
   }
 
   // --- Radius Selection ----------------------------------------------------
