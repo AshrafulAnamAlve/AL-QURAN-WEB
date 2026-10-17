@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1792249606542,
+  "timestamp": 1792257483931,
   "index": "/AL-QURAN-WEB/index.html",
   "assetGroups": [
     {
@@ -12,7 +12,6 @@
       },
       "urls": [
         "/AL-QURAN-WEB/chunk-2FGPID3V.js",
-        "/AL-QURAN-WEB/chunk-2HQPEGQS.js",
         "/AL-QURAN-WEB/chunk-2ZAPYSAS.js",
         "/AL-QURAN-WEB/chunk-4G6KJ2UM.js",
         "/AL-QURAN-WEB/chunk-4GKFY5DU.js",
@@ -41,6 +40,7 @@
         "/AL-QURAN-WEB/chunk-NKDZ6KPE.js",
         "/AL-QURAN-WEB/chunk-NPYPJBU4.js",
         "/AL-QURAN-WEB/chunk-NS3ZAQUW.js",
+        "/AL-QURAN-WEB/chunk-NUEJ42JE.js",
         "/AL-QURAN-WEB/chunk-QMWMAHEZ.js",
         "/AL-QURAN-WEB/chunk-RSNCLUPB.js",
         "/AL-QURAN-WEB/chunk-RYCMV46U.js",
@@ -53,7 +53,7 @@
         "/AL-QURAN-WEB/chunk-YY4LRDSR.js",
         "/AL-QURAN-WEB/favicon.ico",
         "/AL-QURAN-WEB/index.html",
-        "/AL-QURAN-WEB/main-IAMRBWDO.js",
+        "/AL-QURAN-WEB/main-4MBPETXO.js",
         "/AL-QURAN-WEB/manifest.webmanifest",
         "/AL-QURAN-WEB/robots.txt",
         "/AL-QURAN-WEB/sitemap.xml",
@@ -114,7 +114,6 @@
   ],
   "hashTable": {
     "/AL-QURAN-WEB/chunk-2FGPID3V.js": "4ffa6f73e9ddb47858a8b61d1a02815bae221f78",
-    "/AL-QURAN-WEB/chunk-2HQPEGQS.js": "ed656eed1862f0b82a7ea62c3ec066d4949a3f32",
     "/AL-QURAN-WEB/chunk-2ZAPYSAS.js": "5f53c9b3aec27a5baee29fd6816384e6cffaea46",
     "/AL-QURAN-WEB/chunk-4G6KJ2UM.js": "cbe0430369d5121414e471f770bdaa3346b7fee1",
     "/AL-QURAN-WEB/chunk-4GKFY5DU.js": "a2415ed0ca865f7c78f04f8aa6e41920569bec3b",
@@ -143,6 +142,7 @@
     "/AL-QURAN-WEB/chunk-NKDZ6KPE.js": "03f20fea99fcd266490e721f33fdf308bc223314",
     "/AL-QURAN-WEB/chunk-NPYPJBU4.js": "114d2efcf9bc0b5d8b4758dde4c71c69d3a3e817",
     "/AL-QURAN-WEB/chunk-NS3ZAQUW.js": "6926b7973545fd315676128d39c9a9a4a72450f7",
+    "/AL-QURAN-WEB/chunk-NUEJ42JE.js": "685966e0ab5c38386b76980d20c51582843a5564",
     "/AL-QURAN-WEB/chunk-QMWMAHEZ.js": "b67926b64bc8935a37b27cb840f7ea3e298776d1",
     "/AL-QURAN-WEB/chunk-RSNCLUPB.js": "a444c4c50a0899ddaade582a5b7012122efff6d4",
     "/AL-QURAN-WEB/chunk-RYCMV46U.js": "e6bd9ff0dae4e25ebe05d32c363b3659c9cecc0b",
@@ -159,8 +159,8 @@
     "/AL-QURAN-WEB/icons/icon-maskable-192x192.png": "452e2f3dffddcebee8a5382a338732926be911b5",
     "/AL-QURAN-WEB/icons/icon-maskable-512x512.png": "eceafbb5046d77675e786ea2141621066a5efcfd",
     "/AL-QURAN-WEB/icons/icon.svg": "5d0368097bf143b8584aab8fce5c2936bc4a6af3",
-    "/AL-QURAN-WEB/index.html": "973e279d09697e6b2139817d171e00d577c4b4dd",
-    "/AL-QURAN-WEB/main-IAMRBWDO.js": "518323239707c66f9ab6c437b93516d3952957ea",
+    "/AL-QURAN-WEB/index.html": "ff4b92bbddbfaed8172053bd3eaaf9f36cd26cc2",
+    "/AL-QURAN-WEB/main-4MBPETXO.js": "a38b92a94866df9c320fb119079ff4181e4e7cdd",
     "/AL-QURAN-WEB/manifest.webmanifest": "55fd9e7d6cf224b4255b0b26db4f1b47b413465c",
     "/AL-QURAN-WEB/robots.txt": "3ab6e76034e85c077b211d8bb7f9feb8da704c3c",
     "/AL-QURAN-WEB/sitemap.xml": "910dbfe036d388a6766453ee0c31d325264c365e",
