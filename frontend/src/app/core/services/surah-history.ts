@@ -9,7 +9,18 @@ export interface SurahHistoryItem {
   readonly lastAyahNumber: number;
   readonly totalAyahs: number;
   readonly lastMode: 'read' | 'listen';
+  readonly maxReadAyah?: number;
+  readonly maxListenedAyah?: number;
   readonly updatedAt: string;
+}
+
+export interface SurahProgress {
+  readonly surahNumber: number;
+  readonly percentage: number; // 0 to 100
+  readonly highestAyah: number;
+  readonly totalAyahs: number;
+  readonly mode: 'read' | 'listen';
+  readonly isCompleted: boolean;
 }
 
 /**
@@ -59,13 +70,29 @@ export class SurahHistoryService {
       return;
     }
 
+    const prev = this.state()[surahNumber];
+    const prevMaxRead = prev?.maxReadAyah ?? (prev?.lastMode === 'read' ? prev.lastAyahNumber : 0);
+    const prevMaxListen = prev?.maxListenedAyah ?? (prev?.lastMode === 'listen' ? prev.lastAyahNumber : 0);
+
+    const maxReadAyah = mode === 'read'
+      ? Math.max(prevMaxRead, ayahNumber)
+      : prevMaxRead;
+
+    const maxListenedAyah = mode === 'listen'
+      ? Math.max(prevMaxListen, ayahNumber)
+      : prevMaxListen;
+
+    const resolvedTotal = Math.max(totalAyahs || 0, prev?.totalAyahs || 0, ayahNumber);
+
     const item: SurahHistoryItem = {
       surahNumber,
-      surahEnglishName,
-      surahBanglaName: surahBanglaName || '',
+      surahEnglishName: surahEnglishName || prev?.surahEnglishName || '',
+      surahBanglaName: surahBanglaName || prev?.surahBanglaName || '',
       lastAyahNumber: ayahNumber,
-      totalAyahs: Math.max(totalAyahs, ayahNumber),
+      totalAyahs: resolvedTotal,
       lastMode: mode,
+      maxReadAyah,
+      maxListenedAyah,
       updatedAt: updatedAt || new Date().toISOString(),
     };
 
@@ -88,6 +115,33 @@ export class SurahHistoryService {
    */
   getHistory(surahNumber: number): SurahHistoryItem | null {
     return this.state()[surahNumber] ?? null;
+  }
+
+  /**
+   * Computes unified progress (percentage, highest reached ayah, mode) for a surah.
+   */
+  getProgress(surahNumber: number, fallbackTotalAyahs?: number): SurahProgress | null {
+    const item = this.state()[surahNumber];
+    if (!item) return null;
+
+    const total = item.totalAyahs || fallbackTotalAyahs || 1;
+    const maxRead = Math.max(item.maxReadAyah ?? (item.lastMode === 'read' ? item.lastAyahNumber : 0), 0);
+    const maxListen = Math.max(item.maxListenedAyah ?? (item.lastMode === 'listen' ? item.lastAyahNumber : 0), 0);
+
+    const highest = Math.min(total, Math.max(maxRead, maxListen, item.lastAyahNumber));
+    if (highest <= 0) return null;
+
+    const mode: 'read' | 'listen' = maxListen > maxRead ? 'listen' : (item.lastMode || 'read');
+    const rawPercent = Math.min(100, Math.round((highest / total) * 100));
+
+    return {
+      surahNumber,
+      percentage: rawPercent,
+      highestAyah: highest,
+      totalAyahs: total,
+      mode,
+      isCompleted: rawPercent >= 100,
+    };
   }
 
   /**
@@ -121,13 +175,16 @@ export class SurahHistoryService {
 
       const v = value as Record<string, any>;
       if (typeof v['surahNumber'] === 'number' && typeof v['lastAyahNumber'] === 'number') {
+        const lastMode = v['lastMode'] === 'listen' ? 'listen' : 'read';
         validated[num] = {
           surahNumber: v['surahNumber'],
           surahEnglishName: typeof v['surahEnglishName'] === 'string' ? v['surahEnglishName'] : '',
           surahBanglaName: typeof v['surahBanglaName'] === 'string' ? v['surahBanglaName'] : '',
           lastAyahNumber: v['lastAyahNumber'],
           totalAyahs: typeof v['totalAyahs'] === 'number' ? v['totalAyahs'] : v['lastAyahNumber'],
-          lastMode: v['lastMode'] === 'listen' ? 'listen' : 'read',
+          lastMode,
+          maxReadAyah: typeof v['maxReadAyah'] === 'number' ? v['maxReadAyah'] : (lastMode === 'read' ? v['lastAyahNumber'] : 0),
+          maxListenedAyah: typeof v['maxListenedAyah'] === 'number' ? v['maxListenedAyah'] : (lastMode === 'listen' ? v['lastAyahNumber'] : 0),
           updatedAt: typeof v['updatedAt'] === 'string' ? v['updatedAt'] : new Date().toISOString(),
         };
       }

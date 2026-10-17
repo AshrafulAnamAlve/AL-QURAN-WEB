@@ -314,4 +314,33 @@ describe('SurahReaderPage', () => {
 
     playStub.mockRestore();
   });
+
+  it('renders surah reading progress in the header', async () => {
+    localStorage.clear();
+    localStorage.setItem(
+      'alquran.surahHistory',
+      JSON.stringify({
+        1: {
+          surahNumber: 1,
+          surahEnglishName: 'Al-Fatihah',
+          surahBanglaName: 'আল-ফাতিহা',
+          lastAyahNumber: 3,
+          totalAyahs: 7,
+          lastMode: 'read',
+          maxReadAyah: 3,
+          maxListenedAyah: 0,
+          updatedAt: new Date().toISOString(),
+        },
+      }),
+    );
+
+    const fixture = await setup('1', {
+      getSurah: () => of(makeDetail(1, 'Al-Fatihah', 7, null)),
+    });
+
+    const progressEl = fixture.nativeElement.querySelector('.reader__progress');
+    expect(progressEl).toBeTruthy();
+    expect(progressEl.getAttribute('aria-valuenow')).toBe('43');
+    expect(progressEl.textContent).toContain('43%');
+  });
 });

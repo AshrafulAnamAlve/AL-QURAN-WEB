@@ -45,6 +45,25 @@ describe('SurahHistoryService', () => {
     expect(updated?.lastMode).toBe('listen');
   });
 
+  it('calculates unified progress for reading and listening', () => {
+    service.record(1, 'Al-Fatihah', 'আল-ফাতিহা', 3, 7, 'read');
+    let prog = service.getProgress(1);
+    expect(prog).not.toBeNull();
+    expect(prog?.highestAyah).toBe(3);
+    expect(prog?.totalAyahs).toBe(7);
+    expect(prog?.percentage).toBe(43);
+    expect(prog?.mode).toBe('read');
+    expect(prog?.isCompleted).toBe(false);
+
+    // Now listen up to ayah 7
+    service.record(1, 'Al-Fatihah', 'আল-ফাতিহা', 7, 7, 'listen');
+    prog = service.getProgress(1);
+    expect(prog?.highestAyah).toBe(7);
+    expect(prog?.percentage).toBe(100);
+    expect(prog?.mode).toBe('listen');
+    expect(prog?.isCompleted).toBe(true);
+  });
+
   it('orders history by most recent updated date', () => {
     service.record(1, 'Al-Fatihah', 'আল-ফাতিহা', 3, 7, 'read', '2026-10-15T10:00:00Z');
     service.record(112, 'Al-Ikhlas', 'আল-ইখলাস', 2, 4, 'listen', '2026-10-16T12:00:00Z');

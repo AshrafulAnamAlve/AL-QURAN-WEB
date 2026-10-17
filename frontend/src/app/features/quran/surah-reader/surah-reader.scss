@@ -152,6 +152,75 @@
   }
 }
 
+// --- Reader Progress Indicator -------------------------------------------
+.reader__progress {
+  max-width: 440px;
+  margin: 1.15rem auto 0.25rem;
+  padding: 0.625rem 1rem;
+  background: color-mix(in srgb, var(--aq-surface) 80%, transparent);
+  border: 1px solid var(--aq-border);
+  border-radius: var(--aq-radius-md);
+  backdrop-filter: blur(8px);
+  box-shadow: var(--aq-shadow-sm);
+
+  &-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+    margin-bottom: 0.4rem;
+  }
+
+  &-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--aq-primary);
+  }
+
+  &-icon {
+    font-size: 0.95rem;
+  }
+
+  &-percent {
+    font-weight: 750;
+    color: var(--aq-primary);
+  }
+
+  &-count {
+    font-size: 0.775rem;
+    color: var(--aq-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &-completed {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    font-weight: 700;
+    color: #059669;
+  }
+
+  &-track {
+    width: 100%;
+    height: 6px;
+    background: color-mix(in srgb, var(--aq-border) 60%, transparent);
+    border-radius: var(--aq-radius-pill);
+    overflow: hidden;
+  }
+
+  &-fill {
+    height: 100%;
+    background: var(--aq-primary);
+    border-radius: var(--aq-radius-pill);
+    transition: width 0.35s ease;
+
+    &.is-completed {
+      background: linear-gradient(90deg, #059669, #10b981);
+    }
+  }
+}
+
 .reader__bismillah {
   margin: 1rem 0 0.5rem;
   padding-block: 1.25rem;

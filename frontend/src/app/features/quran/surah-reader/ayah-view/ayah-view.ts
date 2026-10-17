@@ -35,6 +35,7 @@ export class AyahViewComponent {
   readonly ayah = input.required<Ayah>();
   readonly surahEnglishName = input.required<string>();
   readonly surahBanglaName = input<string>('');
+  readonly totalAyahs = input<number>(0);
 
   /**
    * Element id, so the page can address this ayah.
@@ -106,7 +107,7 @@ export class AyahViewComponent {
       this.surahEnglishName(),
       this.surahBanglaName() || '',
       a.numberInSurah,
-      0,
+      this.totalAyahs(),
       mode,
     );
   }

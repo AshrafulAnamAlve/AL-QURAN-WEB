@@ -73,6 +73,11 @@ export class SurahReaderPage {
 
   protected readonly isBn = this.lang.isBn;
   readonly resumePrompt = signal<SurahHistoryItem | null>(null);
+  protected readonly progress = computed(() => {
+    const detail = this.detail();
+    if (!detail) return null;
+    return this.history.getProgress(detail.surah.number, detail.surah.ayahCount);
+  });
 
   /** Bound from the :surahNumber route parameter. */
   readonly surahNumber = input.required<string>();
@@ -170,9 +175,15 @@ export class SurahReaderPage {
 
   private frame = 0;
   private pendingFragment: string | null = null;
+  private intersectionObserver?: IntersectionObserver;
+  private readonly observedElements = new Set<Element>();
 
   constructor() {
-    inject(DestroyRef).onDestroy(() => cancelAnimationFrame(this.frame));
+    inject(DestroyRef).onDestroy(() => {
+      cancelAnimationFrame(this.frame);
+      this.intersectionObserver?.disconnect();
+      this.observedElements.clear();
+    });
 
     // Leaving the page does NOT stop the recitation: the mini player lives in
     // the app shell so listening continues while the reader browses elsewhere.
@@ -182,6 +193,15 @@ export class SurahReaderPage {
     effect(() => {
       const total = this.ayahCount();
       untracked(() => this.startProgressiveRender(total));
+    });
+
+    // Connect IntersectionObserver as new ayahs are progressively rendered
+    effect(() => {
+      const count = this.visibleAyahs().length;
+      const detail = this.detail();
+      if (count > 0 && detail && typeof window !== 'undefined' && 'IntersectionObserver' in window) {
+        requestAnimationFrame(() => this.observeAyahs());
+      }
     });
 
     // Route metadata is generic; fill in the real surah name once it is known.
@@ -202,7 +222,7 @@ export class SurahReaderPage {
       }
     });
 
-    // Record reading position and progress
+    // Record reading position and initial ayah progress
     effect(() => {
       const detail = this.detail();
       if (detail) {
@@ -213,6 +233,14 @@ export class SurahReaderPage {
             const parsed = parseInt(frag.substring(5), 10);
             if (!isNaN(parsed) && parsed >= 1 && parsed <= detail.ayahs.length) {
               ayahNum = parsed;
+              this.history.record(
+                detail.surah.number,
+                detail.surah.englishName,
+                detail.surah.banglaName,
+                ayahNum,
+                detail.surah.ayahCount,
+                'read',
+              );
             }
           }
           this.readingPosition.save({
@@ -221,7 +249,10 @@ export class SurahReaderPage {
             surahBanglaName: detail.surah.banglaName,
             ayahNumber: ayahNum,
           });
-          this.readingProgress.markMany(detail.ayahs.map((a) => a.globalNumber));
+          const initialAyah = detail.ayahs[ayahNum - 1];
+          if (initialAyah) {
+            this.readingProgress.markRead(initialAyah.globalNumber);
+          }
         });
       }
     });
@@ -345,6 +376,8 @@ export class SurahReaderPage {
    */
   private startProgressiveRender(total: number): void {
     cancelAnimationFrame(this.frame);
+    this.intersectionObserver?.disconnect();
+    this.observedElements.clear();
     this.pendingFragment = this.route.snapshot.fragment;
 
     if (total === 0) {
@@ -384,13 +417,73 @@ export class SurahReaderPage {
     const fragment = this.pendingFragment;
     this.pendingFragment = null;
 
-    if (!fragment) {
+    if (fragment) {
+      requestAnimationFrame(() => {
+        const target = this.document.getElementById(fragment);
+        target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    }
+
+    this.observeAyahs();
+  }
+
+  private initIntersectionObserver(): void {
+    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
       return;
     }
 
-    requestAnimationFrame(() => {
-      const target = this.document.getElementById(fragment);
-      target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    this.intersectionObserver = new IntersectionObserver(
+      (entries) => {
+        const detail = this.detail();
+        if (!detail) return;
+
+        let maxAyahNum = 0;
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const id = entry.target.id;
+            if (id && id.startsWith('ayah-')) {
+              const num = parseInt(id.substring(5), 10);
+              if (!isNaN(num) && num > 0) {
+                maxAyahNum = Math.max(maxAyahNum, num);
+                const ayah = detail.ayahs[num - 1];
+                if (ayah) {
+                  this.readingProgress.markRead(ayah.globalNumber);
+                }
+              }
+            }
+          }
+        }
+
+        if (maxAyahNum > 0) {
+          this.history.record(
+            detail.surah.number,
+            detail.surah.englishName,
+            detail.surah.banglaName,
+            maxAyahNum,
+            detail.surah.ayahCount,
+            'read',
+          );
+        }
+      },
+      {
+        rootMargin: '0px 0px -15% 0px',
+        threshold: 0.1,
+      },
+    );
+  }
+
+  private observeAyahs(): void {
+    if (!this.intersectionObserver) {
+      this.initIntersectionObserver();
+    }
+    if (!this.intersectionObserver) return;
+
+    const ayahElements = this.document.querySelectorAll('.reader__ayahs article.ayah');
+    ayahElements.forEach((el) => {
+      if (!this.observedElements.has(el)) {
+        this.observedElements.add(el);
+        this.intersectionObserver?.observe(el);
+      }
     });
   }
 }

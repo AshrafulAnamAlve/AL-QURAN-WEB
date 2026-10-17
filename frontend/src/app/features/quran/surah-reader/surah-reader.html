@@ -85,6 +85,30 @@
             </span>
           </button>
         </div>
+
+        @if (progress(); as p) {
+          @if (p.percentage > 0) {
+            <div class="reader__progress" role="progressbar" [attr.aria-valuenow]="p.percentage" aria-valuemin="0" aria-valuemax="100">
+              <div class="reader__progress-meta">
+                <span class="reader__progress-status">
+                  <span class="reader__progress-icon" aria-hidden="true">{{ p.mode === 'listen' ? '🎧' : '📖' }}</span>
+                  <span>{{ p.mode === 'listen' ? (isBn() ? 'তেলাওয়াত' : 'Listening') : (isBn() ? 'পঠন' : 'Reading') }}</span>
+                  <strong class="reader__progress-percent">{{ isBn() ? toBnDigits(p.percentage) : p.percentage }}%</strong>
+                </span>
+                <span class="reader__progress-count">
+                  @if (p.isCompleted) {
+                    <span class="reader__progress-completed">✓ {{ isBn() ? 'সম্পূর্ণ' : 'Completed' }}</span>
+                  } @else {
+                    {{ isBn() ? (toBnDigits(p.highestAyah) + ' / ' + toBnDigits(p.totalAyahs) + ' আয়াত') : (p.highestAyah + ' / ' + p.totalAyahs + ' ayahs') }}
+                  }
+                </span>
+              </div>
+              <div class="reader__progress-track">
+                <div class="reader__progress-fill" [style.width.%]="p.percentage" [class.is-completed]="p.isCompleted"></div>
+              </div>
+            </div>
+          }
+        }
       </div>
     </header>
 
@@ -105,6 +129,7 @@
             [ayah]="ayah"
             [surahEnglishName]="data.surah.englishName"
             [surahBanglaName]="data.surah.banglaName"
+            [totalAyahs]="data.surah.ayahCount"
           />
         }
       </div>
