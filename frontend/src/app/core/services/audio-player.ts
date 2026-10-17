@@ -53,6 +53,12 @@ export class AudioPlayerService {
   /** The queue the open page registered. Not playing until play is pressed. */
   private pageQueue: PlaybackQueue | null = null;
 
+  /** Flag preventing premature pause state during continuous auto-advance in background. */
+  private isAdvancing = false;
+
+  /** Screen wake lock held during active playback. */
+  private wakeLockSentinel: unknown = null;
+
   // --- What is playing ----------------------------------------------------
 
   private readonly queueState = signal<PlaybackQueue | null>(null);
@@ -228,6 +234,8 @@ export class AudioPlayerService {
   }
 
   pause(): void {
+    this.isAdvancing = false;
+    this.releaseWakeLock();
     this.element?.pause();
   }
 
@@ -237,6 +245,9 @@ export class AudioPlayerService {
     }
 
     this.repeatsDone.set(0);
+    if (this.wasPlaying()) {
+      this.isAdvancing = true;
+    }
     await this.load(this.indexState() + 1, this.wasPlaying());
   }
 
@@ -251,6 +262,9 @@ export class AudioPlayerService {
     }
 
     this.repeatsDone.set(0);
+    if (this.wasPlaying()) {
+      this.isAdvancing = true;
+    }
     await this.load(this.indexState() - 1, this.wasPlaying());
   }
 
@@ -285,6 +299,8 @@ export class AudioPlayerService {
 
   /** Stops playback and unloads the queue. The mini player disappears. */
   stop(): void {
+    this.isAdvancing = false;
+    this.releaseWakeLock();
     const audio = this.element;
 
     if (audio) {
@@ -405,8 +421,11 @@ export class AudioPlayerService {
     try {
       await audio.play();
     } catch (cause) {
+      this.isAdvancing = false;
+      this.releaseWakeLock();
       this.isBuffering.set(false);
       this.isPlaying.set(false);
+      this.publishPlaybackState();
 
       // A play() cut short by loading another ayah is normal, not a failure.
       if (cause instanceof DOMException && cause.name === 'AbortError') {
@@ -465,13 +484,10 @@ export class AudioPlayerService {
    * surah, or stop.
    */
   private handleEnded(): void {
-    this.isPlaying.set(false);
-    this.isBuffering.set(false);
-    this.position.set(this.duration());
-
     const mode = this.repeatMode();
 
     if (mode === 'ayah' && this.repeatsDone() + 1 < this.repeatCount()) {
+      this.isAdvancing = true;
       this.repeatsDone.update((done) => done + 1);
       void this.load(this.indexState(), true, { force: true });
       return;
@@ -480,17 +496,25 @@ export class AudioPlayerService {
     this.repeatsDone.set(0);
 
     if (this.hasNext()) {
+      this.isAdvancing = true;
       void this.load(this.indexState() + 1, true);
       return;
     }
 
     if (mode === 'queue') {
+      this.isAdvancing = true;
       void this.load(0, true);
       return;
     }
 
     // The end, with no repeat: stay on the last ayah so pressing play replays
     // it, rather than emptying the player out from under the reader.
+    this.isAdvancing = false;
+    this.isPlaying.set(false);
+    this.isBuffering.set(false);
+    this.position.set(this.duration());
+    this.publishPlaybackState();
+    this.releaseWakeLock();
     this.seek(0);
   }
 
@@ -548,16 +572,21 @@ export class AudioPlayerService {
     audio.preservesPitch = true;
 
     audio.addEventListener('playing', () => {
+      this.isAdvancing = false;
       this.isPlaying.set(true);
       this.isBuffering.set(false);
       this.error.set(null);
       this.primePrefetch();
       this.publishPlaybackState();
+      void this.requestWakeLock();
     });
 
     audio.addEventListener('pause', () => {
-      this.isPlaying.set(false);
-      this.publishPlaybackState();
+      if (!this.isAdvancing) {
+        this.isPlaying.set(false);
+        this.publishPlaybackState();
+        this.releaseWakeLock();
+      }
     });
 
     audio.addEventListener('waiting', () => this.isBuffering.set(true));
@@ -576,6 +605,8 @@ export class AudioPlayerService {
     audio.addEventListener('ended', () => this.handleEnded());
 
     audio.addEventListener('error', () => {
+      this.isAdvancing = false;
+      this.releaseWakeLock();
       this.isPlaying.set(false);
       this.isBuffering.set(false);
       this.error.set(this.describeLoadFailure());
@@ -682,10 +713,18 @@ export class AudioPlayerService {
       return;
     }
 
+    const base = typeof document !== 'undefined' ? document.baseURI : '/';
+    const icon192 = new URL('icons/icon-192x192.png', base).href;
+    const icon512 = new URL('icons/icon-512x512.png', base).href;
+
     session.metadata = new MediaMetadata({
       title: `${ayah.surahEnglishName} ${ayah.surahNumber}:${ayah.numberInSurah}`,
       artist: reciterLabel(this.reciterService.selected()),
       album: queue.title,
+      artwork: [
+        { src: icon192, sizes: '192x192', type: 'image/png' },
+        { src: icon512, sizes: '512x512', type: 'image/png' },
+      ],
     });
 
     this.publishPlaybackState();
@@ -725,6 +764,33 @@ export class AudioPlayerService {
     if (session) {
       session.metadata = null;
       session.playbackState = 'none';
+    }
+  }
+
+  private async requestWakeLock(): Promise<void> {
+    if (typeof navigator !== 'undefined' && 'wakeLock' in navigator) {
+      try {
+        if (!this.wakeLockSentinel) {
+          const nav = navigator as unknown as {
+            wakeLock: { request: (type: string) => Promise<unknown> };
+          };
+          this.wakeLockSentinel = await nav.wakeLock.request('screen');
+        }
+      } catch {
+        // Silently ignore if wakeLock is denied or unsupported
+      }
+    }
+  }
+
+  private releaseWakeLock(): void {
+    if (this.wakeLockSentinel) {
+      try {
+        const sentinel = this.wakeLockSentinel as { release?: () => Promise<void> };
+        void sentinel.release?.();
+      } catch {
+        // Ignore
+      }
+      this.wakeLockSentinel = null;
     }
   }
 }

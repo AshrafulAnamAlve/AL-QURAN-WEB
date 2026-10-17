@@ -290,19 +290,28 @@ describe('SurahReaderPage', () => {
 
   it('renders a prominent audio play button and toggles playback', async () => {
     localStorage.clear();
+    const playStub = vi.spyOn(HTMLMediaElement.prototype, 'play').mockImplementation(function (this: HTMLMediaElement) {
+      this.dispatchEvent(new Event('playing'));
+      return Promise.resolve();
+    });
+
     const fixture = await setup('1', {
       getSurah: () => of(makeDetail(1, 'Al-Fatihah', 7, null)),
     });
 
     const playBtn = fixture.nativeElement.querySelector('.reader__listen-btn') as HTMLButtonElement;
     expect(playBtn).toBeTruthy();
-    expect(playBtn.textContent).toContain('Play Surah Recitation');
+    expect(playBtn.textContent?.trim()).toContain('Play');
 
     // Click play button
     playBtn.click();
+    await fixture.whenStable();
     fixture.detectChanges();
 
     const audio = TestBed.inject(AudioPlayerService);
     expect(audio.current()?.surahNumber).toBe(1);
+    expect(playBtn.textContent?.trim()).toContain('Pause');
+
+    playStub.mockRestore();
   });
 });

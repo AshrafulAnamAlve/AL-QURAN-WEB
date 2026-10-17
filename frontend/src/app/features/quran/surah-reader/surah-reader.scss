@@ -40,30 +40,34 @@
   margin-top: 1rem;
 }
 
-// --- Highlighted Big Audio Play Button ------------------------------------
+// --- Highlighted Audio Play Button (Short Text) --------------------------
 .reader__listen-action {
   display: flex;
   justify-content: center;
-  margin-top: 1.25rem;
+  margin-top: 1rem;
   margin-bottom: 0.25rem;
 }
 
 .reader__listen-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.875rem;
-  padding: 0.75rem 1.625rem;
-  min-height: 3.5rem;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 0.5rem 1.375rem;
+  min-height: 2.625rem;
   border-radius: 9999px;
   background: linear-gradient(135deg, var(--aq-green-700) 0%, var(--aq-green-900) 100%);
   color: #ffffff;
   border: 2px solid var(--aq-gold-400);
   box-shadow:
-    0 4px 18px rgba(15, 81, 50, 0.28),
+    0 4px 16px rgba(15, 81, 50, 0.28),
     0 0 14px rgba(201, 162, 39, 0.35);
   cursor: pointer;
   text-decoration: none;
   font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
   transition:
     transform var(--aq-duration) var(--aq-ease),
     box-shadow var(--aq-duration) var(--aq-ease),
@@ -73,23 +77,23 @@
   @include m.focus-visible;
 
   &:hover {
-    transform: translateY(-2px) scale(1.02);
+    transform: translateY(-2px) scale(1.03);
     border-color: var(--aq-gold-300);
     box-shadow:
-      0 6px 24px rgba(15, 81, 50, 0.4),
-      0 0 22px rgba(201, 162, 39, 0.55);
+      0 6px 20px rgba(15, 81, 50, 0.38),
+      0 0 20px rgba(201, 162, 39, 0.5);
   }
 
   &:active {
-    transform: translateY(1px) scale(0.99);
+    transform: translateY(1px) scale(0.98);
   }
 
   &__icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 2.375rem;
-    height: 2.375rem;
+    width: 1.75rem;
+    height: 1.75rem;
     border-radius: 50%;
     background: var(--aq-gold-400);
     color: var(--aq-green-900);
@@ -103,26 +107,10 @@
     transform: scale(1.08);
   }
 
-  &__content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    text-align: left;
-  }
-
-  &__title {
-    font-size: 1.05rem;
-    font-weight: 700;
-    line-height: 1.25;
-    letter-spacing: 0.01em;
+  &__label {
+    line-height: 1;
     color: #ffffff;
-  }
-
-  &__sub {
-    font-size: 0.775rem;
-    color: var(--aq-gold-100);
-    line-height: 1.2;
-    margin-top: 0.15rem;
+    white-space: nowrap;
   }
 
   // Active playing state
@@ -138,21 +126,14 @@
   }
 
   @include m.down(sm) {
-    padding: 0.625rem 1.125rem;
-    gap: 0.75rem;
-    min-height: 3.125rem;
+    padding: 0.45rem 1.15rem;
+    gap: 0.5rem;
+    min-height: 2.375rem;
+    font-size: 0.875rem;
 
     &__icon {
-      width: 2.125rem;
-      height: 2.125rem;
-    }
-
-    &__title {
-      font-size: 0.9375rem;
-    }
-
-    &__sub {
-      font-size: 0.725rem;
+      width: 1.625rem;
+      height: 1.625rem;
     }
   }
 }
