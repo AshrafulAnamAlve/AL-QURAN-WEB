@@ -592,12 +592,21 @@ export class AudioPlayerService {
     audio.addEventListener('waiting', () => this.isBuffering.set(true));
     audio.addEventListener('stalled', () => this.isBuffering.set(true));
 
+    audio.addEventListener('canplay', () => {
+      if (this.isBuffering() && !audio.paused) {
+        this.isBuffering.set(false);
+      }
+    });
+
     audio.addEventListener('loadedmetadata', () => {
       this.duration.set(Number.isFinite(audio.duration) ? audio.duration : 0);
       this.publishPosition();
     });
 
     audio.addEventListener('timeupdate', () => {
+      if (this.isBuffering()) {
+        this.isBuffering.set(false);
+      }
       this.position.set(audio.currentTime);
       this.publishPosition();
     });

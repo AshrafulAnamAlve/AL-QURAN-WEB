@@ -1,4 +1,4 @@
-import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal, untracked } from '@angular/core';
 import { STORAGE_KEYS, StorageService } from './storage';
 import { ReadingPositionService } from './reading-position';
 
@@ -70,43 +70,57 @@ export class SurahHistoryService {
       return;
     }
 
-    const prev = this.state()[surahNumber];
-    const prevMaxRead = prev?.maxReadAyah ?? (prev?.lastMode === 'read' ? prev.lastAyahNumber : 0);
-    const prevMaxListen = prev?.maxListenedAyah ?? (prev?.lastMode === 'listen' ? prev.lastAyahNumber : 0);
+    untracked(() => {
+      const prev = this.state()[surahNumber];
+      const prevMaxRead = prev?.maxReadAyah ?? (prev?.lastMode === 'read' ? prev.lastAyahNumber : 0);
+      const prevMaxListen = prev?.maxListenedAyah ?? (prev?.lastMode === 'listen' ? prev.lastAyahNumber : 0);
 
-    const maxReadAyah = mode === 'read'
-      ? Math.max(prevMaxRead, ayahNumber)
-      : prevMaxRead;
+      const maxReadAyah = mode === 'read'
+        ? Math.max(prevMaxRead, ayahNumber)
+        : prevMaxRead;
 
-    const maxListenedAyah = mode === 'listen'
-      ? Math.max(prevMaxListen, ayahNumber)
-      : prevMaxListen;
+      const maxListenedAyah = mode === 'listen'
+        ? Math.max(prevMaxListen, ayahNumber)
+        : prevMaxListen;
 
-    const resolvedTotal = Math.max(totalAyahs || 0, prev?.totalAyahs || 0, ayahNumber);
+      const resolvedTotal = Math.max(totalAyahs || 0, prev?.totalAyahs || 0, ayahNumber);
 
-    const item: SurahHistoryItem = {
-      surahNumber,
-      surahEnglishName: surahEnglishName || prev?.surahEnglishName || '',
-      surahBanglaName: surahBanglaName || prev?.surahBanglaName || '',
-      lastAyahNumber: ayahNumber,
-      totalAyahs: resolvedTotal,
-      lastMode: mode,
-      maxReadAyah,
-      maxListenedAyah,
-      updatedAt: updatedAt || new Date().toISOString(),
-    };
+      // Do nothing if state has not changed (prevents microtask loops and redundant disk writes)
+      if (
+        prev &&
+        prev.lastAyahNumber === ayahNumber &&
+        prev.lastMode === mode &&
+        prev.maxReadAyah === maxReadAyah &&
+        prev.maxListenedAyah === maxListenedAyah &&
+        prev.totalAyahs === resolvedTotal
+      ) {
+        return;
+      }
 
-    this.state.update((current) => ({
-      ...current,
-      [surahNumber]: item,
-    }));
+      const item: SurahHistoryItem = {
+        surahNumber,
+        surahEnglishName: surahEnglishName || prev?.surahEnglishName || '',
+        surahBanglaName: surahBanglaName || prev?.surahBanglaName || '',
+        lastAyahNumber: ayahNumber,
+        totalAyahs: resolvedTotal,
+        lastMode: mode,
+        maxReadAyah,
+        maxListenedAyah,
+        updatedAt: updatedAt || new Date().toISOString(),
+      };
 
-    // Keep global reading position in sync as well
-    this.readingPosition.save({
-      surahNumber,
-      surahEnglishName,
-      surahBanglaName,
-      ayahNumber,
+      this.state.update((current) => ({
+        ...current,
+        [surahNumber]: item,
+      }));
+
+      // Keep global reading position in sync as well
+      this.readingPosition.save({
+        surahNumber,
+        surahEnglishName: item.surahEnglishName,
+        surahBanglaName: item.surahBanglaName,
+        ayahNumber,
+      });
     });
   }
 

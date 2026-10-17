@@ -437,6 +437,12 @@ export class SurahReaderPage {
         const detail = this.detail();
         if (!detail) return;
 
+        // When recitation is actively playing, playback auto-scrolls the page.
+        // Don't treat playback scrolling as manual reading.
+        if (this.audio.isPlaying()) {
+          return;
+        }
+
         let maxAyahNum = 0;
         for (const entry of entries) {
           if (entry.isIntersecting) {
