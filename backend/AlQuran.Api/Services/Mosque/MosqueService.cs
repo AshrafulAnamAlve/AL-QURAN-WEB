@@ -96,6 +96,7 @@ public sealed class MosqueService : ExternalApiClientBase, IMosqueService
 
         var endpoints = _options.AllEndpoints;
         Exception? lastFailure = null;
+        QueryResult? successfulEmptyResult = null;
 
         // Step 1: Try primary Overpass mirror with a 3.5s timeout
         if (endpoints.Count > 0)
@@ -120,6 +121,8 @@ public sealed class MosqueService : ExternalApiClientBase, IMosqueService
                 {
                     return new QueryResult(primaryEndpoint, mosques);
                 }
+
+                successfulEmptyResult = new QueryResult(primaryEndpoint, mosques);
             }
             catch (Exception ex)
             {
@@ -130,7 +133,7 @@ public sealed class MosqueService : ExternalApiClientBase, IMosqueService
             }
         }
 
-        // Step 2: Instant, highly reliable OpenStreetMap Nominatim fallback (sub-second response)
+        // Step 2: Instant, highly reliable OpenStreetMap Nominatim fallback
         try
         {
             var nominatimResult = await QueryNominatimAsync(latitude, longitude, radius, limit, cancellationToken);
@@ -141,6 +144,8 @@ public sealed class MosqueService : ExternalApiClientBase, IMosqueService
                     nominatimResult.Mosques.Count, latitude, longitude);
                 return nominatimResult;
             }
+
+            successfulEmptyResult ??= nominatimResult;
         }
         catch (Exception ex)
         {
@@ -173,6 +178,8 @@ public sealed class MosqueService : ExternalApiClientBase, IMosqueService
                         endpoint, mosques.Count);
                     return new QueryResult(endpoint, mosques);
                 }
+
+                successfulEmptyResult ??= new QueryResult(endpoint, mosques);
             }
             catch (Exception ex)
             {
@@ -183,11 +190,15 @@ public sealed class MosqueService : ExternalApiClientBase, IMosqueService
             }
         }
 
-        throw new ExternalApiException(
-            ServiceName,
-            "Every OpenStreetMap mosque server is busy right now. Please try again in a moment.",
-            (lastFailure as ExternalApiException)?.UpstreamStatusCode,
-            lastFailure);
+        // If at least one mirror or Nominatim completed successfully without errors (even with 0 mosques found in radius), return it!
+        if (successfulEmptyResult is not null)
+        {
+            return successfulEmptyResult;
+        }
+
+        // Graceful fallback: return empty list rather than 502 Bad Gateway
+        Logger.LogWarning(lastFailure, "All Overpass mirrors and Nominatim were unreachable; returning graceful empty result");
+        return new QueryResult("OpenStreetMap", Array.Empty<MosqueDto>());
     }
 
     private async Task<QueryResult> QueryNominatimAsync(

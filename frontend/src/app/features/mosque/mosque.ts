@@ -170,16 +170,16 @@ export class MosquePage implements OnInit, AfterViewInit, OnDestroy {
       attributionControl: true,
     });
 
-    const primaryUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-    const fallbackUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    const primaryUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    const fallbackUrl = 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png';
 
     const tiles = this.leaflet
       .tileLayer(primaryUrl, {
-        subdomains: ['a', 'b', 'c', 'd'],
+        subdomains: ['a', 'b', 'c'],
         maxZoom: 19,
         crossOrigin: true,
         attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>',
+          '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
       })
       .addTo(this.map);
 
