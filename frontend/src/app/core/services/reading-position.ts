@@ -45,6 +45,17 @@ export class ReadingPositionService {
       return;
     }
 
+    const prev = this.state();
+    if (
+      prev &&
+      prev.surahNumber === pos.surahNumber &&
+      prev.ayahNumber === pos.ayahNumber &&
+      prev.surahEnglishName === pos.surahEnglishName &&
+      (pos.surahBanglaName === undefined || prev.surahBanglaName === pos.surahBanglaName)
+    ) {
+      return;
+    }
+
     this.state.set({
       surahNumber: pos.surahNumber,
       surahEnglishName: pos.surahEnglishName,

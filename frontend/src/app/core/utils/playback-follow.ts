@@ -37,7 +37,6 @@ export function followPlayback(
 
   effect(() => {
     const ayah = player.current();
-    const playing = player.isPlaying();
     const pageQueue = queue();
 
     // Only follow a recitation that is actually coming from this page.

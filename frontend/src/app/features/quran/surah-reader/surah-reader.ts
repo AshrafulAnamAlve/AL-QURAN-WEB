@@ -175,14 +175,30 @@ export class SurahReaderPage {
 
   private frame = 0;
   private pendingFragment: string | null = null;
-  private intersectionObserver?: IntersectionObserver;
-  private readonly observedElements = new Set<Element>();
+  private scrollTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly onWindowScroll = (): void => {
+    if (this.scrollTimer) {
+      clearTimeout(this.scrollTimer);
+    }
+    // Only track manual reading position after scrolling pauses
+    this.scrollTimer = setTimeout(() => {
+      this.handleScrollStop();
+    }, 400);
+  };
 
   constructor() {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', this.onWindowScroll, { passive: true });
+    }
+
     inject(DestroyRef).onDestroy(() => {
       cancelAnimationFrame(this.frame);
-      this.intersectionObserver?.disconnect();
-      this.observedElements.clear();
+      if (this.scrollTimer) {
+        clearTimeout(this.scrollTimer);
+      }
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('scroll', this.onWindowScroll);
+      }
     });
 
     // Leaving the page does NOT stop the recitation: the mini player lives in
@@ -193,15 +209,6 @@ export class SurahReaderPage {
     effect(() => {
       const total = this.ayahCount();
       untracked(() => this.startProgressiveRender(total));
-    });
-
-    // Connect IntersectionObserver as new ayahs are progressively rendered
-    effect(() => {
-      const count = this.visibleAyahs().length;
-      const detail = this.detail();
-      if (count > 0 && detail && typeof window !== 'undefined' && 'IntersectionObserver' in window) {
-        requestAnimationFrame(() => this.observeAyahs());
-      }
     });
 
     // Route metadata is generic; fill in the real surah name once it is known.
@@ -376,8 +383,6 @@ export class SurahReaderPage {
    */
   private startProgressiveRender(total: number): void {
     cancelAnimationFrame(this.frame);
-    this.intersectionObserver?.disconnect();
-    this.observedElements.clear();
     this.pendingFragment = this.route.snapshot.fragment;
 
     if (total === 0) {
@@ -423,73 +428,44 @@ export class SurahReaderPage {
         target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       });
     }
-
-    this.observeAyahs();
   }
 
-  private initIntersectionObserver(): void {
-    if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
+  private handleScrollStop(): void {
+    // When recitation is active, buffering, or playing, playback follow controls scrolling.
+    // Never treat playback auto-scroll as manual reading.
+    if (this.audio.isActive() || this.audio.isPlaying() || this.audio.isBuffering()) {
       return;
     }
 
-    this.intersectionObserver = new IntersectionObserver(
-      (entries) => {
-        const detail = this.detail();
-        if (!detail) return;
+    const detail = this.detail();
+    if (!detail) return;
 
-        // When recitation is actively playing, playback auto-scrolls the page.
-        // Don't treat playback scrolling as manual reading.
-        if (this.audio.isPlaying()) {
-          return;
-        }
-
-        let maxAyahNum = 0;
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const id = entry.target.id;
-            if (id && id.startsWith('ayah-')) {
-              const num = parseInt(id.substring(5), 10);
-              if (!isNaN(num) && num > 0) {
-                maxAyahNum = Math.max(maxAyahNum, num);
-                const ayah = detail.ayahs[num - 1];
-                if (ayah) {
-                  this.readingProgress.markRead(ayah.globalNumber);
-                }
-              }
+    // Find the first visible ayah below the sticky header area (~140px)
+    const ayahs = this.document.querySelectorAll('.reader__ayahs article.ayah');
+    for (let i = 0; i < ayahs.length; i++) {
+      const el = ayahs[i];
+      const rect = el.getBoundingClientRect();
+      if (rect.bottom > 140) {
+        const id = el.id;
+        if (id && id.startsWith('ayah-')) {
+          const num = parseInt(id.substring(5), 10);
+          if (!isNaN(num) && num > 0) {
+            const ayah = detail.ayahs[num - 1];
+            if (ayah) {
+              this.readingProgress.markRead(ayah.globalNumber);
             }
+            this.history.record(
+              detail.surah.number,
+              detail.surah.englishName,
+              detail.surah.banglaName,
+              num,
+              detail.surah.ayahCount,
+              'read',
+            );
           }
         }
-
-        if (maxAyahNum > 0) {
-          this.history.record(
-            detail.surah.number,
-            detail.surah.englishName,
-            detail.surah.banglaName,
-            maxAyahNum,
-            detail.surah.ayahCount,
-            'read',
-          );
-        }
-      },
-      {
-        rootMargin: '0px 0px -15% 0px',
-        threshold: 0.1,
-      },
-    );
-  }
-
-  private observeAyahs(): void {
-    if (!this.intersectionObserver) {
-      this.initIntersectionObserver();
-    }
-    if (!this.intersectionObserver) return;
-
-    const ayahElements = this.document.querySelectorAll('.reader__ayahs article.ayah');
-    ayahElements.forEach((el) => {
-      if (!this.observedElements.has(el)) {
-        this.observedElements.add(el);
-        this.intersectionObserver?.observe(el);
+        break;
       }
-    });
+    }
   }
 }
