@@ -83,6 +83,24 @@ export const routes: Routes = [
     },
   },
   {
+    path: '99-names',
+    loadComponent: () =>
+      import('./features/asma-ul-husna/asma-ul-husna').then((m) => m.AsmaUlHusnaPage),
+    data: {
+      meta: {
+        title: 'Asma-ul-Husna — 99 Beautiful Names of Allah',
+        description:
+          'Explore all 99 Beautiful Names of Allah with authentic Arabic calligraphy, ' +
+          'transliteration, Bengali & English meanings, spiritual reflections, and audio pronunciation.',
+      },
+    },
+  },
+  {
+    path: 'asma-ul-husna',
+    redirectTo: '99-names',
+    pathMatch: 'full',
+  },
+  {
     path: 'calendar',
     loadComponent: () => import('./features/calendar/calendar').then((m) => m.CalendarPage),
     data: {

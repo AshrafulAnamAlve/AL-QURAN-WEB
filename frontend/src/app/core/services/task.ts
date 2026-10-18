@@ -488,7 +488,7 @@ export class TaskService {
   }
 
   private syncWithBackend(record: HabitDayRecord): void {
-    if (!this.http || typeof window === 'undefined' || !navigator.onLine) return;
+    if (!this.http || typeof window === 'undefined' || navigator.onLine === false) return;
 
     const targetSurah = this.settings().targetSurahNumber || 1;
     const payload = {

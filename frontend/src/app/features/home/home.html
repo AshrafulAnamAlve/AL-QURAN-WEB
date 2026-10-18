@@ -467,6 +467,24 @@
         <span class="explore-card__arrow" aria-hidden="true">&rarr;</span>
       </a>
 
+      <a routerLink="/99-names" class="explore-card">
+        <div class="explore-card__icon-wrap">
+          <aq-icon name="sparkles" [size]="22" />
+        </div>
+        <div class="explore-card__content">
+          <div class="explore-card__badge-row">
+            <h3 class="explore-card__title">{{ isBn() ? 'আসমাউল হুসনা' : 'Asma-ul-Husna' }}</h3>
+            <span class="explore-card__badge">{{ isBn() ? '৯৯টি গুণবাচক নাম' : '99 Names of Allah' }}</span>
+          </div>
+          <p class="explore-card__desc">
+            {{ isBn()
+              ? 'আল্লাহর ৯৯টি গুণবাচক নাম আরবি ক্যালিগ্রাফি, বাংলা অর্থ, তাৎপর্য ও অডিও সহ পাঠ করুন'
+              : 'The 99 Beautiful Names of Allah with Arabic calligraphy, bilingual meanings and audio' }}
+          </p>
+        </div>
+        <span class="explore-card__arrow" aria-hidden="true">&rarr;</span>
+      </a>
+
       <a routerLink="/prayer" class="explore-card">
         <div class="explore-card__icon-wrap">
           <aq-icon name="clock" [size]="22" />

@@ -1,0 +1,458 @@
+<div class="asma-page">
+  <!-- Toast Notification -->
+  @if (toastMessage(); as msg) {
+    <div class="toast-bubble aq-card" role="status" aria-live="polite">
+      <aq-icon name="check" [size]="16" />
+      <span>{{ msg }}</span>
+    </div>
+  }
+
+  <!-- Page Header & Breadcrumb -->
+  <div class="aq-container page-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a routerLink="/">{{ isBn() ? 'হোম' : 'Home' }}</a>
+      <span class="breadcrumb__sep" aria-hidden="true">&rsaquo;</span>
+      <span class="breadcrumb__current">{{ isBn() ? 'আসমাউল হুসনা' : 'Asma-ul-Husna' }}</span>
+    </nav>
+  </div>
+
+  <!-- Hero Section: Supreme Name "الله" -->
+  <section class="hero-supreme aq-pattern" aria-labelledby="supreme-name-heading">
+    <div class="aq-container hero-supreme__inner">
+      <div class="hero-supreme__badge-row">
+        <span class="hero-supreme__tag">
+          <aq-icon name="sparkles" [size]="14" />
+          <span>{{ isBn() ? 'ইসমে আযম — সর্বশ্রেষ্ঠ নাম' : 'Al-Ism Al-A\'zam — The Supreme Name' }}</span>
+        </span>
+      </div>
+
+      <div class="hero-supreme__calligraphy-wrapper">
+        <div class="hero-supreme__halo" aria-hidden="true"></div>
+        <h1 id="supreme-name-heading" class="hero-supreme__arabic aq-arabic" dir="rtl">
+          {{ supremeName.arabic }}
+        </h1>
+      </div>
+
+      <p class="hero-supreme__translit">{{ supremeName.transliteration }} &middot; {{ supremeName.nameBn }}</p>
+
+      <p class="hero-supreme__meaning">
+        {{ isBn() ? supremeName.meaningBn : supremeName.meaningEn }}
+      </p>
+
+      <!-- Quranic Citation Banner -->
+      <blockquote class="hero-supreme__verse" dir="rtl">
+        <span class="hero-supreme__verse-arabic aq-arabic">
+          وَلِلَّهِ الْأَسْمَاءُ الْحُسْنَىٰ فَادْعُوهُ بِهَا
+        </span>
+        <cite class="hero-supreme__verse-trans">
+          {{ isBn()
+            ? '“আর আল্লাহর জন্যই রয়েছে সুন্দর সুন্দর নাম। অতএব তোমরা তাঁকে সেসব নামেই ডাকবে।” (সূরা আল-আ\'রাফ ৭:১৮০)'
+            : '“And to Allah belong the best names, so invoke Him by them.” (Surah Al-A\'raf 7:180)' }}
+        </cite>
+      </blockquote>
+
+      <div class="hero-supreme__actions">
+        <button
+          type="button"
+          class="aq-btn aq-btn--primary aq-btn--lg hero-play-btn"
+          (click)="playName($event, supremeName)"
+          [attr.aria-label]="isBn() ? 'আল্লাহ নামের উচ্চারণ শুনুন' : 'Listen to pronunciation of Allah'"
+        >
+          <aq-icon [name]="activePlayingNumber() === 0 && isPlaying() ? 'pause' : 'play'" [size]="18" />
+          <span>
+            {{ activePlayingNumber() === 0 && isPlaying()
+              ? (isBn() ? 'বিরতি দিন' : 'Pause Pronunciation')
+              : (isBn() ? 'উচ্চারণ শুনুন' : 'Listen Pronunciation') }}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="aq-btn aq-btn--secondary aq-btn--lg"
+          (click)="openDetail(supremeName)"
+        >
+          <aq-icon name="info" [size]="18" />
+          <span>{{ isBn() ? 'গভীর তাৎপর্য ও ফজিলত' : 'Spiritual Significance' }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="aq-btn aq-btn--secondary aq-btn--lg playlist-trigger-btn"
+          (click)="isPlayingAll() ? (isPlaying() ? pauseAudio() : resumeAudio()) : playAll()"
+        >
+          <aq-icon [name]="isPlayingAll() && isPlaying() ? 'pause' : 'sparkles'" [size]="18" />
+          <span>
+            {{ isPlayingAll() && isPlaying()
+              ? (isBn() ? 'সব নাম পাঠ স্থগিত' : 'Pause 99 Playlist')
+              : (isBn() ? '৯৯টি নাম একাধারে শুনুন' : 'Play All 99 Names') }}
+          </span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sticky Sequential Player Bar (Visible when audio is playing or playlist is active) -->
+  @if (activePlayingNumber() !== null) {
+    <aside class="audio-banner-bar" role="region" aria-label="Audio Recitation Player">
+      <div class="aq-container audio-banner-bar__inner">
+        <div class="audio-banner-bar__info">
+          <div class="audio-banner-bar__eq" [class.is-animating]="isPlaying()" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
+          <div class="audio-banner-bar__meta">
+            @if (activePlayingName(); as current) {
+              <div class="audio-banner-bar__title-row">
+                <span class="audio-banner-bar__badge">
+                  {{ current.number === 0 ? (isBn() ? 'ইসমে আযম' : 'Supreme') : '#' + (isBn() ? toBnDigits(current.number) : current.number) }}
+                </span>
+                <strong class="audio-banner-bar__arabic aq-arabic">{{ current.arabic }}</strong>
+                <span class="audio-banner-bar__name">{{ isBn() ? current.nameBn : current.transliteration }}</span>
+              </div>
+              <p class="audio-banner-bar__sub">
+                {{ isBn() ? current.meaningBn : current.meaningEn }}
+              </p>
+            }
+          </div>
+        </div>
+
+        <div class="audio-banner-bar__controls">
+          <button
+            type="button"
+            class="aq-icon-btn audio-banner-btn"
+            (click)="prevTrack()"
+            [attr.aria-label]="isBn() ? 'পূর্ববর্তী নাম' : 'Previous Name'"
+            title="Previous"
+          >
+            <aq-icon name="skipBack" [size]="18" />
+          </button>
+
+          <button
+            type="button"
+            class="aq-btn aq-btn--primary audio-banner-btn audio-banner-btn--play"
+            (click)="isPlaying() ? pauseAudio() : resumeAudio()"
+            [attr.aria-label]="isPlaying() ? (isBn() ? 'বিরতি' : 'Pause') : (isBn() ? 'প্লে' : 'Play')"
+          >
+            <aq-icon [name]="isPlaying() ? 'pause' : 'play'" [size]="20" />
+          </button>
+
+          <button
+            type="button"
+            class="aq-icon-btn audio-banner-btn"
+            (click)="nextTrack()"
+            [attr.aria-label]="isBn() ? 'পরবর্তী নাম' : 'Next Name'"
+            title="Next"
+          >
+            <aq-icon name="skipForward" [size]="18" />
+          </button>
+
+          <button
+            type="button"
+            class="aq-icon-btn audio-banner-btn audio-banner-btn--close"
+            (click)="stopAudio()"
+            [attr.aria-label]="isBn() ? 'প্লেয়ার বন্ধ করুন' : 'Close Player'"
+            title="Stop & Close"
+          >
+            <aq-icon name="close" [size]="18" />
+          </button>
+        </div>
+      </div>
+      <!-- Mini Progress line -->
+      <div class="audio-banner-bar__progress" [style.width.%]="playbackProgress()"></div>
+    </aside>
+  }
+
+  <!-- Main Content Container -->
+  <main class="aq-container asma-content">
+    <!-- Toolbar: Search & Filter Tabs -->
+    <section class="toolbar-section" aria-label="Search and Filter">
+      <div class="search-box">
+        <aq-icon name="search" [size]="18" class="search-box__icon" aria-hidden="true" />
+        <input
+          type="search"
+          class="search-box__input"
+          [placeholder]="isBn() ? 'নাম, অর্থ বা অনুবাদ দিয়ে খুঁজুন (যেমন: রহমান, দয়ালু, Malik)...' : 'Search by name, meaning or transliteration (e.g. Rahman, Merciful, Malik)...'"
+          [value]="searchInput()"
+          (input)="onSearchChange($event)"
+          [attr.aria-label]="isBn() ? 'আসমাউল হুসনা খুঁজুন' : 'Search Asma-ul-Husna'"
+        />
+        @if (searchInput()) {
+          <button
+            type="button"
+            class="search-box__clear"
+            (click)="clearSearch()"
+            [attr.aria-label]="isBn() ? 'অনুসন্ধান মুছুন' : 'Clear search'"
+          >
+            <aq-icon name="close" [size]="16" />
+          </button>
+        }
+      </div>
+
+      <div class="filter-row">
+        <div class="filter-tabs" role="tablist">
+          <button
+            type="button"
+            role="tab"
+            class="filter-tab"
+            [class.is-active]="filterTab() === 'all'"
+            [attr.aria-selected]="filterTab() === 'all'"
+            (click)="setTab('all')"
+          >
+            <aq-icon name="sparkles" [size]="16" />
+            <span>{{ isBn() ? 'সকল নাম' : 'All 99 Names' }}</span>
+            <span class="filter-tab__count">৯৯</span>
+          </button>
+
+          <button
+            type="button"
+            role="tab"
+            class="filter-tab"
+            [class.is-active]="filterTab() === 'bookmarked'"
+            [attr.aria-selected]="filterTab() === 'bookmarked'"
+            (click)="setTab('bookmarked')"
+          >
+            <aq-icon name="bookmark" [size]="16" />
+            <span>{{ isBn() ? 'সংরক্ষিত তালিকা' : 'Bookmarked' }}</span>
+            @if (bookmarkedCount() > 0) {
+              <span class="filter-tab__count filter-tab__count--active">
+                {{ isBn() ? toBnDigits(bookmarkedCount()) : bookmarkedCount() }}
+              </span>
+            }
+          </button>
+        </div>
+
+        <p class="results-count" aria-live="polite">
+          {{ resultCountText() }}
+        </p>
+      </div>
+    </section>
+
+    <!-- Empty State if search yields no results -->
+    @if (filteredNames().length === 0) {
+      <div class="empty-results aq-card">
+        <div class="empty-results__icon" aria-hidden="true">
+          <aq-icon name="search" [size]="32" />
+        </div>
+        <h3 class="empty-results__title">
+          {{ isBn() ? 'কোনো নাম পাওয়া যায়নি' : 'No names matched your search' }}
+        </h3>
+        <p class="empty-results__desc">
+          {{ isBn()
+            ? 'অনুসন্ধান শব্দটি পরিবর্তন করে পুনরায় চেষ্টা করুন অথবা ফিল্টার পরিষ্কার করুন।'
+            : 'Try refining your keywords or switch to the all names view.' }}
+        </p>
+        <button type="button" class="aq-btn aq-btn--secondary" (click)="clearSearch()">
+          {{ isBn() ? 'অনুসন্ধান রিসেট করুন' : 'Reset Search' }}
+        </button>
+      </div>
+    }
+
+    <!-- 99 Names Grid -->
+    <div class="names-grid" role="list">
+      @for (name of filteredNames(); track name.number) {
+        <article
+          [id]="'name-card-' + name.number"
+          class="name-card aq-card"
+          [class.name-card--active]="activePlayingNumber() === name.number"
+          (click)="openDetail(name)"
+          role="listitem"
+          tabindex="0"
+          (keydown.enter)="openDetail(name)"
+        >
+          <!-- Top Card Meta -->
+          <div class="name-card__header">
+            <span class="name-card__num aq-numeral">
+              #{{ isBn() ? toBnDigits(name.number) : name.number }}
+            </span>
+
+            <div class="name-card__quick-actions">
+              <button
+                type="button"
+                class="name-card__action-btn"
+                [class.is-bookmarked]="isBookmarked(name.number)"
+                (click)="toggleBookmark($event, name.number)"
+                [attr.aria-label]="isBookmarked(name.number) ? (isBn() ? 'বুকমার্ক মুছুন' : 'Remove bookmark') : (isBn() ? 'বুকমার্ক করুন' : 'Bookmark')"
+                [title]="isBookmarked(name.number) ? 'Remove Bookmark' : 'Bookmark'"
+              >
+                <aq-icon name="star" [size]="16" />
+              </button>
+
+              <button
+                type="button"
+                class="name-card__action-btn"
+                (click)="copyOrShareName($event, name)"
+                [attr.aria-label]="isBn() ? 'শেয়ার ও অনুলিপি' : 'Copy and share'"
+                title="Copy / অনুলিপি"
+              >
+                <aq-icon name="copy" [size]="16" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Arabic Calligraphy -->
+          <div class="name-card__arabic-wrap">
+            <h2 class="name-card__arabic aq-arabic" dir="rtl">
+              {{ name.arabic }}
+            </h2>
+          </div>
+
+          <!-- Transliteration and Bangla Name -->
+          <div class="name-card__titles">
+            <h3 class="name-card__translit">{{ name.transliteration }}</h3>
+            <p class="name-card__bangla-name">{{ name.nameBn }}</p>
+          </div>
+
+          <!-- Bilingual Meanings -->
+          <div class="name-card__meanings">
+            @if (isBn()) {
+              <p class="name-card__meaning-primary">{{ name.meaningBn }}</p>
+              <p class="name-card__meaning-secondary">{{ name.meaningEn }}</p>
+            } @else {
+              <p class="name-card__meaning-primary">{{ name.meaningEn }}</p>
+              <p class="name-card__meaning-secondary">{{ name.meaningBn }}</p>
+            }
+          </div>
+
+          <!-- Quran Reference Badge -->
+          <div class="name-card__reference">
+            <aq-icon name="book" [size]="13" aria-hidden="true" />
+            <span>{{ name.quranReference }}</span>
+          </div>
+
+          <!-- Card Footer with Listen & Detail CTA -->
+          <div class="name-card__footer">
+            <button
+              type="button"
+              class="play-pill-btn"
+              [class.is-active-track]="activePlayingNumber() === name.number"
+              (click)="playName($event, name)"
+              [attr.aria-label]="isBn() ? name.nameBn + ' এর উচ্চারণ শুনুন' : 'Listen to ' + name.transliteration"
+            >
+              <aq-icon
+                [name]="activePlayingNumber() === name.number && isPlaying() ? 'pause' : 'play'"
+                [size]="14"
+              />
+              <span>
+                {{ activePlayingNumber() === name.number && isPlaying()
+                  ? (isBn() ? 'বিরতি' : 'Pause')
+                  : (isBn() ? 'উচ্চারণ' : 'Pronounce') }}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              class="name-card__detail-link"
+              (click)="openDetail(name); $event.stopPropagation()"
+            >
+              <span>{{ isBn() ? 'তাৎপর্য' : 'Reflect' }}</span>
+              <aq-icon name="chevronRight" [size]="14" />
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  </main>
+
+  <!-- Name Detail Modal -->
+  @if (selectedName(); as modalName) {
+    <div class="modal-backdrop" (click)="closeDetail()" aria-hidden="true"></div>
+    <div
+      class="name-detail-modal aq-card"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-labelledby]="'modal-title-' + modalName.number"
+    >
+      <div class="name-detail-modal__header">
+        <span class="name-detail-modal__badge">
+          {{ modalName.number === 0 ? (isBn() ? 'ইসমে আযম' : 'Supreme Name') : '#' + (isBn() ? toBnDigits(modalName.number) : modalName.number) }}
+        </span>
+        <button
+          type="button"
+          class="aq-icon-btn modal-close-btn"
+          (click)="closeDetail()"
+          [attr.aria-label]="isBn() ? 'মডেল বন্ধ করুন' : 'Close details'"
+        >
+          <aq-icon name="close" [size]="20" />
+        </button>
+      </div>
+
+      <div class="name-detail-modal__body">
+        <div class="name-detail-modal__calligraphy-center">
+          <p class="name-detail-modal__arabic aq-arabic" dir="rtl">
+            {{ modalName.arabic }}
+          </p>
+          <h2 [id]="'modal-title-' + modalName.number" class="name-detail-modal__translit">
+            {{ modalName.transliteration }}
+          </h2>
+          <p class="name-detail-modal__name-bn">{{ modalName.nameBn }}</p>
+        </div>
+
+        <div class="name-detail-modal__meaning-box">
+          <div class="meaning-item">
+            <span class="meaning-item__label">{{ isBn() ? 'বাংলা অর্থ' : 'Bengali Meaning' }}</span>
+            <strong class="meaning-item__val">{{ modalName.meaningBn }}</strong>
+          </div>
+          <div class="meaning-item">
+            <span class="meaning-item__label">{{ isBn() ? 'ইংরেজি অর্থ' : 'English Meaning' }}</span>
+            <strong class="meaning-item__val">{{ modalName.meaningEn }}</strong>
+          </div>
+        </div>
+
+        <!-- Quranic Occurrences -->
+        <div class="name-detail-modal__section">
+          <h3 class="name-detail-modal__sec-title">
+            <aq-icon name="bookOpen" [size]="16" />
+            <span>{{ isBn() ? 'কুরআনিক প্রাসঙ্গিকতা ও উল্লেখ' : 'Quranic References' }}</span>
+          </h3>
+          <p class="name-detail-modal__ref-text">{{ modalName.quranReference }}</p>
+        </div>
+
+        <!-- Deep Spiritual Reflection -->
+        <div class="name-detail-modal__section">
+          <h3 class="name-detail-modal__sec-title">
+            <aq-icon name="sparkles" [size]="16" />
+            <span>{{ isBn() ? 'আধ্যাত্মিক তাৎপর্য ও ফজিলত' : 'Spiritual Significance & Benefits' }}</span>
+          </h3>
+          <p class="name-detail-modal__details-bn">{{ modalName.detailsBn }}</p>
+          <p class="name-detail-modal__details-en">{{ modalName.detailsEn }}</p>
+        </div>
+      </div>
+
+      <div class="name-detail-modal__footer">
+        <button
+          type="button"
+          class="aq-btn aq-btn--primary modal-listen-btn"
+          (click)="playName($event, modalName)"
+        >
+          <aq-icon
+            [name]="activePlayingNumber() === modalName.number && isPlaying() ? 'pause' : 'play'"
+            [size]="18"
+          />
+          <span>
+            {{ activePlayingNumber() === modalName.number && isPlaying()
+              ? (isBn() ? 'বিরতি দিন' : 'Pause Audio')
+              : (isBn() ? 'উচ্চারণ শুনুন' : 'Listen Pronunciation') }}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="aq-btn aq-btn--secondary"
+          [class.is-bookmarked]="isBookmarked(modalName.number)"
+          (click)="toggleBookmark($event, modalName.number)"
+        >
+          <aq-icon name="star" [size]="18" />
+          <span>{{ isBookmarked(modalName.number) ? (isBn() ? 'সংরক্ষিত' : 'Saved') : (isBn() ? 'সংরক্ষণ করুন' : 'Bookmark') }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="aq-btn aq-btn--secondary"
+          (click)="copyOrShareName($event, modalName)"
+        >
+          <aq-icon name="share" [size]="18" />
+          <span>{{ isBn() ? 'শেয়ার' : 'Share' }}</span>
+        </button>
+      </div>
+    </div>
+  }
+</div>

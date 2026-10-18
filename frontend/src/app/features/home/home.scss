@@ -388,10 +388,32 @@
   }
 
   &__title {
-    margin: 0 0 0.25rem;
+    margin: 0;
     font-size: 1rem;
     font-weight: 700;
     color: var(--aq-text);
+  }
+
+  &__badge-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  &__badge {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    border-radius: 9999px;
+    background: var(--aq-gold-100);
+    color: var(--aq-gold-600);
+
+    :host-context([data-theme='dark']) & {
+      background: rgba(201, 162, 39, 0.2);
+      color: var(--aq-gold-300);
+    }
   }
 
   &__desc {

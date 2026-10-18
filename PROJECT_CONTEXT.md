@@ -5,7 +5,7 @@
 > why each decision was made. Open a new session, point at this file, and you
 > have the full context.
 
-**Last updated:** 2026-10-14 · **Current phase:** Phase 6 complete, ready for Phase 7
+**Last updated:** 2026-10-18 · **Current phase:** Phase 15 complete, ready for Phase 16
 
 ---
 
@@ -555,9 +555,9 @@ Live deployment is active on RunASP.NET (backend) and GitHub Pages (frontend).
 
 ### New Features Roadmap (Phases 13 – 17):
 - **[Phase 13](docs/phases/PHASE-13.md) — Daily Quran Task Tracker, Reminders & Habit Calendar**: ✅ **COMPLETE (2026-10-18)**. User-defined daily reading/listening goals, scheduled browser reminders, automatic & manual completion tracking, celebration toasts, and habit calendar streak matrix.
-- **[Phase 14](docs/phases/PHASE-14.md) — Prayer Time Notifications & In-App Adhan Player Modal**: ⏳ **UP NEXT**. Desktop/PWA notifications for all five daily prayers, plus an interactive in-app Adhan player that starts muted by default with an instant one-tap unmute button.
-- **[Phase 15](docs/phases/PHASE-15.md) — Asma-ul-Husna (99 Beautiful Names of Allah)**: Dedicated section featuring a prominent hero calligraphy display of the Supreme Name "الله" (#1), followed by all 99 names with Arabic calligraphy, transliteration, Bengali/English meanings, spiritual reflection notes, and audio pronunciation.
-- **[Phase 16](docs/phases/PHASE-16.md) — Daily Dhikr Rotational Advice Modal & Digital Tasbih**: Rotational spiritual deed prompt on the home page (e.g. Surah An-Nas 3x, Astaghfirullah 3x, Durood 3x) with "Done" and "Skip" actions, alongside a full Digital Tasbih counter with haptic feedback and categorized Adhkar.
+- **[Phase 14](docs/phases/PHASE-14.md) — Prayer Time Notifications & In-App Adhan Player Modal**: ✅ **COMPLETE (2026-10-18)**. Desktop/PWA notifications for all five daily prayers, plus an interactive in-app Adhan player that starts muted by default with an instant one-tap unmute button.
+- **[Phase 15](docs/phases/PHASE-15.md) — Asma-ul-Husna (99 Beautiful Names of Allah)**: ✅ **COMPLETE (2026-10-18)**. Dedicated section featuring a prominent hero calligraphy display of the Supreme Name "الله" (#1), followed by all 99 names with Arabic calligraphy, transliteration, Bengali/English meanings, spiritual reflection notes, sequential continuous audio recitation, instant bilingual search, and personal bookmarking.
+- **[Phase 16](docs/phases/PHASE-16.md) — Daily Dhikr Rotational Advice Modal & Digital Tasbih**: ⏳ **UP NEXT**. Rotational spiritual deed prompt on the home page (e.g. Surah An-Nas 3x, Astaghfirullah 3x, Durood 3x) with "Done" and "Skip" actions, alongside a full Digital Tasbih counter with haptic feedback and categorized Adhkar.
 - **[Phase 17](docs/phases/PHASE-17.md) — Quran Ayah Bangla Pronunciation (উচ্চারণ) and Multi-Script Display**: Bengali phonetic transliteration (উচ্চারণ) rendered alongside Uthmani Arabic script and Bengali translation for all 6,236 ayahs, with reader toolbar visibility toggle and font controls.
 
 ---

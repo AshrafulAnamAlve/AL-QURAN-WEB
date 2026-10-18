@@ -165,6 +165,12 @@ const ICON_DEFINITIONS = {
   volume2: {
     paths: ['M11 5L6 9H2v6h4l5 4V5z', 'M19.07 4.93a10 10 0 0 1 0 14.14', 'M15.54 8.46a5 5 0 0 1 0 7.07'],
   },
+  sparkles: {
+    paths: [
+      'M12 2l2.4 6.9 6.9 2.4-6.9 2.4L12 20.6l-2.4-6.9L2.7 11.3l6.9-2.4L12 2Z',
+      'M19 2l1 2.5 2.5 1-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1L19 2z',
+    ],
+  },
 } as const;
 
 /** Every icon name, as a literal union - misspellings fail at compile time. */
