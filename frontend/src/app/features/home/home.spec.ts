@@ -153,6 +153,19 @@ describe('HomePage', () => {
     expect(el.textContent).toContain('Read Quran');
   });
 
+  it('renders current prayer waqt badge in hero section', () => {
+    // 12:00 UTC (Dhuhr at 11:45 UTC, Asr at 15:15 UTC)
+    prayerTimes.currentTime.set(new Date('2026-10-14T12:00:00Z'));
+    fixture.detectChanges();
+
+    const el: HTMLElement = fixture.nativeElement;
+    const waqtPill = el.querySelector('.hero__waqt-pill');
+    expect(waqtPill).not.toBeNull();
+    expect(waqtPill?.textContent).toContain('Current:');
+    expect(waqtPill?.textContent).toContain('Dhuhr');
+    expect(waqtPill?.textContent).toContain('11:45 AM');
+  });
+
   it('renders prayer times card with live countdown', () => {
     // 03:00 UTC (before Fajr at 04:30)
     prayerTimes.currentTime.set(new Date('2026-10-14T03:00:00Z'));

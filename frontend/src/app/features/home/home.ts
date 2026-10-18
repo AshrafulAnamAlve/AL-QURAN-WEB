@@ -38,7 +38,47 @@ export class HomePage {
   readonly progressPercentage = this.readingProgress.percentage;
 
   readonly nextPrayer = this.prayerTimes.nextPrayer;
+  readonly currentPrayer = this.prayerTimes.currentPrayer;
   readonly currentLocation = this.locationService.location;
+
+  /** Current active waqt (or Duha/Ishraq between sunrise and dhuhr). */
+  readonly currentWaqt = computed<{
+    name: string;
+    banglaName: string;
+    time: string;
+    isDuha?: boolean;
+  } | null>(() => {
+    const current = this.currentPrayer();
+    if (current) {
+      return {
+        name: current.name,
+        banglaName: current.banglaName,
+        time: current.time,
+      };
+    }
+
+    const table = this.prayerTimes.timetable();
+    if (!table) return null;
+
+    const now = this.prayerTimes.currentTime().getTime();
+    const sunrise = table.times.find((t) => t.key.toLowerCase() === 'sunrise');
+    const dhuhr = table.times.find((t) => t.key.toLowerCase() === 'dhuhr');
+
+    if (sunrise?.at && dhuhr?.at) {
+      const sunriseAt = new Date(sunrise.at).getTime();
+      const dhuhrAt = new Date(dhuhr.at).getTime();
+      if (now >= sunriseAt && now < dhuhrAt) {
+        return {
+          name: 'Duha / Ishraq',
+          banglaName: 'ইশরাক / দুহা',
+          time: sunrise.time,
+          isDuha: true,
+        };
+      }
+    }
+
+    return null;
+  });
 
   readonly dailyAyah = this.dailyAyahService.ayah;
   readonly dailySurah = this.dailyAyahService.surah;
