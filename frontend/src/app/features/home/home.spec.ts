@@ -159,11 +159,13 @@ describe('HomePage', () => {
     fixture.detectChanges();
 
     const el: HTMLElement = fixture.nativeElement;
-    const waqtPill = el.querySelector('.hero__waqt-pill');
-    expect(waqtPill).not.toBeNull();
-    expect(waqtPill?.textContent).toContain('Current:');
-    expect(waqtPill?.textContent).toContain('Dhuhr');
-    expect(waqtPill?.textContent).toContain('11:45 AM');
+    const waqtCard = el.querySelector('.hero__waqt-card');
+    expect(waqtCard).not.toBeNull();
+    expect(waqtCard?.textContent).toContain('Current Waqt:');
+    expect(waqtCard?.textContent).toContain('Dhuhr');
+    expect(waqtCard?.textContent).toContain('11:45 AM');
+    expect(waqtCard?.textContent).toContain('Next: Asr');
+    expect(waqtCard?.textContent).toContain('left');
   });
 
   it('renders prayer times card with live countdown', () => {

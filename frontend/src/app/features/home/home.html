@@ -18,19 +18,33 @@
       @if (currentWaqt(); as waqt) {
         <a
           routerLink="/prayer"
-          class="hero__waqt-pill"
+          class="hero__waqt-card"
           [attr.aria-label]="isBn() ? 'বর্তমান নামাজের ওয়াক্ত ' + waqt.banglaName + ', সময় ' + formatTime12h(waqt.time) : 'Current prayer waqt ' + waqt.name + ', time ' + formatTime12h(waqt.time)"
         >
-          <span class="hero__waqt-dot" aria-hidden="true"></span>
-          <span class="hero__waqt-label">{{ isBn() ? 'বর্তমান ওয়াক্ত:' : 'Current:' }}</span>
-          <strong class="hero__waqt-name">{{ isBn() ? waqt.banglaName : waqt.name }}</strong>
-          <span class="hero__waqt-time aq-numeral">{{ formatTime12h(waqt.time) }}</span>
+          <div class="hero__waqt-current">
+            <span class="hero__waqt-dot" aria-hidden="true"></span>
+            <span class="hero__waqt-label">{{ isBn() ? 'বর্তমান ওয়াক্ত:' : 'Current Waqt:' }}</span>
+            <strong class="hero__waqt-name">{{ isBn() ? waqt.banglaName : waqt.name }}</strong>
+            <span class="hero__waqt-time aq-numeral">({{ formatTime12h(waqt.time) }})</span>
+          </div>
+
           @if (nextPrayer(); as next) {
-            <span class="hero__waqt-countdown aq-numeral" title="{{ isBn() ? 'পরবর্তী ওয়াক্তের বাকি সময়' : 'Time until next waqt' }}">
-              &bull; {{ isBn() ? toBnDigits(next.formattedCountdown) : next.formattedCountdown }}
-            </span>
+            <span class="hero__waqt-divider" aria-hidden="true"></span>
+            <div class="hero__waqt-next">
+              <span class="hero__waqt-next-label">
+                {{ isBn() ? (next.isTomorrow ? 'পরবর্তী ফজর' : 'পরবর্তী ' + next.prayer.banglaName) : (next.isTomorrow ? 'Next: Fajr' : 'Next: ' + next.prayer.name) }}
+              </span>
+              <span class="hero__waqt-next-time aq-numeral">({{ formatTime12h(next.prayer.time) }})</span>
+              <span class="hero__waqt-remaining">
+                <aq-icon name="clock" [size]="12" aria-hidden="true" />
+                <span>{{ formatRemaining(next.hours, next.minutes) }}</span>
+              </span>
+            </div>
           }
-          <aq-icon name="chevronRight" [size]="14" class="hero__waqt-arrow" aria-hidden="true" />
+
+          <span class="hero__waqt-action" aria-hidden="true">
+            <aq-icon name="chevronRight" [size]="14" />
+          </span>
         </a>
       }
     </div>

@@ -106,6 +106,32 @@ export class HomePage {
     return this.prayerTimes.toBnDigits(val);
   }
 
+  formatRemaining(hours: number, minutes: number): string {
+    if (this.isBn()) {
+      if (hours > 0 && minutes > 0) {
+        return `বাকি ${this.toBnDigits(hours)} ঘণ্টা ${this.toBnDigits(minutes)} মি.`;
+      }
+      if (hours > 0) {
+        return `বাকি ${this.toBnDigits(hours)} ঘণ্টা`;
+      }
+      if (minutes > 0) {
+        return `বাকি ${this.toBnDigits(minutes)} মিনিট`;
+      }
+      return '১ মিনিটের কম বাকি';
+    } else {
+      if (hours > 0 && minutes > 0) {
+        return `${hours}h ${minutes}m left`;
+      }
+      if (hours > 0) {
+        return `${hours}h left`;
+      }
+      if (minutes > 0) {
+        return `${minutes}m left`;
+      }
+      return 'Less than 1m left';
+    }
+  }
+
   playDailyAyah(): void {
     void this.dailyAyahService.toggleAudio();
   }
