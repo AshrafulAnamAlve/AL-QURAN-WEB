@@ -160,7 +160,7 @@ export class HomePage {
   openAdhanPlayer(): void {
     const current = this.currentPrayer() ?? this.nextPrayer()?.prayer;
     if (current) {
-      this.notificationService.openAdhanModal(current, false);
+      this.notificationService.openAdhanModal(current, false, false);
     } else {
       this.notificationService.triggerTestAlert('asr');
     }

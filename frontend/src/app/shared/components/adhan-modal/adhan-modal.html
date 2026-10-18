@@ -11,18 +11,9 @@
       <!-- HEADER -->
       <header class="adhan-card__header">
         <div class="adhan-card__header-top">
-          <div class="adhan-badge-row">
-            <span class="adhan-badge">
-              <aq-icon name="clock" [size]="14" />
-              <span>{{ language.translate('adhan.nowTimeFor') }}</span>
-            </span>
-
-            @if (modal.isTest) {
-              <span class="test-badge">
-                <aq-icon name="info" [size]="14" />
-                <span>{{ isBn() ? 'টেস্ট প্রিভিউ' : 'Test Preview' }}</span>
-              </span>
-            }
+          <div class="header-badge">
+            <aq-icon name="clock" [size]="15" />
+            <span>{{ isBn() ? 'নামাজের আজান' : 'Call to Prayer' }} &middot; {{ modal.locationName }}</span>
           </div>
 
           <button
@@ -35,128 +26,113 @@
           </button>
         </div>
 
-        <div class="adhan-titles">
-          <!-- Arabic Calligraphy -->
+        <div class="prayer-hero">
           <div class="prayer-arabic" dir="rtl" lang="ar">
             {{ modal.prayer.arabicName }}
           </div>
-
-          <!-- English / Bangla Names -->
-          <h2 class="prayer-primary-title">
+          <h2 class="prayer-title">
             {{ isBn() ? modal.prayer.banglaName : modal.prayer.name }}
-            <span class="prayer-sub-title">({{ isBn() ? modal.prayer.name : modal.prayer.banglaName }})</span>
+            <span class="prayer-time">({{ isBn() ? modal.time12hBn : modal.time12h }})</span>
           </h2>
-
-          <div class="prayer-meta">
-            <span class="prayer-meta__item">
-              <aq-icon name="mapPin" [size]="15" />
-              <span>{{ modal.locationName }}</span>
-            </span>
-            <span class="prayer-meta__dot" aria-hidden="true">·</span>
-            <span class="prayer-meta__time">
-              {{ isBn() ? modal.time12hBn : modal.time12h }}
-            </span>
-          </div>
         </div>
       </header>
 
-      <!-- BODY / AUDIO CONTROLS -->
+      <!-- BODY / PLAYER CENTERPIECE -->
       <div class="adhan-card__body">
-        <!-- Visualizer & Status Box -->
-        <div class="visualizer-card" [class.visualizer-card--playing]="isPlaying()">
-          <!-- Sound Waves -->
-          <div class="wave-visualizer" aria-hidden="true">
-            <span class="wave-bar bar-1"></span>
-            <span class="wave-bar bar-2"></span>
-            <span class="wave-bar bar-3"></span>
-            <span class="wave-bar bar-4"></span>
-            <span class="wave-bar bar-5"></span>
-            <span class="wave-bar bar-6"></span>
-            <span class="wave-bar bar-7"></span>
+        <!-- Main Audio Card -->
+        <div class="player-card" [class.is-playing]="isPlaying()">
+          <!-- Sound Visualizer Wave Graphic -->
+          <div class="wave-graphic" [class.is-animated]="isPlaying() && !isMuted()" aria-hidden="true">
+            <span class="bar bar-1"></span>
+            <span class="bar bar-2"></span>
+            <span class="bar bar-3"></span>
+            <span class="bar bar-4"></span>
+            <span class="bar bar-5"></span>
+            <span class="bar bar-6"></span>
+            <span class="bar bar-7"></span>
+            <span class="bar bar-8"></span>
+            <span class="bar bar-9"></span>
           </div>
 
-          <!-- Status Text -->
-          <div class="visualizer-status">
-            @if (isPlaying()) {
-              @if (isMuted()) {
-                <span class="status-pill status-pill--muted">
-                  <aq-icon name="volumeOff" [size]="16" />
-                  <span>{{ language.translate('adhan.playingMuted') }}</span>
-                </span>
-              } @else {
-                <span class="status-pill status-pill--live">
-                  <aq-icon name="volume2" [size]="16" />
-                  <span>{{ language.translate('adhan.playingSound') }}</span>
-                </span>
-              }
-            } @else {
-              <span class="status-pill status-pill--paused">
-                <aq-icon name="pause" [size]="16" />
-                <span>{{ language.translate('adhan.paused') }}</span>
-              </span>
-            }
-
-            <span class="audio-progress">{{ formattedProgress() }}</span>
-          </div>
-
-          <!-- High-Contrast Prominent Unmute / Mute Action Button -->
-          <div class="unmute-action-wrapper">
+          <!-- Live Status Banner -->
+          <div class="player-status-row">
             @if (isMuted()) {
+              <div class="status-badge status-badge--muted">
+                <aq-icon name="volumeOff" [size]="16" />
+                <span>{{ isBn() ? 'শব্দ বন্ধ (Muted) — শব্দ শুনতে বোতামে চাপ দিন' : 'Sound is Muted — Tap below to hear audio' }}</span>
+              </div>
+            } @else if (isPlaying()) {
+              <div class="status-badge status-badge--live">
+                <aq-icon name="volume2" [size]="16" />
+                <span>{{ isBn() ? 'আজান চলছে' : 'Playing Adhan' }} &middot; {{ isBn() ? selectedVoice().nameBn : selectedVoice().name }}</span>
+              </div>
+            } @else {
+              <div class="status-badge status-badge--paused">
+                <aq-icon name="pause" [size]="16" />
+                <span>{{ isBn() ? 'আজান স্থগিত' : 'Adhan Paused' }}</span>
+              </div>
+            }
+          </div>
+
+          <!-- Time & Interactive Scrubber / Seek Bar -->
+          <div class="time-scrubber">
+            <span class="time-label">{{ formatTime(currentTime()) }}</span>
+            <input
+              type="range"
+              class="scrubber-range"
+              min="0"
+              [max]="duration() || 180"
+              step="0.5"
+              [value]="currentTime()"
+              (input)="onSeek($event)"
+              aria-label="Seek Adhan audio"
+            />
+            <span class="time-label">{{ formatTime(duration()) }}</span>
+          </div>
+
+          <!-- Big, Unmistakable Hero Action Button -->
+          <div class="hero-action-container">
+            @if (isMuted()) {
+              <!-- Prominent Unmute Button when muted -->
               <button
                 type="button"
-                class="unmute-btn"
+                class="hero-btn hero-btn--unmute"
                 (click)="unmuteAdhan()"
                 [attr.aria-label]="language.translate('adhan.unmute')"
               >
-                <aq-icon name="volume2" [size]="22" />
-                <span>{{ language.translate('adhan.unmute') }}</span>
+                <aq-icon name="volume2" [size]="24" />
+                <span>{{ isBn() ? '🔊 আজানের শব্দ চালু করুন' : '🔊 Turn On Sound' }}</span>
               </button>
-            } @else {
+            } @else if (isPlaying()) {
+              <!-- Pause Button when playing -->
               <button
                 type="button"
-                class="mute-btn"
-                (click)="toggleMute()"
-                [attr.aria-label]="language.translate('adhan.mute')"
+                class="hero-btn hero-btn--pause"
+                (click)="togglePlay()"
+                [attr.aria-label]="language.translate('adhan.pause')"
               >
-                <aq-icon name="volumeOff" [size]="20" />
-                <span>{{ language.translate('adhan.mute') }}</span>
+                <aq-icon name="pause" [size]="24" />
+                <span>{{ isBn() ? '⏸️ আজান স্থগিত রাখুন' : '⏸️ Pause Adhan' }}</span>
+              </button>
+            } @else {
+              <!-- Play Button when paused -->
+              <button
+                type="button"
+                class="hero-btn hero-btn--play"
+                (click)="togglePlay()"
+                [attr.aria-label]="language.translate('adhan.play')"
+              >
+                <aq-icon name="play" [size]="24" />
+                <span>{{ isBn() ? '▶️ আজান শুনুন' : '▶️ Play Adhan' }}</span>
               </button>
             }
           </div>
 
-          @if (audioError()) {
-            <div class="audio-error" role="alert">
-              <aq-icon name="alert" [size]="16" />
-              <span>{{ audioError() }}</span>
-            </div>
-          }
-        </div>
-
-        <!-- Controls Row -->
-        <div class="playback-controls">
-          <button
-            type="button"
-            class="control-btn control-btn--play"
-            (click)="togglePlay()"
-            [attr.aria-label]="isPlaying() ? language.translate('adhan.pause') : language.translate('adhan.play')"
-          >
-            <aq-icon [name]="isPlaying() ? 'pause' : 'play'" [size]="20" />
-          </button>
-
-          <button
-            type="button"
-            class="control-btn"
-            (click)="stopAdhan()"
-            [attr.aria-label]="language.translate('adhan.stop')"
-          >
-            <aq-icon name="refresh" [size]="18" />
-          </button>
-
-          <!-- Volume Slider -->
-          <div class="volume-slider-group">
+          <!-- Volume Controls -->
+          <div class="volume-bar">
             <button
               type="button"
-              class="volume-icon-btn"
+              class="volume-btn"
               (click)="toggleMute()"
               [attr.aria-label]="isMuted() ? 'Unmute' : 'Mute'"
             >
@@ -164,29 +140,38 @@
             </button>
             <input
               type="range"
-              class="volume-range"
+              class="volume-slider"
               min="0"
               max="1"
               step="0.05"
               [value]="isMuted() ? 0 : volume()"
               (input)="onVolumeChange($event)"
-              [attr.aria-label]="language.translate('adhan.volume')"
+              aria-label="Volume slider"
             />
-            <span class="volume-value">{{ Math.round((isMuted() ? 0 : volume()) * 100) }}%</span>
+            <span class="volume-text">{{ Math.round((isMuted() ? 0 : volume()) * 100) }}%</span>
           </div>
+
+          @if (audioError()) {
+            <div class="audio-error-msg" role="alert">
+              <aq-icon name="alert" [size]="16" />
+              <span>{{ audioError() }}</span>
+            </div>
+          }
         </div>
 
-        <!-- Voice Selector Dropdown -->
-        <div class="voice-picker-card">
-          <label for="adhan-voice-select" class="voice-picker-label">
-            <aq-icon name="headphones" [size]="16" />
-            <span>{{ language.translate('adhan.voice') }}</span>
-          </label>
+        <!-- Voice / Muezzin Selection Card -->
+        <div class="voice-card">
+          <div class="voice-card__header">
+            <label for="muezzin-select" class="voice-card__label">
+              <aq-icon name="headphones" [size]="17" />
+              <span>{{ isBn() ? 'আজানের সুর ও মুয়াজ্জিন' : 'Adhan Voice / Muezzin' }}</span>
+            </label>
+          </div>
 
-          <div class="select-wrapper">
+          <div class="select-box">
             <select
-              id="adhan-voice-select"
-              class="voice-select"
+              id="muezzin-select"
+              class="select-control"
               [value]="selectedVoice().id"
               (change)="onVoiceSelect($event)"
             >
@@ -196,27 +181,26 @@
                 </option>
               }
             </select>
-            <aq-icon name="chevronDown" [size]="16" class="select-arrow" />
+            <aq-icon name="chevronDown" [size]="16" class="select-chevron" />
           </div>
 
-          <div class="voice-muezzin-info">
-            <span>{{ isBn() ? selectedVoice().muezzinBn : selectedVoice().muezzin }}</span>
-            <span class="dot">·</span>
+          <p class="voice-hint">
+            <span>{{ isBn() ? selectedVoice().muezzinBn : selectedVoice().muezzin }}</span> &middot;
             <span>{{ isBn() ? selectedVoice().locationBn : selectedVoice().location }}</span>
-          </div>
+          </p>
         </div>
 
-        <!-- Next Prayer Countdown Preview -->
+        <!-- Next Prayer Countdown Info -->
         @if (nextPrayer(); as next) {
-          <div class="next-prayer-preview">
-            <div class="next-preview-header">
-              <span class="next-preview-label">{{ language.translate('adhan.nextPrayerIn') }}</span>
-              <span class="next-prayer-name">
-                {{ isBn() ? next.prayer.banglaName : next.prayer.name }}
-              </span>
+          <div class="next-prayer-card">
+            <div class="next-prayer-text">
+              <span class="next-prayer-sub">{{ isBn() ? 'পরবর্তী ওয়াক্ত' : 'Next Prayer' }}</span>
+              <strong class="next-prayer-name">
+                {{ isBn() ? next.prayer.banglaName : next.prayer.name }} ({{ isBn() ? prayerTimes.format12h(next.prayer.time, true) : prayerTimes.format12h(next.prayer.time, false) }})
+              </strong>
             </div>
-            <div class="next-countdown-badge">
-              <aq-icon name="clock" [size]="16" />
+            <div class="next-prayer-clock">
+              <aq-icon name="clock" [size]="15" />
               <span>{{ next.formattedCountdown }}</span>
             </div>
           </div>
@@ -225,14 +209,14 @@
 
       <!-- FOOTER ACTIONS -->
       <footer class="adhan-card__footer">
-        <button type="button" class="footer-btn footer-btn--secondary" (click)="snooze()">
-          <aq-icon name="bell" [size]="18" />
-          <span>{{ language.translate('adhan.snooze10m') }}</span>
+        <button type="button" class="action-btn action-btn--snooze" (click)="snooze()">
+          <aq-icon name="bell" [size]="16" />
+          <span>{{ isBn() ? '১০ মিনিট পর মনে করিয়ে দিন' : 'Remind in 10 mins' }}</span>
         </button>
 
-        <button type="button" class="footer-btn footer-btn--primary" (click)="dismiss()">
-          <aq-icon name="check" [size]="18" />
-          <span>{{ language.translate('adhan.dismiss') }}</span>
+        <button type="button" class="action-btn action-btn--close" (click)="dismiss()">
+          <aq-icon name="check" [size]="16" />
+          <span>{{ isBn() ? 'বন্ধ করুন' : 'Close Player' }}</span>
         </button>
       </footer>
     </div>

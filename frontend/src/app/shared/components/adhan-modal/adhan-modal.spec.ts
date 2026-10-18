@@ -33,7 +33,10 @@ describe('AdhanModalComponent', () => {
     isTest: false,
   };
 
+  let originalAudio: typeof window.Audio;
+
   beforeEach(async () => {
+    originalAudio = window.Audio;
     // Mock Audio constructor
     class MockAudio {
       muted = true;
@@ -47,6 +50,10 @@ describe('AdhanModalComponent', () => {
       addEventListener(event: string, cb: (...args: unknown[]) => void) {
         this.listeners[event] = this.listeners[event] || [];
         this.listeners[event].push(cb);
+      }
+      removeEventListener() {}
+      dispatchEvent() {
+        return true;
       }
       play() {
         return Promise.resolve();
@@ -75,7 +82,7 @@ describe('AdhanModalComponent', () => {
     storage.clearAll();
 
     notificationService = TestBed.inject(PrayerNotificationService);
-    notificationService.openAdhanModal(mockModalState.prayer, false);
+    notificationService.openAdhanModal(mockModalState.prayer, false, true);
 
     fixture = TestBed.createComponent(AdhanModalComponent);
     component = fixture.componentInstance;
@@ -85,22 +92,29 @@ describe('AdhanModalComponent', () => {
   afterEach(() => {
     component.ngOnDestroy();
     storage.clearAll();
+    window.Audio = originalAudio;
   });
 
   it('should create and render prayer details', () => {
     expect(component).toBeTruthy();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.prayer-arabic')?.textContent).toContain('العصر');
-    expect(compiled.querySelector('.prayer-primary-title')?.textContent).toContain('Asr');
+    expect(compiled.querySelector('.prayer-title')?.textContent).toContain('Asr');
   });
 
-  it('should start muted by default adhering to autoplay policy', () => {
+  it('should start muted when startMuted is specified', () => {
     expect(component['isMuted']()).toBe(true);
   });
 
   it('should unmute adhan when unmute button is clicked', () => {
     component.unmuteAdhan();
     expect(component['isMuted']()).toBe(false);
+  });
+
+  it('should seek audio position', () => {
+    const event = { target: { value: '45' } } as unknown as Event;
+    component.onSeek(event);
+    expect(component['currentTime']()).toBe(45);
   });
 
   it('should toggle play and pause', () => {

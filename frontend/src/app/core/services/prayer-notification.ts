@@ -134,8 +134,9 @@ export class PrayerNotificationService implements OnDestroy {
 
   /**
    * Opens the in-app Adhan modal.
+   * @param startMuted If undefined, falls back to settings().defaultMuted
    */
-  openAdhanModal(prayer: PrayerTime, isTest = false): void {
+  openAdhanModal(prayer: PrayerTime, isTest = false, startMuted?: boolean): void {
     const loc = this.locationService.location();
     const city = loc.city || loc.displayName || (this.language.isBn() ? 'আপনার এলাকা' : 'Your Location');
     const time12h = this.prayerTimes.format12h(prayer.time, false);
@@ -147,6 +148,7 @@ export class PrayerNotificationService implements OnDestroy {
       time12hBn,
       locationName: city,
       isTest,
+      startMuted,
     });
   }
 

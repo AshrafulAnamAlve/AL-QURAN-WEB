@@ -118,4 +118,5 @@ export interface AdhanModalState {
   readonly time12hBn: string;
   readonly locationName: string;
   readonly isTest?: boolean;
+  readonly startMuted?: boolean;
 }

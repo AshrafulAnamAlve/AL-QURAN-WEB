@@ -36,7 +36,7 @@ export class AdhanModalComponent implements OnInit, OnDestroy {
 
   // Audio state signals
   protected readonly isPlaying = signal<boolean>(false);
-  protected readonly isMuted = signal<boolean>(true);
+  protected readonly isMuted = signal<boolean>(false);
   protected readonly volume = signal<number>(0.8);
   protected readonly currentTime = signal<number>(0);
   protected readonly duration = signal<number>(0);
@@ -51,47 +51,52 @@ export class AdhanModalComponent implements OnInit, OnDestroy {
     return this.voices.find((v) => v.id === id) ?? this.voices[0];
   });
 
-  protected readonly formattedProgress = computed<string>(() => {
-    const cur = this.currentTime();
-    const dur = this.duration();
-    const format = (secs: number) => {
-      const m = Math.floor(secs / 60);
-      const s = Math.floor(secs % 60);
-      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-    };
-    return `${format(cur)} / ${format(dur)}`;
-  });
-
   private audio: HTMLAudioElement | null = null;
 
   @HostListener('window:keydown', ['$event'])
   onKeydown(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
       this.dismiss();
-    } else if (event.key === ' ' && event.target === document.body) {
+    } else if (event.key === ' ' && (event.target === document.body || event.target === this.el.nativeElement)) {
       event.preventDefault();
       this.togglePlay();
-    } else if (event.key.toLowerCase() === 'm' && event.target === document.body) {
+    } else if (event.key.toLowerCase() === 'm' && (event.target === document.body || event.target === this.el.nativeElement)) {
       event.preventDefault();
       this.toggleMute();
     }
   }
 
   ngOnInit(): void {
-    const defaultMuted = this.notificationService.settings().defaultMuted;
-    this.isMuted.set(defaultMuted);
+    const modal = this.state();
+    const shouldStartMuted =
+      modal?.startMuted !== undefined
+        ? modal.startMuted
+        : this.notificationService.settings().defaultMuted;
+
+    this.isMuted.set(shouldStartMuted);
 
     const initialVol = this.notificationService.settings().volume;
     this.volume.set(initialVol);
 
-    this.initAudio(defaultMuted, initialVol);
+    this.initAudio(shouldStartMuted, initialVol);
   }
 
   ngOnDestroy(): void {
     this.destroyAudio();
   }
 
+  formatTime(secs: number): string {
+    if (isNaN(secs) || secs < 0) return '00:00';
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    const formatted = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    return this.isBn() ? this.prayerTimes.toBnDigits(formatted) : formatted;
+  }
+
   private resolveAudioUrl(relPath: string): string {
+    if (relPath.startsWith('http://') || relPath.startsWith('https://')) {
+      return relPath;
+    }
     if (typeof document !== 'undefined') {
       const base = document.baseURI || '/';
       return new URL(relPath, base).href;
@@ -126,21 +131,34 @@ export class AdhanModalComponent implements OnInit, OnDestroy {
           this.duration.set(this.audio.duration || 0);
         }
       });
+      this.audio.addEventListener('loadedmetadata', () => {
+        if (this.audio) {
+          this.duration.set(this.audio.duration || 0);
+        }
+      });
       this.audio.addEventListener('error', () => {
         this.audioError.set(
           this.isBn()
-            ? 'অডিও লোড করতে সমস্যা হয়েছে। অনুগ্রহ করে বিকল্প সুর নির্বাচন করুন।'
+            ? 'অডিও স্ট্রিম লোড করা যায়নি। অনুগ্রহ করে বিকল্প সুর নির্বাচন করুন।'
             : 'Audio stream failed to load. Please choose another voice option.',
         );
         this.isPlaying.set(false);
       });
 
-      // Auto start (muted starts without browser permission blocks)
+      // Attempt playback
       const playPromise = this.audio.play();
       if (playPromise !== undefined) {
         playPromise.catch(() => {
-          // In case of browser autoplay blocking, wait for user unmute click
-          this.isPlaying.set(false);
+          // If browser autoplay blocks unmuted audio, fallback to muted or paused
+          if (!startMuted && this.audio) {
+            this.audio.muted = true;
+            this.isMuted.set(true);
+            this.audio.play().catch(() => {
+              this.isPlaying.set(false);
+            });
+          } else {
+            this.isPlaying.set(false);
+          }
         });
       }
     } catch (e) {
@@ -159,7 +177,10 @@ export class AdhanModalComponent implements OnInit, OnDestroy {
   }
 
   togglePlay(): void {
-    if (!this.audio) return;
+    if (!this.audio) {
+      this.initAudio(this.isMuted(), this.volume());
+      return;
+    }
     if (this.isPlaying()) {
       this.audio.pause();
     } else {
@@ -173,7 +194,6 @@ export class AdhanModalComponent implements OnInit, OnDestroy {
     this.audio.muted = nextMuted;
     this.isMuted.set(nextMuted);
 
-    // If unmuting while stopped, start playing
     if (!nextMuted && !this.isPlaying()) {
       this.audio.play().catch(() => {});
     }
@@ -188,12 +208,13 @@ export class AdhanModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  stopAdhan(): void {
-    if (!this.audio) return;
-    this.audio.pause();
-    this.audio.currentTime = 0;
-    this.currentTime.set(0);
-    this.isPlaying.set(false);
+  onSeek(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const target = parseFloat(input.value);
+    if (this.audio && !isNaN(target)) {
+      this.audio.currentTime = target;
+      this.currentTime.set(target);
+    }
   }
 
   onVolumeChange(event: Event): void {
@@ -216,7 +237,7 @@ export class AdhanModalComponent implements OnInit, OnDestroy {
     this.currentVoiceId.set(voiceId);
     this.notificationService.setAdhanVoice(voiceId);
 
-    // Re-initialize audio with current mute & volume settings
+    // Re-initialize audio with current settings and play
     this.initAudio(this.isMuted(), this.volume());
   }
 
