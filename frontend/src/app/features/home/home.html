@@ -135,7 +135,7 @@
   @if (nextPrayer(); as next) {
     <section class="panel prayer-home-card" aria-labelledby="prayer-home-heading">
       <div class="prayer-home-card__header">
-        <div>
+        <div class="prayer-home-card__meta">
           <p class="aq-eyebrow">{{ isBn() ? 'নামাজের সময়সূচি' : 'Prayer Times' }} &middot; {{ currentLocation().displayName }}</p>
           <h2 id="prayer-home-heading" class="prayer-home-card__title">
             <span>{{ isBn() ? 'পরবর্তী ওয়াক্ত: ' : 'Next: ' }}{{ next.isTomorrow ? (isBn() ? 'আগামীকালের ফজর' : "Tomorrow's Fajr") : (isBn() ? next.prayer.banglaName : next.prayer.name) }}</span>
@@ -147,23 +147,60 @@
         </div>
 
         <div class="prayer-home-card__actions">
-          <div class="prayer-home-card__timer aq-numeral" role="timer" aria-live="off">
-            {{ isBn() ? toBnDigits(next.formattedCountdown) : next.formattedCountdown }}
+          <div class="prayer-home-card__timer-block">
+            <span class="prayer-home-card__timer-label">
+              {{ isBn() ? 'আজান বাজতে বাকি' : 'Time until Adhan' }}
+            </span>
+            <div class="prayer-home-card__timer aq-numeral" role="timer" aria-live="off">
+              {{ isBn() ? toBnDigits(next.formattedCountdown) : next.formattedCountdown }}
+            </div>
           </div>
-          <button
-            type="button"
-            class="aq-btn aq-btn--primary aq-btn--sm"
-            (click)="openAdhanPlayer()"
-            [attr.aria-label]="isBn() ? 'আজান প্লেয়ার চালু করুন' : 'Open Adhan Player'"
-          >
-            <aq-icon name="volume2" [size]="15" />
-            {{ isBn() ? 'আজান শুনুন' : 'Listen Adhan' }}
-          </button>
-          <a routerLink="/prayer" class="aq-btn aq-btn--secondary aq-btn--sm">
-            <aq-icon name="clock" [size]="16" />
-            {{ isBn() ? 'পূর্ণ সময়সূচি' : 'Timetable' }}
-          </a>
+
+          <div class="prayer-home-card__btn-group">
+            <button
+              type="button"
+              class="aq-btn aq-btn--primary aq-btn--sm prayer-home-btn"
+              (click)="openAdhanPlayer()"
+              [title]="isBn() ? 'যেকোনো সময় আজান শুনুন' : 'Listen to Adhan on demand'"
+              [attr.aria-label]="isBn() ? 'আজান শুনুন' : 'Play Adhan Now'"
+            >
+              <aq-icon name="volume2" [size]="15" />
+              <span>{{ isBn() ? 'আজান শুনুন' : 'Play Adhan Now' }}</span>
+            </button>
+            <a routerLink="/prayer" class="aq-btn aq-btn--secondary aq-btn--sm prayer-home-btn">
+              <aq-icon name="clock" [size]="16" />
+              <span>{{ isBn() ? 'পূর্ণ সময়সূচি' : 'Timetable' }}</span>
+            </a>
+          </div>
         </div>
+      </div>
+
+      <!-- Auto-Adhan Status & Toggle Indicator -->
+      <div class="prayer-home-card__status-banner" [class.is-active]="isNextAdhanActive()" [class.is-muted]="!isNextAdhanActive()">
+        <div class="prayer-home-status-content">
+          <span class="prayer-home-status-icon" aria-hidden="true">{{ isNextAdhanActive() ? '🔔' : '🔕' }}</span>
+          <div class="prayer-home-status-details">
+            <strong class="prayer-home-status-title">
+              {{ isNextAdhanActive() ? (isBn() ? 'স্বয়ংক্রিয় আজান অ্যালার্ট: চালু' : 'Auto-Adhan Alert: ON') : (isBn() ? 'স্বয়ংক্রিয় আজান অ্যালার্ট: বন্ধ' : 'Auto-Adhan Alert: OFF') }}
+            </strong>
+            <span class="prayer-home-status-desc">
+              {{ isNextAdhanActive()
+                ? (isBn() ? (next.prayer.banglaName + ' ওয়াক্তে (' + formatTime12h(next.prayer.time) + ') স্বয়ংক্রিয়ভাবে আজান বাজবে।') : ('Adhan will play automatically at ' + formatTime12h(next.prayer.time) + ' for ' + next.prayer.name + '.'))
+                : (isBn() ? 'ওয়াক্তের সময় কোনো শব্দ বাজবে না (নীরব)।' : 'Adhan will not play automatically (Quiet mode).') }}
+            </span>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="aq-btn aq-btn--sm prayer-home-status-btn"
+          [class.aq-btn--secondary]="isNextAdhanActive()"
+          [class.aq-btn--primary]="!isNextAdhanActive()"
+          (click)="toggleNextPrayerAlert()"
+          [attr.aria-label]="isNextAdhanActive() ? (isBn() ? 'আজান অ্যালার্ট বন্ধ করুন' : 'Turn off Adhan alert') : (isBn() ? 'আজান অ্যালার্ট চালু করুন' : 'Turn on Adhan alert')"
+        >
+          <aq-icon [name]="isNextAdhanActive() ? 'volumeOff' : 'bell'" [size]="14" />
+          <span>{{ isNextAdhanActive() ? (isBn() ? 'বন্ধ করুন' : 'Turn OFF') : (isBn() ? 'চালু করুন' : 'Turn ON') }}</span>
+        </button>
       </div>
 
       <div class="prayer-home-card__strip" role="list">
@@ -174,7 +211,19 @@
             [class.is-next]="item.key === next.prayer.key"
             role="listitem"
           >
-            <span class="prayer-home-strip-item__name">{{ isBn() ? item.banglaName : item.name }}</span>
+            <div class="prayer-home-strip-item__top">
+              <span class="prayer-home-strip-item__name">{{ isBn() ? item.banglaName : item.name }}</span>
+              @if (item.isPrayer) {
+                <span
+                  class="prayer-home-strip-item__alert"
+                  [class.is-on]="isPrayerAlertOn(item.key)"
+                  [title]="isPrayerAlertOn(item.key) ? (isBn() ? 'আজান অ্যালার্ট সক্রিয়' : 'Adhan alert active') : (isBn() ? 'আজান অ্যালার্ট বন্ধ' : 'Adhan alert off')"
+                  aria-hidden="true"
+                >
+                  {{ isPrayerAlertOn(item.key) ? '🔔' : '🔕' }}
+                </span>
+              }
+            </div>
             <span class="prayer-home-strip-item__time aq-numeral">{{ formatTime12h(item.time) }}</span>
           </div>
         }

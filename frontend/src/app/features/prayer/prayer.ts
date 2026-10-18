@@ -8,9 +8,11 @@ import {
   signal,
 } from '@angular/core';
 import { Place } from '../../core/models/location';
-import { CalculationMethod } from '../../core/models/prayer';
+import { CalculationMethod, PrayerTime } from '../../core/models/prayer';
+import { CorePrayerAlertKey } from '../../core/models/prayer-notification';
 import { LocationService } from '../../core/services/location';
 import { PrayerTimesService } from '../../core/services/prayer';
+import { PrayerNotificationService } from '../../core/services/prayer-notification';
 import { LanguageService } from '../../core/services/language';
 import { SeoService } from '../../core/services/seo';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
@@ -92,8 +94,15 @@ export class PrayerPage implements OnInit {
   protected readonly locationService = inject(LocationService);
   protected readonly prayerTimes = inject(PrayerTimesService);
   protected readonly languageService = inject(LanguageService);
+  protected readonly notificationService = inject(PrayerNotificationService);
 
   readonly isBn = this.languageService.isBn;
+
+  readonly isNextAdhanActive = computed<boolean>(() => {
+    const next = this.nextPrayer();
+    if (!next) return false;
+    return this.notificationService.isPrayerAlertActive(next.prayer.key);
+  });
 
   readonly timetable = this.prayerTimes.timetable;
   readonly loading = this.prayerTimes.loading;
@@ -239,5 +248,40 @@ export class PrayerPage implements OnInit {
 
   toBnDigits(val: string | number): string {
     return this.prayerTimes.toBnDigits(val);
+  }
+
+  isPrayerAlertActive(key: string): boolean {
+    return this.notificationService.isPrayerAlertActive(key);
+  }
+
+  async togglePrayerAlert(key: string, event?: Event): Promise<void> {
+    if (event) {
+      event.stopPropagation();
+    }
+    const pKey = key.toLowerCase() as CorePrayerAlertKey;
+    const settings = this.notificationService.settings();
+    if (!settings.enabled) {
+      await this.notificationService.toggleMasterAlerts();
+      this.notificationService.togglePrayer(pKey, true);
+    } else {
+      const active = settings[pKey] ?? false;
+      this.notificationService.togglePrayer(pKey, !active);
+    }
+  }
+
+  async toggleMasterAlerts(): Promise<void> {
+    await this.notificationService.toggleMasterAlerts();
+  }
+
+  openAdhan(prayer?: PrayerTime, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    const target = prayer ?? this.currentPrayer() ?? this.nextPrayer()?.prayer;
+    if (target) {
+      this.notificationService.openAdhanModal(target, false, false, true);
+    } else {
+      this.notificationService.triggerTestAlert('asr');
+    }
   }
 }

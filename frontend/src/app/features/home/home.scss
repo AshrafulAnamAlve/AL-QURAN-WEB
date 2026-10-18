@@ -90,6 +90,14 @@
     &:active {
       transform: translateY(0);
     }
+
+    @media (max-width: 520px) {
+      padding: 0.5rem 0.85rem;
+      border-radius: var(--aq-radius-lg);
+      width: 100%;
+      max-width: 380px;
+      gap: 0.35rem 0.5rem;
+    }
   }
 
   &__waqt-current {
@@ -479,29 +487,178 @@
 
 // --- Prayer Home Specifics ------------------------------------------------
 .prayer-home-card {
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--aq-space-3);
+    margin-bottom: var(--aq-space-3);
+
+    @media (min-width: 640px) {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+  }
+
+  &__meta {
+    flex: 1 1 auto;
+  }
+
   &__time {
     color: var(--aq-primary);
   }
 
   &__actions {
     display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+
+    @media (min-width: 640px) {
+      flex-direction: row;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
+
+  &__timer-block {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: var(--aq-space-3);
+    gap: 0.2rem;
+
+    @media (min-width: 640px) {
+      align-items: flex-end;
+    }
+  }
+
+  &__timer-label {
+    font-size: 0.725rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--aq-text-muted);
   }
 
   &__timer {
-    font-size: 1.5rem;
+    font-size: clamp(1.4rem, 4vw, 1.85rem);
     font-weight: 800;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     color: var(--aq-primary);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+
+  &__btn-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+
+    @media (min-width: 640px) {
+      width: auto;
+    }
+
+    .prayer-home-btn {
+      flex: 1 1 0;
+      justify-content: center;
+      min-height: 44px;
+      white-space: nowrap;
+
+      @media (min-width: 640px) {
+        flex: 0 0 auto;
+        min-height: 38px;
+      }
+    }
+  }
+
+  // Auto-Adhan Status Banner (Clear explanation of when Adhan will play or not)
+  &__status-banner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--aq-radius-md);
+    margin-bottom: var(--aq-space-3);
+    border: 1px solid var(--aq-border);
+    transition: all var(--aq-duration-fast) var(--aq-ease);
+
+    @media (min-width: 640px) {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    &.is-active {
+      background: color-mix(in srgb, var(--aq-primary) 12%, var(--aq-surface));
+      border-color: color-mix(in srgb, var(--aq-primary) 32%, var(--aq-border));
+
+      .prayer-home-status-title {
+        color: var(--aq-primary);
+      }
+    }
+
+    &.is-muted {
+      background: color-mix(in srgb, var(--aq-text-muted) 8%, var(--aq-surface));
+      border-color: color-mix(in srgb, var(--aq-border) 80%, transparent);
+
+      .prayer-home-status-title {
+        color: var(--aq-text);
+      }
+    }
   }
 
   &__strip {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: var(--aq-space-2);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.45rem;
     padding-top: var(--aq-space-3);
     border-top: 1px solid color-mix(in srgb, var(--aq-border) 60%, transparent);
+
+    @media (min-width: 640px) {
+      grid-template-columns: repeat(6, 1fr);
+      gap: var(--aq-space-2);
+    }
+  }
+}
+
+.prayer-home-status-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.prayer-home-status-icon {
+  font-size: 1.25rem;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.prayer-home-status-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.prayer-home-status-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.prayer-home-status-desc {
+  font-size: 0.8125rem;
+  color: var(--aq-text-muted);
+  line-height: 1.35;
+}
+
+.prayer-home-status-btn {
+  flex-shrink: 0;
+  min-height: 42px;
+  justify-content: center;
+
+  @media (min-width: 640px) {
+    min-height: 36px;
   }
 }
 
@@ -509,31 +666,52 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: var(--aq-space-2) var(--aq-space-3);
+  justify-content: center;
+  padding: 0.5rem 0.25rem;
   background: var(--aq-surface-2);
   border-radius: var(--aq-radius-md);
   border: 1px solid var(--aq-border);
   font-size: var(--aq-text-xs);
-  transition: border-color var(--aq-duration-fast) var(--aq-ease);
+  min-height: 58px;
+  transition: all var(--aq-duration-fast) var(--aq-ease);
 
   &.is-active {
-    background: color-mix(in srgb, var(--aq-primary) 12%, var(--aq-surface));
+    background: color-mix(in srgb, var(--aq-primary) 14%, var(--aq-surface));
     border-color: var(--aq-primary);
     color: var(--aq-primary);
     font-weight: 700;
+    box-shadow: 0 2px 8px rgba(15, 81, 50, 0.12);
   }
 
   &.is-next {
     border-color: color-mix(in srgb, var(--aq-primary) 60%, var(--aq-border));
+    background: color-mix(in srgb, var(--aq-primary) 6%, var(--aq-surface-2));
+  }
+
+  &__top {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
   }
 
   &__name {
     font-weight: 600;
+    font-size: 0.775rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__alert {
+    font-size: 0.7rem;
+    line-height: 1;
   }
 
   &__time {
-    font-size: var(--aq-text-sm);
+    font-size: 0.8125rem;
+    font-weight: 600;
     color: var(--aq-text);
+    margin-top: 0.15rem;
   }
 }
 

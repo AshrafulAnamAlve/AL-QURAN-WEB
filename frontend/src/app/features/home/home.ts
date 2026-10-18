@@ -8,6 +8,7 @@ import { ReadingPositionService } from '../../core/services/reading-position';
 import { ReadingProgressService } from '../../core/services/reading-progress';
 import { TaskService } from '../../core/services/task';
 import { PrayerNotificationService } from '../../core/services/prayer-notification';
+import { CorePrayerAlertKey } from '../../core/models/prayer-notification';
 import { IconComponent } from '../../shared/components/icon/icon';
 import { TaskGoalModalComponent } from '../../shared/components/task-goal-modal/task-goal-modal';
 
@@ -46,6 +47,12 @@ export class HomePage {
   readonly nextPrayer = this.prayerTimes.nextPrayer;
   readonly currentPrayer = this.prayerTimes.currentPrayer;
   readonly currentLocation = this.locationService.location;
+
+  readonly isNextAdhanActive = computed<boolean>(() => {
+    const next = this.nextPrayer();
+    if (!next) return false;
+    return this.notificationService.isPrayerAlertActive(next.prayer.key);
+  });
 
   /** Current active waqt (or Duha/Ishraq between sunrise and dhuhr). */
   readonly currentWaqt = computed<{
@@ -160,9 +167,27 @@ export class HomePage {
   openAdhanPlayer(): void {
     const current = this.currentPrayer() ?? this.nextPrayer()?.prayer;
     if (current) {
-      this.notificationService.openAdhanModal(current, false, false);
+      this.notificationService.openAdhanModal(current, false, false, true);
     } else {
       this.notificationService.triggerTestAlert('asr');
+    }
+  }
+
+  isPrayerAlertOn(key: string): boolean {
+    return this.notificationService.isPrayerAlertActive(key);
+  }
+
+  async toggleNextPrayerAlert(): Promise<void> {
+    const next = this.nextPrayer();
+    if (!next) return;
+    const key = next.prayer.key.toLowerCase() as CorePrayerAlertKey;
+    const settings = this.notificationService.settings();
+    if (!settings.enabled) {
+      await this.notificationService.toggleMasterAlerts();
+      this.notificationService.togglePrayer(key, true);
+    } else {
+      const currentlyActive = settings[key] ?? false;
+      this.notificationService.togglePrayer(key, !currentlyActive);
     }
   }
 

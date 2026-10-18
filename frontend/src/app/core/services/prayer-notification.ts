@@ -119,6 +119,29 @@ export class PrayerNotificationService implements OnDestroy {
     this.updateSettings({ enabled });
   }
 
+  /**
+   * Returns true if prayer alerts are enabled globally AND for this specific prayer.
+   */
+  isPrayerAlertActive(key: string): boolean {
+    const s = this._settings();
+    if (!s.enabled) return false;
+    const pKey = key.toLowerCase() as CorePrayerAlertKey;
+    return Boolean(s[pKey]);
+  }
+
+  /**
+   * Toggles master prayer alerts. If turning on and permission has not been requested,
+   * prompts user for notification permission.
+   */
+  async toggleMasterAlerts(): Promise<boolean> {
+    const nextState = !this._settings().enabled;
+    this.toggleMaster(nextState);
+    if (nextState && this._permission() !== 'granted') {
+      await this.requestPermission();
+    }
+    return nextState;
+  }
+
   toggleModalAutoPopup(enabled: boolean): void {
     this.updateSettings({ autoPlayAdhanModal: enabled });
   }
@@ -135,8 +158,14 @@ export class PrayerNotificationService implements OnDestroy {
   /**
    * Opens the in-app Adhan modal.
    * @param startMuted If undefined, falls back to settings().defaultMuted
+   * @param isManual True if manually triggered by user preview
    */
-  openAdhanModal(prayer: PrayerTime, isTest = false, startMuted?: boolean): void {
+  openAdhanModal(
+    prayer: PrayerTime,
+    isTest = false,
+    startMuted?: boolean,
+    isManual = false,
+  ): void {
     const loc = this.locationService.location();
     const city = loc.city || loc.displayName || (this.language.isBn() ? 'আপনার এলাকা' : 'Your Location');
     const time12h = this.prayerTimes.format12h(prayer.time, false);
@@ -148,6 +177,7 @@ export class PrayerNotificationService implements OnDestroy {
       time12hBn,
       locationName: city,
       isTest,
+      isManual,
       startMuted,
     });
   }

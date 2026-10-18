@@ -11,9 +11,14 @@
       <!-- HEADER -->
       <header class="adhan-card__header">
         <div class="adhan-card__header-top">
-          <div class="header-badge">
-            <aq-icon name="clock" [size]="15" />
-            <span>{{ isBn() ? 'নামাজের আজান' : 'Call to Prayer' }} &middot; {{ modal.locationName }}</span>
+          <div class="header-badge" [class.header-badge--preview]="isManual()">
+            <aq-icon [name]="isManual() ? 'headphones' : 'clock'" [size]="15" />
+            <span>
+              {{ isManual()
+                ? (isBn() ? 'আজান প্রিভিউ (যেকোনো সময় শুনুন)' : 'Adhan Preview (On Demand)')
+                : (isBn() ? 'নামাজের আজান' : 'Call to Prayer') }}
+              &middot; {{ modal.locationName }}
+            </span>
           </div>
 
           <button
@@ -190,18 +195,40 @@
           </p>
         </div>
 
-        <!-- Next Prayer Countdown Info -->
+        <!-- Next Prayer Countdown & Auto-Adhan Schedule Info -->
         @if (nextPrayer(); as next) {
           <div class="next-prayer-card">
-            <div class="next-prayer-text">
-              <span class="next-prayer-sub">{{ isBn() ? 'পরবর্তী ওয়াক্ত' : 'Next Prayer' }}</span>
-              <strong class="next-prayer-name">
-                {{ isBn() ? next.prayer.banglaName : next.prayer.name }} ({{ isBn() ? prayerTimes.format12h(next.prayer.time, true) : prayerTimes.format12h(next.prayer.time, false) }})
-              </strong>
+            <div class="next-prayer-card__header">
+              <div class="next-prayer-text">
+                <span class="next-prayer-sub">{{ isBn() ? 'পরবর্তী ওয়াক্ত' : 'Next Prayer' }}</span>
+                <strong class="next-prayer-name">
+                  {{ isBn() ? next.prayer.banglaName : next.prayer.name }} ({{ isBn() ? prayerTimes.format12h(next.prayer.time, true) : prayerTimes.format12h(next.prayer.time, false) }})
+                </strong>
+              </div>
+              <div class="next-prayer-clock">
+                <aq-icon name="clock" [size]="15" />
+                <span>{{ next.formattedCountdown }}</span>
+              </div>
             </div>
-            <div class="next-prayer-clock">
-              <aq-icon name="clock" [size]="15" />
-              <span>{{ next.formattedCountdown }}</span>
+
+            <!-- Auto-Adhan indicator for upcoming prayer -->
+            <div class="next-prayer-adhan-schedule" [class.is-active]="isNextAdhanActive()" [class.is-off]="!isNextAdhanActive()">
+              <div class="schedule-status-info">
+                <span class="schedule-icon">{{ isNextAdhanActive() ? '🔔' : '🔕' }}</span>
+                <span class="schedule-text">
+                  {{ isNextAdhanActive()
+                    ? (isBn() ? 'পরবর্তী ওয়াক্তে স্বয়ংক্রিয়ভাবে আজান বাজবে' : 'Auto-Adhan will play for next prayer')
+                    : (isBn() ? 'পরবর্তী ওয়াক্তের স্বয়ংক্রিয় আজান বন্ধ' : 'Auto-Adhan is muted for next prayer') }}
+                </span>
+              </div>
+              <button
+                type="button"
+                class="schedule-toggle-btn"
+                (click)="toggleNextPrayerAlert()"
+                [attr.aria-label]="isNextAdhanActive() ? (isBn() ? 'পরবর্তী আজান বন্ধ করুন' : 'Mute next Adhan') : (isBn() ? 'পরবর্তী আজান চালু করুন' : 'Enable next Adhan')"
+              >
+                {{ isNextAdhanActive() ? (isBn() ? 'বন্ধ করুন' : 'Mute') : (isBn() ? 'চালু করুন' : 'Enable') }}
+              </button>
             </div>
           </div>
         }

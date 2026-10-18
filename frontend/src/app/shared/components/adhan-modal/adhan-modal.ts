@@ -9,7 +9,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { AdhanVoiceId, AdhanVoiceOption } from '../../../core/models/prayer-notification';
+import { AdhanVoiceId, AdhanVoiceOption, CorePrayerAlertKey } from '../../../core/models/prayer-notification';
 import { LanguageService } from '../../../core/services/language';
 import { PrayerNotificationService } from '../../../core/services/prayer-notification';
 import { PrayerTimesService } from '../../../core/services/prayer';
@@ -32,7 +32,27 @@ export class AdhanModalComponent implements OnInit, OnDestroy {
   readonly isBn = this.language.isBn;
   readonly voices = this.notificationService.voices;
   readonly nextPrayer = this.prayerTimes.nextPrayer;
+  readonly isManual = computed(() => Boolean(this.state()?.isManual));
+  readonly isNextAdhanActive = computed<boolean>(() => {
+    const next = this.nextPrayer();
+    if (!next) return this.notificationService.settings().enabled;
+    return this.notificationService.isPrayerAlertActive(next.prayer.key);
+  });
   protected readonly Math = Math;
+
+  async toggleNextPrayerAlert(): Promise<void> {
+    const next = this.nextPrayer();
+    if (!next) return;
+    const key = next.prayer.key.toLowerCase() as CorePrayerAlertKey;
+    const settings = this.notificationService.settings();
+    if (!settings.enabled) {
+      await this.notificationService.toggleMasterAlerts();
+      this.notificationService.togglePrayer(key, true);
+    } else {
+      const active = settings[key] ?? false;
+      this.notificationService.togglePrayer(key, !active);
+    }
+  }
 
   // Audio state signals
   protected readonly isPlaying = signal<boolean>(false);

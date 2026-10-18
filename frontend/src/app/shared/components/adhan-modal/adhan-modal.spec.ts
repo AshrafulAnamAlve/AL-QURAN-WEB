@@ -145,4 +145,9 @@ describe('AdhanModalComponent', () => {
     component.dismiss();
     expect(notificationService.activeAdhanModal()).toBeNull();
   });
+
+  it('should toggle next prayer alert', async () => {
+    await component.toggleNextPrayerAlert();
+    expect(component.isNextAdhanActive()).toBeDefined();
+  });
 });

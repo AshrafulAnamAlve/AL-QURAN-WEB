@@ -144,6 +144,82 @@
     color: var(--aq-text-subtle);
     font-weight: 500;
   }
+
+  &__adhan-bar {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    margin-top: 0.75rem;
+    border-radius: var(--aq-radius-lg);
+    background: var(--aq-surface);
+    border: 1px solid var(--aq-border);
+
+    @media (min-width: 640px) {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  &__adhan-status {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+
+    &.is-active {
+      .countdown-hero__adhan-title {
+        color: var(--aq-primary);
+      }
+    }
+
+    &.is-off {
+      .countdown-hero__adhan-title {
+        color: var(--aq-text);
+      }
+    }
+  }
+
+  &__adhan-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  &__adhan-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  &__adhan-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  &__adhan-desc {
+    font-size: 0.775rem;
+    color: var(--aq-text-muted);
+  }
+
+  &__adhan-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+
+    .aq-btn {
+      flex: 1 1 0;
+      justify-content: center;
+      min-height: 40px;
+
+      @media (min-width: 640px) {
+        flex: 0 0 auto;
+        min-height: 36px;
+      }
+    }
+  }
 }
 
 .timings-section { margin-bottom: var(--aq-space-6); }
@@ -240,9 +316,40 @@
   }
 
   &__status {
-    min-height: 24px;
+    min-height: 28px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+
+  &__alert-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--aq-radius-pill);
+    border: 1px solid var(--aq-border);
+    background: var(--aq-surface-2);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--aq-text-muted);
+    cursor: pointer;
+    min-height: 28px;
+    touch-action: manipulation;
+    transition: all var(--aq-duration-fast) var(--aq-ease);
+
+    &:hover {
+      background: var(--aq-border);
+      color: var(--aq-text);
+    }
+
+    &.is-active {
+      background: color-mix(in srgb, var(--aq-primary) 12%, var(--aq-surface));
+      border-color: color-mix(in srgb, var(--aq-primary) 32%, var(--aq-border));
+      color: var(--aq-primary);
+    }
   }
 
   &__badge {
