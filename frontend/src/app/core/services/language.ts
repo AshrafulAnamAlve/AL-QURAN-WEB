@@ -243,6 +243,50 @@ export const TRANSLATIONS = {
     en: 'Dismiss',
     bn: 'বন্ধ করুন',
   },
+
+  // Phase 14 — Prayer Notifications & Adhan Player
+  'adhan.title': { en: 'Adhan — Call to Prayer', bn: 'আজান — নামাজের আহবান' },
+  'adhan.nowTimeFor': { en: 'It is now time for', bn: 'এখন ওয়াক্ত হয়েছে' },
+  'adhan.playingMuted': { en: 'Adhan is playing (Muted)', bn: 'আজান বাজছে (শব্দ বন্ধ)' },
+  'adhan.playingSound': { en: 'Adhan is playing', bn: 'আজান বাজছে' },
+  'adhan.paused': { en: 'Adhan paused', bn: 'আজান স্থগিত' },
+  'adhan.unmute': { en: 'Unmute Adhan', bn: 'আজানের শব্দ চালু করুন' },
+  'adhan.mute': { en: 'Mute Adhan', bn: 'শব্দ বন্ধ করুন' },
+  'adhan.play': { en: 'Play', bn: 'চালু' },
+  'adhan.pause': { en: 'Pause', bn: 'স্থগিত' },
+  'adhan.stop': { en: 'Stop', bn: 'বন্ধ' },
+  'adhan.volume': { en: 'Volume', bn: 'শব্দের মাত্রা' },
+  'adhan.voice': { en: 'Adhan Voice / Muezzin', bn: 'মুয়াজ্জিন / আজানের সুর' },
+  'adhan.nextPrayerIn': { en: 'Next Prayer in', bn: 'পরবর্তী ওয়াক্ত বাকি' },
+  'adhan.snooze10m': { en: 'Snooze 10m', bn: '১০ মিনিট পর মনে করিয়ে দিন' },
+  'adhan.dismiss': { en: 'Dismiss', bn: 'বন্ধ করুন' },
+  'adhan.testAlert': { en: 'Test Prayer Notification & Adhan', bn: 'নামাজের নোটিফিকেশন ও আজান পরীক্ষা করুন' },
+
+  // Prayer Notification Settings
+  'settings.notifications.title': { en: 'Prayer Notifications & Adhan Player', bn: 'নামাজের নোটিফিকেশন ও আজান প্লেয়ার' },
+  'settings.notifications.desc': {
+    en: 'Receive timely desktop and mobile alerts for every prayer, and customize in-app Adhan playback.',
+    bn: 'প্রতিটি ওয়াক্তের জন্য সময়মতো নোটিফিকেশন পান এবং ইন-অ্যাপ আজান প্লেয়ার কাস্টমাইজ করুন।',
+  },
+  'settings.notifications.permission': { en: 'Notification Permission', bn: 'নোটিফিকেশন অনুমতি' },
+  'settings.notifications.granted': { en: 'Notifications Allowed', bn: 'নোটিফিকেশন সক্রিয়' },
+  'settings.notifications.denied': { en: 'Notifications Blocked', bn: 'নোটিফিকেশন ব্লক করা হয়েছে' },
+  'settings.notifications.request': { en: 'Enable Notifications', bn: 'নোটিফিকেশন চালু করুন' },
+  'settings.notifications.masterToggle': { en: 'Enable Daily Prayer Alerts', bn: 'দৈনিক নামাজের নোটিফিকেশন সক্রিয় করুন' },
+  'settings.notifications.autoModal': { en: 'Auto-open In-App Adhan Modal on prayer time', bn: 'নামাজের সময়ে স্বয়ংক্রিয়ভাবে আজান প্লেয়ার দেখান' },
+  'settings.notifications.defaultMuted': {
+    en: 'Start Adhan muted by default (Quiet environment safe)',
+    bn: 'ডিফল্টভাবে শব্দ বন্ধ রেখে শুরু করুন (নীরব পরিবেশের জন্য নিরাপদ)',
+  },
+  'settings.notifications.soundOn': {
+    en: 'Start with sound on (Immediate audio playback)',
+    bn: 'শব্দসহ সরাসরি শুরু করুন',
+  },
+  'settings.notifications.testBtn': { en: 'Test Adhan Alert & Player', bn: 'আজান ও নোটিফিকেশন টেস্ট করুন' },
+  'settings.notifications.testSuccess': {
+    en: 'Test prayer notification and Adhan modal triggered!',
+    bn: 'টেস্ট নোটিফিকেশন ও আজান প্লেয়ার সফলভাবে চালু হয়েছে!',
+  },
 } as const;
 
 export type TranslationKey = keyof typeof TRANSLATIONS;

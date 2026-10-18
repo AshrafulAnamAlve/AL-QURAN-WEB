@@ -150,6 +150,15 @@
           <div class="prayer-home-card__timer aq-numeral" role="timer" aria-live="off">
             {{ isBn() ? toBnDigits(next.formattedCountdown) : next.formattedCountdown }}
           </div>
+          <button
+            type="button"
+            class="aq-btn aq-btn--primary aq-btn--sm"
+            (click)="openAdhanPlayer()"
+            [attr.aria-label]="isBn() ? 'আজান প্লেয়ার চালু করুন' : 'Open Adhan Player'"
+          >
+            <aq-icon name="volume2" [size]="15" />
+            {{ isBn() ? 'আজান শুনুন' : 'Listen Adhan' }}
+          </button>
           <a routerLink="/prayer" class="aq-btn aq-btn--secondary aq-btn--sm">
             <aq-icon name="clock" [size]="16" />
             {{ isBn() ? 'পূর্ণ সময়সূচি' : 'Timetable' }}

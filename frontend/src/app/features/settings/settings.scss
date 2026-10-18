@@ -546,3 +546,56 @@
     color: var(--aq-primary);
   }
 }
+
+// Prayer Notification Toggles Grid & Chips
+.prayer-toggles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.prayer-chip-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--aq-radius-md, 0.5rem);
+  border: 1px solid var(--aq-border);
+  background-color: var(--aq-surface-2, var(--aq-bg-subtle));
+  color: var(--aq-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: var(--aq-primary);
+    background-color: var(--aq-surface);
+  }
+
+  &--active {
+    background-color: rgba(var(--aq-primary-rgb, 15, 81, 50), 0.12);
+    border-color: var(--aq-primary);
+    color: var(--aq-primary);
+  }
+}
+
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+
+  &--success {
+    color: #10b981;
+  }
+
+  &--danger {
+    color: #ef4444;
+  }
+}
+

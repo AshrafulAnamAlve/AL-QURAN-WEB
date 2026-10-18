@@ -10,8 +10,10 @@ import {
 import { Place, UserLocation } from '../../core/models/location';
 import { READING_LIMITS, TranslationMode } from '../../core/models/reading-settings';
 import { ThemePreference } from '../../core/models/theme';
+import { AdhanVoiceId, CorePrayerAlertKey } from '../../core/models/prayer-notification';
 import { LanguageService } from '../../core/services/language';
 import { LocationService } from '../../core/services/location';
+import { PrayerNotificationService } from '../../core/services/prayer-notification';
 import { PwaService } from '../../core/services/pwa';
 import { ReciterService } from '../../core/services/reciter';
 import { SettingsService } from '../../core/services/settings';
@@ -44,12 +46,14 @@ export class SettingsPage implements OnInit {
   protected readonly reciterService = inject(ReciterService);
   protected readonly pwa = inject(PwaService);
   protected readonly taskService = inject(TaskService);
+  protected readonly prayerNotifications = inject(PrayerNotificationService);
   private readonly seo = inject(SeoService);
 
   // Constants
   protected readonly limits = READING_LIMITS;
   protected readonly popularCities = POPULAR_CITIES;
   protected readonly playbackSpeeds = [0.75, 1.0, 1.25, 1.5, 2.0];
+  protected readonly Math = Math;
 
   // Modals & City Switcher State
   protected readonly showCityModal = signal(false);
@@ -377,6 +381,64 @@ export class SettingsPage implements OnInit {
     this.taskService.resetTodayProgress();
     this.showToast(
       this.isBn() ? 'আজকের অগ্রগতি রিসেট করা হয়েছে।' : 'Today’s progress has been reset.',
+      'success',
+    );
+  }
+
+  // --- Phase 14: Prayer Notifications & Adhan Player ---
+  async requestPrayerNotificationPermission(): Promise<void> {
+    const granted = await this.prayerNotifications.requestPermission();
+    if (granted) {
+      this.showToast(
+        this.isBn() ? 'নোটিফিকেশন সক্রিয় করা হয়েছে!' : 'Notifications enabled successfully!',
+        'success',
+      );
+    } else {
+      this.showToast(
+        this.isBn()
+          ? 'ব্রাউজারে নোটিফিকেশন অনুমতি পাওয়া যায়নি।'
+          : 'Notification permission was not granted.',
+        'error',
+      );
+    }
+  }
+
+  toggleMasterPrayerAlerts(): void {
+    const current = this.prayerNotifications.settings().enabled;
+    this.prayerNotifications.toggleMaster(!current);
+  }
+
+  togglePrayerAlert(key: CorePrayerAlertKey): void {
+    const current = this.prayerNotifications.settings()[key];
+    this.prayerNotifications.togglePrayer(key, !current);
+  }
+
+  toggleAdhanModalAutoPopup(): void {
+    const current = this.prayerNotifications.settings().autoPlayAdhanModal;
+    this.prayerNotifications.toggleModalAutoPopup(!current);
+  }
+
+  onAdhanVoiceChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    this.prayerNotifications.setAdhanVoice(select.value as AdhanVoiceId);
+  }
+
+  toggleDefaultMuted(): void {
+    const current = this.prayerNotifications.settings().defaultMuted;
+    this.prayerNotifications.setDefaultMuted(!current);
+  }
+
+  onAdhanVolumeInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.prayerNotifications.setVolume(parseFloat(input.value));
+  }
+
+  triggerTestPrayerAlert(): void {
+    this.prayerNotifications.triggerTestAlert('asr');
+    this.showToast(
+      this.isBn()
+        ? 'টেস্ট নোটিফিকেশন ও আজান প্লেয়ার সক্রিয় হয়েছে!'
+        : 'Test prayer alert and Adhan player triggered!',
       'success',
     );
   }

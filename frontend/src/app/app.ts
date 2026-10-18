@@ -8,6 +8,9 @@ import { IconComponent } from './shared/components/icon/icon';
 import { PwaService } from './core/services/pwa';
 import { LanguageService } from './core/services/language';
 
+import { AdhanModalComponent } from './shared/components/adhan-modal/adhan-modal';
+import { PrayerNotificationService } from './core/services/prayer-notification';
+
 /**
  * Application shell: the chrome that stays put while routes change.
  * Page content is rendered into the router outlet inside <main>.
@@ -25,6 +28,7 @@ import { LanguageService } from './core/services/language';
     BottomNavComponent,
     MiniPlayerComponent,
     IconComponent,
+    AdhanModalComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -32,9 +36,11 @@ import { LanguageService } from './core/services/language';
 export class App {
   protected readonly pwa = inject(PwaService);
   protected readonly language = inject(LanguageService);
+  protected readonly notificationService = inject(PrayerNotificationService);
 
   readonly isOffline = this.pwa.isOffline;
   readonly hasUpdate = this.pwa.hasUpdate;
+  readonly activeAdhanModal = this.notificationService.activeAdhanModal;
 
   async updateApp(): Promise<void> {
     await this.pwa.activateUpdate();

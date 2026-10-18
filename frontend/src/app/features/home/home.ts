@@ -7,6 +7,7 @@ import { LanguageService } from '../../core/services/language';
 import { ReadingPositionService } from '../../core/services/reading-position';
 import { ReadingProgressService } from '../../core/services/reading-progress';
 import { TaskService } from '../../core/services/task';
+import { PrayerNotificationService } from '../../core/services/prayer-notification';
 import { IconComponent } from '../../shared/components/icon/icon';
 import { TaskGoalModalComponent } from '../../shared/components/task-goal-modal/task-goal-modal';
 
@@ -31,6 +32,7 @@ export class HomePage {
   protected readonly lang = inject(LanguageService);
   protected readonly dailyAyahService = inject(DailyAyahService);
   protected readonly taskService = inject(TaskService);
+  protected readonly notificationService = inject(PrayerNotificationService);
 
   readonly isBn = this.lang.isBn;
   readonly showGoalModal = signal<boolean>(false);
@@ -152,6 +154,15 @@ export class HomePage {
     } else if (outcome === 'shared') {
       this.shareOutcome.set(this.isBn() ? 'শেয়ার করা হয়েছে!' : 'Shared!');
       setTimeout(() => this.shareOutcome.set(null), 3000);
+    }
+  }
+
+  openAdhanPlayer(): void {
+    const current = this.currentPrayer() ?? this.nextPrayer()?.prayer;
+    if (current) {
+      this.notificationService.openAdhanModal(current, false);
+    } else {
+      this.notificationService.triggerTestAlert('asr');
     }
   }
 

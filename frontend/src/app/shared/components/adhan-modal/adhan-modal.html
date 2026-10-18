@@ -1,0 +1,240 @@
+@if (state(); as modal) {
+  <div class="modal-backdrop" (click)="dismiss()" role="presentation"></div>
+
+  <div
+    class="modal-wrapper"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="language.translate('adhan.title')"
+  >
+    <div class="adhan-card">
+      <!-- HEADER -->
+      <header class="adhan-card__header">
+        <div class="adhan-card__header-top">
+          <div class="adhan-badge-row">
+            <span class="adhan-badge">
+              <aq-icon name="clock" [size]="14" />
+              <span>{{ language.translate('adhan.nowTimeFor') }}</span>
+            </span>
+
+            @if (modal.isTest) {
+              <span class="test-badge">
+                <aq-icon name="info" [size]="14" />
+                <span>{{ isBn() ? 'টেস্ট প্রিভিউ' : 'Test Preview' }}</span>
+              </span>
+            }
+          </div>
+
+          <button
+            type="button"
+            class="close-btn"
+            (click)="dismiss()"
+            [attr.aria-label]="language.translate('adhan.dismiss')"
+          >
+            <aq-icon name="close" [size]="20" />
+          </button>
+        </div>
+
+        <div class="adhan-titles">
+          <!-- Arabic Calligraphy -->
+          <div class="prayer-arabic" dir="rtl" lang="ar">
+            {{ modal.prayer.arabicName }}
+          </div>
+
+          <!-- English / Bangla Names -->
+          <h2 class="prayer-primary-title">
+            {{ isBn() ? modal.prayer.banglaName : modal.prayer.name }}
+            <span class="prayer-sub-title">({{ isBn() ? modal.prayer.name : modal.prayer.banglaName }})</span>
+          </h2>
+
+          <div class="prayer-meta">
+            <span class="prayer-meta__item">
+              <aq-icon name="mapPin" [size]="15" />
+              <span>{{ modal.locationName }}</span>
+            </span>
+            <span class="prayer-meta__dot" aria-hidden="true">·</span>
+            <span class="prayer-meta__time">
+              {{ isBn() ? modal.time12hBn : modal.time12h }}
+            </span>
+          </div>
+        </div>
+      </header>
+
+      <!-- BODY / AUDIO CONTROLS -->
+      <div class="adhan-card__body">
+        <!-- Visualizer & Status Box -->
+        <div class="visualizer-card" [class.visualizer-card--playing]="isPlaying()">
+          <!-- Sound Waves -->
+          <div class="wave-visualizer" aria-hidden="true">
+            <span class="wave-bar bar-1"></span>
+            <span class="wave-bar bar-2"></span>
+            <span class="wave-bar bar-3"></span>
+            <span class="wave-bar bar-4"></span>
+            <span class="wave-bar bar-5"></span>
+            <span class="wave-bar bar-6"></span>
+            <span class="wave-bar bar-7"></span>
+          </div>
+
+          <!-- Status Text -->
+          <div class="visualizer-status">
+            @if (isPlaying()) {
+              @if (isMuted()) {
+                <span class="status-pill status-pill--muted">
+                  <aq-icon name="volumeOff" [size]="16" />
+                  <span>{{ language.translate('adhan.playingMuted') }}</span>
+                </span>
+              } @else {
+                <span class="status-pill status-pill--live">
+                  <aq-icon name="volume2" [size]="16" />
+                  <span>{{ language.translate('adhan.playingSound') }}</span>
+                </span>
+              }
+            } @else {
+              <span class="status-pill status-pill--paused">
+                <aq-icon name="pause" [size]="16" />
+                <span>{{ language.translate('adhan.paused') }}</span>
+              </span>
+            }
+
+            <span class="audio-progress">{{ formattedProgress() }}</span>
+          </div>
+
+          <!-- High-Contrast Prominent Unmute / Mute Action Button -->
+          <div class="unmute-action-wrapper">
+            @if (isMuted()) {
+              <button
+                type="button"
+                class="unmute-btn"
+                (click)="unmuteAdhan()"
+                [attr.aria-label]="language.translate('adhan.unmute')"
+              >
+                <aq-icon name="volume2" [size]="22" />
+                <span>{{ language.translate('adhan.unmute') }}</span>
+              </button>
+            } @else {
+              <button
+                type="button"
+                class="mute-btn"
+                (click)="toggleMute()"
+                [attr.aria-label]="language.translate('adhan.mute')"
+              >
+                <aq-icon name="volumeOff" [size]="20" />
+                <span>{{ language.translate('adhan.mute') }}</span>
+              </button>
+            }
+          </div>
+
+          @if (audioError()) {
+            <div class="audio-error" role="alert">
+              <aq-icon name="alert" [size]="16" />
+              <span>{{ audioError() }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Controls Row -->
+        <div class="playback-controls">
+          <button
+            type="button"
+            class="control-btn control-btn--play"
+            (click)="togglePlay()"
+            [attr.aria-label]="isPlaying() ? language.translate('adhan.pause') : language.translate('adhan.play')"
+          >
+            <aq-icon [name]="isPlaying() ? 'pause' : 'play'" [size]="20" />
+          </button>
+
+          <button
+            type="button"
+            class="control-btn"
+            (click)="stopAdhan()"
+            [attr.aria-label]="language.translate('adhan.stop')"
+          >
+            <aq-icon name="refresh" [size]="18" />
+          </button>
+
+          <!-- Volume Slider -->
+          <div class="volume-slider-group">
+            <button
+              type="button"
+              class="volume-icon-btn"
+              (click)="toggleMute()"
+              [attr.aria-label]="isMuted() ? 'Unmute' : 'Mute'"
+            >
+              <aq-icon [name]="isMuted() || volume() === 0 ? 'volumeOff' : 'volume2'" [size]="18" />
+            </button>
+            <input
+              type="range"
+              class="volume-range"
+              min="0"
+              max="1"
+              step="0.05"
+              [value]="isMuted() ? 0 : volume()"
+              (input)="onVolumeChange($event)"
+              [attr.aria-label]="language.translate('adhan.volume')"
+            />
+            <span class="volume-value">{{ Math.round((isMuted() ? 0 : volume()) * 100) }}%</span>
+          </div>
+        </div>
+
+        <!-- Voice Selector Dropdown -->
+        <div class="voice-picker-card">
+          <label for="adhan-voice-select" class="voice-picker-label">
+            <aq-icon name="headphones" [size]="16" />
+            <span>{{ language.translate('adhan.voice') }}</span>
+          </label>
+
+          <div class="select-wrapper">
+            <select
+              id="adhan-voice-select"
+              class="voice-select"
+              [value]="selectedVoice().id"
+              (change)="onVoiceSelect($event)"
+            >
+              @for (v of voices; track v.id) {
+                <option [value]="v.id">
+                  {{ isBn() ? v.nameBn : v.name }} ({{ isBn() ? v.muezzinBn : v.muezzin }})
+                </option>
+              }
+            </select>
+            <aq-icon name="chevronDown" [size]="16" class="select-arrow" />
+          </div>
+
+          <div class="voice-muezzin-info">
+            <span>{{ isBn() ? selectedVoice().muezzinBn : selectedVoice().muezzin }}</span>
+            <span class="dot">·</span>
+            <span>{{ isBn() ? selectedVoice().locationBn : selectedVoice().location }}</span>
+          </div>
+        </div>
+
+        <!-- Next Prayer Countdown Preview -->
+        @if (nextPrayer(); as next) {
+          <div class="next-prayer-preview">
+            <div class="next-preview-header">
+              <span class="next-preview-label">{{ language.translate('adhan.nextPrayerIn') }}</span>
+              <span class="next-prayer-name">
+                {{ isBn() ? next.prayer.banglaName : next.prayer.name }}
+              </span>
+            </div>
+            <div class="next-countdown-badge">
+              <aq-icon name="clock" [size]="16" />
+              <span>{{ next.formattedCountdown }}</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- FOOTER ACTIONS -->
+      <footer class="adhan-card__footer">
+        <button type="button" class="footer-btn footer-btn--secondary" (click)="snooze()">
+          <aq-icon name="bell" [size]="18" />
+          <span>{{ language.translate('adhan.snooze10m') }}</span>
+        </button>
+
+        <button type="button" class="footer-btn footer-btn--primary" (click)="dismiss()">
+          <aq-icon name="check" [size]="18" />
+          <span>{{ language.translate('adhan.dismiss') }}</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+}

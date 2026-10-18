@@ -255,6 +255,7 @@ export const STORAGE_KEYS = {
   surahHistory: 'surahHistory',
   dailyTasks: 'dailyTasks',
   habitHistory: 'habitHistory',
+  prayerNotifications: 'prayerNotifications',
 } as const;
 
 export interface StorageUsage {

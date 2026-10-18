@@ -43,8 +43,29 @@ describe('SettingsPage', () => {
     expect(el.querySelector('#language')).toBeTruthy();
     expect(el.querySelector('#audio')).toBeTruthy();
     expect(el.querySelector('#location')).toBeTruthy();
+    expect(el.querySelector('#prayer-notifications')).toBeTruthy();
     expect(el.querySelector('#daily-tasks')).toBeTruthy();
     expect(el.querySelector('#data')).toBeTruthy();
+  });
+
+  it('toggles master prayer alerts and individual prayers', () => {
+    const initial = component['prayerNotifications'].settings().enabled;
+    component.toggleMasterPrayerAlerts();
+    expect(component['prayerNotifications'].settings().enabled).toBe(!initial);
+
+    const fajrInitial = component['prayerNotifications'].settings().fajr;
+    component.togglePrayerAlert('fajr');
+    expect(component['prayerNotifications'].settings().fajr).toBe(!fajrInitial);
+  });
+
+  it('toggles default muted and triggers test prayer alert', () => {
+    const mutedInitial = component['prayerNotifications'].settings().defaultMuted;
+    component.toggleDefaultMuted();
+    expect(component['prayerNotifications'].settings().defaultMuted).toBe(!mutedInitial);
+
+    component.triggerTestPrayerAlert();
+    expect(component['toastMessage']()).toBeTruthy();
+    expect(component['prayerNotifications'].activeAdhanModal()).not.toBeNull();
   });
 
   it('toggles daily task reminder setting', () => {

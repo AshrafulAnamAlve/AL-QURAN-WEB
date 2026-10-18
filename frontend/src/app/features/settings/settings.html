@@ -457,6 +457,261 @@
       </div>
     </section>
 
+    <!-- SECTION: PRAYER NOTIFICATIONS & ADHAN PLAYER (PHASE 14) -->
+    <section class="settings-section" id="prayer-notifications" aria-labelledby="heading-prayer-notifications">
+      <div class="section-header">
+        <div class="section-header__icon" aria-hidden="true">
+          <aq-icon name="bell" [size]="22" />
+        </div>
+        <div>
+          <h2 id="heading-prayer-notifications" class="section-header__title">
+            {{ language.translate('settings.notifications.title') }}
+          </h2>
+          <p class="section-header__desc">
+            {{ language.translate('settings.notifications.desc') }}
+          </p>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <!-- Master Alert Toggle & Permission -->
+        <div class="setting-row">
+          <div class="setting-row__info">
+            <span class="setting-row__title">
+              {{ language.translate('settings.notifications.masterToggle') }}
+            </span>
+            <span class="setting-row__desc">
+              {{ isBn() ? 'ওয়াক্তের শুরু হওয়ার মুহূর্তে নোটিফিকেশন অ্যালার্ট।' : 'Send timely alerts when each prayer time starts.' }}
+            </span>
+          </div>
+          <div class="setting-row__control">
+            <button
+              type="button"
+              class="aq-btn aq-btn--sm"
+              [class.aq-btn--primary]="prayerNotifications.settings().enabled"
+              [class.aq-btn--secondary]="!prayerNotifications.settings().enabled"
+              (click)="toggleMasterPrayerAlerts()"
+            >
+              {{ prayerNotifications.settings().enabled ? (isBn() ? 'সক্রিয়' : 'Enabled') : (isBn() ? 'নিষ্ক্রিয়' : 'Disabled') }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Permission Status & Request -->
+        <div class="setting-row">
+          <div class="setting-row__info">
+            <span class="setting-row__title">
+              {{ language.translate('settings.notifications.permission') }}
+            </span>
+            <span class="setting-row__desc">
+              @if (prayerNotifications.isPermissionGranted()) {
+                <span class="status-indicator status-indicator--success">
+                  <aq-icon name="check" [size]="14" />
+                  {{ language.translate('settings.notifications.granted') }}
+                </span>
+              } @else if (prayerNotifications.isPermissionDenied()) {
+                <span class="status-indicator status-indicator--danger">
+                  <aq-icon name="alert" [size]="14" />
+                  {{ language.translate('settings.notifications.denied') }}
+                </span>
+              } @else {
+                <span>{{ isBn() ? 'অনুমতি এখনো দেওয়া হয়নি।' : 'Permission not yet granted.' }}</span>
+              }
+            </span>
+          </div>
+          <div class="setting-row__control">
+            @if (!prayerNotifications.isPermissionGranted()) {
+              <button
+                type="button"
+                class="aq-btn aq-btn--secondary aq-btn--sm"
+                (click)="requestPrayerNotificationPermission()"
+              >
+                <aq-icon name="bell" [size]="14" />
+                {{ language.translate('settings.notifications.request') }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Individual Prayer Alerts -->
+        <div class="control-group">
+          <div class="control-header">
+            <span class="control-label">
+              {{ isBn() ? 'ওয়াক্তভিত্তিক নোটিফিকেশন নির্বাচন' : 'Individual Prayer Alerts' }}
+            </span>
+          </div>
+          <div class="prayer-toggles-grid">
+            <button
+              type="button"
+              class="prayer-chip-toggle"
+              [class.prayer-chip-toggle--active]="prayerNotifications.settings().fajr"
+              (click)="togglePrayerAlert('fajr')"
+            >
+              <aq-icon [name]="prayerNotifications.settings().fajr ? 'check' : 'clock'" [size]="14" />
+              <span>{{ isBn() ? 'ফজর (Fajr)' : 'Fajr' }}</span>
+            </button>
+
+            <button
+              type="button"
+              class="prayer-chip-toggle"
+              [class.prayer-chip-toggle--active]="prayerNotifications.settings().sunrise"
+              (click)="togglePrayerAlert('sunrise')"
+            >
+              <aq-icon [name]="prayerNotifications.settings().sunrise ? 'check' : 'sun'" [size]="14" />
+              <span>{{ isBn() ? 'সূর্যোদয় (Sunrise)' : 'Sunrise' }}</span>
+            </button>
+
+            <button
+              type="button"
+              class="prayer-chip-toggle"
+              [class.prayer-chip-toggle--active]="prayerNotifications.settings().dhuhr"
+              (click)="togglePrayerAlert('dhuhr')"
+            >
+              <aq-icon [name]="prayerNotifications.settings().dhuhr ? 'check' : 'clock'" [size]="14" />
+              <span>{{ isBn() ? 'যোহর (Dhuhr)' : 'Dhuhr' }}</span>
+            </button>
+
+            <button
+              type="button"
+              class="prayer-chip-toggle"
+              [class.prayer-chip-toggle--active]="prayerNotifications.settings().asr"
+              (click)="togglePrayerAlert('asr')"
+            >
+              <aq-icon [name]="prayerNotifications.settings().asr ? 'check' : 'clock'" [size]="14" />
+              <span>{{ isBn() ? 'আসর (Asr)' : 'Asr' }}</span>
+            </button>
+
+            <button
+              type="button"
+              class="prayer-chip-toggle"
+              [class.prayer-chip-toggle--active]="prayerNotifications.settings().maghrib"
+              (click)="togglePrayerAlert('maghrib')"
+            >
+              <aq-icon [name]="prayerNotifications.settings().maghrib ? 'check' : 'clock'" [size]="14" />
+              <span>{{ isBn() ? 'মাগরিব (Maghrib)' : 'Maghrib' }}</span>
+            </button>
+
+            <button
+              type="button"
+              class="prayer-chip-toggle"
+              [class.prayer-chip-toggle--active]="prayerNotifications.settings().isha"
+              (click)="togglePrayerAlert('isha')"
+            >
+              <aq-icon [name]="prayerNotifications.settings().isha ? 'check' : 'moon'" [size]="14" />
+              <span>{{ isBn() ? 'এশা (Isha)' : 'Isha' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- In-App Adhan Modal Auto-Popup -->
+        <div class="setting-row">
+          <div class="setting-row__info">
+            <span class="setting-row__title">
+              {{ language.translate('settings.notifications.autoModal') }}
+            </span>
+            <span class="setting-row__desc">
+              {{ isBn() ? 'নামাজের সময়ে স্ক্রিনে পূর্ণাঙ্গ আজান প্লেয়ার ও পরবর্তী ওয়াক্ত কাউন্টডাউন প্রদর্শন।' : 'Show the interactive Adhan modal with visualizer when on the site.' }}
+            </span>
+          </div>
+          <div class="setting-row__control">
+            <button
+              type="button"
+              class="aq-btn aq-btn--sm"
+              [class.aq-btn--primary]="prayerNotifications.settings().autoPlayAdhanModal"
+              [class.aq-btn--secondary]="!prayerNotifications.settings().autoPlayAdhanModal"
+              (click)="toggleAdhanModalAutoPopup()"
+            >
+              {{ prayerNotifications.settings().autoPlayAdhanModal ? (isBn() ? 'সক্রিয়' : 'Enabled') : (isBn() ? 'নিষ্ক্রিয়' : 'Disabled') }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Adhan Voice Picker -->
+        <div class="control-group">
+          <label for="settings-adhan-voice" class="control-label">
+            {{ language.translate('adhan.voice') }}
+          </label>
+          <select
+            id="settings-adhan-voice"
+            class="aq-select"
+            [value]="prayerNotifications.settings().adhanVoice"
+            (change)="onAdhanVoiceChange($event)"
+          >
+            @for (voice of prayerNotifications.voices; track voice.id) {
+              <option [value]="voice.id">
+                {{ isBn() ? voice.nameBn : voice.name }} — {{ isBn() ? voice.muezzinBn : voice.muezzin }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <!-- Default Audio State -->
+        <div class="setting-row">
+          <div class="setting-row__info">
+            <span class="setting-row__title">
+              {{ isBn() ? 'ডিফল্ট অডিও অবস্থা' : 'Default Audio State' }}
+            </span>
+            <span class="setting-row__desc">
+              {{ prayerNotifications.settings().defaultMuted ? language.translate('settings.notifications.defaultMuted') : language.translate('settings.notifications.soundOn') }}
+            </span>
+          </div>
+          <div class="setting-row__control">
+            <button
+              type="button"
+              class="aq-btn aq-btn--secondary aq-btn--sm"
+              (click)="toggleDefaultMuted()"
+            >
+              <aq-icon [name]="prayerNotifications.settings().defaultMuted ? 'volumeOff' : 'volume2'" [size]="14" />
+              <span>{{ prayerNotifications.settings().defaultMuted ? (isBn() ? 'নীরব (Muted)' : 'Muted') : (isBn() ? 'শব্দসহ (Sound On)' : 'Sound On') }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Adhan Volume -->
+        <div class="control-group">
+          <div class="control-header">
+            <label for="settings-adhan-volume" class="control-label">
+              {{ language.translate('adhan.volume') }}
+            </label>
+            <span class="control-value">{{ Math.round(prayerNotifications.settings().volume * 100) }}%</span>
+          </div>
+          <input
+            id="settings-adhan-volume"
+            type="range"
+            class="range-slider"
+            min="0"
+            max="1"
+            step="0.05"
+            [value]="prayerNotifications.settings().volume"
+            (input)="onAdhanVolumeInput($event)"
+            aria-label="Adhan audio volume"
+          />
+        </div>
+
+        <!-- Test Prayer Alert & Adhan Modal Button -->
+        <div class="setting-row">
+          <div class="setting-row__info">
+            <span class="setting-row__title">
+              {{ isBn() ? 'নোটিফিকেশন ও আজান পরীক্ষা করুন' : 'Test Notification & Adhan Modal' }}
+            </span>
+            <span class="setting-row__desc">
+              {{ isBn() ? 'একটি টেস্ট অ্যালার্ট পাঠিয়ে ব্রাউজার নোটিফিকেশন ও আজান প্লেয়ার পরীক্ষা করুন।' : 'Simulate an immediate prayer alert to verify desktop notifications and audio playback.' }}
+            </span>
+          </div>
+          <div class="setting-row__control">
+            <button
+              type="button"
+              class="aq-btn aq-btn--primary aq-btn--sm"
+              (click)="triggerTestPrayerAlert()"
+            >
+              <aq-icon name="bell" [size]="14" />
+              {{ language.translate('settings.notifications.testBtn') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- SECTION: DAILY QURAN GOAL & REMINDERS (PHASE 13) -->
     <section class="settings-section" id="daily-tasks" aria-labelledby="heading-daily-tasks">
       <div class="section-header">
