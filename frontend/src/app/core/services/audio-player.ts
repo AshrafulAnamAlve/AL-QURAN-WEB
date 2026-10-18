@@ -12,6 +12,7 @@ import { buildAyahAudioUrl } from '../utils/audio-url';
 import { LoggerService } from './logger';
 import { ReciterService, reciterLabel } from './reciter';
 import { STORAGE_KEYS, StorageService } from './storage';
+import { TaskService } from './task';
 
 /** How far the lock-screen skip actions move, in seconds. */
 const SKIP_SECONDS = 5;
@@ -44,6 +45,9 @@ export class AudioPlayerService {
   private readonly logger = inject(LoggerService);
   private readonly storage = inject(StorageService);
   private readonly reciterService = inject(ReciterService);
+  private readonly taskService = inject(TaskService);
+
+  private lastReportedAudioTime = 0;
 
   private element?: HTMLAudioElement;
 
@@ -279,6 +283,7 @@ export class AudioPlayerService {
 
     const target = Math.min(total, Math.max(0, seconds));
     audio.currentTime = target;
+    this.lastReportedAudioTime = target;
     this.position.set(target);
     this.publishPosition();
   }
@@ -387,6 +392,7 @@ export class AudioPlayerService {
 
     this.indexState.set(index);
     this.error.set(null);
+    this.lastReportedAudioTime = 0;
 
     if (options.force || audio.src !== url) {
       this.duration.set(0);
@@ -607,7 +613,15 @@ export class AudioPlayerService {
       if (this.isBuffering()) {
         this.isBuffering.set(false);
       }
-      this.position.set(audio.currentTime);
+      const cur = audio.currentTime;
+      const delta = cur - this.lastReportedAudioTime;
+      if (delta >= 5 && delta < 15) {
+        this.taskService.recordAudioListening(delta);
+        this.lastReportedAudioTime = cur;
+      } else if (delta < 0 || delta >= 15) {
+        this.lastReportedAudioTime = cur;
+      }
+      this.position.set(cur);
       this.publishPosition();
     });
 

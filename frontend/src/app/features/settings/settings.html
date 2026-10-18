@@ -457,6 +457,142 @@
       </div>
     </section>
 
+    <!-- SECTION: DAILY QURAN GOAL & REMINDERS (PHASE 13) -->
+    <section class="settings-section" id="daily-tasks" aria-labelledby="heading-daily-tasks">
+      <div class="section-header">
+        <div class="section-header__icon" aria-hidden="true">
+          <aq-icon name="clock" [size]="22" />
+        </div>
+        <div>
+          <h2 id="heading-daily-tasks" class="section-header__title">
+            {{ isBn() ? 'দৈনিক লক্ষ্য ও অনুস্মারক (Daily Quran Goals)' : 'Daily Quran Goals & Reminders' }}
+          </h2>
+          <p class="section-header__desc">
+            {{ isBn() ? 'দৈনিক তিলাওয়াতের আয়াত সংখ্যা, অডিও শোনার লক্ষ্য এবং নোটিফিকেশনের সময় নির্ধারণ করুন।' : 'Configure daily reading targets, audio listening duration and scheduled notification alerts.' }}
+          </p>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <!-- Daily Reading Goal -->
+        <div class="control-group">
+          <div class="control-header">
+            <label for="settings-reading-goal" class="control-label">
+              {{ isBn() ? 'দৈনিক তিলাওয়াত লক্ষ্য (আয়াত)' : 'Daily Reading Target' }}
+            </label>
+            <span class="control-value">{{ taskService.settings().readingGoalAyahs }} {{ isBn() ? 'আয়াত' : 'ayahs' }}</span>
+          </div>
+          <input
+            id="settings-reading-goal"
+            type="range"
+            class="range-slider"
+            min="5"
+            max="100"
+            step="5"
+            [value]="taskService.settings().readingGoalAyahs"
+            (input)="onReadingGoalInput($event)"
+            aria-label="Daily reading goal ayahs"
+          />
+        </div>
+
+        <!-- Daily Listening Goal -->
+        <div class="control-group">
+          <div class="control-header">
+            <label for="settings-listening-goal" class="control-label">
+              {{ isBn() ? 'দৈনিক অডিও শোনার লক্ষ্য (মিনিট)' : 'Daily Audio Target' }}
+            </label>
+            <span class="control-value">{{ taskService.settings().listeningGoalMinutes }} {{ isBn() ? 'মিনিট' : 'min' }}</span>
+          </div>
+          <input
+            id="settings-listening-goal"
+            type="range"
+            class="range-slider"
+            min="5"
+            max="60"
+            step="5"
+            [value]="taskService.settings().listeningGoalMinutes"
+            (input)="onListeningGoalInput($event)"
+            aria-label="Daily listening goal minutes"
+          />
+        </div>
+
+        <!-- Reminder Time & Enable Toggle -->
+        <div class="setting-row">
+          <div class="setting-row__info">
+            <span class="setting-row__title">
+              {{ isBn() ? 'দৈনিক নোটিফিকেশন অনুস্মারক' : 'Daily Reminder Notification' }}
+            </span>
+            <span class="setting-row__desc">
+              {{ isBn() ? 'নির্ধারিত সময়ে ব্রাউজার বা ডিভাইসে নোটিফিকেশন অ্যালার্ট।' : 'Send a browser or device notification at your chosen reminder time.' }}
+            </span>
+          </div>
+          <div class="setting-row__control" style="display: flex; align-items: center; gap: 0.75rem;">
+            <input
+              type="time"
+              class="aq-input"
+              style="width: 120px; padding: 0.35rem 0.6rem; border-radius: 6px;"
+              [value]="taskService.settings().reminderTime"
+              (change)="onReminderTimeInput($event)"
+              [disabled]="!taskService.settings().reminderEnabled"
+              aria-label="Reminder time"
+            />
+            <button
+              type="button"
+              class="aq-btn aq-btn--sm"
+              [class.aq-btn--primary]="taskService.settings().reminderEnabled"
+              [class.aq-btn--secondary]="!taskService.settings().reminderEnabled"
+              (click)="toggleReminderEnabled()"
+            >
+              {{ taskService.settings().reminderEnabled ? (isBn() ? 'সক্রিয়' : 'Enabled') : (isBn() ? 'নিষ্ক্রিয়' : 'Disabled') }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Notification Permissions and Test Button -->
+        <div class="setting-row">
+          <div class="setting-row__info">
+            <span class="setting-row__title">
+              {{ isBn() ? 'ব্রাউজার নোটিফিকেশন অনুমতি' : 'Notification Permission' }}
+            </span>
+            <span class="setting-row__desc">
+              {{ isBn() ? 'স্ট্যাটাস: ' + (taskService.notificationPermission() === 'granted' ? 'অনুমোদিত (Active)' : 'অনুমতি প্রয়োজন') : 'Status: ' + taskService.notificationPermission() }}
+            </span>
+          </div>
+          <div class="setting-row__control" style="display: flex; gap: 0.5rem;">
+            @if (taskService.notificationPermission() !== 'granted') {
+              <button type="button" class="aq-btn aq-btn--secondary aq-btn--sm" (click)="requestNotificationPermission()">
+                <aq-icon name="bell" [size]="14" />
+                {{ isBn() ? 'অনুমতি দিন' : 'Grant Permission' }}
+              </button>
+            } @else {
+              <button type="button" class="aq-btn aq-btn--ghost aq-btn--sm" (click)="sendTestNotification()">
+                <aq-icon name="bell" [size]="14" />
+                {{ isBn() ? 'টেস্ট পাঠান' : 'Test Alert' }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Reset Today's Progress Button -->
+        <div class="setting-row">
+          <div class="setting-row__info">
+            <span class="setting-row__title">
+              {{ isBn() ? 'আজকের অগ্রগতি রিসেট' : 'Reset Today’s Progress' }}
+            </span>
+            <span class="setting-row__desc">
+              {{ isBn() ? 'আজকের পড়া আয়াত ও শোনার হিসাব শূন্যে ফিরিয়ে আনুন।' : 'Clear today’s logged reading and audio counts.' }}
+            </span>
+          </div>
+          <div class="setting-row__control">
+            <button type="button" class="aq-btn aq-btn--secondary aq-btn--sm" (click)="resetDailyGoal()">
+              <aq-icon name="trash" [size]="14" />
+              {{ isBn() ? 'রিসেট করুন' : 'Reset Today' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- SECTION 6: DATA & STORAGE MANAGEMENT -->
     <section class="settings-section" id="data" aria-labelledby="heading-data">
       <div class="section-header">

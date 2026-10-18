@@ -4,16 +4,20 @@ import {
   OnInit,
   computed,
   inject,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { CalendarService } from '../../core/services/calendar';
 import { LanguageService } from '../../core/services/language';
 import { LocationService } from '../../core/services/location';
 import { PrayerTimesService } from '../../core/services/prayer';
 import { SeoService } from '../../core/services/seo';
+import { TaskService } from '../../core/services/task';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 import { IconComponent } from '../../shared/components/icon/icon';
 import { SkeletonComponent } from '../../shared/components/skeleton/skeleton';
+import { TaskGoalModalComponent } from '../../shared/components/task-goal-modal/task-goal-modal';
 
 export const WEEKDAY_NAMES = [
   { en: 'Sun', bn: 'রবি', ar: 'الأحد' },
@@ -25,29 +29,122 @@ export const WEEKDAY_NAMES = [
   { en: 'Sat', bn: 'শনি', ar: 'السبت' },
 ] as const;
 
+export interface HabitDayCell {
+  readonly dateKey: string;
+  readonly dayNumber: number;
+  readonly weekdayIndex: number;
+  readonly isToday: boolean;
+  readonly status: 'completed' | 'partial' | 'missed' | 'today';
+  readonly ayahsRead: number;
+  readonly minutesListened: number;
+  readonly goalMet: boolean;
+}
+
 @Component({
   selector: 'aq-calendar-page',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     IconComponent,
     SkeletonComponent,
     ErrorStateComponent,
+    TaskGoalModalComponent,
   ],
   templateUrl: './calendar.html',
   styleUrl: './calendar.scss',
 })
 export class CalendarPage implements OnInit {
   private readonly seo = inject(SeoService);
+  private readonly route = inject(ActivatedRoute);
   protected readonly calendar = inject(CalendarService);
   protected readonly language = inject(LanguageService);
   protected readonly prayerTimes = inject(PrayerTimesService);
   protected readonly locationService = inject(LocationService);
+  protected readonly taskService = inject(TaskService);
 
   readonly isBn = this.language.isBn;
   readonly weekdays = WEEKDAY_NAMES;
 
-  // Calendar state signals
+  // Active view tab: 'hijri' for Islamic Calendar, 'habit' for Daily Habit Tracker
+  readonly activeTab = signal<'hijri' | 'habit'>('hijri');
+  readonly showGoalModal = signal<boolean>(false);
+  readonly selectedHabitDay = signal<HabitDayCell | null>(null);
+
+  // Month navigation for Habit Tracker
+  readonly habitViewDate = signal<Date>(new Date());
+
+  readonly habitMonthName = computed(() => {
+    const d = this.habitViewDate();
+    const monthsEn = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December',
+    ];
+    const monthsBn = [
+      'জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন',
+      'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর',
+    ];
+    const m = d.getMonth();
+    const y = d.getFullYear();
+    return this.isBn() ? `${monthsBn[m]} ${this.toBnDigits(y)}` : `${monthsEn[m]} ${y}`;
+  });
+
+  readonly habitLeadingBlanks = computed(() => {
+    const d = this.habitViewDate();
+    const firstDay = new Date(d.getFullYear(), d.getMonth(), 1).getDay();
+    return Array.from({ length: firstDay });
+  });
+
+  readonly habitMonthCells = computed<HabitDayCell[]>(() => {
+    const d = this.habitViewDate();
+    const year = d.getFullYear();
+    const month = d.getMonth();
+    const totalDays = new Date(year, month + 1, 0).getDate();
+    const history = this.taskService.history();
+    const todayStr = this.taskService.todayDate();
+
+    const cells: HabitDayCell[] = [];
+    for (let day = 1; day <= totalDays; day++) {
+      const monthStr = String(month + 1).padStart(2, '0');
+      const dayStr = String(day).padStart(2, '0');
+      const key = `${year}-${monthStr}-${dayStr}`;
+      const isToday = key === todayStr;
+      const rec = history[key];
+
+      const ayahsRead = rec?.ayahsRead ?? 0;
+      const minutesListened = rec?.minutesListened ?? 0;
+      const goalMet = rec?.goalMet ?? (isToday ? this.taskService.isReadingGoalMet() : false);
+
+      let status: 'completed' | 'partial' | 'missed' | 'today';
+      if (isToday) {
+        status = goalMet ? 'completed' : 'today';
+      } else if (goalMet) {
+        status = 'completed';
+      } else if (ayahsRead > 0 || minutesListened > 0) {
+        status = 'partial';
+      } else {
+        const checkDate = new Date(year, month, day);
+        const todayDate = new Date();
+        todayDate.setHours(0, 0, 0, 0);
+        status = checkDate < todayDate ? 'missed' : 'partial';
+      }
+
+      cells.push({
+        dateKey: key,
+        dayNumber: day,
+        weekdayIndex: new Date(year, month, day).getDay(),
+        isToday,
+        status,
+        ayahsRead,
+        minutesListened,
+        goalMet,
+      });
+    }
+
+    return cells;
+  });
+
+  // Calendar state signals (Hijri)
   readonly today = this.calendar.todayConversion;
   readonly monthData = this.calendar.monthData;
   readonly months = this.calendar.months;
@@ -77,15 +174,57 @@ export class CalendarPage implements OnInit {
   });
 
   ngOnInit(): void {
+    if (this.route.snapshot.fragment === 'habit-tracker') {
+      this.activeTab.set('habit');
+    }
+
     this.seo.apply({
-      title: 'Islamic Calendar — Hijri Dates & Ramadan View',
+      title: 'Islamic Calendar & Quran Habit Tracker',
       description:
-        "Astronomically calculated Hijri calendar, today's Islamic date, significant Islamic events, and Ramadan dashboard.",
+        "Astronomically calculated Hijri calendar, today's Islamic date, significant Islamic events, and daily Quran habit calendar.",
       path: '/calendar',
     });
   }
 
-  // Navigation handlers
+  // Tab switching
+  switchTab(tab: 'hijri' | 'habit'): void {
+    this.activeTab.set(tab);
+  }
+
+  // Habit Calendar navigation
+  prevHabitMonth(): void {
+    const d = new Date(this.habitViewDate());
+    d.setMonth(d.getMonth() - 1);
+    this.habitViewDate.set(d);
+  }
+
+  nextHabitMonth(): void {
+    const d = new Date(this.habitViewDate());
+    d.setMonth(d.getMonth() + 1);
+    this.habitViewDate.set(d);
+  }
+
+  goToCurrentHabitMonth(): void {
+    this.habitViewDate.set(new Date());
+  }
+
+  selectHabitDay(day: HabitDayCell): void {
+    this.selectedHabitDay.set(day);
+  }
+
+  closeHabitDayDetails(): void {
+    this.selectedHabitDay.set(null);
+  }
+
+  openGoalModal(): void {
+    this.showGoalModal.set(true);
+  }
+
+  closeGoalModal(): void {
+    this.showGoalModal.set(false);
+  }
+
+  // Navigation handlers (Hijri)
   nextMonth(): void {
     this.calendar.nextMonth();
   }

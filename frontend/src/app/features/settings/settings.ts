@@ -15,6 +15,7 @@ import { LocationService } from '../../core/services/location';
 import { PwaService } from '../../core/services/pwa';
 import { ReciterService } from '../../core/services/reciter';
 import { SettingsService } from '../../core/services/settings';
+import { TaskService } from '../../core/services/task';
 import { POPULAR_CITIES } from '../prayer/prayer';
 import { FilterFieldComponent } from '../../shared/components/filter-field/filter-field';
 import { IconComponent } from '../../shared/components/icon/icon';
@@ -42,6 +43,7 @@ export class SettingsPage implements OnInit {
   protected readonly locationService = inject(LocationService);
   protected readonly reciterService = inject(ReciterService);
   protected readonly pwa = inject(PwaService);
+  protected readonly taskService = inject(TaskService);
   private readonly seo = inject(SeoService);
 
   // Constants
@@ -331,6 +333,52 @@ export class SettingsPage implements OnInit {
     if (accepted) {
       this.showToast(this.language.translate('pwa.installSuccess'), 'success');
     }
+  }
+
+  onReadingGoalInput(event: Event): void {
+    const val = Number((event.target as HTMLInputElement).value);
+    if (val > 0) {
+      this.taskService.updateSettings({ readingGoalAyahs: val });
+    }
+  }
+
+  onListeningGoalInput(event: Event): void {
+    const val = Number((event.target as HTMLInputElement).value);
+    if (val > 0) {
+      this.taskService.updateSettings({ listeningGoalMinutes: val });
+    }
+  }
+
+  onReminderTimeInput(event: Event): void {
+    const val = (event.target as HTMLInputElement).value;
+    if (val) {
+      this.taskService.updateSettings({ reminderTime: val });
+    }
+  }
+
+  toggleReminderEnabled(): void {
+    const curr = this.taskService.settings().reminderEnabled;
+    this.taskService.updateSettings({ reminderEnabled: !curr });
+  }
+
+  async requestNotificationPermission(): Promise<void> {
+    await this.taskService.requestNotificationPermission();
+  }
+
+  sendTestNotification(): void {
+    this.taskService.triggerTestNotification();
+    this.showToast(
+      this.isBn() ? 'টেস্ট নোটিফিকেশন পাঠানো হয়েছে!' : 'Test notification sent!',
+      'success',
+    );
+  }
+
+  resetDailyGoal(): void {
+    this.taskService.resetTodayProgress();
+    this.showToast(
+      this.isBn() ? 'আজকের অগ্রগতি রিসেট করা হয়েছে।' : 'Today’s progress has been reset.',
+      'success',
+    );
   }
 
   private showToast(message: string, type: 'success' | 'error'): void {

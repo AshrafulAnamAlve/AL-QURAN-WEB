@@ -6,7 +6,9 @@ import { DailyAyahService } from '../../core/services/daily-ayah';
 import { LanguageService } from '../../core/services/language';
 import { ReadingPositionService } from '../../core/services/reading-position';
 import { ReadingProgressService } from '../../core/services/reading-progress';
+import { TaskService } from '../../core/services/task';
 import { IconComponent } from '../../shared/components/icon/icon';
+import { TaskGoalModalComponent } from '../../shared/components/task-goal-modal/task-goal-modal';
 
 /**
  * Landing page.
@@ -17,7 +19,7 @@ import { IconComponent } from '../../shared/components/icon/icon';
 @Component({
   selector: 'aq-home-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IconComponent],
+  imports: [RouterLink, IconComponent, TaskGoalModalComponent],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
@@ -28,8 +30,10 @@ export class HomePage {
   protected readonly locationService = inject(LocationService);
   protected readonly lang = inject(LanguageService);
   protected readonly dailyAyahService = inject(DailyAyahService);
+  protected readonly taskService = inject(TaskService);
 
   readonly isBn = this.lang.isBn;
+  readonly showGoalModal = signal<boolean>(false);
 
   readonly lastRead = this.readingPosition.position;
   readonly hasLastRead = this.readingPosition.hasPosition;
@@ -149,5 +153,13 @@ export class HomePage {
       this.shareOutcome.set(this.isBn() ? 'শেয়ার করা হয়েছে!' : 'Shared!');
       setTimeout(() => this.shareOutcome.set(null), 3000);
     }
+  }
+
+  openGoalModal(): void {
+    this.showGoalModal.set(true);
+  }
+
+  closeGoalModal(): void {
+    this.showGoalModal.set(false);
   }
 }

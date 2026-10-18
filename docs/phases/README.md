@@ -17,7 +17,7 @@ before the next one starts, so nothing is left half-working underneath.
 | [10](PHASE-10.md) | Settings, Theme and Responsive Polish | ✅ **Complete** |
 | [11](PHASE-11.md) | PWA, SEO and Accessibility | ✅ **Complete** |
 | [12](PHASE-12.md) | Testing, Bug Fixing and Release Preparation | ✅ **Complete** |
-| [13](PHASE-13.md) | Daily Quran Task Tracker, Reminders & Habit Calendar | ⬜ **Not started** |
+| [13](PHASE-13.md) | Daily Quran Task Tracker, Reminders & Habit Calendar | ✅ **Complete** |
 | [14](PHASE-14.md) | Prayer Time Notifications & In-App Adhan Player Modal | ⬜ **Not started** |
 | [15](PHASE-15.md) | Asma-ul-Husna (99 Beautiful Names of Allah) | ⬜ **Not started** |
 | [16](PHASE-16.md) | Daily Dhikr Rotational Advice Modal & Digital Tasbih | ⬜ **Not started** |

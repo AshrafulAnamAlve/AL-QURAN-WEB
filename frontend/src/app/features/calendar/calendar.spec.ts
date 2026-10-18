@@ -4,11 +4,15 @@ import { of } from 'rxjs';
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { DateConversion, HijriMonth, HijriMonthName, IslamicEvents } from '../../core/models/calendar';
 import { PrayerDay, PrayerTime } from '../../core/models/prayer';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { CalendarApiService } from '../../core/services/calendar-api';
 import { CalendarService } from '../../core/services/calendar';
 import { LanguageService } from '../../core/services/language';
 import { LocationApiService } from '../../core/services/location-api';
 import { PrayerApiService } from '../../core/services/prayer-api';
+import { TaskService } from '../../core/services/task';
+import { StorageService } from '../../core/services/storage';
 import { CalendarPage } from './calendar';
 
 describe('CalendarPage', () => {
@@ -16,6 +20,7 @@ describe('CalendarPage', () => {
   let component: CalendarPage;
   let calendarService: CalendarService;
   let languageService: LanguageService;
+  let taskService: TaskService;
 
   const mockConversion: DateConversion = {
     gregorian: {
@@ -143,6 +148,10 @@ describe('CalendarPage', () => {
       imports: [CalendarPage],
       providers: [
         provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        StorageService,
+        TaskService,
         { provide: CalendarApiService, useValue: calendarApi },
         { provide: PrayerApiService, useValue: prayerApi },
         { provide: LocationApiService, useValue: locationApi },
@@ -152,6 +161,7 @@ describe('CalendarPage', () => {
     localStorage.clear();
     calendarService = TestBed.inject(CalendarService);
     languageService = TestBed.inject(LanguageService);
+    taskService = TestBed.inject(TaskService);
     languageService.setLanguage('en');
 
     fixture = TestBed.createComponent(CalendarPage);
@@ -207,5 +217,49 @@ describe('CalendarPage', () => {
     const eventsSec = el.querySelector('.events-section');
     expect(eventsSec).not.toBeNull();
     expect(eventsSec?.textContent).toContain('First Day of Ramadan');
+  });
+
+  it('switches between Hijri Calendar and Habit Tracker tabs', () => {
+    const el: HTMLElement = fixture.nativeElement;
+    expect(component.activeTab()).toBe('hijri');
+
+    component.switchTab('habit');
+    fixture.detectChanges();
+
+    expect(component.activeTab()).toBe('habit');
+    const habitMetrics = el.querySelector('.habit-metrics-grid');
+    expect(habitMetrics).not.toBeNull();
+    expect(habitMetrics?.textContent).toContain('Current Streak');
+
+    const habitMatrix = el.querySelector('.habit-matrix-section');
+    expect(habitMatrix).not.toBeNull();
+  });
+
+  it('renders habit month grid and allows selecting a day to view details', () => {
+    component.switchTab('habit');
+    fixture.detectChanges();
+
+    const cells = component.habitMonthCells();
+    expect(cells.length).toBeGreaterThanOrEqual(28);
+
+    const firstCell = cells[0];
+    component.selectHabitDay(firstCell);
+    fixture.detectChanges();
+
+    expect(component.selectedHabitDay()?.dateKey).toBe(firstCell.dateKey);
+    const dayDetailCard = fixture.nativeElement.querySelector('.selected-day-card');
+    expect(dayDetailCard).not.toBeNull();
+  });
+
+  it('navigates habit months with prev/next buttons', () => {
+    component.switchTab('habit');
+    fixture.detectChanges();
+
+    const initialDate = component.habitViewDate();
+    component.prevHabitMonth();
+    expect(component.habitViewDate().getMonth()).not.toBe(initialDate.getMonth());
+
+    component.nextHabitMonth();
+    expect(component.habitViewDate().getMonth()).toBe(initialDate.getMonth());
   });
 });

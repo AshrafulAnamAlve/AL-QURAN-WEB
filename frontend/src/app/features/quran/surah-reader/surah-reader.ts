@@ -19,6 +19,7 @@ import { QuranApiService } from '../../../core/services/quran-api';
 import { ReadingPositionService } from '../../../core/services/reading-position';
 import { ReadingProgressService } from '../../../core/services/reading-progress';
 import { AudioPlayerService } from '../../../core/services/audio-player';
+import { TaskService } from '../../../core/services/task';
 import { SurahHistoryItem, SurahHistoryService } from '../../../core/services/surah-history';
 import { LanguageService } from '../../../core/services/language';
 import { SeoService } from '../../../core/services/seo';
@@ -67,6 +68,7 @@ export class SurahReaderPage {
   private readonly seo = inject(SeoService);
   private readonly readingPosition = inject(ReadingPositionService);
   private readonly readingProgress = inject(ReadingProgressService);
+  private readonly taskService = inject(TaskService);
   private readonly history = inject(SurahHistoryService);
   private readonly audio = inject(AudioPlayerService);
   private readonly lang = inject(LanguageService);
@@ -453,6 +455,7 @@ export class SurahReaderPage {
             const ayah = detail.ayahs[num - 1];
             if (ayah) {
               this.readingProgress.markRead(ayah.globalNumber);
+              this.taskService.recordAyahRead(detail.surah.number);
             }
             this.history.record(
               detail.surah.number,

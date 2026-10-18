@@ -12,8 +12,11 @@ import { PrayerApiService } from '../../core/services/prayer-api';
 import { PrayerTimesService } from '../../core/services/prayer';
 import { ReadingPositionService } from '../../core/services/reading-position';
 import { ReadingProgressService } from '../../core/services/reading-progress';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { StorageService } from '../../core/services/storage';
 import { HomePage } from './home';
+import { TaskService } from '../../core/services/task';
 
 describe('HomePage', () => {
   let fixture: ComponentFixture<HomePage>;
@@ -21,6 +24,7 @@ describe('HomePage', () => {
   let readingPosition: ReadingPositionService;
   let readingProgress: ReadingProgressService;
   let prayerTimes: PrayerTimesService;
+  let taskService: TaskService;
 
   const mockPrayerTimes: PrayerTime[] = [
     { key: 'fajr', name: 'Fajr', arabicName: 'الفجر', banglaName: 'ফজর', time: '04:30', at: '2026-10-14T04:30:00Z', isPrayer: true },
@@ -130,6 +134,8 @@ describe('HomePage', () => {
       imports: [HomePage],
       providers: [
         provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
         StorageService,
         { provide: MetaApiService, useValue: metaApi },
         { provide: PrayerApiService, useValue: prayerApi },
@@ -141,6 +147,7 @@ describe('HomePage', () => {
     readingPosition = TestBed.inject(ReadingPositionService);
     readingProgress = TestBed.inject(ReadingProgressService);
     prayerTimes = TestBed.inject(PrayerTimesService);
+    taskService = TestBed.inject(TaskService);
 
     fixture = TestBed.createComponent(HomePage);
     component = fixture.componentInstance;
@@ -219,5 +226,39 @@ describe('HomePage', () => {
     expect(exploreSection).not.toBeNull();
     const cards = el.querySelectorAll('.explore-card');
     expect(cards.length).toBe(6);
+  });
+
+  it('renders Daily Quran Task Tracker card with streak and progress', () => {
+    const el: HTMLElement = fixture.nativeElement;
+    const taskCard = el.querySelector('.daily-task-home-card');
+    expect(taskCard).not.toBeNull();
+    expect(taskCard?.textContent).toContain("Today's Quran Goal");
+    expect(taskCard?.textContent).toContain('Day Streak');
+    expect(taskCard?.textContent).toContain('Edit Goal');
+  });
+
+  it('allows opening and closing the task goal modal', () => {
+    expect(component.showGoalModal()).toBe(false);
+    component.openGoalModal();
+    fixture.detectChanges();
+    expect(component.showGoalModal()).toBe(true);
+
+    const modalEl = fixture.nativeElement.querySelector('aq-task-goal-modal');
+    expect(modalEl).not.toBeNull();
+
+    component.closeGoalModal();
+    fixture.detectChanges();
+    expect(component.showGoalModal()).toBe(false);
+  });
+
+  it('renders in-app reminder banner when reminder is active and goal is pending', () => {
+    taskService.inAppReminderActive.set(true);
+    fixture.detectChanges();
+
+    const el: HTMLElement = fixture.nativeElement;
+    const banner = el.querySelector('.task-reminder-banner');
+    expect(banner).not.toBeNull();
+    expect(banner?.textContent).toContain('Time for your daily Quran reading!');
+    expect(banner?.textContent).toContain('Read Now');
   });
 });

@@ -4,6 +4,7 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { SettingsPage } from './settings';
 import { SettingsService } from '../../core/services/settings';
 import { StorageService } from '../../core/services/storage';
+import { TaskService } from '../../core/services/task';
 
 describe('SettingsPage', () => {
   let fixture: ComponentFixture<SettingsPage>;
@@ -42,7 +43,15 @@ describe('SettingsPage', () => {
     expect(el.querySelector('#language')).toBeTruthy();
     expect(el.querySelector('#audio')).toBeTruthy();
     expect(el.querySelector('#location')).toBeTruthy();
+    expect(el.querySelector('#daily-tasks')).toBeTruthy();
     expect(el.querySelector('#data')).toBeTruthy();
+  });
+
+  it('toggles daily task reminder setting', () => {
+    const taskService = TestBed.inject(TaskService);
+    const initial = taskService.settings().reminderEnabled;
+    component.toggleReminderEnabled();
+    expect(taskService.settings().reminderEnabled).toBe(!initial);
   });
 
   it('changes theme when clicking appearance cards', () => {

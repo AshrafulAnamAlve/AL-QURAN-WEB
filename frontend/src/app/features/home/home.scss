@@ -599,3 +599,265 @@
   }
 }
 
+/* ==========================================================================
+   Phase 13: Daily Quran Task Tracker & Habit Home Elements
+   ========================================================================== */
+
+.task-reminder-banner {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid var(--aq-color-primary, #047857);
+  background-color: color-mix(in srgb, var(--aq-color-primary, #047857) 8%, var(--aq-color-surface, #ffffff));
+  animation: fadeIn 0.25s ease-out;
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: color-mix(in srgb, var(--aq-color-primary, #047857) 18%, transparent);
+    color: var(--aq-color-primary, #047857);
+    flex-shrink: 0;
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--aq-color-text, #1e293b);
+  }
+
+  &__text {
+    margin: 0.15rem 0 0 0;
+    font-size: 0.85rem;
+    color: var(--aq-color-text-muted, #64748b);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+}
+
+.task-celebration-toast {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--aq-color-primary, #047857) 15%, var(--aq-color-surface, #ffffff)), color-mix(in srgb, #f59e0b 12%, var(--aq-color-surface, #ffffff)));
+  border: 1px solid color-mix(in srgb, var(--aq-color-primary, #047857) 35%, transparent);
+  border-radius: var(--aq-radius-lg, 16px);
+  animation: fadeIn 0.3s ease-out;
+
+  &__icon {
+    font-size: 2rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  &__content {
+    flex: 1;
+  }
+
+  &__arabic {
+    font-size: 1.15rem;
+    color: var(--aq-color-primary, #047857);
+    font-weight: 700;
+    margin: 0 0 0.15rem 0;
+  }
+
+  &__title {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--aq-color-text, #1e293b);
+  }
+
+  &__dua {
+    margin: 0.2rem 0 0 0;
+    font-size: 0.85rem;
+    color: var(--aq-color-text-muted, #64748b);
+  }
+}
+
+.daily-task-home-card {
+  grid-column: 1 / -1;
+  background-color: var(--aq-color-surface, #ffffff);
+  border: 1px solid var(--aq-color-border, #e2e8f0);
+  border-radius: var(--aq-radius-lg, 16px);
+
+  &__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  &__title {
+    margin: 0.25rem 0 0 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  &__status-chip {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+
+    &.is-completed {
+      background-color: rgba(22, 163, 74, 0.12);
+      color: #16a34a;
+      border: 1px solid rgba(22, 163, 74, 0.25);
+    }
+
+    &.is-pending {
+      background-color: rgba(234, 179, 8, 0.12);
+      color: #ca8a04;
+      border: 1px solid rgba(234, 179, 8, 0.25);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  &__progress {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__progress-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--aq-color-text, #1e293b);
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+  }
+
+  &__bar-wrap {
+    height: 10px;
+    width: 100%;
+    background-color: var(--aq-color-surface-muted, #f1f5f9);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  &__bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--aq-color-primary, #047857), #10b981);
+    border-radius: 999px;
+    transition: width 0.35s ease;
+  }
+
+  &__audio-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--aq-color-text-muted, #64748b);
+    padding: 0.4rem 0.75rem;
+    background-color: var(--aq-color-surface-muted, #f8fafc);
+    border-radius: 8px;
+    width: fit-content;
+  }
+
+  &__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--aq-color-border, #e2e8f0);
+  }
+}
+
+.streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.12), rgba(234, 179, 8, 0.15));
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  padding: 0.3rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.825rem;
+  color: #c2410c;
+  font-weight: 500;
+
+  &__fire {
+    font-size: 1rem;
+    line-height: 1;
+  }
+}
+
+.manual-check-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--aq-color-text, #334155);
+  cursor: pointer;
+  user-select: none;
+
+  input[type='checkbox'] {
+    width: 17px;
+    height: 17px;
+    accent-color: var(--aq-color-primary, #047857);
+    cursor: pointer;
+  }
+}
+
+.habit-calendar-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--aq-color-primary, #047857);
+  text-decoration: none;
+  transition: opacity 0.15s;
+
+  &:hover {
+    text-decoration: underline;
+    opacity: 0.85;
+  }
+}
+
+

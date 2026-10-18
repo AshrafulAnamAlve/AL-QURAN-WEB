@@ -138,8 +138,9 @@ calls `ApiService`, which is the only place the base URL and timeout are set.
 | 18 | Share and copy an ayah | 6 | **Done** |
 | 19 | Light / dark / system theme | 1 | **Done** |
 | 20 | Responsive layout, mobile bottom nav | 1 | **Done** |
-| 21 | Settings page | 10 | Planned |
-| 22 | PWA, offline, SEO, accessibility polish | 11 | Partly done |
+| 21 | Settings page | 10 | **Done** |
+| 22 | PWA, offline, SEO, accessibility polish | 11 | **Done** |
+| 23 | Daily Quran Task Tracker, Reminders & Habit Calendar | 13 | **Done** |
 
 ---
 
@@ -316,30 +317,25 @@ them live without a rebuild.
 
 ## 8. Current Progress
 
-**Phase 11 of 12 complete.** The Quran is readable, recitation audio is fully
+**Phase 13 of 17 complete.** The Quran is readable, recitation audio is fully
 playable, personal features are live (search, bookmarks, continue reading, progress tracker),
 prayer times and location are live, the Islamic Calendar and Ramadan Dashboard are live,
 Nearby Mosques (`/mosques`) is live with OpenStreetMap Leaflet integration,
-Settings and Preferences (`/settings`) is live, and PWA, Offline Caching, SEO and Accessibility
-are fully implemented and verified.
-The PWA configuration provides offline caching for app shell and Quran text (`/api/quran/**`)
-with strict audio exclusion (`*.mp3` is never cached in the worker), Web App Manifest (`manifest.webmanifest`),
-comprehensive maskable icon sets (SVG, 192x192, 512x512), sticky offline warning banners, update alerts,
-install prompts in the header and settings, `robots.txt`, dynamic Schema.org JSON-LD structured data,
-a full sitemap covering all routes, all 114 surahs and 30 juz, and full keyboard accessibility (Escape to close modals/drawers).
+Settings and Preferences (`/settings`) is live, PWA, Offline Caching, SEO and Accessibility
+are fully implemented, and the Daily Quran Task Tracker, Reminders & Habit Calendar
+(Phase 13) are fully integrated across Home, Calendar, Reader, Audio Player, Settings, and backend sync.
 
-Verified on 2026-10-16:
+Verified on 2026-10-18:
 
 ```
 Backend unit & integration tests    46 passed, 0 failed (AlQuran.Api.Tests)
 Backend build (Release)             0 warnings, 0 errors
-Frontend unit tests                 222 passed (33 test files)
-Frontend production build           397.93 kB raw / 106.48 kB gzipped initial (0 warnings, 0 errors)
-Component style budgets             All < 8.00 kB (0 budget violations)
+Frontend unit tests                 252 passed (36 test files)
+Frontend production build           0 warnings, 0 errors
 Service Worker generation           ngsw-worker.js & ngsw.json generated
 PWA Manifest & Icons                192x192, 512x512, maskable, SVG icons present
 SEO Artifacts                       robots.txt, sitemap.xml (114 surahs, 30 juz), JSON-LD WebSite & Chapter
-All 12 Phases                       100% COMPLETE & VERIFIED
+Phases 1-13                         100% COMPLETE & VERIFIED
 ```
 
 ---
@@ -524,6 +520,15 @@ Arabic. The juz list. Skeletons, error states and empty states throughout.
 - **Production Build Verification** — zero warnings, zero errors on both ASP.NET Core Release build and Angular production bundle.
 - **Release Documentation** — complete step-by-step guides for developers, operators, and static hosting platforms.
 
+### Phase 13 — daily Quran task tracker, reminders & habit calendar
+
+- **Backend Sync API (`TasksController`)** — REST endpoints (`POST /api/tasks/daily-log`, `GET /api/tasks/daily-log/recent`) allowing daily Ayah reading and listening logs to persist to the database (`DailyAyahLog`) with offline fallback.
+- **Task & Habit Service (`TaskService`)** — Signal-based state management storing daily reading targets (Ayahs), listening targets (minutes), reminder schedules, streak metrics, and 365-day history in `localStorage`.
+- **Automatic & Manual Progress Tracking** — Automatic Ayah completion tracking via `SurahReaderComponent`, audio listening tracking via `AudioPlayerService` delta time-updates, and manual "Mark as Read" toggle for physical Mushaf readers.
+- **Home Widget & Alert Banners** — Mini task card on the Home dashboard with completion percentage, streak badge (🔥), celebratory completion toast, and reminder banner alert with direct links to resume reading.
+- **Interactive Habit Calendar (`/calendar`)** — Dual-tab view on Calendar page (`[Hijri Calendar & Ramadan]` / `[Daily Habit Tracker & Streaks]`), interactive monthly habit matrix with status dots (🟢 Completed, 🟡 Partial, ⚪ Missed, 🔵 Today), current & longest streak badges, and monthly Ayah/listening aggregates.
+- **Settings & Reminders (`/settings`)** — Goal customization sliders (Ayahs and minutes), notification permission tester, and reminder time picker.
+
 ---
 
 ## 10. Known Issues
@@ -545,12 +550,12 @@ Arabic. The juz list. Skeletons, error states and empty states throughout.
 
 ## 11. Next Steps & Post-Release Roadmap
 
-**Core Phases 1 to 12 are 100% COMPLETE.**
+**Core Phases 1 to 13 are 100% COMPLETE & VERIFIED.**
 Live deployment is active on RunASP.NET (backend) and GitHub Pages (frontend).
 
 ### New Features Roadmap (Phases 13 – 17):
-- **[Phase 13](docs/phases/PHASE-13.md) — Daily Quran Task Tracker, Reminders & Habit Calendar**: User-defined daily reading/listening goals, scheduled browser reminders, automatic & manual completion tracking, and habit calendar streak matrix.
-- **[Phase 14](docs/phases/PHASE-14.md) — Prayer Time Notifications & In-App Adhan Player Modal**: Desktop/PWA notifications for all five daily prayers, plus an interactive in-app Adhan player that starts muted by default with an instant one-tap unmute button.
+- **[Phase 13](docs/phases/PHASE-13.md) — Daily Quran Task Tracker, Reminders & Habit Calendar**: ✅ **COMPLETE (2026-10-18)**. User-defined daily reading/listening goals, scheduled browser reminders, automatic & manual completion tracking, celebration toasts, and habit calendar streak matrix.
+- **[Phase 14](docs/phases/PHASE-14.md) — Prayer Time Notifications & In-App Adhan Player Modal**: ⏳ **UP NEXT**. Desktop/PWA notifications for all five daily prayers, plus an interactive in-app Adhan player that starts muted by default with an instant one-tap unmute button.
 - **[Phase 15](docs/phases/PHASE-15.md) — Asma-ul-Husna (99 Beautiful Names of Allah)**: Dedicated section featuring a prominent hero calligraphy display of the Supreme Name "الله" (#1), followed by all 99 names with Arabic calligraphy, transliteration, Bengali/English meanings, spiritual reflection notes, and audio pronunciation.
 - **[Phase 16](docs/phases/PHASE-16.md) — Daily Dhikr Rotational Advice Modal & Digital Tasbih**: Rotational spiritual deed prompt on the home page (e.g. Surah An-Nas 3x, Astaghfirullah 3x, Durood 3x) with "Done" and "Skip" actions, alongside a full Digital Tasbih counter with haptic feedback and categorized Adhkar.
 - **[Phase 17](docs/phases/PHASE-17.md) — Quran Ayah Bangla Pronunciation (উচ্চারণ) and Multi-Script Display**: Bengali phonetic transliteration (উচ্চারণ) rendered alongside Uthmani Arabic script and Bengali translation for all 6,236 ayahs, with reader toolbar visibility toggle and font controls.

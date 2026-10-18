@@ -67,6 +67,53 @@
 </section>
 
 <div class="aq-container sections">
+  <!-- In-app Reminder Banner (Phase 13) -->
+  @if (taskService.inAppReminderActive() && !taskService.isTodayGoalCompleted()) {
+    <aside class="task-reminder-banner aq-card" role="alert">
+      <div class="task-reminder-banner__icon">
+        <aq-icon name="bell" [size]="20" />
+      </div>
+      <div class="task-reminder-banner__content">
+        <strong class="task-reminder-banner__title">
+          {{ isBn() ? 'দৈনিক তিলাওয়াতের সময় হয়েছে!' : 'Time for your daily Quran reading!' }}
+        </strong>
+        <p class="task-reminder-banner__text">
+          {{ isBn() ? 'আজকের লক্ষ্য: ' + toBnDigits(taskService.settings().readingGoalAyahs) + 'টি আয়াত তিলাওয়াত করুন।' : 'Your daily goal: Read ' + taskService.settings().readingGoalAyahs + ' ayahs.' }}
+        </p>
+      </div>
+      <div class="task-reminder-banner__actions">
+        <a routerLink="/quran/1" class="aq-btn aq-btn--primary aq-btn--sm">
+          <aq-icon name="bookOpen" [size]="14" />
+          {{ isBn() ? 'এখনই পড়ুন' : 'Read Now' }}
+        </a>
+        <button type="button" class="aq-btn aq-btn--ghost aq-btn--sm" (click)="taskService.dismissReminder()">
+          {{ isBn() ? 'পরে' : 'Dismiss' }}
+        </button>
+      </div>
+    </aside>
+  }
+
+  <!-- Celebration Modal / Toast (Phase 13) -->
+  @if (taskService.celebrationActive()) {
+    <aside class="task-celebration-toast aq-card" role="status" aria-live="polite">
+      <div class="task-celebration-toast__icon">
+        ✨
+      </div>
+      <div class="task-celebration-toast__content">
+        <p class="task-celebration-toast__arabic aq-arabic" dir="rtl">مَا شَاءَ ٱللَّٰهُ تَبَارَكَ ٱللَّٰهُ</p>
+        <strong class="task-celebration-toast__title">
+          {{ isBn() ? 'আলহামদুলিল্লাহ! আজকের লক্ষ্য সম্পন্ন হয়েছে!' : 'Alhamdulillah! Today’s Goal Completed!' }}
+        </strong>
+        <p class="task-celebration-toast__dua">
+          {{ isBn() ? 'আল্লাহ আপনার তিলাওয়াত ও ইবাদাত কবুল করুন। আমীন।' : 'May Allah accept your recitation and bless your efforts. Ameen.' }}
+        </p>
+      </div>
+      <button type="button" class="aq-btn aq-btn--secondary aq-btn--sm" (click)="taskService.dismissCelebration()">
+        {{ isBn() ? 'শুকরিয়া (ঠিক আছে)' : 'Close' }}
+      </button>
+    </aside>
+  }
+
   @if (nextPrayer(); as next) {
     <section class="panel prayer-home-card" aria-labelledby="prayer-home-heading">
       <div class="prayer-home-card__header">
@@ -231,6 +278,89 @@
     </section>
   }
 
+  <!-- Daily Quran Task Tracker & Habit Mini-Card (Phase 13) -->
+  <section class="panel daily-task-home-card" aria-labelledby="daily-task-heading">
+    <div class="daily-task-home-card__header">
+      <div>
+        <p class="aq-eyebrow">{{ isBn() ? 'দৈনিক লক্ষ্য ও অভ্যাস ট্র্যাকার' : 'Daily Quran Goal & Habit Tracker' }}</p>
+        <h2 id="daily-task-heading" class="daily-task-home-card__title">
+          <span>{{ isBn() ? 'আজকের কুরআন রুটিন' : "Today's Quran Goal" }}</span>
+          @if (taskService.isTodayGoalCompleted()) {
+            <span class="daily-task-home-card__status-chip is-completed">
+              <aq-icon name="check" [size]="13" />
+              {{ isBn() ? 'সম্পন্ন' : 'Completed' }}
+            </span>
+          } @else {
+            <span class="daily-task-home-card__status-chip is-pending">
+              {{ isBn() ? 'চলমান' : 'In Progress' }}
+            </span>
+          }
+        </h2>
+      </div>
+
+      <div class="daily-task-home-card__actions">
+        <div class="streak-badge" [title]="isBn() ? 'বর্তমান ধারাবাহিকতা' : 'Current Streak'">
+          <span class="streak-badge__fire">🔥</span>
+          <strong class="aq-numeral">{{ isBn() ? toBnDigits(taskService.metrics().currentStreak) : taskService.metrics().currentStreak }}</strong>
+          <span>{{ isBn() ? 'দিনের স্ট্রিক' : 'Day Streak' }}</span>
+        </div>
+        <button type="button" class="aq-btn aq-btn--secondary aq-btn--sm" (click)="openGoalModal()">
+          <aq-icon name="sliders" [size]="14" />
+          {{ isBn() ? 'রুটিন সেটিং' : 'Edit Goal' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="daily-task-home-card__body">
+      <!-- Reading Progress -->
+      <div class="daily-task-home-card__progress">
+        <div class="daily-task-home-card__progress-info">
+          <span>
+            <aq-icon name="bookOpen" [size]="14" />
+            {{ isBn() ? 'আয়াত পড়া: ' + toBnDigits(taskService.todayRecord().ayahsRead) + ' / ' + toBnDigits(taskService.settings().readingGoalAyahs) + ' আয়াত' : 'Reading: ' + taskService.todayRecord().ayahsRead + ' / ' + taskService.settings().readingGoalAyahs + ' ayahs' }}
+          </span>
+          <strong class="aq-numeral">{{ isBn() ? toBnDigits(taskService.readingProgressPercent()) : taskService.readingProgressPercent() }}%</strong>
+        </div>
+        <div class="daily-task-home-card__bar-wrap">
+          <div
+            class="daily-task-home-card__bar"
+            role="progressbar"
+            [attr.aria-valuenow]="taskService.readingProgressPercent()"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [style.width.%]="taskService.readingProgressPercent()"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Listening info if audio played -->
+      @if (taskService.todayRecord().minutesListened > 0) {
+        <div class="daily-task-home-card__audio-stat">
+          <aq-icon name="volume2" [size]="14" />
+          <span>{{ isBn() ? 'আজ অডিও শোনা হয়েছে: ' + toBnDigits(taskService.todayRecord().minutesListened) + ' মিনিট' : 'Audio listened today: ' + taskService.todayRecord().minutesListened + ' minutes' }}</span>
+        </div>
+      }
+
+      <!-- Bottom controls -->
+      <div class="daily-task-home-card__footer">
+        <label class="manual-check-toggle">
+          <input
+            type="checkbox"
+            [checked]="taskService.todayRecord().manualReadingCompleted"
+            (change)="taskService.toggleManualReading()"
+          />
+          <span>{{ isBn() ? 'কাগজের মুসহাফে তিলাওয়াত করেছি (Mark as Read)' : 'Read from physical Mushaf (Mark Read)' }}</span>
+        </label>
+
+        <a routerLink="/calendar" class="habit-calendar-link">
+          <aq-icon name="calendar" [size]="14" />
+          <span>{{ isBn() ? 'অভ্যাস ক্যালেন্ডার' : 'Habit Calendar' }}</span>
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- Professional Features & Services Section -->
   <section class="explore-section" aria-labelledby="explore-heading">
     <div class="explore-section__header">
@@ -338,3 +468,7 @@
     </div>
   </section>
 </div>
+
+@if (showGoalModal()) {
+  <aq-task-goal-modal (closed)="closeGoalModal()" />
+}

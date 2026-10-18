@@ -17,9 +17,9 @@
   <!-- Page Header -->
   <header class="calendar-header">
     <div class="calendar-header__info">
-      <h1 class="calendar-header__title">{{ isBn() ? 'হিজরি ক্যালেন্ডার' : 'Islamic Calendar' }}</h1>
+      <h1 class="calendar-header__title">{{ isBn() ? 'ইসলামিক ক্যালেন্ডার ও অভ্যাস ট্র্যাকার' : 'Islamic Calendar & Quran Habit Tracker' }}</h1>
       <p class="calendar-header__subtitle">
-        {{ isBn() ? 'ইসলামিক তারিখ, গুরুত্বপূর্ণ দিবস ও রমজান সময়সূচি' : 'Hijri dates, significant Islamic events, and Ramadan timetable' }}
+        {{ isBn() ? 'হিজরি তারিখ, রমজান সময়সূচি এবং আপনার দৈনিক কুরআন তিলাওয়াত ট্র্যাকার' : 'Hijri dates, Ramadan timetable, and your daily Quran reading streak' }}
       </p>
     </div>
 
@@ -40,266 +40,511 @@
     }
   </header>
 
-  <!-- Ramadan Dashboard Section -->
-  @if (isRamadanSelected() || isRamadan()) {
-    <section class="ramadan-hero aq-card aq-pattern" aria-labelledby="ramadan-heading">
-      <div class="ramadan-hero__header">
-        <div>
-          <span class="aq-eyebrow ramadan-hero__eyebrow">
-            {{ isBn() ? 'পবিত্র মাহে রমজান' : 'Holy Month of Ramadan' }}
-          </span>
-          <h2 id="ramadan-heading" class="ramadan-hero__title">
-            <span>{{ isBn() ? 'রমজানুল মুবারক' : 'Ramadan Kareem' }}</span>
-            <span class="ramadan-hero__ar aq-arabic" dir="rtl">رَمَضان المُبارَك</span>
-          </h2>
+  <!-- Calendar Feature Tabs -->
+  <nav class="calendar-tabs" role="tablist" aria-label="Calendar Views">
+    <button
+      type="button"
+      role="tab"
+      class="calendar-tab-btn"
+      [class.is-active]="activeTab() === 'hijri'"
+      [attr.aria-selected]="activeTab() === 'hijri'"
+      (click)="switchTab('hijri')"
+    >
+      <aq-icon name="moon" [size]="18" />
+      <span>{{ isBn() ? 'হিজরি ক্যালেন্ডার ও রমজান' : 'Hijri Calendar & Ramadan' }}</span>
+    </button>
+
+    <button
+      type="button"
+      role="tab"
+      class="calendar-tab-btn"
+      [class.is-active]="activeTab() === 'habit'"
+      [attr.aria-selected]="activeTab() === 'habit'"
+      (click)="switchTab('habit')"
+    >
+      <span class="calendar-tab-btn__fire">🔥</span>
+      <span>{{ isBn() ? 'দৈনিক অভ্যাস ট্র্যাকার ও স্ট্রিক' : 'Habit Tracker & Streak' }}</span>
+      <span class="habit-streak-pill aq-numeral">{{ isBn() ? toBnDigits(taskService.metrics().currentStreak) : taskService.metrics().currentStreak }}</span>
+    </button>
+  </nav>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 1: HIJRI CALENDAR & RAMADAN                                           -->
+  <!-- ========================================================================= -->
+  @if (activeTab() === 'hijri') {
+    <!-- Ramadan Dashboard Section -->
+    @if (isRamadanSelected() || isRamadan()) {
+      <section class="ramadan-hero aq-card aq-pattern" aria-labelledby="ramadan-heading">
+        <div class="ramadan-hero__header">
+          <div>
+            <span class="aq-eyebrow ramadan-hero__eyebrow">
+              {{ isBn() ? 'পবিত্র মাহে রমজান' : 'Holy Month of Ramadan' }}
+            </span>
+            <h2 id="ramadan-heading" class="ramadan-hero__title">
+              <span>{{ isBn() ? 'রমজানুল মুবারক' : 'Ramadan Kareem' }}</span>
+              <span class="ramadan-hero__ar aq-arabic" dir="rtl">رَمَضان المُبارَك</span>
+            </h2>
+          </div>
+
+          @if (daysUntilRamadan() !== null && daysUntilRamadan()! > 0) {
+            <div class="ramadan-countdown-chip aq-chip aq-chip--gold">
+              <aq-icon name="clock" [size]="14" />
+              <span>{{ isBn() ? 'রমজান শুরু হতে বাকি: ' + toBnDigits(daysUntilRamadan()!) + ' দিন' : daysUntilRamadan() + ' days until Ramadan' }}</span>
+            </div>
+          }
         </div>
 
-        @if (daysUntilRamadan() !== null && daysUntilRamadan()! > 0) {
-          <div class="ramadan-countdown-chip aq-chip aq-chip--gold">
-            <aq-icon name="clock" [size]="14" />
-            <span>{{ isBn() ? 'রমজান শুরু হতে বাকি: ' + toBnDigits(daysUntilRamadan()!) + ' দিন' : daysUntilRamadan() + ' days until Ramadan' }}</span>
-          </div>
-        }
-      </div>
-
-      @if (isRamadan()) {
-        <div class="ramadan-progress-box">
-          <div class="ramadan-progress-info">
-            <span>{{ isBn() ? 'রমজানের দিবস: ' + toBnDigits(ramadanProgress()) + '%' : 'Progress: ' + ramadanProgress() + '%' }}</span>
-            <strong>{{ isBn() ? 'দিবস ' + toBnDigits(today()?.hijri?.day || 1) + ' / ৩০' : 'Day ' + (today()?.hijri?.day || 1) + ' of 30' }}</strong>
-          </div>
-          <div class="ramadan-progress-bar-wrap">
-            <div class="ramadan-progress-bar" [style.width.%]="ramadanProgress()"></div>
-          </div>
-        </div>
-
-        <!-- Suhoor & Iftar Timings for Today -->
-        @if (timetable(); as table) {
-          <div class="ramadan-timings-grid">
-            <div class="ramadan-timing-card aq-card">
-              <span class="ramadan-timing-card__label">
-                {{ isBn() ? 'সাহরির শেষ সময় (ইমসাক)' : 'Suhoor Ends (Imsak)' }}
-              </span>
-              <strong class="ramadan-timing-card__time aq-numeral">
-                {{ formatTime(table.times[0]?.time) }}
-              </strong>
-              <span class="ramadan-timing-card__sub">{{ locationService.location().city || 'Your Location' }}</span>
+        @if (isRamadan()) {
+          <div class="ramadan-progress-box">
+            <div class="ramadan-progress-info">
+              <span>{{ isBn() ? 'রমজানের দিবস: ' + toBnDigits(ramadanProgress()) + '%' : 'Progress: ' + ramadanProgress() + '%' }}</span>
+              <strong>{{ isBn() ? 'দিবস ' + toBnDigits(today()?.hijri?.day || 1) + ' / ৩০' : 'Day ' + (today()?.hijri?.day || 1) + ' of 30' }}</strong>
             </div>
-
-            <div class="ramadan-timing-card aq-card">
-              <span class="ramadan-timing-card__label">
-                {{ isBn() ? 'ইফতারের সময় (মাগরিব)' : 'Iftar Time (Maghrib)' }}
-              </span>
-              <strong class="ramadan-timing-card__time aq-numeral">
-                {{ formatTime(table.times[5]?.time) }}
-              </strong>
-              <span class="ramadan-timing-card__sub">{{ locationService.location().city || 'Your Location' }}</span>
+            <div class="ramadan-progress-bar-wrap">
+              <div class="ramadan-progress-bar" [style.width.%]="ramadanProgress()"></div>
             </div>
           </div>
+
+          <!-- Suhoor & Iftar Timings for Today -->
+          @if (timetable(); as table) {
+            <div class="ramadan-timings-grid">
+              <div class="ramadan-timing-card aq-card">
+                <span class="ramadan-timing-card__label">
+                  {{ isBn() ? 'সাহরির শেষ সময় (ইমসাক)' : 'Suhoor Ends (Imsak)' }}
+                </span>
+                <strong class="ramadan-timing-card__time aq-numeral">
+                  {{ formatTime(table.times[0]?.time) }}
+                </strong>
+                <span class="ramadan-timing-card__sub">{{ locationService.location().city || 'Your Location' }}</span>
+              </div>
+
+              <div class="ramadan-timing-card aq-card">
+                <span class="ramadan-timing-card__label">
+                  {{ isBn() ? 'ইফতারের সময় (মাগরিব)' : 'Iftar Time (Maghrib)' }}
+                </span>
+                <strong class="ramadan-timing-card__time aq-numeral">
+                  {{ formatTime(table.times[5]?.time) }}
+                </strong>
+                <span class="ramadan-timing-card__sub">{{ locationService.location().city || 'Your Location' }}</span>
+              </div>
+            </div>
+          }
         }
-      }
-    </section>
-  }
+      </section>
+    }
 
-  <!-- Calendar Navigation Controls -->
-  <section class="calendar-controls aq-card">
-    <div class="calendar-controls__nav">
-      <button
-        type="button"
-        class="aq-icon-btn nav-btn"
-        (click)="prevMonth()"
-        [attr.aria-label]="isBn() ? 'পূর্ববর্তী মাস' : 'Previous month'"
-        title="Previous Month"
-      >
-        <aq-icon name="chevronLeft" [size]="20" />
-      </button>
-
-      <div class="calendar-controls__title">
-        <h2 class="current-month-heading">
-          <span class="month-name-bn">{{ isBn() ? (selectedMonthName()?.banglaName || selectedMonthName()?.nameEn) : selectedMonthName()?.nameEn }}</span>
-          <span class="month-year aq-numeral">{{ isBn() ? toBnDigits(selectedYear()) : selectedYear() }}</span>
-        </h2>
-        @if (selectedMonthName(); as mName) {
-          <span class="month-name-ar aq-arabic" dir="rtl">{{ mName.nameAr }}</span>
-        }
-      </div>
-
-      <button
-        type="button"
-        class="aq-icon-btn nav-btn"
-        (click)="nextMonth()"
-        [attr.aria-label]="isBn() ? 'পরবর্তী মাস' : 'Next month'"
-        title="Next Month"
-      >
-        <aq-icon name="chevronRight" [size]="20" />
-      </button>
-    </div>
-
-    <div class="calendar-controls__actions">
-      @if (!isCurrentMonth()) {
+    <!-- Calendar Navigation Controls -->
+    <section class="calendar-controls aq-card">
+      <div class="calendar-controls__nav">
         <button
           type="button"
-          class="aq-btn aq-btn--secondary aq-btn--sm"
+          class="aq-icon-btn nav-btn"
+          (click)="prevMonth()"
+          [attr.aria-label]="isBn() ? 'পূর্ববর্তী মাস' : 'Previous month'"
+          title="Previous Month"
+        >
+          <aq-icon name="chevronLeft" [size]="20" />
+        </button>
+
+        <div class="calendar-controls__title">
+          <h2 class="current-month-heading">
+            <span class="month-name-bn">{{ isBn() ? (selectedMonthName()?.banglaName || selectedMonthName()?.nameEn) : selectedMonthName()?.nameEn }}</span>
+            <span class="month-year aq-numeral">{{ isBn() ? toBnDigits(selectedYear()) : selectedYear() }}</span>
+          </h2>
+          @if (selectedMonthName(); as mName) {
+            <span class="month-name-ar aq-arabic" dir="rtl">{{ mName.nameAr }}</span>
+          }
+        </div>
+
+        <button
+          type="button"
+          class="aq-icon-btn nav-btn"
+          (click)="nextMonth()"
+          [attr.aria-label]="isBn() ? 'পরবর্তী মাস' : 'Next month'"
+          title="Next Month"
+        >
+          <aq-icon name="chevronRight" [size]="20" />
+        </button>
+      </div>
+
+      <!-- Quick month / year pickers -->
+      <div class="calendar-controls__selectors">
+        <button
+          type="button"
+          class="aq-btn aq-btn--secondary aq-btn--sm today-btn"
+          [disabled]="isCurrentMonth()"
           (click)="goToToday()"
         >
-          <aq-icon name="calendar" [size]="14" />
-          <span>{{ isBn() ? 'বর্তমান মাস' : 'This Month' }}</span>
+          {{ isBn() ? 'চলতি মাস' : 'Current Month' }}
         </button>
-      }
 
-      <div class="select-wrappers">
-        <label for="month-select" class="aq-visually-hidden">Month</label>
         <select
-          id="month-select"
-          class="aq-select"
+          class="aq-select month-select"
           [value]="selectedMonth()"
           (change)="selectMonth($event)"
+          aria-label="Select Hijri Month"
         >
           @for (m of months(); track m.number) {
             <option [value]="m.number">
-              {{ isBn() ? m.banglaName + ' (' + m.nameEn + ')' : m.nameEn }}
+              {{ isBn() ? m.banglaName : m.nameEn }} ({{ m.nameAr }})
             </option>
           }
         </select>
 
-        <label for="year-select" class="aq-visually-hidden">Year</label>
         <select
-          id="year-select"
-          class="aq-select"
+          class="aq-select year-select"
           [value]="selectedYear()"
           (change)="selectYear($event)"
+          aria-label="Select Hijri Year"
         >
-          @for (y of [1445, 1446, 1447, 1448, 1449, 1450]; track y) {
+          @for (y of [selectedYear() - 1, selectedYear(), selectedYear() + 1]; track y) {
             <option [value]="y">
               {{ isBn() ? toBnDigits(y) + ' হিজরি' : y + ' AH' }}
             </option>
           }
         </select>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Error State -->
-  @if (error(); as err) {
-    <div class="calendar-error">
+    <!-- Month Grid Section -->
+    @if (loading()) {
+      <div class="calendar-loading">
+        <aq-skeleton height="380px" />
+      </div>
+    }
+
+    @if (error()) {
       <aq-error-state
-        [title]="err"
+        [title]="isBn() ? 'ক্যালেন্ডার লোড করা যায়নি' : 'Could Not Load Calendar'"
         (retry)="retry()"
       />
-    </div>
-  }
+    }
 
-  <!-- Loading State -->
-  @if (loading() && !monthData()) {
-    <div class="calendar-loading aq-card">
-      <aq-skeleton width="100%" height="320px" />
-    </div>
-  }
+    @if (monthData(); as data) {
+      <section class="month-grid-section" aria-labelledby="grid-heading">
+        <h3 id="grid-heading" class="aq-visually-hidden">
+          {{ data.nameEn }} {{ data.year }} AH Calendar Grid
+        </h3>
 
-  <!-- Month Grid -->
-  @if (monthData(); as data) {
-    <section class="month-grid-section" aria-labelledby="grid-heading">
-      <h3 id="grid-heading" class="aq-visually-hidden">
-        {{ data.nameEn }} {{ data.year }} AH Calendar Grid
-      </h3>
+        <div class="month-grid" role="grid">
+          <!-- Weekday Headers -->
+          <div class="weekday-row" role="row">
+            @for (day of weekdays; track day.en) {
+              <div
+                class="weekday-cell"
+                [class.weekday-cell--jummah]="day.en === 'Fri'"
+                role="columnheader"
+              >
+                <span class="weekday-name">{{ isBn() ? day.bn : day.en }}</span>
+              </div>
+            }
+          </div>
 
-      <div class="month-grid" role="grid">
-        <!-- Weekday Headers -->
-        <div class="weekday-row" role="row">
-          @for (day of weekdays; track day.en) {
-            <div
-              class="weekday-cell"
-              [class.weekday-cell--jummah]="day.en === 'Fri'"
-              role="columnheader"
-            >
-              <span class="weekday-name">{{ isBn() ? day.bn : day.en }}</span>
-            </div>
-          }
+          <!-- Month Days Grid -->
+          <div class="days-grid" role="rowgroup">
+            <!-- Leading blank padding cells -->
+            @for (blank of leadingBlanks(); track $index) {
+              <div class="day-cell day-cell--empty" aria-hidden="true"></div>
+            }
+
+            <!-- Actual month days -->
+            @for (day of data.days; track day.hijriDay) {
+              <div
+                class="day-cell aq-card"
+                [class.day-cell--today]="day.isToday"
+                [class.day-cell--event]="day.events.length > 0"
+                [class.day-cell--friday]="day.weekdayEn === 'Friday'"
+                role="gridcell"
+              >
+                <div class="day-cell__top">
+                  <span class="day-cell__hijri aq-numeral">
+                    {{ isBn() ? toBnDigits(day.hijriDay) : day.hijriDay }}
+                  </span>
+                  @if (day.isToday) {
+                    <span class="today-chip">{{ isBn() ? 'আজ' : 'Today' }}</span>
+                  }
+                </div>
+
+                <div class="day-cell__bottom">
+                  <span class="day-cell__gregorian">
+                    {{ formatDate(day.gregorianDate) }}
+                  </span>
+
+                  @if (day.events.length > 0) {
+                    <div class="day-cell__events">
+                      @for (ev of day.events; track ev) {
+                        <span class="event-pill" [title]="ev">
+                          {{ ev }}
+                        </span>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          </div>
         </div>
+      </section>
+    }
 
-        <!-- Month Days Grid -->
-        <div class="days-grid" role="rowgroup">
-          <!-- Leading blank padding cells -->
-          @for (blank of leadingBlanks(); track $index) {
-            <div class="day-cell day-cell--empty" aria-hidden="true"></div>
-          }
+    <!-- Important Islamic Events Section -->
+    <section class="events-section" aria-labelledby="events-heading">
+      <div class="events-section__header">
+        <h2 id="events-heading" class="events-section__title">
+          {{ isBn() ? 'গুরুত্বপূর্ণ ইসলামি দিন ও দিবসসমূহ (' + toBnDigits(selectedYear()) + ' হিজরি)' : 'Significant Islamic Observances (' + selectedYear() + ' AH)' }}
+        </h2>
+        <p class="events-section__subtitle">
+          {{ isBn() ? 'হিজরি বছরের প্রধান প্রধান ফজিলতপূর্ণ দিবস ও সম্ভাব্য গ্রেগরিয়ান তারিখ' : 'Major Islamic events with estimated Gregorian dates' }}
+        </p>
+      </div>
 
-          <!-- Actual month days -->
-          @for (day of data.days; track day.hijriDay) {
-            <div
-              class="day-cell aq-card"
-              [class.day-cell--today]="day.isToday"
-              [class.day-cell--event]="day.events.length > 0"
-              [class.day-cell--friday]="day.weekdayEn === 'Friday'"
-              role="gridcell"
-            >
-              <div class="day-cell__top">
-                <span class="day-cell__hijri aq-numeral">
-                  {{ isBn() ? toBnDigits(day.hijriDay) : day.hijriDay }}
+      <div class="events-grid">
+        @for (item of events(); track item.key) {
+          <div class="event-card aq-card">
+            <div class="event-card__head">
+              <div class="event-card__badge-row">
+                <span class="aq-chip aq-chip--gold">
+                  {{ isBn() ? toBnDigits(item.hijriDay) + ' ' + item.hijriMonthName : item.hijriDay + ' ' + item.hijriMonthName }}
                 </span>
-                @if (day.isToday) {
-                  <span class="today-chip">{{ isBn() ? 'আজ' : 'Today' }}</span>
+                @if (item.gregorianDate) {
+                  <span class="event-card__gregorian">
+                    <aq-icon name="calendar" [size]="13" />
+                    {{ formatDate(item.gregorianDate) }}
+                  </span>
                 }
               </div>
-
-              <div class="day-cell__bottom">
-                <span class="day-cell__gregorian">
-                  {{ formatDate(day.gregorianDate) }}
-                </span>
-
-                @if (day.events.length > 0) {
-                  <div class="day-cell__events">
-                    @for (ev of day.events; track ev) {
-                      <span class="event-pill" [title]="ev">
-                        {{ ev }}
-                      </span>
-                    }
-                  </div>
-                }
-              </div>
+              <h3 class="event-card__name">
+                {{ isBn() ? item.banglaName : item.name }}
+              </h3>
+              @if (isBn() && item.name !== item.banglaName) {
+                <span class="event-card__en">{{ item.name }}</span>
+              }
             </div>
-          }
-        </div>
+            <p class="event-card__desc">{{ item.description }}</p>
+          </div>
+        }
       </div>
     </section>
   }
 
-  <!-- Important Islamic Events Section -->
-  <section class="events-section" aria-labelledby="events-heading">
-    <div class="events-section__header">
-      <h2 id="events-heading" class="events-section__title">
-        {{ isBn() ? 'গুরুত্বপূর্ণ ইসলামি দিন ও দিবসসমূহ (' + toBnDigits(selectedYear()) + ' হিজরি)' : 'Significant Islamic Observances (' + selectedYear() + ' AH)' }}
-      </h2>
-      <p class="events-section__subtitle">
-        {{ isBn() ? 'হিজরি বছরের প্রধান প্রধান ফজিলতপূর্ণ দিবস ও সম্ভাব্য গ্রেগরিয়ান তারিখ' : 'Major Islamic events with estimated Gregorian dates' }}
-      </p>
-    </div>
+  <!-- ========================================================================= -->
+  <!-- TAB 2: DAILY HABIT TRACKER & STREAKS (PHASE 13)                           -->
+  <!-- ========================================================================= -->
+  @if (activeTab() === 'habit') {
+    <!-- Habit Metrics Cards -->
+    <section class="habit-metrics-grid" aria-label="Habit Statistics">
+      <div class="habit-stat-card aq-card">
+        <div class="habit-stat-card__icon fire-icon">🔥</div>
+        <div class="habit-stat-card__info">
+          <span class="habit-stat-card__label">{{ isBn() ? 'বর্তমান ধারাবাহিকতা' : 'Current Streak' }}</span>
+          <strong class="habit-stat-card__value aq-numeral">{{ isBn() ? toBnDigits(taskService.metrics().currentStreak) : taskService.metrics().currentStreak }} {{ isBn() ? 'দিন' : 'Days' }}</strong>
+        </div>
+      </div>
 
-    <div class="events-grid">
-      @for (item of events(); track item.key) {
-        <div class="event-card aq-card">
-          <div class="event-card__head">
-            <div class="event-card__badge-row">
-              <span class="aq-chip aq-chip--gold">
-                {{ isBn() ? toBnDigits(item.hijriDay) + ' ' + item.hijriMonthName : item.hijriDay + ' ' + item.hijriMonthName }}
-              </span>
-              @if (item.gregorianDate) {
-                <span class="event-card__gregorian">
-                  <aq-icon name="calendar" [size]="13" />
-                  {{ formatDate(item.gregorianDate) }}
+      <div class="habit-stat-card aq-card">
+        <div class="habit-stat-card__icon trophy-icon">🏆</div>
+        <div class="habit-stat-card__info">
+          <span class="habit-stat-card__label">{{ isBn() ? 'সর্বোচ্চ ধারাবাহিকতা' : 'Longest Streak' }}</span>
+          <strong class="habit-stat-card__value aq-numeral">{{ isBn() ? toBnDigits(taskService.metrics().longestStreak) : taskService.metrics().longestStreak }} {{ isBn() ? 'দিন' : 'Days' }}</strong>
+        </div>
+      </div>
+
+      <div class="habit-stat-card aq-card">
+        <div class="habit-stat-card__icon book-icon">
+          <aq-icon name="bookOpen" [size]="22" />
+        </div>
+        <div class="habit-stat-card__info">
+          <span class="habit-stat-card__label">{{ isBn() ? 'এই মাসে পড়া আয়াত' : 'Ayahs This Month' }}</span>
+          <strong class="habit-stat-card__value aq-numeral">{{ isBn() ? toBnDigits(taskService.metrics().totalAyahsThisMonth) : taskService.metrics().totalAyahsThisMonth }}</strong>
+        </div>
+      </div>
+
+      <div class="habit-stat-card aq-card">
+        <div class="habit-stat-card__icon audio-icon">
+          <aq-icon name="volume2" [size]="22" />
+        </div>
+        <div class="habit-stat-card__info">
+          <span class="habit-stat-card__label">{{ isBn() ? 'এই মাসে অডিও শোনা' : 'Audio Listened' }}</span>
+          <strong class="habit-stat-card__value aq-numeral">{{ isBn() ? toBnDigits(taskService.metrics().totalMinutesThisMonth) : taskService.metrics().totalMinutesThisMonth }} {{ isBn() ? 'মি.' : 'min' }}</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Habit Calendar Navigation Controls -->
+    <section class="calendar-controls aq-card">
+      <div class="calendar-controls__nav">
+        <button
+          type="button"
+          class="aq-icon-btn nav-btn"
+          (click)="prevHabitMonth()"
+          [attr.aria-label]="isBn() ? 'পূর্ববর্তী মাস' : 'Previous month'"
+        >
+          <aq-icon name="chevronLeft" [size]="20" />
+        </button>
+
+        <div class="calendar-controls__title">
+          <h2 class="current-month-heading">
+            <span>{{ habitMonthName() }}</span>
+          </h2>
+        </div>
+
+        <button
+          type="button"
+          class="aq-icon-btn nav-btn"
+          (click)="nextHabitMonth()"
+          [attr.aria-label]="isBn() ? 'পরবর্তী মাস' : 'Next month'"
+        >
+          <aq-icon name="chevronRight" [size]="20" />
+        </button>
+      </div>
+
+      <div class="calendar-controls__selectors">
+        <button
+          type="button"
+          class="aq-btn aq-btn--secondary aq-btn--sm"
+          (click)="goToCurrentHabitMonth()"
+        >
+          {{ isBn() ? 'বর্তমান মাস' : 'This Month' }}
+        </button>
+        <button
+          type="button"
+          class="aq-btn aq-btn--primary aq-btn--sm"
+          (click)="openGoalModal()"
+        >
+          <aq-icon name="sliders" [size]="14" />
+          {{ isBn() ? 'রুটিন ও লক্ষ্য নির্ধারণ' : 'Configure Goals' }}
+        </button>
+      </div>
+    </section>
+
+    <!-- Habit Matrix Grid -->
+    <section class="habit-matrix-section aq-card" aria-label="Habit Calendar Grid">
+      <!-- Weekday headers -->
+      <div class="weekday-row">
+        @for (day of weekdays; track day.en) {
+          <div class="weekday-cell" [class.weekday-cell--jummah]="day.en === 'Fri'">
+            <span>{{ isBn() ? day.bn : day.en }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Days Grid -->
+      <div class="habit-days-grid">
+        @for (blank of habitLeadingBlanks(); track $index) {
+          <div class="habit-day-cell is-empty" aria-hidden="true"></div>
+        }
+
+        @for (cell of habitMonthCells(); track cell.dateKey) {
+          <div
+            class="habit-day-cell"
+            [class.is-today]="cell.isToday"
+            [class.status-completed]="cell.status === 'completed'"
+            [class.status-partial]="cell.status === 'partial'"
+            [class.status-missed]="cell.status === 'missed'"
+            [class.status-today]="cell.status === 'today'"
+            [class.is-selected]="selectedHabitDay()?.dateKey === cell.dateKey"
+            (click)="selectHabitDay(cell)"
+            role="button"
+            tabindex="0"
+            [attr.aria-label]="cell.dateKey + ': ' + cell.status"
+          >
+            <div class="habit-day-cell__top">
+              <span class="day-number aq-numeral">{{ isBn() ? toBnDigits(cell.dayNumber) : cell.dayNumber }}</span>
+              <span class="status-indicator-dot" [title]="cell.status"></span>
+            </div>
+
+            <div class="habit-day-cell__metrics">
+              @if (cell.ayahsRead > 0) {
+                <span class="metric-pill read-pill" [title]="isBn() ? toBnDigits(cell.ayahsRead) + ' আয়াত পড়া হয়েছে' : cell.ayahsRead + ' ayahs read'">
+                  📖 {{ isBn() ? toBnDigits(cell.ayahsRead) : cell.ayahsRead }}
+                </span>
+              }
+              @if (cell.minutesListened > 0) {
+                <span class="metric-pill audio-pill" [title]="isBn() ? toBnDigits(cell.minutesListened) + ' মিনিট শোনা হয়েছে' : cell.minutesListened + ' min listened'">
+                  🎧 {{ isBn() ? toBnDigits(cell.minutesListened) : cell.minutesListened }}m
                 </span>
               }
             </div>
-            <h3 class="event-card__name">
-              {{ isBn() ? item.banglaName : item.name }}
-            </h3>
-            @if (isBn() && item.name !== item.banglaName) {
-              <span class="event-card__en">{{ item.name }}</span>
-            }
           </div>
-          <p class="event-card__desc">{{ item.description }}</p>
+        }
+      </div>
+
+      <!-- Habit Grid Legend -->
+      <div class="habit-legend">
+        <div class="legend-item">
+          <span class="legend-dot status-completed"></span>
+          <span>{{ isBn() ? 'লক্ষ্য সম্পন্ন (Completed)' : 'Goal Completed' }}</span>
         </div>
-      }
+        <div class="legend-item">
+          <span class="legend-dot status-partial"></span>
+          <span>{{ isBn() ? 'চলমান / আংশিক (In Progress)' : 'In Progress' }}</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot status-missed"></span>
+          <span>{{ isBn() ? 'অপঠিত (Inactive)' : 'Inactive' }}</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot status-today"></span>
+          <span>{{ isBn() ? 'আজকের দিন (Today)' : 'Today' }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Selected Day Detail Card -->
+    @if (selectedHabitDay(); as day) {
+      <div class="selected-day-card aq-card">
+        <div class="selected-day-card__header">
+          <div>
+            <span class="aq-eyebrow">{{ isBn() ? 'তারিখের বিস্তারিত' : 'Day Details' }}</span>
+            <h3 class="selected-day-card__title">
+              {{ day.dateKey }}
+              @if (day.isToday) {
+                <span class="today-chip">{{ isBn() ? 'আজ' : 'Today' }}</span>
+              }
+            </h3>
+          </div>
+          <button type="button" class="close-btn" (click)="closeHabitDayDetails()" [attr.aria-label]="isBn() ? 'বন্ধ করুন' : 'Close'">
+            <aq-icon name="close" [size]="16" />
+          </button>
+        </div>
+
+        <div class="selected-day-card__content">
+          <div class="detail-row">
+            <span>{{ isBn() ? 'তিলাওয়াত লক্ষ্য অর্জন:' : 'Goal Status:' }}</span>
+            <strong [class.text-success]="day.goalMet">
+              {{ day.goalMet ? (isBn() ? '✅ লক্ষ্য সম্পন্ন হয়েছে' : '✅ Goal Met') : (isBn() ? '⏳ চলমান' : '⏳ In Progress') }}
+            </strong>
+          </div>
+          <div class="detail-row">
+            <span>{{ isBn() ? 'পড়া আয়াত সংখ্যা:' : 'Ayahs Read:' }}</span>
+            <strong>{{ isBn() ? toBnDigits(day.ayahsRead) : day.ayahsRead }} {{ isBn() ? 'টি' : '' }}</strong>
+          </div>
+          <div class="detail-row">
+            <span>{{ isBn() ? 'অডিও তিলাওয়াত শোনা:' : 'Audio Listened:' }}</span>
+            <strong>{{ isBn() ? toBnDigits(day.minutesListened) : day.minutesListened }} {{ isBn() ? 'মিনিট' : 'minutes' }}</strong>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Quick Today Action Strip -->
+    <div class="today-quick-strip aq-card">
+      <div class="today-quick-strip__info">
+        <strong>{{ isBn() ? 'কাগজের মুসহাফ থেকে পড়ে থাকলে টিক দিন:' : 'Reading from a paper Mushaf? Check to mark today complete:' }}</strong>
+        <p>{{ isBn() ? 'আজকের লক্ষ্য: ' + toBnDigits(taskService.settings().readingGoalAyahs) + 'টি আয়াত' : 'Daily Goal: ' + taskService.settings().readingGoalAyahs + ' Ayahs' }}</p>
+      </div>
+      <label class="manual-check-toggle">
+        <input
+          type="checkbox"
+          [checked]="taskService.todayRecord().manualReadingCompleted"
+          (change)="taskService.toggleManualReading()"
+        />
+        <span>{{ isBn() ? 'আজকের লক্ষ্য সম্পন্ন চিহ্নিত করুন' : 'Mark Today as Completed' }}</span>
+      </label>
     </div>
-  </section>
+  }
 </div>
+
+@if (showGoalModal()) {
+  <aq-task-goal-modal (closed)="closeGoalModal()" />
+}
