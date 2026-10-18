@@ -361,6 +361,8 @@
       aria-modal="true"
       [attr.aria-labelledby]="'modal-title-' + modalName.number"
     >
+      <div class="name-detail-modal__handle" aria-hidden="true"></div>
+
       <div class="name-detail-modal__header">
         <span class="name-detail-modal__badge">
           {{ modalName.number === 0 ? (isBn() ? 'ইসমে আযম' : 'Supreme Name') : '#' + (isBn() ? toBnDigits(modalName.number) : modalName.number) }}
@@ -434,24 +436,26 @@
           </span>
         </button>
 
-        <button
-          type="button"
-          class="aq-btn aq-btn--secondary"
-          [class.is-bookmarked]="isBookmarked(modalName.number)"
-          (click)="toggleBookmark($event, modalName.number)"
-        >
-          <aq-icon name="star" [size]="18" />
-          <span>{{ isBookmarked(modalName.number) ? (isBn() ? 'সংরক্ষিত' : 'Saved') : (isBn() ? 'সংরক্ষণ করুন' : 'Bookmark') }}</span>
-        </button>
+        <div class="modal-secondary-actions">
+          <button
+            type="button"
+            class="aq-btn aq-btn--secondary"
+            [class.is-bookmarked]="isBookmarked(modalName.number)"
+            (click)="toggleBookmark($event, modalName.number)"
+          >
+            <aq-icon name="star" [size]="18" />
+            <span>{{ isBookmarked(modalName.number) ? (isBn() ? 'সংরক্ষিত' : 'Saved') : (isBn() ? 'সংরক্ষণ করুন' : 'Bookmark') }}</span>
+          </button>
 
-        <button
-          type="button"
-          class="aq-btn aq-btn--secondary"
-          (click)="copyOrShareName($event, modalName)"
-        >
-          <aq-icon name="share" [size]="18" />
-          <span>{{ isBn() ? 'শেয়ার' : 'Share' }}</span>
-        </button>
+          <button
+            type="button"
+            class="aq-btn aq-btn--secondary"
+            (click)="copyOrShareName($event, modalName)"
+          >
+            <aq-icon name="share" [size]="18" />
+            <span>{{ isBn() ? 'শেয়ার' : 'Share' }}</span>
+          </button>
+        </div>
       </div>
     </div>
   }

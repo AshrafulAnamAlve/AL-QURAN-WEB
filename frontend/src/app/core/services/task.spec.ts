@@ -93,11 +93,12 @@ describe('TaskService', () => {
 
   it('calculates streaks correctly across consecutive days', () => {
     const today = service.todayDate();
-    const d = new Date();
-    d.setDate(d.getDate() - 1);
-    const y1 = d.toISOString().split('T')[0];
-    d.setDate(d.getDate() - 1);
-    const y2 = d.toISOString().split('T')[0];
+    const d1 = new Date();
+    d1.setDate(d1.getDate() - 1);
+    const y1 = `${d1.getFullYear()}-${String(d1.getMonth() + 1).padStart(2, '0')}-${String(d1.getDate()).padStart(2, '0')}`;
+    const d2 = new Date();
+    d2.setDate(d2.getDate() - 2);
+    const y2 = `${d2.getFullYear()}-${String(d2.getMonth() + 1).padStart(2, '0')}-${String(d2.getDate()).padStart(2, '0')}`;
 
     const historyMock = {
       [y2]: {
