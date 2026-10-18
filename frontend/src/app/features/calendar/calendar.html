@@ -1,25 +1,12 @@
 <div class="aq-container calendar-page">
-  <!-- Advisory Banner (Astronomical Calculation Notice) -->
-  <div class="advisory-banner aq-card" role="note">
-    <div class="advisory-banner__icon">
-      <aq-icon name="moon" [size]="20" />
-    </div>
-    <div class="advisory-banner__body">
-      <p class="advisory-banner__title">
-        {{ isBn() ? 'চাঁদ দেখার ওপর নির্ভরশীলতা' : 'Calculated Dates & Moon Sighting' }}
-      </p>
-      <p class="advisory-banner__text">
-        {{ isBn() ? 'এই হিজরি ক্যালেন্ডারের তারিখসমূহ জ্যোতির্বৈজ্ঞানিক গণনার ওপর ভিত্তি করে তৈরি। স্থানীয় চাঁদ দেখার ওপর নির্ভর করে প্রকৃত ইসলামি তারিখ ১ দিন এদিক-সেদিক হতে পারে।' : 'Islamic dates displayed here are calculated astronomically. The actual observance of Islamic months and festivals depends on the verified sighting of the crescent moon in your region.' }}
-      </p>
-    </div>
-  </div>
-
   <!-- Page Header -->
   <header class="calendar-header">
     <div class="calendar-header__info">
-      <h1 class="calendar-header__title">{{ isBn() ? 'ইসলামিক ক্যালেন্ডার ও অভ্যাস ট্র্যাকার' : 'Islamic Calendar & Quran Habit Tracker' }}</h1>
+      <h1 class="calendar-header__title">
+        {{ activeTab() === 'habit' ? (isBn() ? 'দৈনিক কুরআন অভ্যাস ও স্ট্রিক ট্র্যাকার' : 'Daily Quran Habit & Streak Tracker') : (isBn() ? 'ইসলামিক ক্যালেন্ডার ও রমজান' : 'Islamic Hijri Calendar & Ramadan') }}
+      </h1>
       <p class="calendar-header__subtitle">
-        {{ isBn() ? 'হিজরি তারিখ, রমজান সময়সূচি এবং আপনার দৈনিক কুরআন তিলাওয়াত ট্র্যাকার' : 'Hijri dates, Ramadan timetable, and your daily Quran reading streak' }}
+        {{ activeTab() === 'habit' ? (isBn() ? 'আপনার প্রতিদিনের কুরআন তিলাওয়াত, অডিও শোনার সময় এবং অভ্যাসের স্ট্রিক ম্যাট্রিক্স' : 'Track your daily recitation targets, listening minutes, and habit streak matrix') : (isBn() ? 'হিজরি তারিখ, চন্দ্র মাসের দিনপঞ্জি এবং রমজান মাসের সময়সূচি' : 'Hijri dates, lunar calendar grid, and holy Ramadan timetable') }}
       </p>
     </div>
 
@@ -72,6 +59,20 @@
   <!-- TAB 1: HIJRI CALENDAR & RAMADAN                                           -->
   <!-- ========================================================================= -->
   @if (activeTab() === 'hijri') {
+    <!-- Advisory Banner (Astronomical Calculation Notice - only on Hijri Tab) -->
+    <div class="advisory-banner aq-card" role="note">
+      <div class="advisory-banner__icon">
+        <aq-icon name="moon" [size]="20" />
+      </div>
+      <div class="advisory-banner__body">
+        <p class="advisory-banner__title">
+          {{ isBn() ? 'চাঁদ দেখার ওপর নির্ভরশীলতা' : 'Calculated Dates & Moon Sighting' }}
+        </p>
+        <p class="advisory-banner__text">
+          {{ isBn() ? 'এই হিজরি ক্যালেন্ডারের তারিখসমূহ জ্যোতির্বৈজ্ঞানিক গণনার ওপর ভিত্তি করে তৈরি। স্থানীয় চাঁদ দেখার ওপর নির্ভর করে প্রকৃত ইসলামি তারিখ ১ দিন এদিক-সেদিক হতে পারে।' : 'Islamic dates displayed here are calculated astronomically. The actual observance of Islamic months and festivals depends on the verified sighting of the crescent moon in your region.' }}
+        </p>
+      </div>
+    </div>
     <!-- Ramadan Dashboard Section -->
     @if (isRamadanSelected() || isRamadan()) {
       <section class="ramadan-hero aq-card aq-pattern" aria-labelledby="ramadan-heading">

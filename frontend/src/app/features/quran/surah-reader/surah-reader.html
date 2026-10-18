@@ -67,6 +67,14 @@
             {{ data.surah.revelationType === 'Meccan' ? (isBn() ? 'মাক্কী' : 'Meccan') : (isBn() ? 'মাদানী' : 'Medinan') }}
           </span>
           <span class="aq-chip aq-numeral">{{ data.surah.ayahCount }} {{ isBn() ? 'আয়াত' : 'ayahs' }}</span>
+          <a
+            routerLink="/calendar"
+            [queryParams]="{ tab: 'habit' }"
+            class="aq-chip aq-chip--habit"
+            [title]="isBn() ? 'দৈনিক লক্ষ্য ও অভ্যাস ক্যালেন্ডার' : 'Daily Goal & Habit Tracker'"
+          >
+            🔥 {{ isBn() ? 'আজকের লক্ষ্য: ' + toBnDigits(taskService.todayRecord().ayahsRead) + ' / ' + toBnDigits(taskService.settings().readingGoalAyahs) : 'Goal: ' + taskService.todayRecord().ayahsRead + '/' + taskService.settings().readingGoalAyahs }}
+          </a>
         </div>
 
         <div class="reader__listen-action">

@@ -47,6 +47,20 @@
           </span>
         </a>
       }
+
+      <!-- Live Streak & Daily Goal Pill in Hero Meta -->
+      <a
+        routerLink="/calendar"
+        [queryParams]="{ tab: 'habit' }"
+        class="hero__streak-pill"
+        [attr.aria-label]="isBn() ? 'দৈনিক কুরআন স্ট্রিক ' + toBnDigits(taskService.metrics().currentStreak) + ' দিন' : 'Daily Quran Streak ' + taskService.metrics().currentStreak + ' days'"
+      >
+        <span class="hero__streak-fire" aria-hidden="true">🔥</span>
+        <span class="hero__streak-count aq-numeral">{{ isBn() ? toBnDigits(taskService.metrics().currentStreak) : taskService.metrics().currentStreak }}</span>
+        <span class="hero__streak-label">{{ isBn() ? 'দিনের স্ট্রিক' : 'Day Streak' }}</span>
+        <span class="hero__streak-sep">&middot;</span>
+        <span class="hero__streak-progress aq-numeral">{{ isBn() ? toBnDigits(taskService.readingProgressPercent()) : taskService.readingProgressPercent() }}% {{ isBn() ? 'সম্পন্ন' : 'done' }}</span>
+      </a>
     </div>
 
     <div class="hero__actions">
@@ -57,6 +71,10 @@
       <a routerLink="/prayer" class="aq-btn aq-btn--secondary aq-btn--lg">
         <aq-icon name="clock" [size]="18" />
         {{ isBn() ? 'নামাজের সময়সূচি' : 'Prayer Times' }}
+      </a>
+      <a routerLink="/calendar" [queryParams]="{ tab: 'habit' }" class="aq-btn aq-btn--secondary aq-btn--lg hero__habit-btn">
+        <span class="hero__habit-fire" aria-hidden="true">🔥</span>
+        {{ isBn() ? 'দৈনিক লক্ষ্য ও অভ্যাস' : 'Daily Goal & Habits' }}
       </a>
       <a routerLink="/mosques" class="aq-btn aq-btn--secondary aq-btn--lg">
         <aq-icon name="mapPin" [size]="18" />
@@ -154,6 +172,89 @@
       </div>
     </section>
   }
+
+  <!-- Daily Quran Task Tracker & Habit Mini-Card (Phase 13) -->
+  <section class="panel daily-task-home-card" aria-labelledby="daily-task-heading">
+    <div class="daily-task-home-card__header">
+      <div>
+        <p class="aq-eyebrow">{{ isBn() ? 'দৈনিক লক্ষ্য ও অভ্যাস ট্র্যাকার' : 'Daily Quran Goal & Habit Tracker' }}</p>
+        <h2 id="daily-task-heading" class="daily-task-home-card__title">
+          <span>{{ isBn() ? 'আজকের কুরআন রুটিন' : "Today's Quran Goal" }}</span>
+          @if (taskService.isTodayGoalCompleted()) {
+            <span class="daily-task-home-card__status-chip is-completed">
+              <aq-icon name="check" [size]="13" />
+              {{ isBn() ? 'সম্পন্ন' : 'Completed' }}
+            </span>
+          } @else {
+            <span class="daily-task-home-card__status-chip is-pending">
+              {{ isBn() ? 'চলমান' : 'In Progress' }}
+            </span>
+          }
+        </h2>
+      </div>
+
+      <div class="daily-task-home-card__actions">
+        <div class="streak-badge" [title]="isBn() ? 'বর্তমান ধারাবাহিকতা' : 'Current Streak'">
+          <span class="streak-badge__fire">🔥</span>
+          <strong class="aq-numeral">{{ isBn() ? toBnDigits(taskService.metrics().currentStreak) : taskService.metrics().currentStreak }}</strong>
+          <span>{{ isBn() ? 'দিনের স্ট্রিক' : 'Day Streak' }}</span>
+        </div>
+        <button type="button" class="aq-btn aq-btn--secondary aq-btn--sm" (click)="openGoalModal()">
+          <aq-icon name="sliders" [size]="14" />
+          {{ isBn() ? 'রুটিন সেটিং' : 'Edit Goal' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="daily-task-home-card__body">
+      <!-- Reading Progress -->
+      <div class="daily-task-home-card__progress">
+        <div class="daily-task-home-card__progress-info">
+          <span>
+            <aq-icon name="bookOpen" [size]="14" />
+            {{ isBn() ? 'আয়াত পড়া: ' + toBnDigits(taskService.todayRecord().ayahsRead) + ' / ' + toBnDigits(taskService.settings().readingGoalAyahs) + ' আয়াত' : 'Reading: ' + taskService.todayRecord().ayahsRead + ' / ' + taskService.settings().readingGoalAyahs + ' ayahs' }}
+          </span>
+          <strong class="aq-numeral">{{ isBn() ? toBnDigits(taskService.readingProgressPercent()) : taskService.readingProgressPercent() }}%</strong>
+        </div>
+        <div class="daily-task-home-card__bar-wrap">
+          <div
+            class="daily-task-home-card__bar"
+            role="progressbar"
+            [attr.aria-valuenow]="taskService.readingProgressPercent()"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [style.width.%]="taskService.readingProgressPercent()"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Listening info if audio played -->
+      @if (taskService.todayRecord().minutesListened > 0) {
+        <div class="daily-task-home-card__audio-stat">
+          <aq-icon name="volume2" [size]="14" />
+          <span>{{ isBn() ? 'আজ অডিও শোনা হয়েছে: ' + toBnDigits(taskService.todayRecord().minutesListened) + ' মিনিট' : 'Audio listened today: ' + taskService.todayRecord().minutesListened + ' minutes' }}</span>
+        </div>
+      }
+
+      <!-- Bottom controls -->
+      <div class="daily-task-home-card__footer">
+        <label class="manual-check-toggle">
+          <input
+            type="checkbox"
+            [checked]="taskService.todayRecord().manualReadingCompleted"
+            (change)="taskService.toggleManualReading()"
+          />
+          <span>{{ isBn() ? 'কাগজের মুসহাফে তিলাওয়াত করেছি (Mark as Read)' : 'Read from physical Mushaf (Mark Read)' }}</span>
+        </label>
+
+        <a routerLink="/calendar" [queryParams]="{ tab: 'habit' }" class="habit-calendar-link">
+          <aq-icon name="calendar" [size]="14" />
+          <span>{{ isBn() ? 'অভ্যাস ক্যালেন্ডার' : 'Habit Calendar' }}</span>
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
 
   @if (hasLastRead()) {
     <section class="panel continue-card" aria-labelledby="continue-heading">
@@ -277,89 +378,6 @@
       </div>
     </section>
   }
-
-  <!-- Daily Quran Task Tracker & Habit Mini-Card (Phase 13) -->
-  <section class="panel daily-task-home-card" aria-labelledby="daily-task-heading">
-    <div class="daily-task-home-card__header">
-      <div>
-        <p class="aq-eyebrow">{{ isBn() ? 'দৈনিক লক্ষ্য ও অভ্যাস ট্র্যাকার' : 'Daily Quran Goal & Habit Tracker' }}</p>
-        <h2 id="daily-task-heading" class="daily-task-home-card__title">
-          <span>{{ isBn() ? 'আজকের কুরআন রুটিন' : "Today's Quran Goal" }}</span>
-          @if (taskService.isTodayGoalCompleted()) {
-            <span class="daily-task-home-card__status-chip is-completed">
-              <aq-icon name="check" [size]="13" />
-              {{ isBn() ? 'সম্পন্ন' : 'Completed' }}
-            </span>
-          } @else {
-            <span class="daily-task-home-card__status-chip is-pending">
-              {{ isBn() ? 'চলমান' : 'In Progress' }}
-            </span>
-          }
-        </h2>
-      </div>
-
-      <div class="daily-task-home-card__actions">
-        <div class="streak-badge" [title]="isBn() ? 'বর্তমান ধারাবাহিকতা' : 'Current Streak'">
-          <span class="streak-badge__fire">🔥</span>
-          <strong class="aq-numeral">{{ isBn() ? toBnDigits(taskService.metrics().currentStreak) : taskService.metrics().currentStreak }}</strong>
-          <span>{{ isBn() ? 'দিনের স্ট্রিক' : 'Day Streak' }}</span>
-        </div>
-        <button type="button" class="aq-btn aq-btn--secondary aq-btn--sm" (click)="openGoalModal()">
-          <aq-icon name="sliders" [size]="14" />
-          {{ isBn() ? 'রুটিন সেটিং' : 'Edit Goal' }}
-        </button>
-      </div>
-    </div>
-
-    <div class="daily-task-home-card__body">
-      <!-- Reading Progress -->
-      <div class="daily-task-home-card__progress">
-        <div class="daily-task-home-card__progress-info">
-          <span>
-            <aq-icon name="bookOpen" [size]="14" />
-            {{ isBn() ? 'আয়াত পড়া: ' + toBnDigits(taskService.todayRecord().ayahsRead) + ' / ' + toBnDigits(taskService.settings().readingGoalAyahs) + ' আয়াত' : 'Reading: ' + taskService.todayRecord().ayahsRead + ' / ' + taskService.settings().readingGoalAyahs + ' ayahs' }}
-          </span>
-          <strong class="aq-numeral">{{ isBn() ? toBnDigits(taskService.readingProgressPercent()) : taskService.readingProgressPercent() }}%</strong>
-        </div>
-        <div class="daily-task-home-card__bar-wrap">
-          <div
-            class="daily-task-home-card__bar"
-            role="progressbar"
-            [attr.aria-valuenow]="taskService.readingProgressPercent()"
-            aria-valuemin="0"
-            aria-valuemax="100"
-            [style.width.%]="taskService.readingProgressPercent()"
-          ></div>
-        </div>
-      </div>
-
-      <!-- Listening info if audio played -->
-      @if (taskService.todayRecord().minutesListened > 0) {
-        <div class="daily-task-home-card__audio-stat">
-          <aq-icon name="volume2" [size]="14" />
-          <span>{{ isBn() ? 'আজ অডিও শোনা হয়েছে: ' + toBnDigits(taskService.todayRecord().minutesListened) + ' মিনিট' : 'Audio listened today: ' + taskService.todayRecord().minutesListened + ' minutes' }}</span>
-        </div>
-      }
-
-      <!-- Bottom controls -->
-      <div class="daily-task-home-card__footer">
-        <label class="manual-check-toggle">
-          <input
-            type="checkbox"
-            [checked]="taskService.todayRecord().manualReadingCompleted"
-            (change)="taskService.toggleManualReading()"
-          />
-          <span>{{ isBn() ? 'কাগজের মুসহাফে তিলাওয়াত করেছি (Mark as Read)' : 'Read from physical Mushaf (Mark Read)' }}</span>
-        </label>
-
-        <a routerLink="/calendar" class="habit-calendar-link">
-          <aq-icon name="calendar" [size]="14" />
-          <span>{{ isBn() ? 'অভ্যাস ক্যালেন্ডার' : 'Habit Calendar' }}</span>
-          <span aria-hidden="true">&rarr;</span>
-        </a>
-      </div>
-    </div>
-  </section>
 
   <!-- Professional Features & Services Section -->
   <section class="explore-section" aria-labelledby="explore-heading">

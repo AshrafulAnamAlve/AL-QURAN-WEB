@@ -35,9 +35,27 @@
 
 .reader__facts {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: center;
   gap: 0.5rem;
   margin-top: 1rem;
+}
+
+.aq-chip--habit {
+  background: color-mix(in srgb, var(--aq-accent) 15%, var(--aq-surface));
+  border: 1px solid color-mix(in srgb, var(--aq-accent) 45%, var(--aq-border));
+  color: var(--aq-text);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--aq-duration-fast) var(--aq-ease);
+
+  &:hover {
+    background: color-mix(in srgb, var(--aq-accent) 28%, var(--aq-surface));
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(201, 162, 39, 0.18);
+  }
 }
 
 // --- Highlighted Audio Play Button (Short Text) --------------------------

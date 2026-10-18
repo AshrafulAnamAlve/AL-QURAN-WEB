@@ -17,7 +17,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { path: '/', label: 'Home', labelBn: 'হোম', icon: 'home', primary: true },
   { path: '/quran', label: 'Quran', labelBn: 'কুরআন', icon: 'book', primary: true },
   { path: '/juz', label: 'Juz', labelBn: 'পারা', icon: 'layers' },
-  { path: '/calendar', label: 'Calendar', labelBn: 'ক্যালেন্ডার', icon: 'calendar' },
+  { path: '/calendar', label: 'Calendar & Habits', labelBn: 'ক্যালেন্ডার ও অভ্যাস', icon: 'calendar' },
   { path: '/prayer', label: 'Prayer', labelBn: 'নামাজ', icon: 'clock', primary: true },
   { path: '/mosques', label: 'Mosques', labelBn: 'মসজিদ', icon: 'mosque' },
   { path: '/bookmarks', label: 'Bookmarks', labelBn: 'বুকমার্ক', icon: 'bookmark', primary: true },

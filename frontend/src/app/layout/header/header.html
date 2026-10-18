@@ -102,6 +102,29 @@
   aria-label="Mobile navigation"
 >
   <ul>
+    <!-- Habit Tracker & Goals Quick Action in Drawer -->
+    <li class="drawer__habit-item">
+      <a
+        routerLink="/calendar"
+        [queryParams]="{ tab: 'habit' }"
+        (click)="closeDrawer()"
+        class="drawer__habit-link"
+      >
+        <span class="drawer__habit-icon" aria-hidden="true">🔥</span>
+        <div class="drawer__habit-text">
+          <strong class="drawer__habit-title">
+            {{ isBn() ? 'দৈনিক লক্ষ্য ও অভ্যাস' : 'Daily Goals & Habit Tracker' }}
+          </strong>
+          <span class="drawer__habit-sub">
+            {{ isBn() ? 'আজকের লক্ষ্য: ' + toBnDigits(taskService.readingProgressPercent()) + '% সম্পন্ন' : 'Today: ' + taskService.readingProgressPercent() + '% completed' }}
+          </span>
+        </div>
+        <span class="drawer__habit-badge aq-numeral">
+          {{ isBn() ? toBnDigits(taskService.metrics().currentStreak) : taskService.metrics().currentStreak }}d 🔥
+        </span>
+      </a>
+    </li>
+
     @for (item of navItems; track item.path) {
       <li>
         <a

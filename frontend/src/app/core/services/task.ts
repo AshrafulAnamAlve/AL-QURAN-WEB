@@ -188,6 +188,9 @@ export class TaskService {
     this.startReminderWatcher();
   }
 
+  // In-memory set of distinct global ayahs read today to prevent duplicate counts during scroll stops
+  private readonly readAyahsToday = new Set<number>();
+
   // --- Public Action Methods ---
 
   updateSettings(partial: Partial<DailyTaskSettings>): void {
@@ -198,11 +201,18 @@ export class TaskService {
     });
   }
 
-  recordAyahRead(surahNumber?: number, count = 1): void {
+  recordAyahRead(surahNumber?: number, count = 1, ayahGlobalNumber?: number): void {
     const targetSurah = this.settings().targetSurahNumber;
     if (targetSurah !== null && surahNumber !== undefined && surahNumber !== targetSurah) {
       // User set a specific surah goal and this ayah is from a different surah
       return;
+    }
+
+    if (ayahGlobalNumber !== undefined) {
+      if (this.readAyahsToday.has(ayahGlobalNumber)) {
+        return;
+      }
+      this.readAyahsToday.add(ayahGlobalNumber);
     }
 
     const today = this.todayDate();
@@ -252,7 +262,7 @@ export class TaskService {
       ...current,
       manualReadingCompleted: nextVal,
       goalMet: isNowMet,
-      completedAt: isNowMet && !wasMet ? new Date().toISOString() : current.completedAt,
+      completedAt: isNowMet && !wasMet ? new Date().toISOString() : isNowMet ? current.completedAt : undefined,
     };
 
     this.saveTodayRecord(updated);
@@ -260,6 +270,8 @@ export class TaskService {
     if (!wasMet && isNowMet) {
       this.celebrationActive.set(true);
       this.syncWithBackend(updated);
+    } else if (!isNowMet) {
+      this.celebrationActive.set(false);
     }
   }
 

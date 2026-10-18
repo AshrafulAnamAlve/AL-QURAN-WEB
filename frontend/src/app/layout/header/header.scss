@@ -284,6 +284,61 @@
     }
   }
 
+  .drawer__habit-item {
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px dashed var(--aq-border);
+
+    .drawer__habit-link {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.75rem 0.85rem;
+      background: color-mix(in srgb, var(--aq-accent) 12%, var(--aq-surface));
+      border: 1px solid color-mix(in srgb, var(--aq-accent) 35%, var(--aq-border));
+      border-radius: var(--aq-radius-md);
+
+      &:hover {
+        background: color-mix(in srgb, var(--aq-accent) 22%, var(--aq-surface));
+      }
+    }
+
+    .drawer__habit-icon {
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    .drawer__habit-text {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .drawer__habit-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--aq-text);
+    }
+
+    .drawer__habit-sub {
+      font-size: 0.75rem;
+      color: var(--aq-text-subtle);
+    }
+
+    .drawer__habit-badge {
+      flex: 0 0 auto;
+      padding: 0.2rem 0.5rem;
+      background: var(--aq-surface);
+      border: 1px solid var(--aq-border);
+      border-radius: var(--aq-radius-pill);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--aq-gold-600, #b45309);
+      white-space: nowrap;
+    }
+  }
+
   .drawer__install-item {
     margin-top: 0.5rem;
     padding-top: 0.5rem;

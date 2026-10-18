@@ -68,7 +68,7 @@ export class SurahReaderPage {
   private readonly seo = inject(SeoService);
   private readonly readingPosition = inject(ReadingPositionService);
   private readonly readingProgress = inject(ReadingProgressService);
-  private readonly taskService = inject(TaskService);
+  protected readonly taskService = inject(TaskService);
   private readonly history = inject(SurahHistoryService);
   private readonly audio = inject(AudioPlayerService);
   private readonly lang = inject(LanguageService);
@@ -261,6 +261,7 @@ export class SurahReaderPage {
           const initialAyah = detail.ayahs[ayahNum - 1];
           if (initialAyah) {
             this.readingProgress.markRead(initialAyah.globalNumber);
+            this.taskService.recordAyahRead(detail.surah.number, 1, initialAyah.globalNumber);
           }
         });
       }
@@ -455,7 +456,7 @@ export class SurahReaderPage {
             const ayah = detail.ayahs[num - 1];
             if (ayah) {
               this.readingProgress.markRead(ayah.globalNumber);
-              this.taskService.recordAyahRead(detail.surah.number);
+              this.taskService.recordAyahRead(detail.surah.number, 1, ayah.globalNumber);
             }
             this.history.record(
               detail.surah.number,

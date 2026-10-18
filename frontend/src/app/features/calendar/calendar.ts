@@ -7,7 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CalendarService } from '../../core/services/calendar';
 import { LanguageService } from '../../core/services/language';
 import { LocationService } from '../../core/services/location';
@@ -26,7 +26,7 @@ export const WEEKDAY_NAMES = [
   { en: 'Wed', bn: 'বুধ', ar: 'الأربعاء' },
   { en: 'Thu', bn: 'বৃহঃ', ar: 'الخميس' },
   { en: 'Fri', bn: 'শুক্র', ar: 'الجمعة' },
-  { en: 'Sat', bn: 'শনি', ar: 'السبت' },
+  { en: 'Sat', bn: 'শনি', ar: 'السبত' },
 ] as const;
 
 export interface HabitDayCell {
@@ -57,6 +57,7 @@ export interface HabitDayCell {
 export class CalendarPage implements OnInit {
   private readonly seo = inject(SeoService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   protected readonly calendar = inject(CalendarService);
   protected readonly language = inject(LanguageService);
   protected readonly prayerTimes = inject(PrayerTimesService);
@@ -174,6 +175,15 @@ export class CalendarPage implements OnInit {
   });
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe((params) => {
+      const tabParam = params.get('tab');
+      if (tabParam === 'habit') {
+        this.activeTab.set('habit');
+      } else if (tabParam === 'hijri') {
+        this.activeTab.set('hijri');
+      }
+    });
+
     if (this.route.snapshot.fragment === 'habit-tracker') {
       this.activeTab.set('habit');
     }
@@ -189,6 +199,12 @@ export class CalendarPage implements OnInit {
   // Tab switching
   switchTab(tab: 'hijri' | 'habit'): void {
     this.activeTab.set(tab);
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   // Habit Calendar navigation

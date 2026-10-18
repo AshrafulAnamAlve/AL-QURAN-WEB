@@ -10,6 +10,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { LanguageService } from '../../core/services/language';
 import { PwaService } from '../../core/services/pwa';
 import { ThemeService } from '../../core/services/theme';
+import { TaskService } from '../../core/services/task';
 import { IconComponent } from '../../shared/components/icon/icon';
 import { NAV_ITEMS } from '../nav-items';
 
@@ -29,6 +30,7 @@ export class HeaderComponent {
   private readonly router = inject(Router);
   protected readonly language = inject(LanguageService);
   protected readonly pwa = inject(PwaService);
+  protected readonly taskService = inject(TaskService);
 
   protected readonly navItems = NAV_ITEMS;
   protected readonly drawerOpen = signal(false);
@@ -74,5 +76,9 @@ export class HeaderComponent {
 
   async installApp(): Promise<void> {
     await this.pwa.promptInstall();
+  }
+
+  toBnDigits(val: string | number): string {
+    return String(val).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[parseInt(d, 10)]);
   }
 }
