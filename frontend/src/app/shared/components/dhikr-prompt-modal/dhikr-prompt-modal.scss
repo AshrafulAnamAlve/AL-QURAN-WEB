@@ -176,6 +176,16 @@
     border-radius: 0.75rem;
     padding: 0.875rem;
     border: 1px dashed var(--aq-border-strong);
+    transition: all 0.25s ease;
+
+    &.is-complete {
+      border-color: var(--aq-green-600);
+      background: rgba(15, 81, 50, 0.05);
+
+      :host-context([data-theme='dark']) & {
+        background: rgba(40, 167, 69, 0.08);
+      }
+    }
   }
 
   &__counter-info {
@@ -200,6 +210,49 @@
 
     :host-context([data-theme='dark']) & {
       color: var(--aq-gold-300);
+    }
+
+    &.is-target-met {
+      background: var(--aq-green-700);
+      color: #ffffff;
+      border-color: var(--aq-green-700);
+    }
+  }
+
+  &__success-banner {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.625rem 0.75rem;
+    background: var(--aq-surface);
+    border-radius: 0.5rem;
+    border: 1px solid var(--aq-green-600);
+    animation: fadeIn 0.3s ease;
+  }
+
+  &__success-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  &__success-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+
+    strong {
+      font-size: 0.875rem;
+      color: var(--aq-green-700);
+
+      :host-context([data-theme='dark']) & {
+        color: var(--aq-green-400, #48bb78);
+      }
+    }
+
+    small {
+      font-size: 0.75rem;
+      color: var(--aq-text-muted);
+      line-height: 1.3;
     }
   }
 
@@ -226,6 +279,11 @@
   &__done-btn {
     flex: 1.4;
     background: linear-gradient(135deg, var(--aq-green-700) 0%, var(--aq-green-800) 100%);
+
+    &.is-celebrate {
+      box-shadow: 0 0 0 3px rgba(15, 81, 50, 0.25);
+      animation: pulseBtn 1.5s infinite;
+    }
   }
 
   &__tasbih-btn {
@@ -295,4 +353,10 @@
 @keyframes slideInRight {
   from { transform: translateX(110%); }
   to { transform: translateX(0); }
+}
+
+@keyframes pulseBtn {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+  100% { transform: scale(1); }
 }

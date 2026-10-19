@@ -265,8 +265,10 @@ export class DhikrService {
     this.triggerHaptic([35]);
     this.promptCount.set(next);
 
-    if (next >= prompt.targetCount) {
-      this.completePrompt();
+    // If target reached on this tap, celebrate with celebratory haptic vibration
+    // but DO NOT abruptly close the modal so user can read and enjoy the completion.
+    if (next === prompt.targetCount) {
+      this.triggerHaptic([80, 50, 120]);
     }
   }
 

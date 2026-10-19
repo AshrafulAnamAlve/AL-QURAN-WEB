@@ -59,31 +59,42 @@
       </div>
 
       <!-- Quick interactive counter -->
-      <div class="dhikr-prompt-sheet__counter-box">
+      <div class="dhikr-prompt-sheet__counter-box" [class.is-complete]="count() >= item.targetCount">
         <div class="dhikr-prompt-sheet__counter-info">
           <span class="dhikr-prompt-sheet__target-text">
             {{ isBn()
               ? 'নির্ধারিত লক্ষ্য: ' + toBnDigits(item.targetCount) + ' বার'
               : 'Target: ' + item.targetCount + ' times' }}
           </span>
-          <span class="dhikr-prompt-sheet__progress-pill">
+          <span class="dhikr-prompt-sheet__progress-pill" [class.is-target-met]="count() >= item.targetCount">
             {{ isBn() ? toBnDigits(count()) : count() }} / {{ isBn() ? toBnDigits(item.targetCount) : item.targetCount }}
           </span>
         </div>
 
+        @if (count() >= item.targetCount) {
+          <div class="dhikr-prompt-sheet__success-banner" role="status">
+            <span class="dhikr-prompt-sheet__success-icon">✨</span>
+            <div class="dhikr-prompt-sheet__success-text">
+              <strong>{{ isBn() ? 'আলহামদুলিল্লাহ! লক্ষ্য পূরণ হয়েছে' : 'Alhamdulillah! Target Reached' }}</strong>
+              <small>{{ isBn() ? 'নিচের \'সম্পন্ন করেছি\' বাটনে চাপ দিন অথবা আরও পাঠ করতে থাকুন।' : 'Tap \'Done\' below or keep reciting.' }}</small>
+            </div>
+          </div>
+        }
+
         <button
           type="button"
           class="dhikr-tap-btn"
+          [class.is-finished]="count() >= item.targetCount"
           (click)="increment()"
           [attr.aria-label]="isBn() ? 'জিকির কাউন্ট করুন' : 'Tap to count Dhikr'"
         >
           <span class="dhikr-tap-btn__ripple"></span>
           <span class="dhikr-tap-btn__icon">
-            <aq-icon name="check" [size]="20" />
+            <aq-icon [name]="count() >= item.targetCount ? 'sparkles' : 'check'" [size]="20" />
           </span>
           <span class="dhikr-tap-btn__text">
             {{ count() >= item.targetCount
-              ? (isBn() ? 'সম্পূর্ণ হয়েছে!' : 'Completed!')
+              ? (isBn() ? 'আরও পাঠ করুন (+১)' : 'Recite More (+1)')
               : (isBn() ? 'পাঠ করতে ট্যাপ করুন (+১)' : 'Tap to count (+1)') }}
           </span>
         </button>
@@ -96,6 +107,7 @@
         <button
           type="button"
           class="aq-btn aq-btn--primary dhikr-prompt-sheet__done-btn"
+          [class.is-celebrate]="count() >= item.targetCount"
           (click)="complete()"
         >
           <aq-icon name="check" [size]="16" />
