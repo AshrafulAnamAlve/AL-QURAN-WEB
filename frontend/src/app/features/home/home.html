@@ -485,6 +485,24 @@
         <span class="explore-card__arrow" aria-hidden="true">&rarr;</span>
       </a>
 
+      <a routerLink="/tasbih" class="explore-card">
+        <div class="explore-card__icon-wrap">
+          <aq-icon name="repeat" [size]="22" />
+        </div>
+        <div class="explore-card__content">
+          <div class="explore-card__badge-row">
+            <h3 class="explore-card__title">{{ isBn() ? 'ডিজিটাল তসবিহ ও জিকির' : 'Digital Tasbih & Dhikr' }}</h3>
+            <span class="explore-card__badge">{{ isBn() ? 'কাউন্টার ও দু\'আ' : 'Tactile Counter' }}</span>
+          </div>
+          <p class="explore-card__desc">
+            {{ isBn()
+              ? 'স্পর্শ ও ভাইব্রেশন সহ ডিজিটাল তসবিহ এবং বিশুদ্ধ সকাল-সন্ধ্যার জিকির সংকলন'
+              : 'Interactive tactile counter with vibration, sound, and authentic morning & evening supplications' }}
+          </p>
+        </div>
+        <span class="explore-card__arrow" aria-hidden="true">&rarr;</span>
+      </a>
+
       <a routerLink="/prayer" class="explore-card">
         <div class="explore-card__icon-wrap">
           <aq-icon name="clock" [size]="22" />
@@ -566,3 +584,5 @@
 @if (showGoalModal()) {
   <aq-task-goal-modal (closed)="closeGoalModal()" />
 }
+
+<aq-dhikr-prompt-modal />

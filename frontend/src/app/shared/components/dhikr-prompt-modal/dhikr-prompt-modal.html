@@ -1,0 +1,135 @@
+@if (isVisible() && prompt(); as item) {
+  <div class="dhikr-modal-overlay" (click)="skip()" aria-hidden="true"></div>
+
+  <aside
+    class="dhikr-prompt-sheet aq-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="dhikr-prompt-title"
+  >
+    <!-- Top Drag Handle for mobile -->
+    <div class="dhikr-prompt-sheet__handle" aria-hidden="true"></div>
+
+    <!-- Header -->
+    <div class="dhikr-prompt-sheet__header">
+      <div class="dhikr-prompt-sheet__badge">
+        <aq-icon name="sparkles" [size]="14" />
+        <span>{{ isBn() ? 'আজকের বিশেষ আমল' : 'Daily Sunnah Dhikr' }}</span>
+      </div>
+
+      <button
+        type="button"
+        class="aq-icon-btn dhikr-prompt-sheet__close"
+        (click)="skip()"
+        [attr.aria-label]="isBn() ? 'বন্ধ করুন' : 'Close'"
+      >
+        <aq-icon name="close" [size]="18" />
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="dhikr-prompt-sheet__body">
+      <!-- Arabic Text -->
+      <div class="dhikr-prompt-sheet__calligraphy">
+        <p class="dhikr-prompt-sheet__arabic aq-arabic" dir="rtl">
+          {{ item.arabic }}
+        </p>
+      </div>
+
+      <!-- Title & Transliteration -->
+      <div class="dhikr-prompt-sheet__meta">
+        <h3 id="dhikr-prompt-title" class="dhikr-prompt-sheet__title">
+          {{ isBn() ? item.nameBn : item.nameEn }}
+        </h3>
+        <p class="dhikr-prompt-sheet__translit">{{ item.transliteration }}</p>
+        <p class="dhikr-prompt-sheet__meaning">
+          {{ isBn() ? item.meaningBn : item.meaningEn }}
+        </p>
+      </div>
+
+      <!-- Virtue & Hadith reference -->
+      <div class="dhikr-prompt-sheet__virtue">
+        <div class="dhikr-prompt-sheet__virtue-badge">
+          <aq-icon name="bookOpen" [size]="13" />
+          <span>{{ isBn() ? item.hadithReferenceBn : item.hadithReference }}</span>
+        </div>
+        <p class="dhikr-prompt-sheet__virtue-text">
+          {{ isBn() ? item.virtueBn : item.virtueEn }}
+        </p>
+      </div>
+
+      <!-- Quick interactive counter -->
+      <div class="dhikr-prompt-sheet__counter-box">
+        <div class="dhikr-prompt-sheet__counter-info">
+          <span class="dhikr-prompt-sheet__target-text">
+            {{ isBn()
+              ? 'নির্ধারিত লক্ষ্য: ' + toBnDigits(item.targetCount) + ' বার'
+              : 'Target: ' + item.targetCount + ' times' }}
+          </span>
+          <span class="dhikr-prompt-sheet__progress-pill">
+            {{ isBn() ? toBnDigits(count()) : count() }} / {{ isBn() ? toBnDigits(item.targetCount) : item.targetCount }}
+          </span>
+        </div>
+
+        <button
+          type="button"
+          class="dhikr-tap-btn"
+          (click)="increment()"
+          [attr.aria-label]="isBn() ? 'জিকির কাউন্ট করুন' : 'Tap to count Dhikr'"
+        >
+          <span class="dhikr-tap-btn__ripple"></span>
+          <span class="dhikr-tap-btn__icon">
+            <aq-icon name="check" [size]="20" />
+          </span>
+          <span class="dhikr-tap-btn__text">
+            {{ count() >= item.targetCount
+              ? (isBn() ? 'সম্পূর্ণ হয়েছে!' : 'Completed!')
+              : (isBn() ? 'পাঠ করতে ট্যাপ করুন (+১)' : 'Tap to count (+1)') }}
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="dhikr-prompt-sheet__footer">
+      <div class="dhikr-prompt-sheet__btn-row">
+        <button
+          type="button"
+          class="aq-btn aq-btn--primary dhikr-prompt-sheet__done-btn"
+          (click)="complete()"
+        >
+          <aq-icon name="check" [size]="16" />
+          <span>{{ isBn() ? 'সম্পন্ন করেছি' : 'Done' }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="aq-btn aq-btn--secondary"
+          (click)="skip()"
+        >
+          <span>{{ isBn() ? 'পরে করব' : 'Skip' }}</span>
+        </button>
+
+        <a
+          routerLink="/tasbih"
+          (click)="skip()"
+          class="aq-btn aq-btn--secondary dhikr-prompt-sheet__tasbih-btn"
+          title="Open Tasbih"
+        >
+          <aq-icon name="repeat" [size]="16" />
+          <span>{{ isBn() ? 'তসবিহ' : 'Tasbih' }}</span>
+        </a>
+      </div>
+
+      <div class="dhikr-prompt-sheet__opt-out">
+        <button
+          type="button"
+          class="opt-out-link"
+          (click)="dismissToday()"
+        >
+          {{ isBn() ? 'আজকের জন্য আর দেখাবেন না' : 'Don\'t show again today' }}
+        </button>
+      </div>
+    </div>
+  </aside>
+}

@@ -1,0 +1,246 @@
+<div class="tasbih-page">
+  <!-- Toast Notification -->
+  @if (toastMessage(); as msg) {
+    <div class="toast-bubble aq-card" role="status" aria-live="polite">
+      <aq-icon name="check" [size]="16" />
+      <span>{{ msg }}</span>
+    </div>
+  }
+
+  <!-- Page Header & Breadcrumb -->
+  <div class="aq-container page-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a routerLink="/">{{ isBn() ? 'হোম' : 'Home' }}</a>
+      <span class="breadcrumb__sep" aria-hidden="true">&rsaquo;</span>
+      <span class="breadcrumb__current">{{ isBn() ? 'ডিজিটাল তসবিহ ও জিকির' : 'Digital Tasbih & Adhkar' }}</span>
+    </nav>
+  </div>
+
+  <!-- Hero: Main Interactive Digital Tasbih -->
+  <section class="tasbih-hero aq-pattern" aria-label="Digital Tasbih Counter">
+    <div class="aq-container tasbih-hero__inner">
+      <!-- Top Stats Row -->
+      <div class="tasbih-stats-row">
+        <div class="stat-pill">
+          <aq-icon name="sparkles" [size]="14" />
+          <span>{{ isBn() ? 'ধারাবাহিকতা: ' + toBnDigits(streak()) + ' দিন' : 'Streak: ' + streak() + ' days' }}</span>
+        </div>
+
+        <div class="stat-pill stat-pill--gold">
+          <aq-icon name="repeat" [size]="14" />
+          <span>{{ isBn() ? 'আজ মোট: ' + toBnDigits(todayRecord().totalCountToday) + ' বার' : 'Today: ' + todayRecord().totalCountToday }}</span>
+        </div>
+      </div>
+
+      <!-- Active Dhikr Display Card -->
+      <div class="active-dhikr-card aq-card">
+        <div class="active-dhikr-card__arabic aq-arabic" dir="rtl">
+          {{ activeDhikr().arabic }}
+        </div>
+        <h1 class="active-dhikr-card__name">
+          {{ isBn() ? activeDhikr().nameBn : activeDhikr().nameEn }}
+        </h1>
+        <p class="active-dhikr-card__translit">{{ activeDhikr().transliteration }}</p>
+        <p class="active-dhikr-card__meaning">
+          {{ isBn() ? activeDhikr().meaningBn : activeDhikr().meaningEn }}
+        </p>
+      </div>
+
+      <!-- Main Tactile Counter Disc -->
+      <div class="counter-disc-wrapper">
+        <button
+          type="button"
+          class="counter-disc"
+          (click)="onTap()"
+          [attr.aria-label]="isBn() ? 'জিকির কাউন্ট করুন (+১)' : 'Count Tasbih (+1)'"
+        >
+          <div class="counter-disc__glow" aria-hidden="true"></div>
+          <div class="counter-disc__inner">
+            <span class="counter-disc__sublabel">
+              {{ laps() > 0 ? (isBn() ? 'ল্যাপ ' + toBnDigits(laps()) : 'Lap ' + laps()) : (isBn() ? 'কাউন্টার' : 'Counter') }}
+            </span>
+            <span class="counter-disc__num aq-numeral">
+              {{ isBn() ? toBnDigits(count()) : count() }}
+            </span>
+            <span class="counter-disc__target">
+              @if (target() > 0) {
+                {{ isBn() ? '/ ' + toBnDigits(target()) + ' বার' : '/ ' + target() }}
+              } @else {
+                {{ isBn() ? 'অসীম' : 'Free Count' }}
+              }
+            </span>
+          </div>
+        </button>
+      </div>
+
+      <!-- Target Presets & Quick Adjustments -->
+      <div class="presets-row" role="group" [attr.aria-label]="isBn() ? 'লক্ষ্য নির্ধারণ' : 'Target Presets'">
+        @for (preset of presetTargets; track preset) {
+          <button
+            type="button"
+            class="preset-btn"
+            [class.is-active]="target() === preset"
+            (click)="setPreset(preset)"
+          >
+            {{ preset === 0 ? (isBn() ? 'অসীম (∞)' : 'Unlimited') : (isBn() ? toBnDigits(preset) : preset) }}
+          </button>
+        }
+      </div>
+
+      <!-- Auxiliary Utility Toolbar -->
+      <div class="tasbih-controls">
+        <button
+          type="button"
+          class="aq-icon-btn control-btn"
+          (click)="toggleSound()"
+          [class.is-active]="settings().soundEnabled"
+          [attr.aria-label]="isBn() ? 'সাউন্ড টগল' : 'Toggle sound'"
+          [title]="settings().soundEnabled ? (isBn() ? 'সাউন্ড চালু' : 'Sound On') : (isBn() ? 'সাউন্ড বন্ধ' : 'Sound Off')"
+        >
+          <aq-icon [name]="settings().soundEnabled ? 'volume2' : 'volumeOff'" [size]="18" />
+        </button>
+
+        <button
+          type="button"
+          class="aq-icon-btn control-btn"
+          (click)="onDecrement()"
+          [disabled]="count() === 0"
+          [attr.aria-label]="isBn() ? 'এক কমান (-১)' : 'Minus one (-1)'"
+          title="Minus 1"
+        >
+          <span class="minus-symbol">&minus;</span>
+        </button>
+
+        <button
+          type="button"
+          class="aq-btn aq-btn--secondary control-btn control-btn--reset"
+          (click)="onReset()"
+          [attr.aria-label]="isBn() ? 'কাউন্টার রিসেট' : 'Reset counter'"
+        >
+          <aq-icon name="refresh" [size]="16" />
+          <span>{{ isBn() ? 'রিসেট' : 'Reset' }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="aq-icon-btn control-btn"
+          (click)="toggleVibration()"
+          [class.is-active]="settings().vibrationEnabled"
+          [attr.aria-label]="isBn() ? 'ভাইব্রেশন টগল' : 'Toggle vibration'"
+          [title]="settings().vibrationEnabled ? (isBn() ? 'ভাইব্রেশন চালু' : 'Vibration On') : (isBn() ? 'ভাইব্রেশন বন্ধ' : 'Vibration Off')"
+        >
+          <aq-icon name="sparkles" [size]="18" />
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categorized Adhkar Library Section -->
+  <main class="aq-container adhkar-section">
+    <div class="section-heading">
+      <div class="section-heading__badge">
+        <aq-icon name="bookOpen" [size]="16" />
+        <span>{{ isBn() ? 'সুন্নাহ জিকির ও দু\'আ' : 'Authentic Sunnah Adhkar' }}</span>
+      </div>
+      <h2 class="section-heading__title">
+        {{ isBn() ? 'দৈনিক দোয়া ও জিকির ভাণ্ডার' : 'Daily Supplications & Remembrance' }}
+      </h2>
+      <p class="section-heading__sub">
+        {{ isBn()
+          ? 'সহীহ হাদীস ও কুরআন থেকে সংকলিত বিশুদ্ধ সকাল, সন্ধ্যা ও নামাজ পরবর্তী দোয়াসমূহ।'
+          : 'Curated supplications from the Quran and Sahih Hadith for morning, evening, and post-prayer.' }}
+      </p>
+    </div>
+
+    <!-- Search & Category Filters -->
+    <div class="adhkar-toolbar">
+      <div class="search-box">
+        <aq-icon name="search" [size]="18" class="search-box__icon" aria-hidden="true" />
+        <input
+          type="search"
+          class="search-box__input"
+          [placeholder]="isBn() ? 'জিকির বা দোয়ার নাম, অর্থ দিয়ে খুঁজুন...' : 'Search supplications by name or meaning...'"
+          [value]="searchQuery()"
+          (input)="onSearchChange($event)"
+          [attr.aria-label]="isBn() ? 'জিকির খুঁজুন' : 'Search Dhikr'"
+        />
+        @if (searchQuery()) {
+          <button
+            type="button"
+            class="search-box__clear"
+            (click)="clearSearch()"
+            [attr.aria-label]="isBn() ? 'অনুসন্ধান মুছুন' : 'Clear search'"
+          >
+            <aq-icon name="close" [size]="16" />
+          </button>
+        }
+      </div>
+
+      <div class="category-tabs" role="tablist">
+        @for (cat of categories; track cat.id) {
+          <button
+            type="button"
+            role="tab"
+            class="category-tab"
+            [class.is-active]="currentCategory() === cat.id"
+            [attr.aria-selected]="currentCategory() === cat.id"
+            (click)="setCategory(cat.id)"
+          >
+            <aq-icon [name]="cat.icon" [size]="15" />
+            <span>{{ isBn() ? cat.nameBn : cat.nameEn }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Adhkar Cards Grid -->
+    <div class="adhkar-grid" role="list">
+      @for (item of filteredItems(); track item.id) {
+        <article
+          class="adhkar-card aq-card"
+          [class.adhkar-card--active]="activeDhikr().id === item.id"
+          role="listitem"
+        >
+          <div class="adhkar-card__header">
+            <span class="adhkar-card__badge">
+              {{ isBn() ? item.hadithReferenceBn : item.hadithReference }}
+            </span>
+            <span class="adhkar-card__target-count">
+              <aq-icon name="repeat" [size]="12" />
+              <span>{{ isBn() ? toBnDigits(item.targetCount) + ' বার' : item.targetCount + 'x' }}</span>
+            </span>
+          </div>
+
+          <div class="adhkar-card__arabic-wrap">
+            <p class="adhkar-card__arabic aq-arabic" dir="rtl">
+              {{ item.arabic }}
+            </p>
+          </div>
+
+          <div class="adhkar-card__info">
+            <h3 class="adhkar-card__title">{{ isBn() ? item.nameBn : item.nameEn }}</h3>
+            <p class="adhkar-card__translit">{{ item.transliteration }}</p>
+            <p class="adhkar-card__meaning">{{ isBn() ? item.meaningBn : item.meaningEn }}</p>
+          </div>
+
+          <div class="adhkar-card__virtue">
+            <aq-icon name="sparkles" [size]="14" class="adhkar-card__virtue-icon" />
+            <p class="adhkar-card__virtue-text">{{ isBn() ? item.virtueBn : item.virtueEn }}</p>
+          </div>
+
+          <div class="adhkar-card__footer">
+            <button
+              type="button"
+              class="aq-btn aq-btn--primary count-on-tasbih-btn"
+              (click)="selectDhikr(item)"
+              [attr.aria-label]="isBn() ? item.nameBn + ' তসবিহতে পাঠ করুন' : 'Count ' + item.nameEn + ' on Tasbih'"
+            >
+              <aq-icon name="repeat" [size]="16" />
+              <span>{{ isBn() ? 'তসবিহতে পাঠ করুন' : 'Count on Tasbih' }}</span>
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  </main>
+</div>

@@ -257,6 +257,8 @@ export const STORAGE_KEYS = {
   habitHistory: 'habitHistory',
   prayerNotifications: 'prayerNotifications',
   bookmarkedNames: 'bookmarkedNames',
+  dhikrHistory: 'dhikrHistory',
+  dhikrSettings: 'dhikrSettings',
 } as const;
 
 export interface StorageUsage {

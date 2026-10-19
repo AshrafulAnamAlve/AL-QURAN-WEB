@@ -101,6 +101,23 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
+    path: 'tasbih',
+    loadComponent: () => import('./features/tasbih/tasbih').then((m) => m.TasbihPage),
+    data: {
+      meta: {
+        title: 'Digital Tasbih & Daily Adhkar — জিকির ও তসবিহ',
+        description:
+          'Interactive Digital Tasbih counter with tactile haptic feedback, sound effects, ' +
+          'and authentic morning, evening, and post-prayer supplications.',
+      },
+    },
+  },
+  {
+    path: 'dhikr',
+    redirectTo: 'tasbih',
+    pathMatch: 'full',
+  },
+  {
     path: 'calendar',
     loadComponent: () => import('./features/calendar/calendar').then((m) => m.CalendarPage),
     data: {

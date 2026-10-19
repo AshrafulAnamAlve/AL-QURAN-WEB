@@ -1,6 +1,6 @@
 # Phase 16 — Daily Dhikr Rotational Advice Modal & Digital Tasbih Section
 
-**Status: ⬜ NOT STARTED**
+**Status: ✅ COMPLETE (October 19, 2026)**
 
 ---
 
@@ -13,7 +13,7 @@ Offer gentle spiritual nudges upon visiting the home page via an interactive rot
 ## Scope
 
 ### 1. Rotational Spiritual Advice Modal (Home Page)
-- [ ] **Gentle Side / Bottom Slide-in Modal**:
+- [x] **Gentle Side / Bottom Slide-in Modal**:
   - Unobtrusively appears when the user visits the home page (with smart session throttling so it never annoys).
   - Rotates through a curated collection of authentic, high-reward Dhikr & Sunnah deeds:
     - *Example 1*: **Surah An-Nas & Al-Falaq (3 times)** — Protection from evil whispers and harm.
@@ -22,7 +22,7 @@ Offer gentle spiritual nudges upon visiting the home page via an interactive rot
     - *Example 4*: **SubhanAllahi wa bihamdihi (100 times)** — Forgiveness of sins and immense weight on the Scale.
     - *Example 5*: **La hawla wa la quwwata illa billah (10 times)** — A treasure from the treasures of Paradise.
     - *Example 6*: **Ayat al-Kursi (1 time)** — Angelic guardianship until morning/evening.
-- [ ] **Modal Content & Controls**:
+- [x] **Modal Content & Controls**:
   - Arabic text with Bangla phonetics and translation.
   - Counter badge (e.g. `1 of 3 completed` with tap-to-count increment).
   - Two clear action buttons:
@@ -31,14 +31,14 @@ Offer gentle spiritual nudges upon visiting the home page via an interactive rot
   - "Don't show again today" checkbox option.
 
 ### 2. Dedicated Dhikr & Digital Tasbih Section (`/dhikr` or `/tasbih`)
-- [ ] **Dedicated Route & Navigation**:
-  - Accessible from the main header and home explore section.
-- [ ] **Interactive Digital Tasbih Counter**:
+- [x] **Dedicated Route & Navigation**:
+  - Accessible from the main header, drawer navigation, and home explore section.
+- [x] **Interactive Digital Tasbih Counter**:
   - Tactile, large circular tap button with satisfying visual ripple, click sound, and mobile vibration haptic feedback.
   - Target presets: `33` (SubhanAllah/Alhamdulillah/Allahu Akbar), `99`, `100`, or `Unlimited`.
-  - Auto-lap counter (e.g., completed 3 sets of 33).
+  - Auto-lap counter (e.g., completed sets of 33).
   - Reset, sound on/off, and haptic feedback toggles.
-- [ ] **Categorized Adhkar Catalog**:
+- [x] **Categorized Adhkar Catalog**:
   - **Morning Adhkar** (সকালের দোয়া ও জিকির).
   - **Evening Adhkar** (সন্ধ্যার দোয়া ও জিকির).
   - **Post-Prayer Adhkar** (ফরজ নামাজের পরের সুন্নাহ জিকির).
@@ -46,9 +46,9 @@ Offer gentle spiritual nudges upon visiting the home page via an interactive rot
   - Each item includes Arabic text, Bangla translation, source Hadith reference, and recommended repeat count.
 
 ### 3. Persistence & Habit History
-- [ ] **Local Storage**:
+- [x] **Local Storage**:
   - Stores completed dhikr counts, daily streaks, and last seen timestamps in `alquran.dhikr_history`.
-- [ ] **Habit Calendar Link**:
+- [x] **Habit Calendar Link**:
   - Feeds into Phase 13's habit calendar so users can see days they completed their daily Dhikr alongside Quran reading.
 
 ---
@@ -68,7 +68,7 @@ DhikrService (Signals store, rotational index algorithm, completion tracker)
        |        +---> "Done" button (awards completion & streak)
        |        +---> "Skip" button (snoozes/dismisses cleanly)
        |
-       +---> /dhikr Dedicated Page
+       +---> /tasbih & /dhikr Dedicated Page
                 |
                 +---> DigitalTasbihComponent (tactile counter + haptics)
                 +---> CategoryFilterTabs (Morning, Evening, After Prayer, Bedtime)
@@ -79,13 +79,13 @@ DhikrService (Signals store, rotational index algorithm, completion tracker)
 
 ## Acceptance Criteria
 
-- [ ] When entering the home page, the Dhikr advice modal appears with a different recommended deed.
-- [ ] Modal clearly displays Arabic text, Bangla translation, and required count.
-- [ ] Clicking **"Done"** records completion, increments the user's daily dhikr counter, and closes the modal with positive feedback.
-- [ ] Clicking **"Skip"** cleanly dismisses the modal without penalty.
-- [ ] Dedicated `/dhikr` page offers a functioning Digital Tasbih counter with target resets and haptic feedback.
-- [ ] Categorized Adhkar (Morning, Evening, Post-Prayer) are readable with verified Hadith citations.
-- [ ] All settings (show/hide prompt, sound, haptics) persist accurately across page reloads.
+- [x] When entering the home page, the Dhikr advice modal appears with a different recommended deed.
+- [x] Modal clearly displays Arabic text, Bangla translation, and required count.
+- [x] Clicking **"Done"** records completion, increments the user's daily dhikr counter, and closes the modal with positive feedback.
+- [x] Clicking **"Skip"** cleanly dismisses the modal without penalty.
+- [x] Dedicated `/tasbih` page offers a functioning Digital Tasbih counter with target resets and haptic feedback.
+- [x] Categorized Adhkar (Morning, Evening, Post-Prayer) are readable with verified Hadith citations.
+- [x] All settings (show/hide prompt, sound, haptics) persist accurately across page reloads.
 
 ---
 
@@ -94,9 +94,9 @@ DhikrService (Signals store, rotational index algorithm, completion tracker)
 1. Open `/home`: verify the Dhikr advice modal slides in with an actionable deed (e.g. Durood Sharif 3x).
 2. Tap the count until reaching 3/3; click **"Done"** and verify success confirmation.
 3. Refresh in a new session: verify the modal surfaces a different deed (e.g. Istighfar 3x). Click **"Skip"** and verify it dismisses cleanly.
-4. Navigate to `/dhikr`: test the Digital Tasbih by tapping the count button up to 33 and verify lap count increments.
+4. Navigate to `/tasbih`: test the Digital Tasbih by tapping the count button up to 33 and verify lap count increments.
 5. Switch tabs between Morning and Evening Adhkar and verify bilingual texts and Hadith references.
 
 ---
 
-**Previous:** [Phase 15](PHASE-15.md) · **Next:** — (Future enhancements)
+**Previous:** [Phase 15](PHASE-15.md) · **Next:** [Phase 17](PHASE-17.md)
