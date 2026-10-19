@@ -7,36 +7,15 @@
     </div>
   }
 
-  <!-- Page Header & Breadcrumb -->
-  <div class="aq-container page-header">
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a routerLink="/">{{ isBn() ? 'হোম' : 'Home' }}</a>
-      <span class="breadcrumb__sep" aria-hidden="true">&rsaquo;</span>
-      <span class="breadcrumb__current">{{ isBn() ? 'ডিজিটাল তসবিহ ও জিকির' : 'Digital Tasbih & Adhkar' }}</span>
-    </nav>
-  </div>
-
-  <!-- Hero: Main Interactive Digital Tasbih -->
+  <!-- Clean, Single-Screen Tasbih Experience -->
   <section class="tasbih-hero aq-pattern" aria-label="Digital Tasbih Counter">
     <div class="aq-container tasbih-hero__inner">
-      <!-- Top Stats Row -->
-      <div class="tasbih-stats-row">
-        <div class="stat-pill">
-          <aq-icon name="sparkles" [size]="14" />
-          <span>{{ isBn() ? 'ধারাবাহিকতা: ' + toBnDigits(streak()) + ' দিন' : 'Streak: ' + streak() + ' days' }}</span>
-        </div>
 
-        <div class="stat-pill stat-pill--gold">
-          <aq-icon name="repeat" [size]="14" />
-          <span>{{ isBn() ? 'আজ মোট: ' + toBnDigits(todayRecord().totalCountToday) + ' বার' : 'Today: ' + todayRecord().totalCountToday }}</span>
-        </div>
-      </div>
-
-      <!-- Active Dhikr Display Card -->
+      <!-- Active Dhikr Card: Clear Arabic, Meaning & Target -->
       <div class="active-dhikr-card aq-card">
-        <div class="active-dhikr-card__arabic aq-arabic" dir="rtl">
+        <p class="active-dhikr-card__arabic aq-arabic" dir="rtl">
           {{ activeDhikr().arabic }}
-        </div>
+        </p>
         <h1 class="active-dhikr-card__name">
           {{ isBn() ? activeDhikr().nameBn : activeDhikr().nameEn }}
         </h1>
@@ -46,42 +25,7 @@
         </p>
       </div>
 
-      <!-- Sunnah 100-Tasbih Routine Sequence (Phase 16 UX upgrade) -->
-      <div class="trinity-sequence-card aq-card" [class.is-active]="isTrinityActive()">
-        <div class="trinity-sequence-header">
-          <div class="trinity-sequence-title">
-            <aq-icon name="sparkles" [size]="15" />
-            <span>{{ isBn() ? 'নামাজের সুন্নাহ তসবিহ (১০০ বার)' : 'Sunnah Post-Prayer Tasbih (100x)' }}</span>
-          </div>
-
-          <label class="trinity-toggle-label" [title]="isBn() ? '৩৩ বার পূর্ণ হলে স্বয়ংক্রিয়ভাবে পরবর্তী জিকিরে পরিবর্তন' : 'Automatically switch dhikr when 33 is reached'">
-            <input
-              type="checkbox"
-              [checked]="settings().autoAdvanceTrinity"
-              (change)="toggleAutoAdvance()"
-            />
-            <span>{{ isBn() ? 'স্বয়ংক্রিয় পরিবর্তন' : 'Auto-switch' }}</span>
-          </label>
-        </div>
-
-        <div class="trinity-stepper" role="tablist">
-          @for (step of trinitySteps; track step.id; let idx = $index) {
-            <button
-              type="button"
-              class="trinity-step-btn"
-              [class.is-active]="activeDhikr().id === step.id"
-              [class.is-past]="currentTrinityStepIndex() > idx"
-              (click)="jumpToTrinityStep(step.id)"
-              [attr.aria-label]="step.labelEn"
-            >
-              <span class="trinity-step-num">{{ idx + 1 }}</span>
-              <span class="trinity-step-text">{{ isBn() ? step.labelBn : step.labelEn }}</span>
-            </button>
-          }
-        </div>
-      </div>
-
-      <!-- Main Tactile Counter Disc -->
+      <!-- Main Tactile Circle Counter Disc -->
       <div class="counter-disc-wrapper">
         <button
           type="button"
@@ -91,18 +35,11 @@
         >
           <div class="counter-disc__glow" aria-hidden="true"></div>
           <div class="counter-disc__inner">
-            <span class="counter-disc__sublabel">
-              {{ laps() > 0 ? (isBn() ? 'ল্যাপ ' + toBnDigits(laps()) : 'Lap ' + laps()) : (isBn() ? 'কাউন্টার' : 'Counter') }}
-            </span>
             <span class="counter-disc__num aq-numeral">
               {{ isBn() ? toBnDigits(count()) : count() }}
             </span>
             <span class="counter-disc__target">
-              @if (target() > 0) {
-                {{ isBn() ? '/ ' + toBnDigits(target()) + ' বার' : '/ ' + target() }}
-              } @else {
-                {{ isBn() ? 'অসীম' : 'Free Count' }}
-              }
+              {{ isBn() ? '/ ' + toBnDigits(target()) + ' বার' : '/ ' + target() }}
             </span>
             <span class="counter-disc__tap-hint">
               {{ isBn() ? 'ট্যাপ করুন (+১)' : 'Tap anywhere (+1)' }}
@@ -111,21 +48,7 @@
         </button>
       </div>
 
-      <!-- Target Presets & Quick Adjustments -->
-      <div class="presets-row" role="group" [attr.aria-label]="isBn() ? 'লক্ষ্য নির্ধারণ' : 'Target Presets'">
-        @for (preset of presetTargets; track preset) {
-          <button
-            type="button"
-            class="preset-btn"
-            [class.is-active]="target() === preset"
-            (click)="setPreset(preset)"
-          >
-            {{ preset === 0 ? (isBn() ? 'অসীম (∞)' : 'Unlimited') : (isBn() ? toBnDigits(preset) : preset) }}
-          </button>
-        }
-      </div>
-
-      <!-- Auxiliary Utility Toolbar -->
+      <!-- Simple Controls: Sound, Reset, Vibration -->
       <div class="tasbih-controls">
         <button
           type="button"
@@ -135,18 +58,7 @@
           [attr.aria-label]="isBn() ? 'সাউন্ড টগল' : 'Toggle sound'"
           [title]="settings().soundEnabled ? (isBn() ? 'সাউন্ড চালু' : 'Sound On') : (isBn() ? 'সাউন্ড বন্ধ' : 'Sound Off')"
         >
-          <aq-icon [name]="settings().soundEnabled ? 'volume2' : 'volumeOff'" [size]="18" />
-        </button>
-
-        <button
-          type="button"
-          class="aq-icon-btn control-btn"
-          (click)="onDecrement()"
-          [disabled]="count() === 0"
-          [attr.aria-label]="isBn() ? 'এক কমান (-১)' : 'Minus one (-1)'"
-          title="Minus 1"
-        >
-          <span class="minus-symbol">&minus;</span>
+          <aq-icon [name]="settings().soundEnabled ? 'volume2' : 'volumeOff'" [size]="20" />
         </button>
 
         <button
@@ -162,14 +74,26 @@
         <button
           type="button"
           class="aq-icon-btn control-btn"
+          (click)="onDecrement()"
+          [disabled]="count() === 0"
+          [attr.aria-label]="isBn() ? 'এক কমান (-১)' : 'Minus one (-1)'"
+          title="Minus 1"
+        >
+          <span class="minus-symbol">&minus;</span>
+        </button>
+
+        <button
+          type="button"
+          class="aq-icon-btn control-btn"
           (click)="toggleVibration()"
           [class.is-active]="settings().vibrationEnabled"
           [attr.aria-label]="isBn() ? 'ভাইব্রেশন টগল' : 'Toggle vibration'"
           [title]="settings().vibrationEnabled ? (isBn() ? 'ভাইব্রেশন চালু' : 'Vibration On') : (isBn() ? 'ভাইব্রেশন বন্ধ' : 'Vibration Off')"
         >
-          <aq-icon name="sparkles" [size]="18" />
+          <aq-icon name="sparkles" [size]="20" />
         </button>
       </div>
+
     </div>
   </section>
 

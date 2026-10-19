@@ -4,7 +4,6 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { DhikrService } from '../../core/services/dhikr';
 import { DhikrCategory, DhikrItem } from '../../core/models/dhikr';
 import { IconComponent } from '../../shared/components/icon/icon';
@@ -14,7 +13,7 @@ import { IconName } from '../../shared/components/icon/icon-registry';
   selector: 'aq-tasbih',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, RouterLink, IconComponent],
+  imports: [CommonModule, IconComponent],
   templateUrl: './tasbih.html',
   styleUrl: './tasbih.scss',
 })
