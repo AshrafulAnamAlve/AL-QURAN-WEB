@@ -154,16 +154,62 @@ export class DhikrService {
     this.playClickSound();
 
     if (t > 0 && newCount >= t) {
-      // Completed target for this lap
+      // Completed target for this dhikr/lap
       this.triggerHaptic([60, 40, 100, 40, 150]);
+      this.recordDhikrProgress(this.activeDhikr().id, 1);
+
+      // Check if auto-advance trinity sequence is enabled
+      if (this.settings().autoAdvanceTrinity) {
+        const nextInTrinity = this.getNextTrinityItem(this.activeDhikr().id);
+        if (nextInTrinity) {
+          this.activeDhikr.set(nextInTrinity.item);
+          this.target.set(nextInTrinity.target);
+          this.count.set(0);
+          this.showToast(
+            this.isBn()
+              ? `মাশাআল্লাহ! এবার পাঠ করুন: ${nextInTrinity.item.nameBn}`
+              : `MashaAllah! Next: ${nextInTrinity.item.nameEn}`,
+          );
+          return;
+        } else if (this.activeDhikr().id === 'tahlil_complete') {
+          // Completed the full 100-Tasbih Sunnah cycle! Loop back to SubhanAllah
+          const subhanAllah = this.allItems.find((i) => i.id === 'tasbih_subhanallah') || this.allItems[0];
+          this.activeDhikr.set(subhanAllah);
+          this.target.set(33);
+          this.count.set(0);
+          this.laps.update((l) => l + 1);
+          this.showToast(
+            this.isBn()
+              ? 'আলহামদুলিল্লাহ! ১০০ বার তসবিহর পূর্ণ রাউন্ড সমাপ্ত হয়েছে।'
+              : 'Alhamdulillah! Complete 100-tasbih round finished.',
+          );
+          return;
+        }
+      }
+
       this.count.set(0);
       this.laps.update((l) => l + 1);
-      this.recordDhikrProgress(this.activeDhikr().id, 1);
     } else {
       this.triggerHaptic([35]);
       this.count.set(newCount);
       this.recordDhikrProgress(this.activeDhikr().id, 1);
     }
+  }
+
+  private getNextTrinityItem(currentId: string): { item: DhikrItem; target: number } | null {
+    if (currentId === 'tasbih_subhanallah') {
+      const alhamd = this.allItems.find((i) => i.id === 'tasbih_alhamdulillah');
+      return alhamd ? { item: alhamd, target: 33 } : null;
+    }
+    if (currentId === 'tasbih_alhamdulillah') {
+      const allahuAkbar = this.allItems.find((i) => i.id === 'tasbih_allahuakbar');
+      return allahuAkbar ? { item: allahuAkbar, target: 34 } : null;
+    }
+    if (currentId === 'tasbih_allahuakbar') {
+      const tahlil = this.allItems.find((i) => i.id === 'tahlil_complete');
+      return tahlil ? { item: tahlil, target: 1 } : null;
+    }
+    return null;
   }
 
   decrementCount(): void {
@@ -206,6 +252,10 @@ export class DhikrService {
 
   toggleVibration(): void {
     this.updateSettings({ vibrationEnabled: !this.settings().vibrationEnabled });
+  }
+
+  toggleAutoAdvanceTrinity(): void {
+    this.updateSettings({ autoAdvanceTrinity: !this.settings().autoAdvanceTrinity });
   }
 
   toggleHomePrompt(): void {

@@ -46,6 +46,41 @@
         </p>
       </div>
 
+      <!-- Sunnah 100-Tasbih Routine Sequence (Phase 16 UX upgrade) -->
+      <div class="trinity-sequence-card aq-card" [class.is-active]="isTrinityActive()">
+        <div class="trinity-sequence-header">
+          <div class="trinity-sequence-title">
+            <aq-icon name="sparkles" [size]="15" />
+            <span>{{ isBn() ? 'নামাজের সুন্নাহ তসবিহ (১০০ বার)' : 'Sunnah Post-Prayer Tasbih (100x)' }}</span>
+          </div>
+
+          <label class="trinity-toggle-label" [title]="isBn() ? '৩৩ বার পূর্ণ হলে স্বয়ংক্রিয়ভাবে পরবর্তী জিকিরে পরিবর্তন' : 'Automatically switch dhikr when 33 is reached'">
+            <input
+              type="checkbox"
+              [checked]="settings().autoAdvanceTrinity"
+              (change)="toggleAutoAdvance()"
+            />
+            <span>{{ isBn() ? 'স্বয়ংক্রিয় পরিবর্তন' : 'Auto-switch' }}</span>
+          </label>
+        </div>
+
+        <div class="trinity-stepper" role="tablist">
+          @for (step of trinitySteps; track step.id; let idx = $index) {
+            <button
+              type="button"
+              class="trinity-step-btn"
+              [class.is-active]="activeDhikr().id === step.id"
+              [class.is-past]="currentTrinityStepIndex() > idx"
+              (click)="jumpToTrinityStep(step.id)"
+              [attr.aria-label]="step.labelEn"
+            >
+              <span class="trinity-step-num">{{ idx + 1 }}</span>
+              <span class="trinity-step-text">{{ isBn() ? step.labelBn : step.labelEn }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
       <!-- Main Tactile Counter Disc -->
       <div class="counter-disc-wrapper">
         <button
@@ -68,6 +103,9 @@
               } @else {
                 {{ isBn() ? 'অসীম' : 'Free Count' }}
               }
+            </span>
+            <span class="counter-disc__tap-hint">
+              {{ isBn() ? 'ট্যাপ করুন (+১)' : 'Tap anywhere (+1)' }}
             </span>
           </div>
         </button>

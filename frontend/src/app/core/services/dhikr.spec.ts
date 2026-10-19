@@ -32,6 +32,8 @@ describe('DhikrService', () => {
   });
 
   it('should increment count and auto-advance lap when target reached', () => {
+    // When trinity is disabled or for non-trinity item
+    service.updateSettings({ autoAdvanceTrinity: false });
     service.setTarget(3);
     expect(service.count()).toBe(0);
     expect(service.laps()).toBe(0);
@@ -46,6 +48,22 @@ describe('DhikrService', () => {
     expect(service.count()).toBe(0);
     expect(service.laps()).toBe(1);
     expect(service.todayRecord().totalCountToday).toBe(3);
+  });
+
+  it('should auto-switch SubhanAllah to Alhamdulillah when trinity auto-advance is enabled', () => {
+    const subhanAllah = service.allItems.find((i) => i.id === 'tasbih_subhanallah')!;
+    service.setActiveDhikr(subhanAllah);
+    service.setTarget(3);
+    service.updateSettings({ autoAdvanceTrinity: true });
+
+    service.incrementCount(); // 1
+    service.incrementCount(); // 2
+    expect(service.activeDhikr().id).toBe('tasbih_subhanallah');
+
+    service.incrementCount(); // Reaches target 3 -> auto-advances to Alhamdulillah!
+    expect(service.activeDhikr().id).toBe('tasbih_alhamdulillah');
+    expect(service.count()).toBe(0);
+    expect(service.target()).toBe(33);
   });
 
   it('should allow decrement and reset', () => {

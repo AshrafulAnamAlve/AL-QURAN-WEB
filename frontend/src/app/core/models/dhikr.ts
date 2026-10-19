@@ -22,6 +22,7 @@ export interface DhikrSettings {
   readonly vibrationEnabled: boolean;
   readonly showHomePrompt: boolean;
   readonly targetPreset: number; // 33, 99, 100, 0 (unlimited)
+  readonly autoAdvanceTrinity: boolean; // Auto switch 33 SubhanAllah -> 33 Alhamdulillah -> 34 Allahu Akbar -> 1 Tahlil
 }
 
 export interface DhikrDayHistory {
@@ -36,6 +37,7 @@ export const DEFAULT_DHIKR_SETTINGS: DhikrSettings = {
   vibrationEnabled: true,
   showHomePrompt: true,
   targetPreset: 33,
+  autoAdvanceTrinity: true,
 };
 
 export const DHIKR_ITEMS: readonly DhikrItem[] = [
