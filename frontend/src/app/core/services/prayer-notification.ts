@@ -233,18 +233,41 @@ export class PrayerNotificationService implements OnDestroy {
       : `🕌 It is now time for ${prayer.name} prayer`;
 
     const body = isBn
-      ? `${city}-এ এখন ${prayer.banglaName} নামাজের সময় (${time12hBn})।`
-      : `It is now time for ${prayer.name} prayer (${time12h}) in ${city}.`;
+      ? `${city}-এ এখন ${prayer.banglaName} নামাজের সময় (${time12hBn})। আযান শুনতে ট্যাপ করুন।`
+      : `It is now time for ${prayer.name} prayer (${time12h}) in ${city}. Tap to hear Adhan.`;
 
+    const options: NotificationOptions = {
+      body,
+      icon: 'icons/icon-192x192.png',
+      badge: 'icons/icon-192x192.png',
+      tag: `prayer-${prayer.key.toLowerCase()}`,
+      requireInteraction: false,
+      data: {
+        url: window.location.origin + window.location.pathname + '#/prayer',
+      },
+    };
+
+    // Mobile Android Chrome requires ServiceWorkerRegistration.showNotification()
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.ready
+        .then((reg) => reg.showNotification(title, options))
+        .catch((swErr) => {
+          this.logger.warn('ServiceWorker showNotification failed, trying fallback', swErr);
+          this.emitDesktopNotificationFallback(title, options, prayer);
+        });
+      return null;
+    }
+
+    return this.emitDesktopNotificationFallback(title, options, prayer);
+  }
+
+  private emitDesktopNotificationFallback(
+    title: string,
+    options: NotificationOptions,
+    prayer: PrayerTime,
+  ): Notification | null {
     try {
-      const notification = new Notification(title, {
-        body,
-        icon: 'icons/icon-192x192.png',
-        badge: 'icons/icon-192x192.png',
-        tag: `prayer-${prayer.key.toLowerCase()}`,
-        requireInteraction: false,
-      });
-
+      const notification = new Notification(title, options);
       notification.onclick = () => {
         if (typeof window !== 'undefined') {
           window.focus();
@@ -252,10 +275,9 @@ export class PrayerNotificationService implements OnDestroy {
         this.openAdhanModal(prayer);
         notification.close();
       };
-
       return notification;
     } catch (err) {
-      this.logger.warn('Failed to emit Notification', err);
+      this.logger.warn('Failed to emit Notification fallback', err);
       return null;
     }
   }

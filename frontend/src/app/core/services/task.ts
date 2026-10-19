@@ -465,24 +465,45 @@ export class TaskService {
     }
 
     if (Notification.permission === 'granted') {
-      try {
-        const notif = new Notification(title, {
-          body,
-          icon: 'icons/icon-192x192.png',
-          badge: 'icons/icon-72x72.png',
-          tag: 'alquran-daily-task',
-        });
+      const targetSurah = this.settings().targetSurahNumber || 1;
+      const options: NotificationOptions = {
+        body,
+        icon: 'icons/icon-192x192.png',
+        badge: 'icons/icon-72x72.png',
+        tag: 'alquran-daily-task',
+        data: {
+          url: `${window.location.origin}${window.location.pathname}#/quran/${targetSurah}`,
+        },
+      };
 
-        notif.onclick = () => {
-          window.focus();
-          const targetSurah = this.settings().targetSurahNumber || 1;
-          window.location.hash = `#/quran/${targetSurah}`;
-          notif.close();
-        };
-      } catch {
-        this.inAppReminderActive.set(true);
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.ready
+          .then((reg) => reg.showNotification(title, options))
+          .catch(() => {
+            this.emitDesktopTaskNotificationFallback(title, options, targetSurah);
+          });
+        return;
       }
+
+      this.emitDesktopTaskNotificationFallback(title, options, targetSurah);
     } else {
+      this.inAppReminderActive.set(true);
+    }
+  }
+
+  private emitDesktopTaskNotificationFallback(
+    title: string,
+    options: NotificationOptions,
+    targetSurah: number,
+  ): void {
+    try {
+      const notif = new Notification(title, options);
+      notif.onclick = () => {
+        window.focus();
+        window.location.hash = `#/quran/${targetSurah}`;
+        notif.close();
+      };
+    } catch {
       this.inAppReminderActive.set(true);
     }
   }
