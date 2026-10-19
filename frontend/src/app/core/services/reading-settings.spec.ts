@@ -95,4 +95,20 @@ describe('ReadingSettingsService', () => {
     expect(service.arabicSize()).toBe(DEFAULT_READING_SETTINGS.arabicSize);
     expect(service.translationMode()).toBe('english');
   });
+
+  it('toggles and persists Bangla pronunciation visibility', () => {
+    const service = create();
+    expect(service.showBanglaPronunciation()).toBe(true);
+
+    service.toggleBanglaPronunciation();
+    expect(service.showBanglaPronunciation()).toBe(false);
+    TestBed.tick();
+
+    TestBed.resetTestingModule();
+    const restored = create();
+    expect(restored.showBanglaPronunciation()).toBe(false);
+
+    restored.setShowBanglaPronunciation(true);
+    expect(restored.showBanglaPronunciation()).toBe(true);
+  });
 });

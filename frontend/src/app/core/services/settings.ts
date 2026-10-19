@@ -39,6 +39,7 @@ export class SettingsService {
   readonly lineHeight = this.readingSettingsService.lineHeight;
   readonly readingWidth = this.readingSettingsService.readingWidth;
   readonly translationMode = this.readingSettingsService.translationMode;
+  readonly showBanglaPronunciation = this.readingSettingsService.showBanglaPronunciation;
   readonly isDefaultReadingSettings = this.readingSettingsService.isDefault;
 
   // --- Appearance ---
@@ -91,6 +92,16 @@ export class SettingsService {
 
   setTranslationMode(mode: TranslationMode): void {
     this.readingSettingsService.setTranslationMode(mode);
+    this.refreshStorageUsage();
+  }
+
+  setShowBanglaPronunciation(show: boolean): void {
+    this.readingSettingsService.setShowBanglaPronunciation(show);
+    this.refreshStorageUsage();
+  }
+
+  toggleBanglaPronunciation(): void {
+    this.readingSettingsService.toggleBanglaPronunciation();
     this.refreshStorageUsage();
   }
 

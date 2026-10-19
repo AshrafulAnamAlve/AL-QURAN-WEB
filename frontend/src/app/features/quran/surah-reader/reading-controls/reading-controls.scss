@@ -54,6 +54,15 @@
   }
 }
 
+.controls__mode--pronunciation {
+  border-left: 1px solid var(--aq-border);
+  margin-left: 0.125rem;
+
+  &.is-active {
+    color: var(--aq-gold, #c4972e);
+  }
+}
+
 .controls__toggle {
   flex: 0 0 auto;
 
@@ -92,6 +101,14 @@
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+
+  &--toggle {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.25rem;
+  }
 }
 
 .control__label {

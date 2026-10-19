@@ -162,6 +162,25 @@
           </div>
         </div>
 
+        <!-- Bangla Pronunciation Toggle -->
+        <div class="control-group">
+          <div class="control-header">
+            <span class="control-label">{{ isBn() ? 'বাংলা উচ্চারণ (উচ্চারণ)' : 'Bangla Pronunciation' }}</span>
+            <button
+              type="button"
+              class="aq-btn aq-btn--sm"
+              [class.aq-btn--primary]="settings.showBanglaPronunciation()"
+              [class.aq-btn--secondary]="!settings.showBanglaPronunciation()"
+              (click)="settings.toggleBanglaPronunciation()"
+            >
+              {{ settings.showBanglaPronunciation() ? (isBn() ? 'চালু' : 'Enabled') : (isBn() ? 'বন্ধ' : 'Disabled') }}
+            </button>
+          </div>
+          <p class="control-help" style="margin: 0.25rem 0 0; font-size: 0.8125rem; color: var(--aq-text-muted);">
+            {{ isBn() ? 'আরবি আয়াতের নিচে বিশুদ্ধ বাংলা উচ্চারণ প্রদর্শন করুন।' : 'Show authentic Bengali phonetic pronunciation under each ayah.' }}
+          </p>
+        </div>
+
         <!-- Reset Reading Layout Button -->
         @if (!settings.isDefaultReadingSettings()) {
           <div class="control-footer">
@@ -192,8 +211,22 @@
             [style.font-size.rem]="settings.arabicSize()"
             [style.line-height]="settings.lineHeight()"
           >
-            ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلۡحَىُّ ٱلۡقَيُّومُ ۚ لَا تَأۡخُذُهُۥ سِنَةٞ وَلَا نَوۡمٞ ۚ لَّهُۥ مَا فِي ٱلسَّمَٰوَٰتِ وَمَا فِي ٱلۡأَرۡضِ ۗ
+            ٱللَّهُ لَآ إِلَٰهَ إِلَّا هُوَ ٱلۡحَىُّ ٱلۡقَيُّومُ ۚ لَا تَأۡখُذُهُۥ سِنَةٞ وَلَا نَوۡمٞ ۚ لَّهُۥ مَا فِي ٱلسَّمَٰوَٰتِ وَمَا فِي ٱلۡأَرۡضِ ۗ
           </p>
+
+          <!-- Bangla Pronunciation -->
+          @if (settings.showBanglaPronunciation()) {
+            <p
+              class="preview-pronunciation aq-bangla-pronunciation"
+              [style.font-size.rem]="settings.translationSize() * 1.03"
+              style="margin: 0.75rem 0 0; color: var(--aq-gold-dark, #b5832a); font-weight: 500; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.5rem;"
+            >
+              <span class="ayah__pronunciation-badge" style="display: inline-flex; align-items: center; font-size: 0.6875rem; font-weight: 600; padding: 0.125rem 0.4rem; border-radius: var(--aq-radius-sm); background: var(--aq-gold-soft, rgba(212, 160, 23, 0.12)); color: var(--aq-gold, #c4972e);">
+                {{ isBn() ? 'উচ্চারণ' : 'Pronunciation' }}
+              </span>
+              <span>আল্লাহু লা ইলাহা ইল্লা হুওয়াল হাইয়্যুল ক্বাইয়্যুম, লা তা'খুযুহু সিনাতুঁও ওয়ালা নাওম...</span>
+            </p>
+          }
 
           <!-- Bangla Translation -->
           @if (settings.translationMode() === 'bangla' || settings.translationMode() === 'both') {

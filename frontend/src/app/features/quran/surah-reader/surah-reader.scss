@@ -239,14 +239,43 @@
   }
 }
 
+.reader__bismillah-block {
+  margin: 1.25rem auto 0.75rem;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  border-bottom: 1px solid var(--aq-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .reader__bismillah {
-  margin: 1rem 0 0.5rem;
-  padding-block: 1.25rem;
+  margin: 0;
   text-align: center;
   color: var(--aq-primary);
-  border-bottom: 1px solid var(--aq-border);
   // Slightly smaller than the ayah text, so it reads as a heading not a verse.
   font-size: calc(var(--aq-arabic-size) * 0.85);
+  line-height: var(--aq-arabic-line-height);
+}
+
+.reader__bismillah-pronunciation {
+  margin: 0;
+  font-family: var(--aq-font-bn);
+  font-size: calc(var(--aq-translation-size) * 1.05);
+  font-weight: 600;
+  color: var(--aq-gold-dark, #b5832a);
+
+  :host-context([data-theme='dark']) & {
+    color: var(--aq-gold-light, #e0b368);
+  }
+}
+
+.reader__bismillah-meaning {
+  margin: 0;
+  font-family: var(--aq-font-bn);
+  font-size: calc(var(--aq-translation-size) * 0.95);
+  color: var(--aq-text-muted);
 }
 
 // --- Resume Prompt Modal ---------------------------------------------------

@@ -44,6 +44,10 @@ export class ReadingSettingsService {
     return mode === 'english' || mode === 'both';
   });
 
+  readonly showBanglaPronunciation = computed(
+    () => this.state().showBanglaPronunciation,
+  );
+
   readonly isDefault = computed(() => {
     const current = this.state();
     return (
@@ -51,6 +55,7 @@ export class ReadingSettingsService {
       && current.translationSize === DEFAULT_READING_SETTINGS.translationSize
       && current.lineHeight === DEFAULT_READING_SETTINGS.lineHeight
       && current.readingWidth === DEFAULT_READING_SETTINGS.readingWidth
+      && current.showBanglaPronunciation === DEFAULT_READING_SETTINGS.showBanglaPronunciation
     );
   });
 
@@ -83,6 +88,14 @@ export class ReadingSettingsService {
     this.patch({ translationMode: mode });
   }
 
+  setShowBanglaPronunciation(show: boolean): void {
+    this.patch({ showBanglaPronunciation: show });
+  }
+
+  toggleBanglaPronunciation(): void {
+    this.patch({ showBanglaPronunciation: !this.state().showBanglaPronunciation });
+  }
+
   /** Restores the text and layout defaults, leaving the translation choice alone. */
   resetLayout(): void {
     this.patch({
@@ -90,6 +103,7 @@ export class ReadingSettingsService {
       translationSize: DEFAULT_READING_SETTINGS.translationSize,
       lineHeight: DEFAULT_READING_SETTINGS.lineHeight,
       readingWidth: DEFAULT_READING_SETTINGS.readingWidth,
+      showBanglaPronunciation: DEFAULT_READING_SETTINGS.showBanglaPronunciation,
     });
   }
 
@@ -128,6 +142,9 @@ export class ReadingSettingsService {
       translationMode: isTranslationMode(stored.translationMode)
         ? stored.translationMode
         : DEFAULT_READING_SETTINGS.translationMode,
+      showBanglaPronunciation: typeof stored.showBanglaPronunciation === 'boolean'
+        ? stored.showBanglaPronunciation
+        : DEFAULT_READING_SETTINGS.showBanglaPronunciation,
     };
   }
 }

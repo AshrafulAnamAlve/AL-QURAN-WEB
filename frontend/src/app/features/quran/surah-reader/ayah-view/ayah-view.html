@@ -73,6 +73,13 @@
 
   <p class="ayah__arabic aq-arabic" lang="ar" dir="rtl">{{ ayah().arabic }}</p>
 
+  @if (showsBanglaPronunciation() && banglaPronunciation()) {
+    <p class="ayah__pronunciation aq-bangla-pronunciation">
+      <span class="ayah__pronunciation-badge">{{ isBn() ? 'উচ্চারণ' : 'Pronunciation' }}</span>
+      <span class="ayah__pronunciation-text">{{ banglaPronunciation() }}</span>
+    </p>
+  }
+
   @if (showsBangla() && banglaText()) {
     <p class="ayah__translation aq-bangla" lang="bn">{{ banglaText() }}</p>
   }

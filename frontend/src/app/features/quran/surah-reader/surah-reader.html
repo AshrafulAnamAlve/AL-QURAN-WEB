@@ -128,7 +128,19 @@
     <!-- Ayahs ------------------------------------------------------------ -->
     <div class="reader__body">
       @if (data.bismillahArabic) {
-        <p class="reader__bismillah aq-arabic" lang="ar" dir="rtl">{{ data.bismillahArabic }}</p>
+        <div class="reader__bismillah-block">
+          <p class="reader__bismillah aq-arabic" lang="ar" dir="rtl">{{ data.bismillahArabic }}</p>
+          @if (showsBanglaPronunciation()) {
+            <p class="reader__bismillah-pronunciation aq-bangla-pronunciation">
+              {{ isBn() ? 'বিসমিল্লাহির রাহমানির রাহিম' : 'Bismillahir Rahmanir Rahim' }}
+            </p>
+          }
+          @if (showsBangla()) {
+            <p class="reader__bismillah-meaning aq-bangla" lang="bn">
+              {{ isBn() ? 'শুরু করছি আল্লাহর নামে যিনি পরম করুণাময়, অতি দয়ালু।' : 'In the name of Allah, the Entirely Merciful, the Especially Merciful.' }}
+            </p>
+          }
+        </div>
       }
 
       <div class="reader__ayahs">

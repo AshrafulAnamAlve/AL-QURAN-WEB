@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, signal } f
 import { Ayah } from '../../../../core/models/quran';
 import { AudioPlayerService } from '../../../../core/services/audio-player';
 import { BookmarkService } from '../../../../core/services/bookmarks';
+import { LanguageService } from '../../../../core/services/language';
+import { QuranPronunciationService } from '../../../../core/services/quran-pronunciation';
 import { ReadingPositionService } from '../../../../core/services/reading-position';
 import { ReadingProgressService } from '../../../../core/services/reading-progress';
 import { ReadingSettingsService } from '../../../../core/services/reading-settings';
@@ -31,6 +33,8 @@ export class AyahViewComponent {
   private readonly readingPosition = inject(ReadingPositionService);
   private readonly readingProgress = inject(ReadingProgressService);
   private readonly history = inject(SurahHistoryService);
+  private readonly pronunciation = inject(QuranPronunciationService);
+  protected readonly lang = inject(LanguageService);
 
   readonly ayah = input.required<Ayah>();
   readonly surahEnglishName = input.required<string>();
@@ -55,6 +59,8 @@ export class AyahViewComponent {
 
   protected readonly showsBangla = this.settings.showsBangla;
   protected readonly showsEnglish = this.settings.showsEnglish;
+  protected readonly showsBanglaPronunciation = this.settings.showBanglaPronunciation;
+  protected readonly isBn = this.lang.isBn;
 
   protected readonly banglaText = computed(
     () => this.ayah().translations.find((item) => item.language === 'bn')?.text ?? '',
@@ -63,6 +69,14 @@ export class AyahViewComponent {
   protected readonly englishText = computed(
     () => this.ayah().translations.find((item) => item.language === 'en')?.text ?? '',
   );
+
+  protected readonly banglaPronunciation = computed(() => {
+    const a = this.ayah();
+    return (
+      a.pronunciationBangla
+      || this.pronunciation.getPronunciation(a.surahNumber, a.numberInSurah, a.arabic)
+    );
+  });
 
   protected readonly reference = computed(
     () => `${this.ayah().surahNumber}:${this.ayah().numberInSurah}`,
@@ -158,6 +172,7 @@ export class AyahViewComponent {
       surahNumber: this.ayah().surahNumber,
       ayahNumber: this.ayah().numberInSurah,
       arabic: this.ayah().arabic,
+      pronunciation: this.banglaPronunciation(),
       translations: [this.banglaText(), this.englishText()].filter(Boolean),
     };
   }

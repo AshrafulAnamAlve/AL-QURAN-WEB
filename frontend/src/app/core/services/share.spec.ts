@@ -46,4 +46,15 @@ describe('ShareService', () => {
   it('builds a deep link to the exact ayah', () => {
     expect(service.buildUrl(18, 10)).toContain('/quran/18#ayah-10');
   });
+
+  it('formats an ayah with pronunciation when provided', () => {
+    const text = service.format({
+      ...content,
+      pronunciation: "আলহামদু লিল্লাহি রাব্বিল আ'লামীন",
+    });
+
+    expect(text).toContain("উচ্চারণ: আলহামদু লিল্লাহি রাব্বিল আ'লামীন");
+    expect(text).toContain(content.arabic);
+    expect(text).toContain(content.translations[0]);
+  });
 });

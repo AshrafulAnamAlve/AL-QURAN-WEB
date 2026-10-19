@@ -55,6 +55,8 @@ export interface Ayah {
   readonly numberInSurah: number;
   readonly surahNumber: number;
   readonly arabic: string;
+  /** Bengali phonetic transliteration / pronunciation (বাংলা উচ্চারণ). */
+  readonly pronunciationBangla?: string;
   readonly translations: readonly Translation[];
   readonly juz: number;
   readonly page: number;

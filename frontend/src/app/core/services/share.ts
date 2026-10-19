@@ -9,6 +9,7 @@ export interface AyahShareContent {
   readonly surahNumber: number;
   readonly ayahNumber: number;
   readonly arabic: string;
+  readonly pronunciation?: string;
   readonly translations: readonly string[];
 }
 
@@ -31,8 +32,19 @@ export class ShareService {
   format(content: AyahShareContent): string {
     const reference = `${content.surahEnglishName} — ${content.surahNumber}:${content.ayahNumber}`;
     const translations = content.translations.filter((text) => text.trim().length > 0);
+    const pronunciationBlock = content.pronunciation?.trim()
+      ? [`উচ্চারণ: ${content.pronunciation.trim()}`]
+      : [];
 
-    return [reference, '', content.arabic, ...translations.flatMap((text) => ['', text]), '', 'Al-Quran']
+    return [
+      reference,
+      '',
+      content.arabic,
+      ...pronunciationBlock.flatMap((text) => ['', text]),
+      ...translations.flatMap((text) => ['', text]),
+      '',
+      'Al-Quran',
+    ]
       .join('\n')
       .replace(/\n{3,}/g, '\n\n');
   }

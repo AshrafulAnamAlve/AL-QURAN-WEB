@@ -33,6 +33,7 @@ export class ReadingControlsComponent {
   protected readonly lineHeight = this.settings.lineHeight;
   protected readonly readingWidth = this.settings.readingWidth;
   protected readonly translationMode = this.settings.translationMode;
+  protected readonly showPronunciation = this.settings.showBanglaPronunciation;
   protected readonly isDefault = this.settings.isDefault;
 
   toggle(): void {
@@ -41,6 +42,10 @@ export class ReadingControlsComponent {
 
   setMode(mode: TranslationMode): void {
     this.settings.setTranslationMode(mode);
+  }
+
+  togglePronunciation(): void {
+    this.settings.toggleBanglaPronunciation();
   }
 
   onArabicSize(event: Event): void {

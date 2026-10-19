@@ -1,6 +1,6 @@
 # Phase 17 — Quran Ayah Bangla Pronunciation (উচ্চারণ) and Multi-Script Display
 
-**Status: ⬜ NOT STARTED**
+**Status: ✅ COMPLETE**
 
 ---
 
@@ -13,13 +13,13 @@ Provide authentic Bengali phonetic transliteration / pronunciation (বাংল
 ## Scope
 
 ### 1. Data Model & Backend API Integration
-- [ ] **DTO Enhancement**:
+- [x] **DTO Enhancement**:
   - Update `AyahDto` in backend to include:
     ```csharp
     public string? PronunciationBangla { get; init; }
     ```
   - Ensure the Quran service loads verified Bengali phonetic transliteration alongside the Uthmani Arabic text and Muhiuddin Khan Bengali translation.
-- [ ] **Frontend Model Update**:
+- [x] **Frontend Model Update**:
   - Extend `Ayah` interface in `frontend/src/app/core/models/quran.ts`:
     ```typescript
     export interface Ayah {
@@ -34,24 +34,24 @@ Provide authentic Bengali phonetic transliteration / pronunciation (বাংল
     ```
 
 ### 2. Surah & Juz Reader UI Hierarchy
-- [ ] **Visual Layout per Ayah Card**:
+- [x] **Visual Layout per Ayah Card**:
   - **1. Arabic Script (আরবি)**: Large high-contrast Amiri Quran calligraphy font.
   - **2. Bangla Pronunciation (বাংলা উচ্চারণ)**:
-    - Elegant, readable typography with distinct styling (e.g. highlighted badge / softly accented text).
+    - Elegant, readable typography with distinct styling (highlighted badge / softly accented text).
     - Labeled with a subtle badge or header: `"উচ্চারণ:"` (e.g., *বিসমিল্লাহির রাহমানির রাহিম*, *আলহামদু লিল্লাহি রাব্বিল আ'লামীন*).
   - **3. Bangla Meaning (বাংলা অর্থ / অনুবাদ)**: Full translation by Maulana Muhiuddin Khan.
   - **4. English Translation**: Optional Sahih International translation.
-- [ ] **Bismillah Display**:
+- [x] **Bismillah Display**:
   - Surah header displays the Arabic Bismillah accompanied by its Bangla pronunciation and meaning.
 
 ### 3. Reading Controls & Customization
-- [ ] **Pronunciation Visibility Toggle**:
+- [x] **Pronunciation Visibility Toggle**:
   - Quick toggle in the reading toolbar (`reading-controls.ts`):
     - `"বাংলা উচ্চারণ"`: [Show / Hide].
   - Remembers user preference across sessions via `ReadingSettingsService` (`localStorage.getItem('alquran.reading_settings')`).
-- [ ] **Font Size Controls**:
+- [x] **Font Size Controls**:
   - Dedicated slider or proportional scaling for pronunciation text size.
-- [ ] **Copy & Share Integration**:
+- [x] **Copy & Share Integration**:
   - When copying or sharing an ayah, include Arabic, Bangla pronunciation, and Bangla translation in the formatted clipboard payload.
 
 ---
@@ -77,13 +77,13 @@ QuranApiService -> SurahReaderComponent -> AyahViewComponent
 
 ## Acceptance Criteria
 
-- [ ] Every ayah in the Surah Reader and Juz Reader displays accurate Bangla pronunciation (উচ্চারণ).
-- [ ] Clear visual hierarchy between Arabic text, Bangla pronunciation, and Bangla translation.
-- [ ] Reading controls include a quick toggle to show or hide the pronunciation text.
-- [ ] Setting persists in `localStorage` across page refreshes and different surahs.
-- [ ] Copy and Share actions format the ayah with Arabic, pronunciation, and meaning.
-- [ ] Responsive across mobile, tablet, and desktop viewports with no text clipping.
-- [ ] Unit tests verify toggle functionality, DTO parsing, and render output.
+- [x] Every ayah in the Surah Reader and Juz Reader displays accurate Bangla pronunciation (উচ্চারণ).
+- [x] Clear visual hierarchy between Arabic text, Bangla pronunciation, and Bangla translation.
+- [x] Reading controls include a quick toggle to show or hide the pronunciation text.
+- [x] Setting persists in `localStorage` across page refreshes and different surahs.
+- [x] Copy and Share actions format the ayah with Arabic, pronunciation, and meaning.
+- [x] Responsive across mobile, tablet, and desktop viewports with no text clipping.
+- [x] Unit tests verify toggle functionality, DTO parsing, and render output.
 
 ---
 

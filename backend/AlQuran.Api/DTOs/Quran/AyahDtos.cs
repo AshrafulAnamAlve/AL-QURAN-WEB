@@ -27,6 +27,7 @@ public sealed record TranslationDto(
 /// <param name="HizbQuarter">Hizb quarter number.</param>
 /// <param name="IsSajda">True on the ayahs that carry a prostration mark.</param>
 /// <param name="AudioUrl">Direct CDN URL for the recitation of this ayah.</param>
+/// <param name="PronunciationBangla">Bengali phonetic transliteration / pronunciation (বাংলা উচ্চারণ).</param>
 public sealed record AyahDto(
     int GlobalNumber,
     int NumberInSurah,
@@ -38,7 +39,8 @@ public sealed record AyahDto(
     int Ruku,
     int HizbQuarter,
     bool IsSajda,
-    string AudioUrl);
+    string AudioUrl,
+    string? PronunciationBangla = null);
 
 /// <summary>A parsed "surah:ayah" reference such as 2:255.</summary>
 public sealed record AyahReferenceDto(int SurahNumber, int AyahNumber, string SurahEnglishName);

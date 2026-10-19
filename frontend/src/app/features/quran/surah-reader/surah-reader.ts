@@ -18,6 +18,7 @@ import { QURAN_TOTALS } from '../../../core/models/quran';
 import { QuranApiService } from '../../../core/services/quran-api';
 import { ReadingPositionService } from '../../../core/services/reading-position';
 import { ReadingProgressService } from '../../../core/services/reading-progress';
+import { ReadingSettingsService } from '../../../core/services/reading-settings';
 import { AudioPlayerService } from '../../../core/services/audio-player';
 import { TaskService } from '../../../core/services/task';
 import { SurahHistoryItem, SurahHistoryService } from '../../../core/services/surah-history';
@@ -72,8 +73,11 @@ export class SurahReaderPage {
   private readonly history = inject(SurahHistoryService);
   private readonly audio = inject(AudioPlayerService);
   private readonly lang = inject(LanguageService);
+  private readonly settings = inject(ReadingSettingsService);
 
   protected readonly isBn = this.lang.isBn;
+  protected readonly showsBanglaPronunciation = this.settings.showBanglaPronunciation;
+  protected readonly showsBangla = this.settings.showsBangla;
   readonly resumePrompt = signal<SurahHistoryItem | null>(null);
   protected readonly progress = computed(() => {
     const detail = this.detail();

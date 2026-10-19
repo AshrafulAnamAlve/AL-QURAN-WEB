@@ -81,6 +81,42 @@
   overflow-wrap: break-word;
 }
 
+.ayah__pronunciation {
+  margin: 0.75rem 0 0;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-family: var(--aq-font-bn);
+  font-size: calc(var(--aq-translation-size) * 1.03);
+  line-height: var(--aq-translation-line-height);
+  color: var(--aq-gold-dark, #b5832a);
+  text-wrap: pretty;
+  overflow-wrap: break-word;
+
+  :host-context([data-theme='dark']) & {
+    color: var(--aq-gold-light, #e0b368);
+  }
+}
+
+.ayah__pronunciation-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0.125rem 0.4rem;
+  border-radius: var(--aq-radius-sm);
+  background: var(--aq-gold-soft, rgba(212, 160, 23, 0.12));
+  color: var(--aq-gold, #c4972e);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.ayah__pronunciation-text {
+  font-weight: 500;
+}
+
 .ayah__translation {
   margin: 0.875rem 0 0;
   color: var(--aq-text-muted);

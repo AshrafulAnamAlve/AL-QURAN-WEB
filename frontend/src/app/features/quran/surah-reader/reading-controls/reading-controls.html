@@ -19,6 +19,17 @@
           }
         </button>
       }
+
+      <button
+        type="button"
+        class="controls__mode controls__mode--pronunciation"
+        [class.is-active]="showPronunciation()"
+        [attr.aria-pressed]="showPronunciation()"
+        (click)="togglePronunciation()"
+        [attr.aria-label]="isBn() ? 'বাংলা উচ্চারণ চালু বা বন্ধ করুন' : 'Toggle Bangla pronunciation'"
+      >
+        {{ isBn() ? 'উচ্চারণ' : 'Pronunciation' }}
+      </button>
     </div>
 
     <button
@@ -100,6 +111,21 @@
           (input)="onReadingWidth($event)"
         />
       </label>
+
+      <div class="control control--toggle">
+        <span class="control__label">
+          {{ isBn() ? 'বাংলা উচ্চারণ' : 'Bangla pronunciation' }}
+        </span>
+        <button
+          type="button"
+          class="aq-btn aq-btn--sm"
+          [class.aq-btn--primary]="showPronunciation()"
+          [class.aq-btn--secondary]="!showPronunciation()"
+          (click)="togglePronunciation()"
+        >
+          {{ showPronunciation() ? (isBn() ? 'চালু' : 'Enabled') : (isBn() ? 'বন্ধ' : 'Disabled') }}
+        </button>
+      </div>
     </div>
 
     <div class="controls__footer">

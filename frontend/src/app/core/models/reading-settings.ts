@@ -20,6 +20,8 @@ export interface ReadingSettings {
   readingWidth: number;
   /** Which translations to show. */
   translationMode: TranslationMode;
+  /** Whether to show Bengali phonetic transliteration / pronunciation (বাংলা উচ্চারণ). */
+  showBanglaPronunciation: boolean;
 }
 
 /**
@@ -41,4 +43,5 @@ export const DEFAULT_READING_SETTINGS: ReadingSettings = {
   lineHeight: READING_LIMITS.lineHeight.default,
   readingWidth: READING_LIMITS.readingWidth.default,
   translationMode: 'bangla',
+  showBanglaPronunciation: true,
 };
