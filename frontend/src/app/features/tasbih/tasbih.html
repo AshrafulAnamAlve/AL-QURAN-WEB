@@ -48,6 +48,60 @@
         </button>
       </div>
 
+      <!-- Target Selection: Default 33, or Set Any Custom Number -->
+      <div class="target-setting-bar">
+        <span class="target-setting-label">
+          {{ isBn() ? 'লক্ষ্যমাত্রা:' : 'Target:' }}
+        </span>
+
+        <button
+          type="button"
+          class="target-pill"
+          [class.is-active]="target() === 33"
+          (click)="setTargetNumber(33)"
+        >
+          {{ isBn() ? '৩৩ বার' : '33 times' }}
+        </button>
+
+        <button
+          type="button"
+          class="target-pill"
+          [class.is-active]="target() === 10"
+          (click)="setTargetNumber(10)"
+        >
+          {{ isBn() ? '১০ বার' : '10 times' }}
+        </button>
+
+        <button
+          type="button"
+          class="target-pill"
+          [class.is-active]="target() === 100"
+          (click)="setTargetNumber(100)"
+        >
+          {{ isBn() ? '১০০ বার' : '100 times' }}
+        </button>
+
+        <div class="custom-target-box">
+          <input
+            #customInput
+            type="number"
+            min="1"
+            max="9999"
+            class="custom-target-input"
+            [placeholder]="isBn() ? 'কাস্টম...' : 'Custom...'"
+            (keydown.enter)="onCustomTargetSubmit(customInput.value); customInput.value = ''"
+          />
+          <button
+            type="button"
+            class="custom-target-set-btn"
+            (click)="onCustomTargetSubmit(customInput.value); customInput.value = ''"
+            [attr.aria-label]="isBn() ? 'লক্ষ্য সেট করুন' : 'Set custom target'"
+          >
+            {{ isBn() ? 'সেট' : 'Set' }}
+          </button>
+        </div>
+      </div>
+
       <!-- Simple Controls: Sound, Reset, Vibration -->
       <div class="tasbih-controls">
         <button

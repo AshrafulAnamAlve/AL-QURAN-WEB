@@ -50,11 +50,10 @@ describe('DhikrService', () => {
     expect(service.todayRecord().totalCountToday).toBe(3);
   });
 
-  it('should auto-switch SubhanAllah to Alhamdulillah when trinity auto-advance is enabled', () => {
+  it('should auto-switch SubhanAllah to Alhamdulillah when target count is reached', () => {
     const subhanAllah = service.allItems.find((i) => i.id === 'tasbih_subhanallah')!;
     service.setActiveDhikr(subhanAllah);
     service.setTarget(3);
-    service.updateSettings({ autoAdvanceTrinity: true });
 
     service.incrementCount(); // 1
     service.incrementCount(); // 2
@@ -63,7 +62,6 @@ describe('DhikrService', () => {
     service.incrementCount(); // Reaches target 3 -> auto-advances to Alhamdulillah!
     expect(service.activeDhikr().id).toBe('tasbih_alhamdulillah');
     expect(service.count()).toBe(0);
-    expect(service.target()).toBe(33);
   });
 
   it('should allow decrement and reset', () => {
@@ -128,6 +126,20 @@ describe('DhikrService', () => {
   });
 
   it('should manage home advice prompt lifecycle (increment, complete, skip)', () => {
+    if (typeof sessionStorage !== 'undefined') {
+      sessionStorage.clear();
+    }
+    const today = service.todayDate();
+    service.history.update((h) => ({
+      ...h,
+      [today]: {
+        date: today,
+        completedDhikrIds: [],
+        totalCountToday: 0,
+        adviceCompleted: false,
+      },
+    }));
+
     service.initHomePrompt();
     expect(service.activePrompt()).not.toBeNull();
     expect(service.isPromptVisible()).toBe(true);

@@ -33,49 +33,23 @@ export class TasbihPage {
   readonly searchQuery = this.dhikrService.searchQuery;
   readonly toastMessage = this.dhikrService.toastMessage;
 
-  readonly presetTargets = [33, 99, 100, 0];
+  customTargetInput = '';
 
-  readonly trinitySteps = [
-    { id: 'tasbih_subhanallah', target: 33, labelBn: 'সুবহানাল্লাহ (৩৩)', labelEn: 'SubhanAllah (33)' },
-    { id: 'tasbih_alhamdulillah', target: 33, labelBn: 'আলহামদুলিল্লাহ (৩৩)', labelEn: 'Alhamdulillah (33)' },
-    { id: 'tasbih_allahuakbar', target: 34, labelBn: 'আল্লাহু আকবার (৩৪)', labelEn: 'Allahu Akbar (34)' },
-    { id: 'tahlil_complete', target: 1, labelBn: 'তাহলিল (১)', labelEn: 'Tahlil (1)' },
-  ];
-
-  isTrinityActive(): boolean {
-    const id = this.activeDhikr().id;
-    return this.trinitySteps.some((s) => s.id === id);
-  }
-
-  currentTrinityStepIndex(): number {
-    const id = this.activeDhikr().id;
-    return this.trinitySteps.findIndex((s) => s.id === id);
-  }
-
-  startTrinitySequence(): void {
-    const subhanAllah = this.dhikrService.allItems.find((i) => i.id === 'tasbih_subhanallah');
-    if (subhanAllah) {
-      this.dhikrService.setActiveDhikr(subhanAllah);
-      this.dhikrService.setTarget(33);
-      this.dhikrService.updateSettings({ autoAdvanceTrinity: true });
+  setTargetNumber(num: number): void {
+    if (num > 0) {
+      this.dhikrService.setTarget(num);
       this.dhikrService.showToast(
         this.isBn()
-          ? 'সুন্নাহ ১০০ তসবিহ মোড চালু হয়েছে (৩৩+৩৩+৩৪+১)'
-          : 'Sunnah 100-Tasbih mode active (33+33+34+1)',
+          ? `লক্ষ্য নির্ধারণ করা হয়েছে: ${this.toBnDigits(num)} বার`
+          : `Target set to: ${num}`,
       );
     }
   }
 
-  toggleAutoAdvance(): void {
-    this.dhikrService.toggleAutoAdvanceTrinity();
-  }
-
-  jumpToTrinityStep(stepId: string): void {
-    const item = this.dhikrService.allItems.find((i) => i.id === stepId);
-    const step = this.trinitySteps.find((s) => s.id === stepId);
-    if (item && step) {
-      this.dhikrService.setActiveDhikr(item);
-      this.dhikrService.setTarget(step.target);
+  onCustomTargetSubmit(val: string): void {
+    const parsed = parseInt(val, 10);
+    if (!isNaN(parsed) && parsed > 0) {
+      this.setTargetNumber(parsed);
     }
   }
 

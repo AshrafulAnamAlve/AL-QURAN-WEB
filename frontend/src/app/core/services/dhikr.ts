@@ -28,11 +28,13 @@ export class DhikrService {
     this.storage.read<Record<string, DhikrDayHistory>>(STORAGE_KEYS.dhikrHistory, {}),
   );
 
-  // Active Tasbih State
-  readonly activeDhikr = signal<DhikrItem>(DHIKR_ITEMS[7] || DHIKR_ITEMS[0]); // Default to SubhanAllah
+  // Active Tasbih State: Default explicitly to SubhanAllah (index in list)
+  readonly activeDhikr = signal<DhikrItem>(
+    this.allItems.find((i) => i.id === 'tasbih_subhanallah') || this.allItems[0],
+  );
   readonly count = signal<number>(0);
   readonly laps = signal<number>(0);
-  readonly target = signal<number>(this.settings().targetPreset);
+  readonly target = signal<number>(this.settings().targetPreset || 33);
 
   // Filter & Search
   readonly categoryFilter = signal<DhikrCategory>('all');
@@ -154,41 +156,25 @@ export class DhikrService {
     this.playClickSound();
 
     if (t > 0 && newCount >= t) {
-      // Completed target for this dhikr/lap
+      // Completed target for this dhikr
       this.triggerHaptic([60, 40, 100, 40, 150]);
       this.recordDhikrProgress(this.activeDhikr().id, 1);
 
-      // Check if auto-advance trinity sequence is enabled
-      if (this.settings().autoAdvanceTrinity) {
-        const nextInTrinity = this.getNextTrinityItem(this.activeDhikr().id);
-        if (nextInTrinity) {
-          this.activeDhikr.set(nextInTrinity.item);
-          this.target.set(nextInTrinity.target);
-          this.count.set(0);
-          this.showToast(
-            this.isBn()
-              ? `মাশাআল্লাহ! এবার পাঠ করুন: ${nextInTrinity.item.nameBn}`
-              : `MashaAllah! Next: ${nextInTrinity.item.nameEn}`,
-          );
-          return;
-        } else if (this.activeDhikr().id === 'tahlil_complete') {
-          // Completed the full 100-Tasbih Sunnah cycle! Loop back to SubhanAllah
-          const subhanAllah = this.allItems.find((i) => i.id === 'tasbih_subhanallah') || this.allItems[0];
-          this.activeDhikr.set(subhanAllah);
-          this.target.set(33);
-          this.count.set(0);
-          this.laps.update((l) => l + 1);
-          this.showToast(
-            this.isBn()
-              ? 'আলহামদুলিল্লাহ! ১০০ বার তসবিহর পূর্ণ রাউন্ড সমাপ্ত হয়েছে।'
-              : 'Alhamdulillah! Complete 100-tasbih round finished.',
-          );
-          return;
-        }
+      // Auto-advance to next Dhikr in sequence
+      const nextItem = this.getNextDhikrItem(this.activeDhikr().id);
+      if (nextItem) {
+        this.activeDhikr.set(nextItem);
+        this.count.set(0);
+        this.laps.update((l) => l + 1);
+        this.showToast(
+          this.isBn()
+            ? `মাশাআল্লাহ! এবার পাঠ করুন: ${nextItem.nameBn}`
+            : `MashaAllah! Next: ${nextItem.nameEn}`,
+        );
+      } else {
+        this.count.set(0);
+        this.laps.update((l) => l + 1);
       }
-
-      this.count.set(0);
-      this.laps.update((l) => l + 1);
     } else {
       this.triggerHaptic([35]);
       this.count.set(newCount);
@@ -196,19 +182,32 @@ export class DhikrService {
     }
   }
 
-  private getNextTrinityItem(currentId: string): { item: DhikrItem; target: number } | null {
-    if (currentId === 'tasbih_subhanallah') {
-      const alhamd = this.allItems.find((i) => i.id === 'tasbih_alhamdulillah');
-      return alhamd ? { item: alhamd, target: 33 } : null;
+  private getNextDhikrItem(currentId: string): DhikrItem | null {
+    // Priority order: SubhanAllah -> Alhamdulillah -> Allahu Akbar -> La ilaha illallah (Tahlil) -> Astaghfirullah -> Durood -> ...
+    const sequenceIds = [
+      'tasbih_subhanallah',
+      'tasbih_alhamdulillah',
+      'tasbih_allahuakbar',
+      'tahlil_complete',
+      'astaghfirullah_3',
+      'durood_sharif',
+      'subhanallahi_wa_bihamdihi_100',
+      'kalimatani_habibatani',
+      'la_hawla',
+    ];
+
+    const currentSeqIdx = sequenceIds.indexOf(currentId);
+    if (currentSeqIdx !== -1) {
+      const nextId = sequenceIds[(currentSeqIdx + 1) % sequenceIds.length];
+      return this.allItems.find((i) => i.id === nextId) || null;
     }
-    if (currentId === 'tasbih_alhamdulillah') {
-      const allahuAkbar = this.allItems.find((i) => i.id === 'tasbih_allahuakbar');
-      return allahuAkbar ? { item: allahuAkbar, target: 34 } : null;
+
+    // If not in the priority sequence, advance to next item in allItems
+    const allIdx = this.allItems.findIndex((i) => i.id === currentId);
+    if (allIdx !== -1) {
+      return this.allItems[(allIdx + 1) % this.allItems.length];
     }
-    if (currentId === 'tasbih_allahuakbar') {
-      const tahlil = this.allItems.find((i) => i.id === 'tahlil_complete');
-      return tahlil ? { item: tahlil, target: 1 } : null;
-    }
+
     return null;
   }
 
