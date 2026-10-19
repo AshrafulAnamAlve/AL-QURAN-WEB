@@ -467,6 +467,24 @@
         <span class="explore-card__arrow" aria-hidden="true">&rarr;</span>
       </a>
 
+      <a routerLink="/hadith" class="explore-card">
+        <div class="explore-card__icon-wrap">
+          <aq-icon name="book" [size]="22" />
+        </div>
+        <div class="explore-card__content">
+          <div class="explore-card__badge-row">
+            <h3 class="explore-card__title">{{ isBn() ? 'হাদিস শরীফ' : 'Hadith Sharif' }}</h3>
+            <span class="explore-card__badge">{{ isBn() ? 'সহিহ সংকলন' : 'Authentic' }}</span>
+          </div>
+          <p class="explore-card__desc">
+            {{ isBn()
+              ? 'বুখারী, মুসলিম ও রিয়াদুস সালেহীন থেকে বিশুদ্ধ হাদিস ও দৈনিক হাদিস পড়ুন'
+              : 'Authentic prophetic traditions from Bukhari, Muslim & Riyad as-Salihin' }}
+          </p>
+        </div>
+        <span class="explore-card__arrow" aria-hidden="true">&rarr;</span>
+      </a>
+
       <a routerLink="/99-names" class="explore-card">
         <div class="explore-card__icon-wrap">
           <aq-icon name="sparkles" [size]="22" />
@@ -585,4 +603,4 @@
   <aq-task-goal-modal (closed)="closeGoalModal()" />
 }
 
-<aq-dhikr-prompt-modal />
+<aq-daily-hadith-modal />

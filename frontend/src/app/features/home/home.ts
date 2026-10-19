@@ -11,7 +11,7 @@ import { PrayerNotificationService } from '../../core/services/prayer-notificati
 import { CorePrayerAlertKey } from '../../core/models/prayer-notification';
 import { IconComponent } from '../../shared/components/icon/icon';
 import { TaskGoalModalComponent } from '../../shared/components/task-goal-modal/task-goal-modal';
-import { DhikrPromptModalComponent } from '../../shared/components/dhikr-prompt-modal/dhikr-prompt-modal';
+import { DailyHadithModalComponent } from '../../shared/components/daily-hadith-modal/daily-hadith-modal';
 
 /**
  * Landing page.
@@ -22,7 +22,7 @@ import { DhikrPromptModalComponent } from '../../shared/components/dhikr-prompt-
 @Component({
   selector: 'aq-home-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IconComponent, TaskGoalModalComponent, DhikrPromptModalComponent],
+  imports: [RouterLink, IconComponent, TaskGoalModalComponent, DailyHadithModalComponent],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })

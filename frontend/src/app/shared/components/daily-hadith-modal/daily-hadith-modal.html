@@ -1,0 +1,99 @@
+@if (isVisible(); as visible) {
+  <div class="hadith-modal-overlay" (click)="close()" aria-hidden="true"></div>
+
+  <aside
+    class="hadith-modal-sheet aq-card"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="hadith-modal-title"
+  >
+    <div class="hadith-modal-sheet__handle" aria-hidden="true"></div>
+
+    <!-- Header -->
+    <div class="hadith-modal-sheet__header">
+      <div class="hadith-modal-sheet__badge">
+        <aq-icon name="sparkles" [size]="14" />
+        <span id="hadith-modal-title">{{ isBn() ? 'আজকের নির্বাচিত হাদিস' : 'Daily Hadith of the Day' }}</span>
+      </div>
+
+      <div class="hadith-modal-sheet__source-pill">
+        {{ isBn() ? hadith().bookBn : hadith().book }} · {{ isBn() ? 'হাদিস নং ' + toBnDigits(hadith().hadithNumber) : 'Hadith #' + hadith().hadithNumber }}
+      </div>
+
+      <button
+        type="button"
+        class="aq-icon-btn hadith-modal-sheet__close"
+        (click)="close()"
+        [attr.aria-label]="isBn() ? 'বন্ধ করুন' : 'Close'"
+      >
+        <aq-icon name="close" [size]="18" />
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="hadith-modal-sheet__body">
+      <!-- Narrator & Grade -->
+      <div class="hadith-modal-sheet__meta">
+        <span class="hadith-modal-sheet__narrator">
+          {{ isBn() ? hadith().narratorBn : hadith().narratorEn }}
+        </span>
+        <span class="aq-chip aq-chip--gold hadith-modal-sheet__grade">
+          {{ isBn() ? hadith().gradeBn : hadith().gradeEn }}
+        </span>
+      </div>
+
+      <!-- Arabic Text -->
+      <div class="hadith-modal-sheet__arabic-wrap">
+        <p class="hadith-modal-sheet__arabic aq-arabic" dir="rtl">
+          {{ hadith().arabic }}
+        </p>
+      </div>
+
+      <!-- Translation -->
+      <div class="hadith-modal-sheet__translation">
+        <p class="hadith-modal-sheet__bangla aq-bangla">
+          {{ hadith().bangla }}
+        </p>
+        @if (!isBn()) {
+          <p class="hadith-modal-sheet__english">
+            {{ hadith().english }}
+          </p>
+        }
+      </div>
+
+      <!-- Actions Toolbar -->
+      <div class="hadith-modal-sheet__actions">
+        <button
+          type="button"
+          class="aq-btn aq-btn--primary hadith-modal-sheet__read-more-btn"
+          (click)="readMore()"
+        >
+          <aq-icon name="bookOpen" [size]="16" />
+          <span>{{ isBn() ? 'আরও হাদিস পড়ুন' : 'Read More Hadiths' }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="aq-btn aq-btn--secondary"
+          (click)="copyHadith()"
+          [title]="isBn() ? 'হাদিসটি কপি করুন' : 'Copy Hadith text'"
+        >
+          <aq-icon [name]="copied() ? 'check' : 'copy'" [size]="16" />
+          <span>{{ copied() ? (isBn() ? 'কপি হয়েছে' : 'Copied') : (isBn() ? 'কপি' : 'Copy') }}</span>
+        </button>
+      </div>
+
+      <!-- Checkbox Don't show again today -->
+      <div class="hadith-modal-sheet__footer">
+        <label class="hadith-modal-sheet__checkbox-label">
+          <input
+            type="checkbox"
+            [checked]="dontShowAgain()"
+            (change)="toggleDontShowAgain($event)"
+          />
+          <span>{{ isBn() ? 'আজকের জন্য আর দেখাবেন না' : 'Don\'t show again today' }}</span>
+        </label>
+      </div>
+    </div>
+  </aside>
+}

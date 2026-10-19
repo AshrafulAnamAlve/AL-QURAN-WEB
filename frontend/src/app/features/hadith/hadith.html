@@ -1,0 +1,287 @@
+<div class="hadith-page aq-container">
+  <!-- Breadcrumbs & Header -->
+  <header class="page-header">
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a routerLink="/" class="breadcrumb__link">{{ isBn() ? 'হোম' : 'Home' }}</a>
+      <span class="breadcrumb__sep" aria-hidden="true">&rsaquo;</span>
+      <span class="breadcrumb__current">{{ isBn() ? 'হাদিস শরীফ' : 'Hadith' }}</span>
+    </nav>
+
+    <div class="header-main">
+      <div class="header-titles">
+        <h1 class="page-title">
+          <span class="page-title__arabic aq-arabic" aria-hidden="true">الحديث النبوي</span>
+          <span class="page-title__text">{{ isBn() ? 'হাদিস শরীফ' : 'Hadith Sharif' }}</span>
+        </h1>
+        <p class="page-subtitle">
+          {{ isBn()
+            ? 'রাসূলুল্লাহ (সা.)-এর পবিত্র বাণী, সহিহ বুখারী, মুসলিম, তিরমিযী ও রিয়াদুস সালেহীন থেকে বিশুদ্ধ সংকলন'
+            : 'Authentic prophetic traditions selected from Sahih al-Bukhari, Muslim, and Riyad as-Salihin' }}
+        </p>
+      </div>
+
+      <!-- Quick Bookmark counter filter button -->
+      <div class="header-actions">
+        <button
+          type="button"
+          class="bookmark-filter-btn"
+          [class.bookmark-filter-btn--active]="showBookmarksOnly()"
+          (click)="toggleBookmarksFilter()"
+          [attr.aria-pressed]="showBookmarksOnly()"
+        >
+          <aq-icon name="bookmark" [size]="18" />
+          <span>{{ isBn() ? 'সংরক্ষিত হাদিস' : 'Saved Hadiths' }}</span>
+          @if (bookmarksCount() > 0) {
+            <span class="badge aq-numeral">{{ isBn() ? toBnDigits(bookmarksCount()) : bookmarksCount() }}</span>
+          }
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Featured Daily Hadith Card (If not filtered by bookmarks or search) -->
+  @if (!showBookmarksOnly() && !searchInput()) {
+    <section class="daily-hero-card" aria-label="Daily Hadith">
+      <div class="daily-hero-card__badge-row">
+        <span class="daily-hero-badge">
+          <aq-icon name="sparkles" [size]="14" />
+          <span>{{ isBn() ? 'আজকের নির্বাচিত হাদিস' : 'Hadith of the Day' }}</span>
+        </span>
+        <span class="source-tag">
+          {{ isBn() ? dailyHadith().bookBn : dailyHadith().book }} : {{ isBn() ? toBnDigits(dailyHadith().hadithNumber) : dailyHadith().hadithNumber }}
+        </span>
+      </div>
+
+      <p class="daily-hero-card__arabic aq-arabic" dir="rtl" lang="ar">
+        {{ dailyHadith().arabic }}
+      </p>
+
+      <div class="daily-hero-card__content">
+        <p class="daily-hero-card__bangla">
+          {{ dailyHadith().bangla }}
+        </p>
+        <p class="daily-hero-card__english">
+          {{ dailyHadith().english }}
+        </p>
+      </div>
+
+      <div class="daily-hero-card__footer">
+        <div class="narrator-info">
+          <span class="narrator-label">{{ isBn() ? 'বর্ণনায়:' : 'Narrator:' }}</span>
+          <strong class="narrator-name">{{ isBn() ? dailyHadith().narratorBn : dailyHadith().narratorEn }}</strong>
+          <span class="grade-pill grade-pill--sahih">{{ isBn() ? dailyHadith().gradeBn : dailyHadith().gradeEn }}</span>
+        </div>
+
+        <div class="action-btn-group">
+          <button
+            type="button"
+            class="action-btn"
+            [class.action-btn--bookmarked]="hadithService.isBookmarked(dailyHadith().id)"
+            (click)="toggleBookmark(dailyHadith().id)"
+            [title]="isBn() ? 'বুকমার্ক করুন' : 'Bookmark'"
+          >
+            <aq-icon name="bookmark" [size]="16" />
+          </button>
+          <button
+            type="button"
+            class="action-btn"
+            (click)="copyHadith(dailyHadith())"
+            [title]="isBn() ? 'অনুলিপি করুন' : 'Copy Hadith'"
+          >
+            <aq-icon name="copy" [size]="16" />
+          </button>
+          <button
+            type="button"
+            class="action-btn"
+            (click)="shareHadith(dailyHadith())"
+            [title]="isBn() ? 'শেয়ার করুন' : 'Share Hadith'"
+          >
+            <aq-icon name="share" [size]="16" />
+          </button>
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- Search & Filter Controls -->
+  <section class="controls-section">
+    <!-- Search Box -->
+    <div class="search-box">
+      <span class="search-box__icon" aria-hidden="true">
+        <aq-icon name="search" [size]="18" />
+      </span>
+      <input
+        type="search"
+        class="search-box__input"
+        [value]="searchInput()"
+        (input)="onSearchChange($event)"
+        [placeholder]="isBn() ? 'হাদিস, বিষয়, বর্ণনাকারী বা নম্বর দিয়ে খুঁজুন...' : 'Search by text, narrator, book, or number...'"
+        [attr.aria-label]="isBn() ? 'হাদিস খুঁজুন' : 'Search Hadiths'"
+      />
+      @if (searchInput()) {
+        <button
+          type="button"
+          class="search-box__clear"
+          (click)="clearSearch()"
+          [attr.aria-label]="isBn() ? 'অনুসন্ধান মুছুন' : 'Clear search'"
+        >
+          <aq-icon name="close" [size]="16" />
+        </button>
+      }
+    </div>
+
+    <!-- Category Filter Chips -->
+    <div class="filter-group">
+      <label class="filter-group__label">{{ isBn() ? 'বিষয়ভিত্তিক হাদিস:' : 'Categories:' }}</label>
+      <div class="chip-scroll" role="tablist">
+        @for (cat of categories; track cat.id) {
+          <button
+            type="button"
+            role="tab"
+            class="chip"
+            [class.chip--active]="selectedCategory() === cat.id"
+            (click)="selectCategory(cat.id)"
+            [attr.aria-selected]="selectedCategory() === cat.id"
+          >
+            <span class="chip__icon" aria-hidden="true">{{ cat.icon }}</span>
+            <span class="chip__label">{{ isBn() ? cat.nameBn : cat.nameEn }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Books Filter Chips -->
+    <div class="filter-group">
+      <label class="filter-group__label">{{ isBn() ? 'গ্রন্থ অনুযায়ী:' : 'Books:' }}</label>
+      <div class="chip-scroll">
+        @for (b of books(); track b) {
+          <button
+            type="button"
+            class="chip chip--subtle"
+            [class.chip--active]="selectedBook() === b"
+            (click)="selectBook(b)"
+          >
+            <span class="chip__label">{{ b }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Results bar -->
+    <div class="results-bar">
+      <span class="results-bar__count">{{ resultCountText() }}</span>
+      @if (selectedCategory() !== 'all' || selectedBook() !== 'all' || searchInput() || showBookmarksOnly()) {
+        <button type="button" class="results-bar__reset" (click)="resetFilters()">
+          <aq-icon name="refresh" [size]="14" />
+          <span>{{ isBn() ? 'ফিল্টার রিসেট করুন' : 'Reset Filters' }}</span>
+        </button>
+      }
+    </div>
+  </section>
+
+  <!-- Hadith Cards List -->
+  <main class="hadith-list" aria-label="Hadith Collection List">
+    @for (item of displayedHadiths(); track item.id) {
+      <article class="hadith-card" [id]="'hadith-' + item.id">
+        <!-- Top meta header -->
+        <header class="hadith-card__header">
+          <div class="source-info">
+            <span class="book-name">{{ isBn() ? item.bookBn : item.book }}</span>
+            <span class="hadith-num aq-numeral">
+              {{ isBn() ? 'হাদিস নং ' + toBnDigits(item.hadithNumber) : 'Hadith #' + item.hadithNumber }}
+            </span>
+            @if (item.chapterBn) {
+              <span class="chapter-badge">{{ isBn() ? item.chapterBn : item.chapterEn }}</span>
+            }
+          </div>
+
+          <div class="header-badges">
+            <span class="grade-pill grade-pill--sahih">{{ isBn() ? item.gradeBn : item.gradeEn }}</span>
+          </div>
+        </header>
+
+        <!-- Arabic Calligraphy Text -->
+        <div class="hadith-card__arabic aq-arabic" dir="rtl" lang="ar">
+          {{ item.arabic }}
+        </div>
+
+        <!-- Translation section -->
+        <div class="hadith-card__translation">
+          <p class="hadith-card__bangla">
+            {{ item.bangla }}
+          </p>
+          <p class="hadith-card__english">
+            {{ item.english }}
+          </p>
+        </div>
+
+        <!-- Card Footer -->
+        <footer class="hadith-card__footer">
+          <div class="narrator">
+            <span class="narrator__label">{{ isBn() ? 'বর্ণনাকারী:' : 'Narrated by:' }}</span>
+            <span class="narrator__name">{{ isBn() ? item.narratorBn : item.narratorEn }}</span>
+          </div>
+
+          <div class="card-actions">
+            <button
+              type="button"
+              class="card-action-btn"
+              [class.card-action-btn--bookmarked]="hadithService.isBookmarked(item.id)"
+              (click)="toggleBookmark(item.id)"
+              [title]="isBn() ? 'বুকমার্ক করুন' : 'Bookmark'"
+              [attr.aria-label]="isBn() ? 'বুকমার্ক করুন' : 'Bookmark'"
+            >
+              <aq-icon name="bookmark" [size]="16" />
+              <span class="btn-text">{{ isBn() ? 'সংরক্ষণ' : 'Save' }}</span>
+            </button>
+
+            <button
+              type="button"
+              class="card-action-btn"
+              (click)="copyHadith(item)"
+              [title]="isBn() ? 'হাদিস অনুলিপি করুন' : 'Copy Hadith'"
+              [attr.aria-label]="isBn() ? 'হাদিস অনুলিপি করুন' : 'Copy Hadith'"
+            >
+              <aq-icon name="copy" [size]="16" />
+              <span class="btn-text">{{ isBn() ? 'কপি' : 'Copy' }}</span>
+            </button>
+
+            <button
+              type="button"
+              class="card-action-btn"
+              (click)="shareHadith(item)"
+              [title]="isBn() ? 'শেয়ার করুন' : 'Share Hadith'"
+              [attr.aria-label]="isBn() ? 'শেয়ার করুন' : 'Share Hadith'"
+            >
+              <aq-icon name="share" [size]="16" />
+              <span class="btn-text">{{ isBn() ? 'শেয়ার' : 'Share' }}</span>
+            </button>
+          </div>
+        </footer>
+      </article>
+    } @empty {
+      <div class="empty-state">
+        <div class="empty-state__icon" aria-hidden="true">📖</div>
+        <h3 class="empty-state__title">
+          {{ isBn() ? 'কোনো হাদিস পাওয়া যায়নি' : 'No Hadiths Found' }}
+        </h3>
+        <p class="empty-state__desc">
+          {{ isBn()
+            ? 'আপনার অনুসন্ধান বা নির্বাচিত ফিল্টারের সাথে মিলে এমন কোনো হাদিস পাওয়া যায়নি।'
+            : 'No Hadiths matched your search or selected filter combination.' }}
+        </p>
+        <button type="button" class="aq-btn aq-btn--primary" (click)="resetFilters()">
+          {{ isBn() ? 'ফিল্টার রিসেট করুন' : 'Reset Filters' }}
+        </button>
+      </div>
+    }
+  </main>
+
+  <!-- Toast Notification -->
+  @if (toastMessage(); as message) {
+    <div class="hadith-toast" role="alert" aria-live="polite">
+      <aq-icon name="check" [size]="16" />
+      <span>{{ message }}</span>
+    </div>
+  }
+</div>

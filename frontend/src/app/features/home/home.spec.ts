@@ -225,7 +225,7 @@ describe('HomePage', () => {
     const exploreSection = el.querySelector('.explore-section');
     expect(exploreSection).not.toBeNull();
     const cards = el.querySelectorAll('.explore-card');
-    expect(cards.length).toBe(8);
+    expect(cards.length).toBe(9);
   });
 
   it('renders Daily Quran Task Tracker card with streak and progress', () => {

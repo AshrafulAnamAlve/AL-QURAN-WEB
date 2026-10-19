@@ -101,6 +101,18 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
+    path: 'hadith',
+    loadComponent: () => import('./features/hadith/hadith').then((m) => m.HadithPage),
+    data: {
+      meta: {
+        title: 'Hadith Sharif — সহিহ হাদিস সংকলন',
+        description:
+          'Read authentic Hadiths from Sahih al-Bukhari, Sahih Muslim and Riyad as-Salihin ' +
+          'with Arabic text, Bangla translation, English meaning, and daily Hadith.',
+      },
+    },
+  },
+  {
     path: 'tasbih',
     loadComponent: () => import('./features/tasbih/tasbih').then((m) => m.TasbihPage),
     data: {

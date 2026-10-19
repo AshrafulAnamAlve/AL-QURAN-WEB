@@ -1,0 +1,709 @@
+@use 'mixins' as m;
+
+.hadith-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding-top: 1rem;
+  padding-bottom: 4rem;
+  position: relative;
+}
+
+// --- Breadcrumb & Header ---
+.page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--aq-text-muted);
+
+  &__link {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: var(--aq-primary);
+    }
+  }
+
+  &__sep {
+    opacity: 0.5;
+  }
+
+  &__current {
+    color: var(--aq-text);
+    font-weight: 500;
+  }
+}
+
+.header-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.header-titles {
+  flex: 1;
+  min-width: 260px;
+}
+
+.page-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0;
+
+  &__arabic {
+    font-size: 1.5rem;
+    color: var(--aq-gold-600);
+    line-height: 1.2;
+
+    :host-context([data-theme='dark']) & {
+      color: var(--aq-gold-400);
+    }
+  }
+
+  &__text {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--aq-text);
+    letter-spacing: -0.02em;
+  }
+}
+
+.page-subtitle {
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+  color: var(--aq-text-muted);
+  max-width: 680px;
+  line-height: 1.5;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.bookmark-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  background: var(--aq-surface-raised, #ffffff);
+  border: 1px solid var(--aq-border);
+  color: var(--aq-text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  .badge {
+    background: var(--aq-gold-500);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.1rem 0.45rem;
+    border-radius: 9999px;
+  }
+
+  &:hover {
+    border-color: var(--aq-gold-500);
+    background: var(--aq-surface-hover, #f8fafc);
+  }
+
+  &--active {
+    background: var(--aq-primary-soft, rgba(16, 185, 129, 0.12));
+    border-color: var(--aq-primary);
+    color: var(--aq-primary);
+
+    .badge {
+      background: var(--aq-primary);
+    }
+  }
+}
+
+// --- Featured Daily Hero Card ---
+.daily-hero-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.75rem;
+  border-radius: 1.25rem;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(217, 119, 6, 0.08) 100%),
+    var(--aq-surface-raised, #ffffff);
+  border: 1.5px solid var(--aq-gold-400);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--aq-primary), var(--aq-gold-500));
+  }
+
+  &__badge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .daily-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    background: var(--aq-primary);
+    color: #ffffff;
+    font-size: 0.785rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .source-tag {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--aq-gold-700);
+
+    :host-context([data-theme='dark']) & {
+      color: var(--aq-gold-300);
+    }
+  }
+
+  &__arabic {
+    font-size: 1.65rem;
+    line-height: 2;
+    color: var(--aq-text);
+    margin: 0;
+    text-align: right;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__bangla {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: var(--aq-text);
+    font-weight: 500;
+  }
+
+  &__english {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--aq-text-muted);
+    font-style: italic;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--aq-border);
+    flex-wrap: wrap;
+  }
+}
+
+.narrator-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  flex-wrap: wrap;
+
+  .narrator-label {
+    color: var(--aq-text-muted);
+  }
+
+  .narrator-name {
+    color: var(--aq-text);
+  }
+}
+
+.grade-pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+
+  &--sahih {
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+
+    :host-context([data-theme='dark']) & {
+      color: #34d399;
+      background: rgba(16, 185, 129, 0.2);
+    }
+  }
+}
+
+.action-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.5rem;
+  background: var(--aq-surface);
+  border: 1px solid var(--aq-border);
+  color: var(--aq-text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var(--aq-primary);
+    color: var(--aq-primary);
+    background: var(--aq-surface-hover);
+  }
+
+  &--bookmarked {
+    color: var(--aq-gold-500);
+    border-color: var(--aq-gold-500);
+    background: rgba(217, 119, 6, 0.08);
+  }
+}
+
+// --- Controls Section ---
+.controls-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  &__icon {
+    position: absolute;
+    left: 1rem;
+    color: var(--aq-text-muted);
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+  }
+
+  &__input {
+    width: 100%;
+    height: 3rem;
+    padding: 0 2.5rem 0 2.75rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--aq-border);
+    background: var(--aq-surface-raised, #ffffff);
+    color: var(--aq-text);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &::placeholder {
+      color: var(--aq-text-muted);
+    }
+
+    &:focus {
+      border-color: var(--aq-primary);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+    }
+  }
+
+  &__clear {
+    position: absolute;
+    right: 0.75rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: none;
+    background: transparent;
+    color: var(--aq-text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+
+    &:hover {
+      background: var(--aq-surface-hover);
+      color: var(--aq-text);
+    }
+  }
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &__label {
+    font-size: 0.825rem;
+    font-weight: 600;
+    color: var(--aq-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
+.chip-scroll {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--aq-border);
+    border-radius: 9999px;
+  }
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 9999px;
+  background: var(--aq-surface-raised, #ffffff);
+  border: 1px solid var(--aq-border);
+  color: var(--aq-text);
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &__icon {
+    font-size: 0.95rem;
+  }
+
+  &:hover {
+    border-color: var(--aq-primary);
+    background: var(--aq-surface-hover);
+  }
+
+  &--active {
+    background: var(--aq-primary);
+    border-color: var(--aq-primary);
+    color: #ffffff;
+
+    &:hover {
+      background: var(--aq-primary);
+    }
+  }
+
+  &--subtle {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.75rem;
+
+    &.chip--active {
+      background: var(--aq-gold-500);
+      border-color: var(--aq-gold-500);
+      color: #ffffff;
+    }
+  }
+}
+
+.results-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--aq-text-muted);
+  padding: 0.25rem 0.25rem 0;
+
+  &__reset {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border: none;
+    background: transparent;
+    color: var(--aq-primary);
+    font-size: 0.825rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+
+    &:hover {
+      background: var(--aq-surface-hover);
+    }
+  }
+}
+
+// --- Hadith List & Cards ---
+.hadith-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.hadith-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background: var(--aq-surface-raised, #ffffff);
+  border: 1px solid var(--aq-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: var(--aq-gold-400);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--aq-border);
+  }
+
+  .source-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    font-size: 0.875rem;
+
+    .book-name {
+      font-weight: 700;
+      color: var(--aq-text);
+    }
+
+    .hadith-num {
+      color: var(--aq-text-muted);
+    }
+
+    .chapter-badge {
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+      background: var(--aq-surface);
+      color: var(--aq-text-muted);
+      border: 1px solid var(--aq-border);
+    }
+  }
+
+  &__arabic {
+    font-size: 1.45rem;
+    line-height: 2;
+    color: var(--aq-text);
+    text-align: right;
+    padding: 0.25rem 0;
+  }
+
+  &__translation {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  &__bangla {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--aq-text);
+  }
+
+  &__english {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--aq-text-muted);
+    font-style: italic;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--aq-border);
+    flex-wrap: wrap;
+  }
+
+  .narrator {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.825rem;
+
+    &__label {
+      color: var(--aq-text-muted);
+    }
+
+    &__name {
+      font-weight: 500;
+      color: var(--aq-text);
+    }
+  }
+
+  .card-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .card-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.65rem;
+    border-radius: 0.5rem;
+    background: var(--aq-surface);
+    border: 1px solid var(--aq-border);
+    color: var(--aq-text);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: var(--aq-primary);
+      color: var(--aq-primary);
+      background: var(--aq-surface-hover);
+    }
+
+    &--bookmarked {
+      color: var(--aq-gold-500);
+      border-color: var(--aq-gold-500);
+      background: rgba(217, 119, 6, 0.08);
+    }
+  }
+}
+
+// --- Empty State ---
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  border-radius: 1rem;
+  background: var(--aq-surface-raised, #ffffff);
+  border: 1px dashed var(--aq-border);
+  gap: 0.75rem;
+
+  &__icon {
+    font-size: 3rem;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--aq-text);
+  }
+
+  &__desc {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--aq-text-muted);
+    max-width: 420px;
+    line-height: 1.5;
+  }
+}
+
+// --- Toast Bubble ---
+.hadith-toast {
+  position: fixed;
+  bottom: calc(var(--aq-bottom-nav-height, 4rem) + 1.25rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background: var(--aq-primary, #059669);
+  color: #ffffff;
+  border-radius: 9999px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  font-size: 0.875rem;
+  font-weight: 500;
+  animation: toastFade 0.25s ease-out;
+
+  :host-context([data-theme='dark']) & {
+    background: #064e3b;
+    border: 1px solid var(--aq-gold-500);
+  }
+}
+
+@keyframes toastFade {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@media (max-width: 640px) {
+  .daily-hero-card {
+    padding: 1.25rem;
+
+    &__arabic {
+      font-size: 1.35rem;
+    }
+  }
+
+  .hadith-card {
+    padding: 1.15rem;
+
+    &__arabic {
+      font-size: 1.25rem;
+    }
+
+    .btn-text {
+      display: none;
+    }
+
+    .card-action-btn {
+      padding: 0.4rem;
+    }
+  }
+}

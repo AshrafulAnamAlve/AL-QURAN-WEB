@@ -16,6 +16,7 @@ export interface NavItem {
 export const NAV_ITEMS: readonly NavItem[] = [
   { path: '/', label: 'Home', labelBn: 'হোম', icon: 'home', primary: true },
   { path: '/quran', label: 'Quran', labelBn: 'কুরআন', icon: 'book', primary: true },
+  { path: '/hadith', label: 'Hadith', labelBn: 'হাদিস', icon: 'bookOpen' },
   { path: '/juz', label: 'Juz', labelBn: 'পারা', icon: 'layers' },
   { path: '/99-names', label: '99 Names', labelBn: '৯৯ নাম', icon: 'sparkles' },
   { path: '/tasbih', label: 'Tasbih', labelBn: 'তসবিহ', icon: 'tasbih' },

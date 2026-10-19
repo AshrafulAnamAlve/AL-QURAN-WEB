@@ -317,25 +317,27 @@ them live without a rebuild.
 
 ## 8. Current Progress
 
-**Phase 13 of 17 complete.** The Quran is readable, recitation audio is fully
+**Phase 18 of 18 complete.** The Quran is readable, recitation audio is fully
 playable, personal features are live (search, bookmarks, continue reading, progress tracker),
 prayer times and location are live, the Islamic Calendar and Ramadan Dashboard are live,
 Nearby Mosques (`/mosques`) is live with OpenStreetMap Leaflet integration,
 Settings and Preferences (`/settings`) is live, PWA, Offline Caching, SEO and Accessibility
-are fully implemented, and the Daily Quran Task Tracker, Reminders & Habit Calendar
-(Phase 13) are fully integrated across Home, Calendar, Reader, Audio Player, Settings, and backend sync.
+are fully implemented, the Daily Quran Task Tracker & Habit Calendar (Phase 13),
+Prayer Notifications & In-App Adhan Player (Phase 14), Asma-ul-Husna (Phase 15),
+Digital Tasbih & Dhikr (Phase 16), Quran Ayah Bangla Pronunciation (Phase 17), and
+Daily Hadith Modal & Dedicated Hadith Section (Phase 18) are fully integrated.
 
-Verified on 2026-10-18:
+Verified on 2026-10-19:
 
 ```
 Backend unit & integration tests    46 passed, 0 failed (AlQuran.Api.Tests)
 Backend build (Release)             0 warnings, 0 errors
-Frontend unit tests                 252 passed (36 test files)
+Frontend unit tests                 330 passed (47 test files)
 Frontend production build           0 warnings, 0 errors
 Service Worker generation           ngsw-worker.js & ngsw.json generated
 PWA Manifest & Icons                192x192, 512x512, maskable, SVG icons present
 SEO Artifacts                       robots.txt, sitemap.xml (114 surahs, 30 juz), JSON-LD WebSite & Chapter
-Phases 1-13                         100% COMPLETE & VERIFIED
+Phases 1-18                         100% COMPLETE & VERIFIED
 ```
 
 ---
@@ -553,12 +555,13 @@ Arabic. The juz list. Skeletons, error states and empty states throughout.
 **Core Phases 1 to 16 are 100% COMPLETE & VERIFIED.**
 Live deployment is active on RunASP.NET (backend) and GitHub Pages (frontend).
 
-### New Features Roadmap (Phases 13 – 17):
+### New Features Roadmap (Phases 13 – 18):
 - **[Phase 13](docs/phases/PHASE-13.md) — Daily Quran Task Tracker, Reminders & Habit Calendar**: ✅ **COMPLETE (2026-10-18)**. User-defined daily reading/listening goals, scheduled browser reminders, automatic & manual completion tracking, celebration toasts, and habit calendar streak matrix.
 - **[Phase 14](docs/phases/PHASE-14.md) — Prayer Time Notifications & In-App Adhan Player Modal**: ✅ **COMPLETE (2026-10-18)**. Desktop/PWA notifications for all five daily prayers, plus an interactive in-app Adhan player that starts muted by default with an instant one-tap unmute button.
 - **[Phase 15](docs/phases/PHASE-15.md) — Asma-ul-Husna (99 Beautiful Names of Allah)**: ✅ **COMPLETE (2026-10-18)**. Dedicated section featuring a prominent hero calligraphy display of the Supreme Name "الله" (#1), followed by all 99 names with Arabic calligraphy, transliteration, Bengali/English meanings, spiritual reflection notes, sequential continuous audio recitation, instant bilingual search, and personal bookmarking.
 - **[Phase 16](docs/phases/PHASE-16.md) — Daily Dhikr Rotational Advice Modal & Digital Tasbih**: ✅ **COMPLETE (2026-10-19)**. Rotational spiritual deed prompt on the home page (e.g. Surah An-Nas 3x, Astaghfirullah 3x, Durood 3x) with "Done" and "Skip" actions, alongside a tactile Digital Tasbih counter with target selector (33, 10, 100, custom), automatic Dhikr progression, synthetic audio clicks, haptic feedback, and categorized Adhkar.
 - **[Phase 17](docs/phases/PHASE-17.md) — Quran Ayah Bangla Pronunciation (উচ্চারণ) and Multi-Script Display**: ✅ **COMPLETE (2026-10-19)**. Authentic Bengali phonetic transliteration (উচ্চারণ) rendered alongside Uthmani Arabic script and Muhiuddin Khan Bengali translation across all Quran reader views, with reader toolbar visibility toggle, settings panel toggle, Bismillah phonetic display, and clipboard copy/share formatting.
+- **[Phase 18](docs/phases/PHASE-18.md) — Daily Hadith Modal & Dedicated Hadith Section (হাদিস বিভাগ)**: ✅ **COMPLETE (2026-10-19)**. Replaced intrusive home page task modal with an inspiring daily authentic Hadith modal featuring deterministic day rotation and "Read More" (আরও পড়ুন) button, and created a dedicated Hadith Section (`/hadith`) with topic filters (Faith, Prayer, Ethics, Charity, Fasting, Du'a, 40 Hadith), canonical books (Bukhari, Muslim, Tirmidhi, Abu Dawud, Riyad as-Salihin), instant search, and bookmarking.
 
 ---
 

@@ -22,6 +22,7 @@ before the next one starts, so nothing is left half-working underneath.
 | [15](PHASE-15.md) | Asma-ul-Husna (99 Beautiful Names of Allah) | ✅ **Complete** |
 | [16](PHASE-16.md) | Daily Dhikr Rotational Advice Modal & Digital Tasbih | ✅ **Complete** |
 | [17](PHASE-17.md) | Quran Ayah Bangla Pronunciation (উচ্চারণ) | ✅ **Complete** |
+| [18](PHASE-18.md) | Daily Hadith Modal & Dedicated Hadith Section (হাদিস বিভাগ) | ✅ **Complete** |
 
 ## How a phase is closed
 
