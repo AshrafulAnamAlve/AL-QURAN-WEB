@@ -285,6 +285,35 @@
   }
 }
 
+.desktop-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  background: color-mix(in srgb, var(--aq-gold, #c9a227) 15%, var(--aq-surface));
+  color: var(--aq-gold-700, #967117);
+  border: 1px solid color-mix(in srgb, var(--aq-gold, #c9a227) 35%, transparent);
+  border-radius: var(--aq-radius-pill);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--aq-gold, #c9a227);
+    color: #fff;
+    border-color: var(--aq-gold, #c9a227);
+  }
+
+  @media (max-width: 1280px) {
+    .desktop-pill-label {
+      display: none;
+    }
+    padding: 0.35rem;
+  }
+}
+
 .install-pill-btn {
   display: inline-flex;
   align-items: center;
@@ -472,6 +501,47 @@
       font-weight: 700;
       color: var(--aq-gold-600, #b45309);
       white-space: nowrap;
+    }
+  }
+
+  .drawer__desktop-item {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--aq-border);
+  }
+
+  .drawer__desktop-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: color-mix(in srgb, var(--aq-gold, #c9a227) 12%, var(--aq-surface));
+    color: var(--aq-text);
+    border: 1px solid color-mix(in srgb, var(--aq-gold, #c9a227) 30%, transparent);
+    border-radius: var(--aq-radius-md);
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s ease;
+
+    &:hover {
+      background: var(--aq-surface-2);
+    }
+  }
+
+  .drawer__desktop-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+
+    strong {
+      font-size: 0.875rem;
+      color: var(--aq-text);
+    }
+
+    span {
+      font-size: 0.75rem;
+      color: var(--aq-text-muted);
     }
   }
 

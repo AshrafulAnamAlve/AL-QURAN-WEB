@@ -9,6 +9,8 @@ import { PwaService } from './core/services/pwa';
 import { LanguageService } from './core/services/language';
 
 import { AdhanModalComponent } from './shared/components/adhan-modal/adhan-modal';
+import { DesktopModalComponent } from './shared/components/desktop-modal/desktop-modal';
+import { DesktopService } from './core/services/desktop';
 import { PrayerNotificationService } from './core/services/prayer-notification';
 
 /**
@@ -29,6 +31,7 @@ import { PrayerNotificationService } from './core/services/prayer-notification';
     MiniPlayerComponent,
     IconComponent,
     AdhanModalComponent,
+    DesktopModalComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -37,10 +40,12 @@ export class App {
   protected readonly pwa = inject(PwaService);
   protected readonly language = inject(LanguageService);
   protected readonly notificationService = inject(PrayerNotificationService);
+  protected readonly desktop = inject(DesktopService);
 
   readonly isOffline = this.pwa.isOffline;
   readonly hasUpdate = this.pwa.hasUpdate;
   readonly activeAdhanModal = this.notificationService.activeAdhanModal;
+  readonly showDesktopModal = this.desktop.showDownloadModal;
 
   async updateApp(): Promise<void> {
     await this.pwa.activateUpdate();

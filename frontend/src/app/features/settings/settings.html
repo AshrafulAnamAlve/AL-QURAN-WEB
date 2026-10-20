@@ -963,6 +963,33 @@
         </div>
       </div>
 
+      <!-- Desktop Application & Shortcuts -->
+      <div class="settings-card">
+        <h3 class="card-subtitle">{{ isBn() ? 'ডেস্কটপ অ্যাপ্লিকেশন ও শর্টকাট' : 'Desktop Application & Shortcuts' }}</h3>
+        <p class="card-desc">
+          {{ isBn() ? 'উইন্ডোজ পিসির জন্য অফলাইন কুরআন, ব্যাকগ্রাউন্ড আজান অ্যালার্ট, ট্রে ওয়াখত নোটিফিকেশন এবং গ্লোবাল মিডিয়া কি শর্টকাট উপভোগ করুন।' : 'Enjoy offline Quran for Windows, background Adhan alerts, system tray waqt counter, and global media keyboard shortcuts.' }}
+        </p>
+
+        <div class="backup-actions">
+          @if (!desktop.isDesktop()) {
+            <button type="button" class="aq-btn aq-btn--primary" (click)="desktop.openDownloadModal('download')">
+              <aq-icon name="download" [size]="18" />
+              <span>{{ isBn() ? 'ডেস্কটপ অ্যাপ ডাউনলোড' : 'Download Desktop App' }}</span>
+            </button>
+          } @else {
+            <span class="preview-header__badge">
+              <aq-icon name="check" [size]="16" />
+              <span>{{ isBn() ? 'ডেস্কটপ অ্যাপে চলমান' : 'Running on Desktop App' }}</span>
+            </span>
+          }
+
+          <button type="button" class="aq-btn aq-btn--secondary" (click)="desktop.openDownloadModal('shortcuts')">
+            <aq-icon name="settings" [size]="18" />
+            <span>{{ isBn() ? 'কিবোর্ড শর্টকাটসমূহ' : 'Keyboard Shortcuts' }}</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Danger Zone -->
       <div class="settings-card settings-card--danger">
         <h3 class="card-subtitle card-subtitle--danger">

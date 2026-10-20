@@ -1,0 +1,401 @@
+@use 'mixins' as m;
+
+:host {
+  display: contents;
+}
+
+.desktop-modal__backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  @include m.z(modal);
+  animation: modal-fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.desktop-modal__dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 640px);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--aq-surface);
+  border: 1px solid var(--aq-border);
+  border-radius: var(--aq-radius-xl, 16px);
+  box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.45);
+  @include m.z(modal);
+  overflow: hidden;
+  animation: modal-scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.desktop-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--aq-border);
+  background: color-mix(in srgb, var(--aq-surface) 95%, var(--aq-primary));
+}
+
+.desktop-modal__header-info {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.desktop-modal__header-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--aq-radius-lg, 12px);
+  background: linear-gradient(135deg, var(--aq-green-700), var(--aq-green-500));
+  color: #fff;
+  box-shadow: var(--aq-shadow-sm);
+  flex-shrink: 0;
+}
+
+.desktop-modal__title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--aq-text);
+  line-height: 1.3;
+}
+
+.desktop-modal__subtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--aq-text-muted);
+}
+
+.desktop-modal__close-btn {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--aq-text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: var(--aq-surface-2);
+    color: var(--aq-text);
+    border-color: var(--aq-border);
+  }
+
+  @include m.focus-visible;
+}
+
+// Tabs
+.desktop-modal__tabs {
+  display: flex;
+  padding: 0.5rem 1.5rem;
+  gap: 0.5rem;
+  background: var(--aq-bg-subtle);
+  border-bottom: 1px solid var(--aq-border);
+}
+
+.desktop-modal__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: var(--aq-radius-md, 8px);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--aq-text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    color: var(--aq-text);
+    background: color-mix(in srgb, var(--aq-surface) 60%, transparent);
+  }
+
+  &.is-active {
+    color: var(--aq-primary);
+    background: var(--aq-surface);
+    border-color: var(--aq-border);
+    box-shadow: var(--aq-shadow-sm);
+  }
+
+  @include m.focus-visible;
+}
+
+// Body
+.desktop-modal__body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+// Download Card
+.download-card {
+  padding: 1.25rem;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--aq-primary-soft) 40%, var(--aq-surface)), var(--aq-surface));
+  border: 1px solid var(--aq-primary-border, var(--aq-border));
+  border-radius: var(--aq-radius-lg, 12px);
+  box-shadow: var(--aq-shadow-sm);
+}
+
+.download-card__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--aq-primary);
+  margin-bottom: 0.5rem;
+}
+
+.download-card__version {
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  background: var(--aq-primary);
+  color: #fff;
+  font-size: 0.7rem;
+}
+
+.download-card__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--aq-text);
+}
+
+.download-card__desc {
+  margin: 0.35rem 0 1rem;
+  font-size: 0.875rem;
+  color: var(--aq-text-muted);
+  line-height: 1.45;
+}
+
+.download-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.15rem;
+  border-radius: var(--aq-radius-md, 8px);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.18s ease;
+
+  &--primary {
+    background: linear-gradient(135deg, var(--aq-green-700), var(--aq-green-500));
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(15, 81, 50, 0.25);
+
+    &:hover {
+      background: linear-gradient(135deg, var(--aq-green-800), var(--aq-green-600));
+      color: #fff;
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+  }
+
+  &--secondary {
+    background: var(--aq-surface);
+    color: var(--aq-text);
+    border: 1px solid var(--aq-border);
+
+    &:hover {
+      background: var(--aq-surface-2);
+      color: var(--aq-text);
+      text-decoration: none;
+    }
+  }
+
+  &__size {
+    font-size: 0.75rem;
+    opacity: 0.85;
+    padding-left: 0.25rem;
+  }
+
+  @include m.focus-visible;
+}
+
+// Features
+.features-title {
+  margin: 0.25rem 0 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--aq-text);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+
+  @include m.up(sm) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.feature-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--aq-bg-subtle);
+  border: 1px solid var(--aq-border);
+  border-radius: var(--aq-radius-md, 8px);
+
+  &__icon {
+    font-size: 1.35rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  &__name {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--aq-text);
+    margin-bottom: 0.15rem;
+  }
+
+  &__desc {
+    margin: 0;
+    font-size: 0.775rem;
+    color: var(--aq-text-muted);
+    line-height: 1.4;
+  }
+}
+
+// Shortcuts Tab
+.shortcuts-intro {
+  font-size: 0.875rem;
+  color: var(--aq-text-muted);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.shortcuts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.65rem 0.875rem;
+  background: var(--aq-bg-subtle);
+  border: 1px solid var(--aq-border);
+  border-radius: var(--aq-radius-md, 8px);
+  transition: background 0.12s ease;
+
+  &:hover {
+    background: var(--aq-surface-2);
+  }
+}
+
+.shortcut-keys {
+  flex: 0 0 auto;
+}
+
+.shortcut-key {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  font-family: inherit;
+  font-size: 0.775rem;
+  font-weight: 700;
+  color: var(--aq-text);
+  background: var(--aq-surface);
+  border: 1px solid var(--aq-border-dark, var(--aq-border));
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.shortcut-desc {
+  flex: 1 1 auto;
+  font-size: 0.84rem;
+  color: var(--aq-text);
+}
+
+.shortcut-copy-btn {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--aq-text-muted);
+  cursor: pointer;
+  transition: all 0.12s ease;
+
+  &:hover {
+    background: var(--aq-surface);
+    color: var(--aq-text);
+    border-color: var(--aq-border);
+  }
+
+  .copied-check {
+    color: var(--aq-green-500);
+  }
+
+  @include m.focus-visible;
+}
+
+.shortcuts-tip {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: color-mix(in srgb, var(--aq-gold, #c9a227) 12%, var(--aq-surface));
+  border: 1px solid color-mix(in srgb, var(--aq-gold, #c9a227) 35%, transparent);
+  border-radius: var(--aq-radius-md, 8px);
+  font-size: 0.8125rem;
+  color: var(--aq-text);
+  line-height: 1.45;
+
+  &__icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  &__text {
+    margin: 0;
+  }
+}
+
+@keyframes modal-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-scale-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}

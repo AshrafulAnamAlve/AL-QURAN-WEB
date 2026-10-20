@@ -7,6 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { DesktopService } from '../../core/services/desktop';
 import { LanguageService } from '../../core/services/language';
 import { PwaService } from '../../core/services/pwa';
 import { ThemeService } from '../../core/services/theme';
@@ -31,6 +32,9 @@ export class HeaderComponent {
   protected readonly language = inject(LanguageService);
   protected readonly pwa = inject(PwaService);
   protected readonly taskService = inject(TaskService);
+  protected readonly desktop = inject(DesktopService);
+
+  readonly isDesktopApp = this.desktop.isDesktop;
 
   protected readonly navItems = NAV_ITEMS;
   protected readonly primaryNavItems = PRIMARY_NAV_ITEMS;
@@ -103,6 +107,12 @@ export class HeaderComponent {
 
   async installApp(): Promise<void> {
     await this.pwa.promptInstall();
+  }
+
+  openDesktopModal(): void {
+    this.closeDrawer();
+    this.closeMoreDropdown();
+    this.desktop.openDownloadModal();
   }
 
   toBnDigits(val: string | number): string {

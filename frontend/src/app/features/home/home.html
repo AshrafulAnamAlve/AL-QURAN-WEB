@@ -701,6 +701,42 @@
         <span class="explore-card__arrow" aria-hidden="true">&rarr;</span>
       </a>
     </div>
+
+    <!-- Desktop Application Showcase Banner -->
+    @if (!isDesktopApp()) {
+      <aside class="desktop-banner" role="region" [attr.aria-label]="isBn() ? 'আল-কুরআন ডেস্কটপ সংস্করণ' : 'Al-Quran Desktop App'">
+        <div class="desktop-banner__badge">
+          <span>{{ isBn() ? 'পিসি ও ল্যাপটপের জন্য' : 'For PC & Laptop' }}</span>
+          <span class="desktop-banner__os">Windows 10 / 11</span>
+        </div>
+
+        <div class="desktop-banner__main">
+          <div class="desktop-banner__icon">
+            <aq-icon name="monitor" [size]="32" />
+          </div>
+          <div class="desktop-banner__text">
+            <h3 class="desktop-banner__title">
+              {{ isBn() ? 'আল-কুরআন ডেস্কটপ অ্যাপ্লিকেশন' : 'Al-Quran Desktop Application' }}
+            </h3>
+            <p class="desktop-banner__desc">
+              {{ isBn()
+                ? 'ব্যাকগ্রাউন্ডে আজানের ধ্বনি, টাস্কবার সিস্টেম ট্রেতে লাইভ ওয়াক্তের কাউন্টডাউন এবং কিবোর্ডের মিডিয়া হটকি দিয়ে তিলাওয়াত উপভোগ করুন।'
+                : 'Experience background Adhan alerts, live waqt countdown on the taskbar tray, and global media keyboard shortcuts.' }}
+            </p>
+          </div>
+          <div class="desktop-banner__actions">
+            <button
+              type="button"
+              class="aq-btn aq-btn--primary desktop-banner__btn"
+              (click)="openDesktopModal()"
+            >
+              <aq-icon name="download" [size]="18" />
+              <span>{{ isBn() ? 'ডাউনলোড ও শর্টকাট' : 'Download & Shortcuts' }}</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+    }
   </section>
 </div>
 

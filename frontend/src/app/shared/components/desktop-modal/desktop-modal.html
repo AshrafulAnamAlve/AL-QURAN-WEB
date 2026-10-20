@@ -1,0 +1,218 @@
+<div class="desktop-modal__backdrop" (click)="close()" role="presentation"></div>
+
+<div
+  class="desktop-modal__dialog"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-label]="isBn() ? 'আল-কুরআন ডেস্কটপ অ্যাপ ডাউনলোড ও শর্টকাট' : 'Al-Quran Desktop App & Shortcuts'"
+>
+  <!-- Modal Header -->
+  <header class="desktop-modal__header">
+    <div class="desktop-modal__header-info">
+      <div class="desktop-modal__header-icon">
+        <aq-icon name="monitor" [size]="22" />
+      </div>
+      <div>
+        <h2 class="desktop-modal__title">
+          {{ isBn() ? 'আল-কুরআন ডেস্কটপ অ্যাপ' : 'Al-Quran Desktop App' }}
+        </h2>
+        <p class="desktop-modal__subtitle">
+          {{ isBn() ? 'উইন্ডোজের জন্য ব্যাকগ্রাউন্ড আজান, সিস্টেম ট্রে ও মিডিয়া শর্টকাট' : 'Background Adhan, System Tray & Media Hotkeys for Windows PC' }}
+        </p>
+      </div>
+    </div>
+
+    <button
+      type="button"
+      class="desktop-modal__close-btn"
+      (click)="close()"
+      [attr.aria-label]="isBn() ? 'বন্ধ করুন' : 'Close'"
+    >
+      <aq-icon name="close" [size]="20" />
+    </button>
+  </header>
+
+  <!-- Segmented Tabs -->
+  <div class="desktop-modal__tabs" role="tablist">
+    <button
+      type="button"
+      role="tab"
+      class="desktop-modal__tab"
+      [class.is-active]="activeTab() === 'download'"
+      [attr.aria-selected]="activeTab() === 'download'"
+      (click)="setTab('download')"
+    >
+      <aq-icon name="download" [size]="16" />
+      <span>{{ isBn() ? 'ডাউনলোড অপশন' : 'Download Options' }}</span>
+    </button>
+
+    <button
+      type="button"
+      role="tab"
+      class="desktop-modal__tab"
+      [class.is-active]="activeTab() === 'shortcuts'"
+      [attr.aria-selected]="activeTab() === 'shortcuts'"
+      (click)="setTab('shortcuts')"
+    >
+      <aq-icon name="sparkles" [size]="16" />
+      <span>{{ isBn() ? 'কিবোর্ড শর্টকাট' : 'Keyboard Shortcuts' }}</span>
+    </button>
+  </div>
+
+  <!-- Tab 1: Download Options -->
+  @if (activeTab() === 'download') {
+    <div class="desktop-modal__body">
+      <!-- Primary Download Card -->
+      <div class="download-card">
+        <div class="download-card__badge">
+          <span>Windows 10 / 11 (64-bit)</span>
+          <span class="download-card__version">v1.0.0</span>
+        </div>
+
+        <h3 class="download-card__title">
+          {{ isBn() ? 'আল-কুরআন পোর্টেবল সংস্করণ (Standalone Portable)' : 'Al-Quran Standalone Portable' }}
+        </h3>
+        <p class="download-card__desc">
+          {{ isBn()
+            ? 'কোনো ইনস্টলেশনের প্রয়োজন নেই! ফাইলটি ডাউনলোড করে সরাসরি যেকোনো পিসিতে ডাবল-ক্লিক করলেই চালু হবে।'
+            : 'No installation required! Simply download and double-click to run directly on any Windows PC.' }}
+        </p>
+
+        <div class="download-card__actions">
+          <a
+            [href]="desktop.downloadLinks.portableExe"
+            class="download-btn download-btn--primary"
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <aq-icon name="download" [size]="18" />
+            <span>{{ isBn() ? 'পোর্টেবল সংস্করণ ডাউনলোড (.exe)' : 'Download Portable (.exe)' }}</span>
+            <span class="download-btn__size">~75 MB</span>
+          </a>
+
+          <a
+            [href]="desktop.downloadLinks.releasePage"
+            class="download-btn download-btn--secondary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <aq-icon name="externalLink" [size]="16" />
+            <span>{{ isBn() ? 'গিটহাব রিলিজ ও অন্যান্য সংস্করণ' : 'GitHub Releases & Setup' }}</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Feature Highlights -->
+      <h4 class="features-title">
+        {{ isBn() ? 'ডেস্কটপ সংস্করণের বিশেষ সুবিধাসমূহ' : 'Key Desktop Features' }}
+      </h4>
+
+      <div class="features-grid">
+        <div class="feature-item">
+          <div class="feature-item__icon">🕌</div>
+          <div>
+            <strong class="feature-item__name">
+              {{ isBn() ? 'ব্যাকগ্রাউন্ড আজান অ্যালার্ট' : 'Background Adhan' }}
+            </strong>
+            <p class="feature-item__desc">
+              {{ isBn()
+                ? 'অ্যাপ মিনিমাইজ থাকলেও সঠিক ওয়াক্তে আজানের ধ্বনি ও নেটিভ উইন্ডোজ নোটিফিকেশন পাঠাবে।'
+                : 'Plays authentic Adhan audio and sends native Windows toast alerts on prayer time.' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-item__icon">📌</div>
+          <div>
+            <strong class="feature-item__name">
+              {{ isBn() ? 'টাস্কবার সিস্টেম ট্রে ও লাইভ ওয়াক্ত' : 'Taskbar System Tray' }}
+            </strong>
+            <p class="feature-item__desc">
+              {{ isBn()
+                ? 'ঘড়ির পাশে ট্রে আইকনে পরবর্তী ওয়াক্তের নাম ও কাউন্টডাউন সর্বদা সচল থাকে।'
+                : 'Hover or click the taskbar tray icon to see next waqt name and live countdown.' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-item__icon">⌨️</div>
+          <div>
+            <strong class="feature-item__name">
+              {{ isBn() ? 'গ্লোবাল মিডিয়া হটকি' : 'Global Media Hotkeys' }}
+            </strong>
+            <p class="feature-item__desc">
+              {{ isBn()
+                ? 'যেকোনো সফটওয়্যার বা গেমিং চলাকালীন কিবোর্ডের মিডিয়া কি দিয়ে তিলাওয়াত প্লে বা নেক্সট করা যায়।'
+                : 'Control Quran recitation playback globally using standard keyboard media buttons.' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-item__icon">⚡</div>
+          <div>
+            <strong class="feature-item__name">
+              {{ isBn() ? '১০০% অফলাইন ও দ্রুতগতি' : 'Offline & Zero Data' }}
+            </strong>
+            <p class="feature-item__desc">
+              {{ isBn()
+                ? 'কুরআন, হাদিস ও রুকইয়াহ সম্পূর্ণ ইন্টারনেটের উপস্থিতি ছাড়াও অফলাইনে পাঠ করা যায়।'
+                : 'Access the complete Quran, Hadith, and Ruqyah fully offline with instant startup.' }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Tab 2: Keyboard Shortcuts -->
+  @if (activeTab() === 'shortcuts') {
+    <div class="desktop-modal__body">
+      <div class="shortcuts-intro">
+        <p>
+          {{ isBn()
+            ? 'ডেস্কটপ অ্যাপ্লিকেশনে কাজ দ্রুত ও সুবিধাজনক করতে নিচের কিবোর্ড শর্টকাটগুলো ব্যবহার করুন:'
+            : 'Use these keyboard shortcuts to navigate and control recitation swiftly in the desktop app:' }}
+        </p>
+      </div>
+
+      <div class="shortcuts-list">
+        @for (item of desktop.shortcuts; track item.key) {
+          <div class="shortcut-row">
+            <div class="shortcut-keys">
+              <kbd class="shortcut-key">{{ item.key }}</kbd>
+            </div>
+            <div class="shortcut-desc">
+              <span>{{ isBn() ? item.descriptionBn : item.descriptionEn }}</span>
+            </div>
+            <button
+              type="button"
+              class="shortcut-copy-btn"
+              (click)="copyShortcut(item.key)"
+              [attr.aria-label]="isBn() ? 'শর্টকাট কপি করুন' : 'Copy shortcut'"
+              title="Copy / অনুলিপি"
+            >
+              @if (copiedKey() === item.key) {
+                <aq-icon name="check" [size]="15" class="copied-check" />
+              } @else {
+                <aq-icon name="copy" [size]="15" />
+              }
+            </button>
+          </div>
+        }
+      </div>
+
+      <div class="shortcuts-tip">
+        <span class="shortcuts-tip__icon">💡</span>
+        <p class="shortcuts-tip__text">
+          {{ isBn()
+            ? 'টিপস: মিডিয়া প্লে/পজ (MediaPlayPause) এবং পরবর্তী ট্র্যাক বাটনগুলো উইন্ডোজের যেকোনো স্ক্রিন বা অ্যাপ থেকে গ্লোবালি কাজ করে।'
+            : 'Tip: Media Play/Pause and Next Track hotkeys function globally across Windows, even when other software is focused.' }}
+        </p>
+      </div>
+    </div>
+  }
+</div>

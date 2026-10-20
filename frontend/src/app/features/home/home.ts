@@ -10,6 +10,7 @@ import { TaskService } from '../../core/services/task';
 import { PrayerNotificationService } from '../../core/services/prayer-notification';
 import { CorePrayerAlertKey } from '../../core/models/prayer-notification';
 import { HadithService } from '../../core/services/hadith';
+import { DesktopService } from '../../core/services/desktop';
 import { ShareService } from '../../core/services/share';
 import { IconComponent } from '../../shared/components/icon/icon';
 import { TaskGoalModalComponent } from '../../shared/components/task-goal-modal/task-goal-modal';
@@ -38,10 +39,16 @@ export class HomePage {
   protected readonly taskService = inject(TaskService);
   protected readonly notificationService = inject(PrayerNotificationService);
   protected readonly hadithService = inject(HadithService);
+  protected readonly desktop = inject(DesktopService);
   private readonly shareService = inject(ShareService);
 
   readonly dailyHadith = this.hadithService.dailyHadith;
   readonly hadithShareOutcome = signal<string | null>(null);
+  readonly isDesktopApp = this.desktop.isDesktop;
+
+  openDesktopModal(): void {
+    this.desktop.openDownloadModal();
+  }
 
   readonly isBn = this.lang.isBn;
   readonly showGoalModal = signal<boolean>(false);

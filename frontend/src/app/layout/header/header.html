@@ -56,6 +56,17 @@
                   </a>
                 </li>
               }
+              <li role="none">
+                <button
+                  type="button"
+                  (click)="openDesktopModal()"
+                  role="menuitem"
+                  class="nav-dropdown__item nav-dropdown__desktop-btn"
+                >
+                  <aq-icon name="monitor" [size]="16" class="nav-dropdown__icon" />
+                  <span>{{ isBn() ? 'ডেস্কটপ অ্যাপ ও শর্টকাট' : 'Desktop App & Shortcuts' }}</span>
+                </button>
+              </li>
             </ul>
           }
         </li>
@@ -63,6 +74,19 @@
     </nav>
 
     <div class="actions">
+      @if (!isDesktopApp()) {
+        <button
+          type="button"
+          class="desktop-pill-btn"
+          (click)="openDesktopModal()"
+          [attr.aria-label]="isBn() ? 'ডেস্কটপ অ্যাপ ডাউনলোড ও শর্টকাট' : 'Download Desktop App & Shortcuts'"
+          title="Download Desktop App / ডেস্কটপ সংস্করণ"
+        >
+          <aq-icon name="monitor" [size]="15" />
+          <span class="desktop-pill-label">{{ isBn() ? 'ডেস্কটপ অ্যাপ' : 'Desktop App' }}</span>
+        </button>
+      }
+
       @if (pwa.canInstall()) {
         <button
           type="button"
@@ -177,6 +201,22 @@
           }
           <aq-icon name="chevronRight" [size]="16" />
         </a>
+      </li>
+    }
+
+    @if (!isDesktopApp()) {
+      <li class="drawer__desktop-item">
+        <button
+          type="button"
+          class="drawer__desktop-btn"
+          (click)="openDesktopModal()"
+        >
+          <aq-icon name="monitor" [size]="20" />
+          <div class="drawer__desktop-text">
+            <strong>{{ isBn() ? 'ডেস্কটপ অ্যাপ ও শর্টকাট' : 'Desktop App & Shortcuts' }}</strong>
+            <span>{{ isBn() ? 'Windows 10 / 11 (.exe)' : 'Windows 10 / 11 (.exe)' }}</span>
+          </div>
+        </button>
       </li>
     }
 

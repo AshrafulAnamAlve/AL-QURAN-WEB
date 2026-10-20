@@ -18,6 +18,7 @@ import { PwaService } from '../../core/services/pwa';
 import { ReciterService } from '../../core/services/reciter';
 import { SettingsService } from '../../core/services/settings';
 import { TaskService } from '../../core/services/task';
+import { DesktopService } from '../../core/services/desktop';
 import { POPULAR_CITIES } from '../prayer/prayer';
 import { FilterFieldComponent } from '../../shared/components/filter-field/filter-field';
 import { IconComponent } from '../../shared/components/icon/icon';
@@ -45,6 +46,7 @@ export class SettingsPage implements OnInit {
   protected readonly locationService = inject(LocationService);
   protected readonly reciterService = inject(ReciterService);
   protected readonly pwa = inject(PwaService);
+  protected readonly desktop = inject(DesktopService);
   protected readonly taskService = inject(TaskService);
   protected readonly prayerNotifications = inject(PrayerNotificationService);
   private readonly seo = inject(SeoService);

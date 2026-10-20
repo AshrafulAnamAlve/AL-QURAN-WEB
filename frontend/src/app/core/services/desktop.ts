@@ -33,6 +33,58 @@ declare global {
   }
 }
 
+export const DESKTOP_DOWNLOAD_LINKS = {
+  releasePage: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest',
+  portableExe: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest/download/Al-Quran.1.0.0.exe',
+  setupExe: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest/download/Al-Quran-Setup.exe',
+};
+
+export interface DesktopShortcut {
+  key: string;
+  descriptionBn: string;
+  descriptionEn: string;
+  category: 'audio' | 'navigation' | 'general';
+}
+
+export const DESKTOP_SHORTCUTS: DesktopShortcut[] = [
+  {
+    key: 'Media Play/Pause or Space',
+    descriptionBn: 'কুরআন তিলাওয়াত শুরু বা বন্ধ করুন',
+    descriptionEn: 'Play or pause Quran recitation',
+    category: 'audio',
+  },
+  {
+    key: 'Media Next Track',
+    descriptionBn: 'পরবর্তী আয়াতে যান',
+    descriptionEn: 'Jump to next ayah',
+    category: 'audio',
+  },
+  {
+    key: 'Media Previous Track',
+    descriptionBn: 'পূর্ববর্তী আয়াতে ফিরে যান',
+    descriptionEn: 'Jump to previous ayah',
+    category: 'audio',
+  },
+  {
+    key: 'M',
+    descriptionBn: 'আজান সাউন্ড মিউট বা আনমিউট করুন',
+    descriptionEn: 'Mute or unmute Adhan sound',
+    category: 'audio',
+  },
+  {
+    key: 'Ctrl + K or /',
+    descriptionBn: 'সার্চ ও অনুসন্ধান প্যানেল খুলুন',
+    descriptionEn: 'Open instant search dialog',
+    category: 'navigation',
+  },
+  {
+    key: 'Esc',
+    descriptionBn: 'যেকোনো সক্রিয় মোডাল বা পপআপ বন্ধ করুন',
+    descriptionEn: 'Dismiss active dialog or modal',
+    category: 'general',
+  },
+];
+
 @Injectable({ providedIn: 'root' })
 export class DesktopService {
   private readonly prayerService = inject(PrayerTimesService);
@@ -49,6 +101,22 @@ export class DesktopService {
       ? window.desktopApi.platform
       : 'web';
   };
+
+  /** Controls display of the Desktop App download and shortcuts modal on the website */
+  readonly showDownloadModal = signal<boolean>(false);
+  readonly modalTab = signal<'download' | 'shortcuts'>('download');
+
+  readonly downloadLinks = DESKTOP_DOWNLOAD_LINKS;
+  readonly shortcuts = DESKTOP_SHORTCUTS;
+
+  openDownloadModal(tab: 'download' | 'shortcuts' = 'download'): void {
+    this.modalTab.set(tab);
+    this.showDownloadModal.set(true);
+  }
+
+  closeDownloadModal(): void {
+    this.showDownloadModal.set(false);
+  }
 
   constructor() {
     this.setupDesktopStyles();
