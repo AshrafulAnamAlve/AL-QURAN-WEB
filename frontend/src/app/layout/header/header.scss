@@ -20,6 +20,14 @@
   justify-content: space-between;
   gap: 0.5rem;
   height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 480px) {
+    padding-left: max(0.5rem, env(safe-area-inset-left, 0));
+    padding-right: max(0.5rem, env(safe-area-inset-right, 0));
+    gap: 0.25rem;
+  }
 
   @media (min-width: 640px) {
     gap: 1.25rem;
@@ -33,7 +41,8 @@
   gap: 0.625rem;
   color: var(--aq-text);
   text-decoration: none;
-  flex: 0 0 auto;
+  flex: 0 1 auto;
+  min-width: 0;
   z-index: 2;
   position: relative;
 
@@ -82,6 +91,10 @@
   font-size: 1.0625rem;
   letter-spacing: -0.01em;
   white-space: nowrap;
+
+  @media (max-width: 380px) {
+    font-size: 0.9375rem;
+  }
 }
 
 .brand__tag {
@@ -256,6 +269,34 @@
   flex-shrink: 0;
   z-index: 2;
   position: relative;
+
+  @media (max-width: 380px) {
+    gap: 0.15rem;
+
+    .aq-icon-btn {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      min-height: 36px;
+      padding: 0;
+    }
+
+    .lang-pill {
+      padding: 0.15rem 0.35rem;
+      font-size: 0.6875rem;
+    }
+  }
+
+  @media (max-width: 330px) {
+    gap: 0.1rem;
+
+    .aq-icon-btn {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      min-height: 32px;
+    }
+  }
 }
 
 // Language switch pill button (EN / বাং)
