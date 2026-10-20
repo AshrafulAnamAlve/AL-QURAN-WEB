@@ -1096,61 +1096,240 @@
 
 .ruqyah-toast {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 100;
+  bottom: calc(var(--aq-bottom-nav-height, 4rem) + 1.25rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 600;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
-  border-radius: 0.75rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 9999px;
   background: #1f2937;
   color: #ffffff;
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   font-weight: 500;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  animation: slideUp 0.25s ease;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+  max-width: calc(100vw - 2rem);
+  animation: toastSlideUp 0.25s ease;
+
+  :host-context([data-theme='dark']) & {
+    background: #111827;
+    border: 1px solid var(--aq-border);
+  }
 
   aq-icon {
     color: #10b981;
+    flex-shrink: 0;
   }
 }
 
-@keyframes slideUp {
+@keyframes toastSlideUp {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translate(-50%, 12px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate(-50%, 0);
   }
 }
 
 @media (max-width: 640px) {
-  .ruqyah-hero__title {
-    flex-direction: column;
+  .ruqyah-container {
+    padding: 1rem 0.75rem calc(var(--aq-bottom-nav-height, 4rem) + 2rem);
+    gap: 1.15rem;
+  }
+
+  .ruqyah-hero {
+    padding: 1.15rem 1rem;
+    gap: 0.65rem;
+
+    &__title {
+      flex-direction: column;
+      gap: 0.25rem;
+
+      &-bn {
+        font-size: 1.35rem;
+      }
+
+      &-ar {
+        font-size: 1.4rem;
+      }
+    }
+
+    &__desc {
+      font-size: 0.85rem;
+      line-height: 1.55;
+    }
+  }
+
+  .ruqyah-stats {
+    gap: 0.45rem;
+
+    .stat-pill {
+      padding: 0.3rem 0.55rem;
+      font-size: 0.78rem;
+    }
+  }
+
+  .tab-switcher {
     gap: 0.25rem;
+    padding: 0.25rem;
+
+    .tab-btn {
+      padding: 0.55rem 0.45rem;
+      font-size: 0.8rem;
+      gap: 0.35rem;
+    }
   }
 
-  .ruqyah-player-bar .player-inner {
-    flex-direction: column;
-    align-items: stretch;
+  .ruqyah-player-bar {
+    padding: 0.85rem 1rem;
+
+    .player-inner {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+
+    .player-info {
+      min-width: unset;
+      width: 100%;
+
+      &__icon {
+        width: 2.2rem;
+        height: 2.2rem;
+      }
+
+      &__title {
+        font-size: 0.875rem;
+      }
+
+      &__reciter {
+        font-size: 0.75rem;
+      }
+    }
+
+    .player-controls {
+      justify-content: center;
+      gap: 0.65rem;
+    }
+
+    .player-timeline {
+      width: 100%;
+      flex: 1 1 100%;
+    }
+
+    .player-tools {
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .dropdown-menu {
+      left: 50%;
+      right: auto;
+      transform: translateX(-50%);
+    }
   }
 
-  .ruqyah-player-bar .player-info {
-    min-width: unset;
-  }
+  .ruqyah-toolbar {
+    gap: 0.5rem;
 
-  .ruqyah-player-bar .player-controls {
-    justify-content: center;
-  }
-
-  .ruqyah-player-bar .player-tools {
-    justify-content: center;
+    .search-box {
+      flex: 1 1 100%;
+      width: 100%;
+    }
   }
 
   .topic-select-wrap {
     flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .simple-toggle-btn {
+    flex: 1 1 auto;
+    justify-content: center;
+    padding: 0 0.75rem;
+  }
+
+  .reset-link-btn {
+    flex: 0 0 auto;
+    padding: 0 0.65rem;
+  }
+
+  .ruqyah-card {
+    padding: 1.15rem 1rem;
+    gap: 0.95rem;
+
+    &__title {
+      font-size: 1.05rem;
+    }
+
+    &__arabic {
+      font-size: 1.35rem;
+      line-height: 2.2;
+      padding: 0.85rem 1rem;
+    }
+
+    &__pronunciation {
+      font-size: 0.85rem;
+    }
+
+    &__translation {
+      .translation-bn {
+        font-size: 0.9rem;
+      }
+      .translation-en {
+        font-size: 0.82rem;
+      }
+    }
+
+    &__instruction {
+      font-size: 0.8rem;
+      padding: 0.55rem 0.75rem;
+    }
+
+    &__counter-row {
+      .counter-btn {
+        height: 2.8rem;
+        font-size: 0.85rem;
+      }
+
+      .reset-count-btn {
+        width: 2.8rem;
+        height: 2.8rem;
+      }
+    }
+  }
+
+  .audio-tracks-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .track-card {
+    padding: 1rem;
+    gap: 0.75rem;
+
+    .track-play-btn {
+      width: 2.8rem;
+      height: 2.8rem;
+    }
+  }
+
+  .guide-card {
+    padding: 1.15rem 1rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .tab-switcher .tab-btn {
+    font-size: 0.74rem;
+    padding: 0.5rem 0.25rem;
+
+    aq-icon {
+      display: none;
+    }
   }
 }

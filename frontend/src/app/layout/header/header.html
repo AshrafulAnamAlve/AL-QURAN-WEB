@@ -172,6 +172,9 @@
           @if (item.path === '/hadith') {
             <span class="drawer__badge drawer__badge--gold">{{ isBn() ? '৩৬,০০০+ হাদিস' : '36k+ Hadiths' }}</span>
           }
+          @if (item.path === '/ruqyah') {
+            <span class="drawer__badge">{{ isBn() ? 'অডিও ও শিফা' : 'Audio & Shifa' }}</span>
+          }
           <aq-icon name="chevronRight" [size]="16" />
         </a>
       </li>
