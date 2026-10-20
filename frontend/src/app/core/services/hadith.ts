@@ -14,6 +14,7 @@ const STORAGE_KEYS = {
   bookmarks: 'alquran.hadith_bookmarks',
   canonicalBookmarks: 'alquran.canonical_hadith_bookmarks',
   dailyDismissed: 'alquran.daily_hadith_dismissed',
+  read: 'alquran.hadith_read',
 } as const;
 
 const CDN_BASE = 'https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1';
@@ -521,6 +522,10 @@ export class HadithService {
   readonly bookmarks = this._bookmarks.asReadonly();
   readonly bookmarksCount = computed(() => this._bookmarks().size);
 
+  private readonly _readHadiths = signal<Set<number | string>>(this.loadReadHadiths());
+  readonly readHadiths = this._readHadiths.asReadonly();
+  readonly readCount = computed(() => this._readHadiths().size);
+
   private readonly _dailyModalDismissed = signal<boolean>(this.checkIfDismissedToday());
   readonly isDailyModalDismissed = this._dailyModalDismissed.asReadonly();
 
@@ -608,6 +613,49 @@ export class HadithService {
       this.storage.write(STORAGE_KEYS.bookmarks, Array.from(updated));
       return updated;
     });
+  }
+
+  isRead(id: number | string): boolean {
+    return this._readHadiths().has(id);
+  }
+
+  toggleRead(id: number | string): void {
+    this._readHadiths.update((set) => {
+      const updated = new Set(set);
+      if (updated.has(id)) {
+        updated.delete(id);
+      } else {
+        updated.add(id);
+      }
+      this.storage.write(STORAGE_KEYS.read, Array.from(updated));
+      return updated;
+    });
+  }
+
+  markAsRead(id: number | string): void {
+    if (this._readHadiths().has(id)) return;
+    this._readHadiths.update((set) => {
+      const updated = new Set(set);
+      updated.add(id);
+      this.storage.write(STORAGE_KEYS.read, Array.from(updated));
+      return updated;
+    });
+  }
+
+  markAllAsRead(ids: (number | string)[]): void {
+    this._readHadiths.update((set) => {
+      const updated = new Set(set);
+      for (const id of ids) {
+        updated.add(id);
+      }
+      this.storage.write(STORAGE_KEYS.read, Array.from(updated));
+      return updated;
+    });
+  }
+
+  clearReadHistory(): void {
+    this._readHadiths.set(new Set());
+    this.storage.write(STORAGE_KEYS.read, []);
   }
 
   dismissDailyModal(dontShowAgainToday = true): void {
@@ -747,6 +795,11 @@ export class HadithService {
 
   private loadBookmarks(): Set<number | string> {
     const stored = this.storage.read<(number | string)[]>(STORAGE_KEYS.bookmarks, []);
+    return new Set(Array.isArray(stored) ? stored : []);
+  }
+
+  private loadReadHadiths(): Set<number | string> {
+    const stored = this.storage.read<(number | string)[]>(STORAGE_KEYS.read, []);
     return new Set(Array.isArray(stored) ? stored : []);
   }
 }

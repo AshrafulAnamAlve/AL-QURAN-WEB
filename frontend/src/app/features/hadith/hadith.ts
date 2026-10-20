@@ -40,6 +40,7 @@ export class HadithPage {
   // Search input binding for Curated
   readonly searchInput = signal<string>('');
   readonly showBookmarksOnly = signal<boolean>(false);
+  readonly showUnreadOnly = signal<boolean>(false);
 
   // Canonical Library State
   readonly canonicalBooks = CANONICAL_BOOKS;
@@ -66,12 +67,16 @@ export class HadithPage {
   readonly selectedBook = this.hadithService.selectedBook;
   readonly books = this.hadithService.books;
   readonly bookmarksCount = this.hadithService.bookmarksCount;
+  readonly readCount = this.hadithService.readCount;
 
   // Filtered hadiths for Curated tab
   readonly displayedHadiths = computed<readonly Hadith[]>(() => {
     let list = this.hadithService.filteredHadiths();
     if (this.showBookmarksOnly()) {
       list = list.filter((h) => this.hadithService.isBookmarked(h.id));
+    }
+    if (this.showUnreadOnly()) {
+      list = list.filter((h) => !this.hadithService.isRead(h.id));
     }
     return list;
   });
@@ -97,10 +102,14 @@ export class HadithPage {
     return this.chapters().find((c) => c.number === num);
   });
 
-  // Canonical hadiths filtered by search and limited by displayLimit
+  // Canonical hadiths filtered by search, unread filter and limited by displayLimit
   readonly displayedCanonicalHadiths = computed<readonly CanonicalHadithItem[]>(() => {
     const query = this.canonicalSearch().trim().toLowerCase();
     let items = this.canonicalHadiths();
+
+    if (this.showUnreadOnly()) {
+      items = items.filter((h) => !this.hadithService.isRead(h.id));
+    }
 
     if (query) {
       items = items.filter((h) => {
@@ -116,8 +125,12 @@ export class HadithPage {
 
   readonly totalCanonicalCountInChapter = computed<number>(() => {
     const query = this.canonicalSearch().trim().toLowerCase();
-    if (!query) return this.canonicalHadiths().length;
-    return this.canonicalHadiths().filter((h) => {
+    let items = this.canonicalHadiths();
+    if (this.showUnreadOnly()) {
+      items = items.filter((h) => !this.hadithService.isRead(h.id));
+    }
+    if (!query) return items.length;
+    return items.filter((h) => {
       const matchesBangla = h.bangla.toLowerCase().includes(query);
       const matchesArabic = h.arabic.includes(query);
       const matchesNumber = String(h.hadithNumber).includes(query);
@@ -168,11 +181,33 @@ export class HadithPage {
     this.showBookmarksOnly.update((v) => !v);
   }
 
+  toggleUnreadFilter(): void {
+    this.showUnreadOnly.update((v) => !v);
+  }
+
+  isRead(id: number | string): boolean {
+    return this.hadithService.isRead(id);
+  }
+
+  toggleRead(id: number | string): void {
+    this.hadithService.toggleRead(id);
+    const wasRead = this.hadithService.isRead(id);
+    const msg = this.isBn()
+      ? wasRead
+        ? 'হাদিসটি পঠিত হিসেবে চিহ্নিত করা হয়েছে'
+        : 'পঠিত তালিকা থেকে সরানো হয়েছে'
+      : wasRead
+        ? 'Hadith marked as read'
+        : 'Marked as unread';
+    this.showToast(msg);
+  }
+
   resetFilters(): void {
     this.clearSearch();
     this.hadithService.setCategory('all');
     this.hadithService.setBook('all');
     this.showBookmarksOnly.set(false);
+    this.showUnreadOnly.set(false);
   }
 
   // --- Canonical Library Actions ---

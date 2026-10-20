@@ -143,5 +143,33 @@ describe('HadithPage', () => {
     expect(component.activeTab()).toBe('curated');
     expect(el.querySelector('.daily-hero-card')).not.toBeNull();
   });
+
+  it('allows marking hadith as read and hides read hadiths when unread filter is active', () => {
+    const totalHadiths = component.displayedHadiths().length;
+    const firstHadithId = component.displayedHadiths()[0].id;
+
+    expect(component.isRead(firstHadithId)).toBe(false);
+    expect(component.readCount()).toBe(0);
+
+    // Mark as read
+    component.toggleRead(firstHadithId);
+    fixture.detectChanges();
+
+    expect(component.isRead(firstHadithId)).toBe(true);
+    expect(component.readCount()).toBe(1);
+
+    // Toggle unread filter ON
+    component.toggleUnreadFilter();
+    fixture.detectChanges();
+
+    expect(component.showUnreadOnly()).toBe(true);
+    expect(component.displayedHadiths().length).toBe(totalHadiths - 1);
+    expect(component.displayedHadiths().some((h) => h.id === firstHadithId)).toBe(false);
+
+    // Toggle unread filter OFF
+    component.toggleUnreadFilter();
+    fixture.detectChanges();
+    expect(component.displayedHadiths().length).toBe(totalHadiths);
+  });
 });
 

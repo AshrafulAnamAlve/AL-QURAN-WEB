@@ -135,6 +135,27 @@
   }
 }
 
+.unread-filter-btn {
+  &--active {
+    background: rgba(16, 185, 129, 0.15) !important;
+    border-color: var(--aq-primary) !important;
+    color: var(--aq-primary) !important;
+
+    .badge {
+      background: var(--aq-primary) !important;
+    }
+  }
+
+  .badge--read {
+    background: var(--aq-primary);
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.1rem 0.45rem;
+    border-radius: 9999px;
+  }
+}
+
 // --- Main Tabs ---
 .hadith-tabs {
   display: flex;
@@ -699,6 +720,26 @@
       border-color: var(--aq-gold-500);
       background: rgba(217, 119, 6, 0.08);
     }
+
+    &--read {
+      &:hover {
+        border-color: var(--aq-primary);
+        color: var(--aq-primary);
+      }
+    }
+
+    &--is-read {
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--aq-primary);
+      border-color: var(--aq-primary);
+      font-weight: 600;
+
+      :host-context([data-theme='dark']) & {
+        background: rgba(16, 185, 129, 0.22);
+        color: #34d399;
+        border-color: #059669;
+      }
+    }
   }
 }
 
@@ -1059,6 +1100,39 @@
   .chapter-summary-title {
     font-weight: 600;
     color: var(--aq-text);
+  }
+
+  .chapter-summary-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+  }
+
+  .unread-toggle-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    border: 1px solid var(--aq-border);
+    background: var(--aq-surface);
+    color: var(--aq-text-muted);
+    font-size: 0.775rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: var(--aq-primary);
+      color: var(--aq-text);
+    }
+
+    &--active {
+      background: var(--aq-primary);
+      border-color: var(--aq-primary);
+      color: #ffffff;
+    }
   }
 
   .chapter-summary-count {

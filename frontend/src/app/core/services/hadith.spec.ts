@@ -122,5 +122,28 @@ describe('HadithService', () => {
     expect(service.isBookmarked('bukhari-1')).toBe(false);
     expect(service.bookmarksCount()).toBe(0);
   });
+
+  it('tracks read hadiths and persists them to storage', () => {
+    expect(service.readCount()).toBe(0);
+    expect(service.isRead(1)).toBe(false);
+
+    service.markAsRead(1);
+    expect(service.isRead(1)).toBe(true);
+    expect(service.readCount()).toBe(1);
+
+    // Toggle read unmarks
+    service.toggleRead(1);
+    expect(service.isRead(1)).toBe(false);
+    expect(service.readCount()).toBe(0);
+
+    // Mark multiple
+    service.markAllAsRead([1, 2, 'bukhari-1']);
+    expect(service.readCount()).toBe(3);
+    expect(service.isRead('bukhari-1')).toBe(true);
+
+    // Clear read history
+    service.clearReadHistory();
+    expect(service.readCount()).toBe(0);
+  });
 });
 
