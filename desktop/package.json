@@ -1,0 +1,24 @@
+{
+  "name": "al-quran-desktop",
+  "version": "1.0.0",
+  "description": "Al-Quran Cross-Platform Desktop Application (Read, Listen, Reflect)",
+  "main": "dist/main/index.js",
+  "author": "Ashraful Anam Alve",
+  "license": "MIT",
+  "scripts": {
+    "build:main": "tsc",
+    "watch:main": "tsc -w",
+    "build:frontend": "cd ../frontend && npm run build -- --base-href ./",
+    "start": "npm run build:main && electron .",
+    "start:dev": "set NODE_ENV=development&& npm run build:main && electron .",
+    "package:win": "npm run build:frontend && npm run build:main && electron-builder --win",
+    "package:portable": "npm run build:frontend && npm run build:main && electron-builder --win portable",
+    "package:all": "npm run build:frontend && npm run build:main && electron-builder -mwl"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "electron": "^34.0.0",
+    "electron-builder": "^25.1.8",
+    "typescript": "^5.7.0"
+  }
+}
