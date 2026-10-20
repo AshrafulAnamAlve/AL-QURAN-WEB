@@ -5,7 +5,7 @@
 > why each decision was made. Open a new session, point at this file, and you
 > have the full context.
 
-**Last updated:** 2026-10-19 · **Current phase:** Phase 17 complete (All 17 phases completed)
+**Last updated:** 2026-10-20 · **Current phase:** Phase 20 complete (All 20 phases completed)
 
 ---
 
@@ -317,27 +317,30 @@ them live without a rebuild.
 
 ## 8. Current Progress
 
-**Phase 18 of 18 complete.** The Quran is readable, recitation audio is fully
+**Phase 20 of 20 complete.** The Quran is readable, recitation audio is fully
 playable, personal features are live (search, bookmarks, continue reading, progress tracker),
 prayer times and location are live, the Islamic Calendar and Ramadan Dashboard are live,
 Nearby Mosques (`/mosques`) is live with OpenStreetMap Leaflet integration,
 Settings and Preferences (`/settings`) is live, PWA, Offline Caching, SEO and Accessibility
 are fully implemented, the Daily Quran Task Tracker & Habit Calendar (Phase 13),
 Prayer Notifications & In-App Adhan Player (Phase 14), Asma-ul-Husna (Phase 15),
-Digital Tasbih & Dhikr (Phase 16), Quran Ayah Bangla Pronunciation (Phase 17), and
-Daily Hadith Modal & Dedicated Hadith Section (Phase 18) are fully integrated.
+Digital Tasbih & Dhikr (Phase 16), Quran Ayah Bangla Pronunciation (Phase 17),
+Daily Hadith Modal & Dedicated Hadith Section (Phase 18),
+Authentic Ruqyah Shariah Section & Audio (Phase 19), and
+Cross-Platform Desktop Application (Phase 20) are fully integrated.
 
-Verified on 2026-10-19:
+Verified on 2026-10-20:
 
 ```
 Backend unit & integration tests    46 passed, 0 failed (AlQuran.Api.Tests)
 Backend build (Release)             0 warnings, 0 errors
-Frontend unit tests                 330 passed (47 test files)
+Frontend unit tests                 355 passed, 0 failed (50 test files)
 Frontend production build           0 warnings, 0 errors
+Desktop main & preload build        0 warnings, 0 errors (Electron 34 + TS 5.7)
 Service Worker generation           ngsw-worker.js & ngsw.json generated
 PWA Manifest & Icons                192x192, 512x512, maskable, SVG icons present
 SEO Artifacts                       robots.txt, sitemap.xml (114 surahs, 30 juz), JSON-LD WebSite & Chapter
-Phases 1-18                         100% COMPLETE & VERIFIED
+Phases 1-20                         100% COMPLETE & VERIFIED
 ```
 
 ---
@@ -562,6 +565,11 @@ Live deployment is active on RunASP.NET (backend) and GitHub Pages (frontend).
 - **[Phase 16](docs/phases/PHASE-16.md) — Daily Dhikr Rotational Advice Modal & Digital Tasbih**: ✅ **COMPLETE (2026-10-19)**. Rotational spiritual deed prompt on the home page (e.g. Surah An-Nas 3x, Astaghfirullah 3x, Durood 3x) with "Done" and "Skip" actions, alongside a tactile Digital Tasbih counter with target selector (33, 10, 100, custom), automatic Dhikr progression, synthetic audio clicks, haptic feedback, and categorized Adhkar.
 - **[Phase 17](docs/phases/PHASE-17.md) — Quran Ayah Bangla Pronunciation (উচ্চারণ) and Multi-Script Display**: ✅ **COMPLETE (2026-10-19)**. Authentic Bengali phonetic transliteration (উচ্চারণ) rendered alongside Uthmani Arabic script and Muhiuddin Khan Bengali translation across all Quran reader views, with reader toolbar visibility toggle, settings panel toggle, Bismillah phonetic display, and clipboard copy/share formatting.
 - **[Phase 18](docs/phases/PHASE-18.md) — Daily Hadith Modal & Dedicated Hadith Section (হাদিস বিভাগ)**: ✅ **COMPLETE (2026-10-19)**. Replaced intrusive home page task modal with an inspiring daily authentic Hadith modal featuring deterministic day rotation and "Read More" (আরও পড়ুন) button, and created a dedicated Hadith Section (`/hadith`) with topic filters (Faith, Prayer, Ethics, Charity, Fasting, Du'a, 40 Hadith), canonical books (Bukhari, Muslim, Tirmidhi, Abu Dawud, Riyad as-Salihin), instant search, and bookmarking.
+- **Phase 19 — Authentic Ruqyah Shariah (রুকইয়াহ আশ-শারইয়াহ — Audio & Reading)**: ✅ **COMPLETE (2026-10-20)**. Dedicated `/ruqyah` feature with 5 authenticated categories (Physical Healing, Evil Eye/Nazar, Magic & Harm Protection, Mental Peace & Anxiety, Daily Masnun), interactive repetition counter (1x, 3x, 7x), Arabic script with harakat, Bengali transliteration, authentic Bengali translation, verified Quran/Hadith citations, and long recitation audio streaming from prominent Qaris (Mishary Rashid Alafasy, Saad Al-Ghamdi, Ahmed Al-Ajmy, Idris Abkar).
+- **Phase 20 — Cross-Platform Desktop Application (`desktop/`)**: ✅ **COMPLETE (2026-10-20)**. Dedicated native desktop app powered by Electron 34, TypeScript 5.7, and Electron-Builder 25 with relative asset loading (`base-href ./`), window state persistence, taskbar system tray with live waqt countdown tooltip and deep-linking, native Action Center & macOS notifications with click-to-focus and Adhan modal popup, unthrottled background Adhan audio playback (`backgroundThrottling: false`), bi-directional tray mute sync, global media keyboard hotkeys (`MediaPlayPause`, `MediaNextTrack`, `MediaPreviousTrack`), emerald & gold styled title bar overlay, and packaging scripts for Windows NSIS Setup (`.exe`), Standalone Portable (`.exe`), macOS, and Linux.
+
+### Upcoming Roadmap (Phase 21+):
+- **Phase 21 — Qibla Compass & Prayer Direction (কিবলা দিকনির্ণয় — Interactive Sensor & Map Compass)**: Real-time interactive Qibla compass using HTML5 device orientation sensor (gyroscope/magnetometer) with animated Kaaba alignment, precise degree calculation from user coordinates, distance to Makkah in kilometers, and interactive map direction fallback for non-sensor desktop devices.
 
 ---
 
