@@ -1,6 +1,6 @@
 # Development Phases
 
-The project is organized in seventeen phases. Each phase is specified, built and tested
+The project is organized in twenty-one phases. Each phase is specified, built and tested
 before the next one starts, so nothing is left half-working underneath.
 
 | Phase | Title | Status |
@@ -23,6 +23,9 @@ before the next one starts, so nothing is left half-working underneath.
 | [16](PHASE-16.md) | Daily Dhikr Rotational Advice Modal & Digital Tasbih | ✅ **Complete** |
 | [17](PHASE-17.md) | Quran Ayah Bangla Pronunciation (উচ্চারণ) | ✅ **Complete** |
 | [18](PHASE-18.md) | Daily Hadith Modal & Dedicated Hadith Section (হাদিস বিভাগ) | ✅ **Complete** |
+| [19](PHASE-19.md) | Authentic Ruqyah Shariah (রুকইয়াহ আশ-শারইয়াহ — Audio & Reading) | ✅ **Complete** |
+| [20](PHASE-20.md) | Cross-Platform Desktop Application (Electron + TypeScript) | ✅ **Complete** |
+| 21 | Qibla Compass & Prayer Direction (কিবলা দিকনির্ণয় — Gyroscope & Compass) | ⬜ **Planned** |
 
 ## How a phase is closed
 

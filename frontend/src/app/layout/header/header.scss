@@ -87,7 +87,7 @@
   display: none;
   flex: 1 1 auto;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
 
   @media (min-width: 960px) {
     display: flex;
@@ -588,11 +588,18 @@
   }
 
   .brand,
+  .brand *,
   .desktop-nav,
+  .desktop-nav *,
   .actions,
+  .actions *,
+  .nav-dropdown,
+  .nav-dropdown *,
+  .nav-dropdown__menu,
+  .nav-dropdown__menu *,
   button,
   a {
-    -webkit-app-region: no-drag;
+    -webkit-app-region: no-drag !important;
   }
 
   @media (min-width: 768px) {

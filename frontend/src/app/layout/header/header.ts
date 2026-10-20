@@ -71,12 +71,14 @@ export class HeaderComponent {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-    if (!target.closest('.nav-dropdown')) {
+    if (!target || !target.closest || !target.closest('.nav-dropdown')) {
       this.closeMoreDropdown();
     }
   }
 
-  toggleMoreDropdown(): void {
+  toggleMoreDropdown(event?: Event): void {
+    event?.stopPropagation();
+    event?.preventDefault();
     this.moreDropdownOpen.update((v) => !v);
   }
 

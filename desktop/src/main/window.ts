@@ -78,6 +78,14 @@ export function createMainWindow(): BrowserWindow {
     return { action: 'deny' };
   });
 
+  // Enable F12 key to toggle DevTools for inspection and debugging
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'F12' && input.type === 'keyDown') {
+      mainWindow?.webContents.toggleDevTools();
+      event.preventDefault();
+    }
+  });
+
   if (isDev) {
     mainWindow.loadURL('http://localhost:4200');
   } else {

@@ -87,8 +87,20 @@
             rel="noopener noreferrer"
           >
             <aq-icon name="download" [size]="18" />
-            <span>{{ isBn() ? 'পোর্টেবল সংস্করণ ডাউনলোড (.exe)' : 'Download Portable (.exe)' }}</span>
-            <span class="download-btn__size">~75 MB</span>
+            <span>{{ isBn() ? 'পোর্টেবল সংস্করণ (.exe)' : 'Portable Edition (.exe)' }}</span>
+            <span class="download-btn__size">~79 MB</span>
+          </a>
+
+          <a
+            [href]="desktop.downloadLinks.setupExe"
+            class="download-btn download-btn--secondary"
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <aq-icon name="download" [size]="16" />
+            <span>{{ isBn() ? 'ইনস্টলার সেটআপ (.exe)' : 'Setup Installer (.exe)' }}</span>
+            <span class="download-btn__size">~79 MB</span>
           </a>
 
           <a
@@ -98,7 +110,7 @@
             rel="noopener noreferrer"
           >
             <aq-icon name="externalLink" [size]="16" />
-            <span>{{ isBn() ? 'গিটহাব রিলিজ ও অন্যান্য সংস্করণ' : 'GitHub Releases & Setup' }}</span>
+            <span>{{ isBn() ? 'গিটহাব রিলিজ' : 'GitHub Releases' }}</span>
           </a>
         </div>
       </div>

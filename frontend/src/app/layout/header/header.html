@@ -32,7 +32,7 @@
             type="button"
             class="nav-dropdown__btn"
             [class.is-active]="isSecondaryActive() || moreDropdownOpen()"
-            (click)="toggleMoreDropdown()"
+            (click)="toggleMoreDropdown($event)"
             [attr.aria-expanded]="moreDropdownOpen()"
             aria-haspopup="true"
           >
