@@ -8,9 +8,9 @@
   "scripts": {
     "build:main": "tsc",
     "watch:main": "tsc -w",
-    "build:frontend": "cd ../frontend && npm run build -- --base-href ./",
+    "build:frontend": "cd ../frontend && npm run build:desktop",
     "start": "npm run build:main && electron .",
-    "start:dev": "set NODE_ENV=development&& npm run build:main && electron .",
+    "start:dev": "npm run build:main && electron . --dev",
     "package:win": "npm run build:frontend && npm run build:main && electron-builder --win",
     "package:portable": "npm run build:frontend && npm run build:main && electron-builder --win portable",
     "package:all": "npm run build:frontend && npm run build:main && electron-builder -mwl"

@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:desktop": "ng build --configuration production --base-href ./",
     "build:gh-pages": "ng build --configuration production --base-href /AL-QURAN-WEB/",
     "deploy": "npm run build:gh-pages && node copy-ghpages.cjs && gh-pages -d dist/frontend/browser --dotfiles",
     "watch": "ng build --watch --configuration development",

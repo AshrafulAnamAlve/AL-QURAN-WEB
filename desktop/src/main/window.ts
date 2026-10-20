@@ -17,7 +17,7 @@ export function getMainWindow(): BrowserWindow | null {
 }
 
 export function createMainWindow(): BrowserWindow {
-  const isDev = process.env['NODE_ENV'] === 'development';
+  const isDev = process.env['NODE_ENV'] === 'development' || process.argv.includes('--dev');
 
   mainWindow = new BrowserWindow({
     width: 1240,

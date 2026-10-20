@@ -214,6 +214,25 @@ export class PrayerNotificationService implements OnDestroy {
    * Sends desktop notification with prayer details and audio/focus actions.
    */
   sendDesktopNotification(prayer: PrayerTime): Notification | null {
+    if (typeof window !== 'undefined' && window.desktopApi?.isDesktop) {
+      const loc = this.locationService.location();
+      const city = loc.city || loc.displayName || (this.language.isBn() ? 'আপনার এলাকা' : 'your area');
+      const time12h = this.prayerTimes.format12h(prayer.time, false);
+      const time12hBn = this.prayerTimes.format12h(prayer.time, true);
+
+      const isBn = this.language.isBn();
+      const title = isBn
+        ? `🕌 ${prayer.banglaName} নামাজের সময় হয়েছে`
+        : `🕌 It is now time for ${prayer.name} prayer`;
+
+      const body = isBn
+        ? `${city}-এ এখন ${prayer.banglaName} নামাজের সময় (${time12hBn})।`
+        : `It is now time for ${prayer.name} prayer (${time12h}) in ${city}.`;
+
+      window.desktopApi.notify(title, body);
+      return null;
+    }
+
     if (typeof window === 'undefined' || !('Notification' in window)) {
       return null;
     }
