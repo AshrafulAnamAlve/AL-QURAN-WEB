@@ -12,7 +12,7 @@ import { PwaService } from '../../core/services/pwa';
 import { ThemeService } from '../../core/services/theme';
 import { TaskService } from '../../core/services/task';
 import { IconComponent } from '../../shared/components/icon/icon';
-import { NAV_ITEMS } from '../nav-items';
+import { NAV_ITEMS, PRIMARY_NAV_ITEMS, SECONDARY_NAV_ITEMS } from '../nav-items';
 
 /**
  * Application header: brand, desktop navigation, language toggle (EN/বাং),
@@ -33,7 +33,10 @@ export class HeaderComponent {
   protected readonly taskService = inject(TaskService);
 
   protected readonly navItems = NAV_ITEMS;
+  protected readonly primaryNavItems = PRIMARY_NAV_ITEMS;
+  protected readonly secondaryNavItems = SECONDARY_NAV_ITEMS;
   protected readonly drawerOpen = signal(false);
+  protected readonly moreDropdownOpen = signal(false);
 
   readonly isBn = this.language.isBn;
   readonly currentLang = this.language.language;
@@ -46,11 +49,35 @@ export class HeaderComponent {
     return this.isDark() ? 'Switch to light mode' : 'Switch to dark mode';
   });
 
+  protected readonly isSecondaryActive = computed<boolean>(() => {
+    const current = this.router.url;
+    return this.secondaryNavItems.some((item) => current === item.path || (item.path !== '/' && current.startsWith(item.path)));
+  });
+
   @HostListener('window:keydown.escape')
   onEscape(): void {
     if (this.drawerOpen()) {
       this.closeDrawer();
     }
+    if (this.moreDropdownOpen()) {
+      this.closeMoreDropdown();
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.nav-dropdown')) {
+      this.closeMoreDropdown();
+    }
+  }
+
+  toggleMoreDropdown(): void {
+    this.moreDropdownOpen.update((v) => !v);
+  }
+
+  closeMoreDropdown(): void {
+    this.moreDropdownOpen.set(false);
   }
 
   toggleTheme(): void {

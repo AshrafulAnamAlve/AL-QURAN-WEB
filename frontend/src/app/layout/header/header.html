@@ -14,7 +14,7 @@
 
     <nav class="desktop-nav" aria-label="Main navigation">
       <ul>
-        @for (item of navItems; track item.path) {
+        @for (item of primaryNavItems; track item.path) {
           <li>
             <a
               [routerLink]="item.path"
@@ -25,6 +25,40 @@
             </a>
           </li>
         }
+
+        <!-- Dropdown for More Features -->
+        <li class="nav-dropdown" [class.is-open]="moreDropdownOpen()">
+          <button
+            type="button"
+            class="nav-dropdown__btn"
+            [class.is-active]="isSecondaryActive() || moreDropdownOpen()"
+            (click)="toggleMoreDropdown()"
+            [attr.aria-expanded]="moreDropdownOpen()"
+            aria-haspopup="true"
+          >
+            <span>{{ isBn() ? 'আরও' : 'More' }}</span>
+            <aq-icon name="chevronDown" [size]="13" class="nav-dropdown__chevron" />
+          </button>
+
+          @if (moreDropdownOpen()) {
+            <ul class="nav-dropdown__menu" role="menu">
+              @for (item of secondaryNavItems; track item.path) {
+                <li role="none">
+                  <a
+                    [routerLink]="item.path"
+                    routerLinkActive="is-active"
+                    (click)="closeMoreDropdown()"
+                    role="menuitem"
+                    class="nav-dropdown__item"
+                  >
+                    <aq-icon [name]="item.icon" [size]="16" class="nav-dropdown__icon" />
+                    <span>{{ isBn() ? item.labelBn : item.label }}</span>
+                  </a>
+                </li>
+              }
+            </ul>
+          }
+        </li>
       </ul>
     </nav>
 

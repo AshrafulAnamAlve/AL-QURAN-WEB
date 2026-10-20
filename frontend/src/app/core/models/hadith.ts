@@ -21,15 +21,15 @@ export interface HadithCategoryInfo {
 }
 
 export const HADITH_CATEGORIES: readonly HadithCategoryInfo[] = [
-  { id: 'all', nameEn: 'All Hadiths', nameBn: 'সকল বিষয়', icon: 'bookOpen' },
-  { id: 'iman', nameEn: 'Faith & Belief', nameBn: 'ঈমান ও আকীদা', icon: 'sparkles' },
-  { id: 'salah', nameEn: 'Prayer & Purification', nameBn: 'নামাজ ও পবিত্রতা', icon: 'clock' },
-  { id: 'character', nameEn: 'Good Character & Akhlaq', nameBn: 'সদাচরণ ও আখলাক', icon: 'heart' },
-  { id: 'charity', nameEn: 'Charity & Kindness', nameBn: 'দান-সদকা ও পরোপকার', icon: 'gift' },
-  { id: 'fasting', nameEn: 'Fasting & Ramadan', nameBn: 'সিয়াম ও রোজা', icon: 'moon' },
-  { id: 'dua', nameEn: 'Repentance & Du\'a', nameBn: 'তওবা ও দোয়া', icon: 'message' },
-  { id: 'knowledge', nameEn: 'Knowledge & Wisdom', nameBn: 'জ্ঞান ও প্রজ্ঞা', icon: 'search' },
-  { id: 'nawawi40', nameEn: 'Imam Nawawi\'s 40 Hadiths', nameBn: 'ইমাম নববীর ৪০ হাদিস', icon: 'check' },
+  { id: 'all', nameEn: 'All Topics', nameBn: 'সকল বিষয়', icon: '📖' },
+  { id: 'iman', nameEn: 'Faith & Belief', nameBn: 'ঈমান ও আকীদা', icon: '✨' },
+  { id: 'salah', nameEn: 'Prayer (Salah)', nameBn: 'সালাত ও পবিত্রতা', icon: '🕌' },
+  { id: 'character', nameEn: 'Good Character', nameBn: 'উত্তম চরিত্র ও আখলাক', icon: '🤍' },
+  { id: 'charity', nameEn: 'Charity (Sadaqah)', nameBn: 'দান-সদকা', icon: '🤲' },
+  { id: 'fasting', nameEn: 'Fasting (Sawm)', nameBn: 'সিয়াম ও রোজা', icon: '🌙' },
+  { id: 'dua', nameEn: 'Dua & Istighfar', nameBn: 'দোয়া ও তওবা', icon: '📿' },
+  { id: 'knowledge', nameEn: 'Knowledge & Wisdom', nameBn: 'জ্ঞান ও হিকমত', icon: '📜' },
+  { id: 'nawawi40', nameEn: 'Nawawi\'s 40', nameBn: 'ইমাম নববীর ৪০ হাদিস', icon: '⭐' },
 ];
 
 export interface Hadith {
