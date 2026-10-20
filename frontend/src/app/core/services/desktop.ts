@@ -1,4 +1,5 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { LanguageService } from './language';
 import { PrayerTimesService } from './prayer';
 
@@ -22,6 +23,8 @@ declare global {
       close: () => void;
       quit: () => void;
       getAppInfo: () => Promise<DesktopAppInfo>;
+      onNavigate: (callback: (route: string) => void) => void;
+      onToggleAdhanMute: (callback: (muted: boolean) => void) => void;
     };
   }
 }
@@ -30,6 +33,7 @@ declare global {
 export class DesktopService {
   private readonly prayerService = inject(PrayerTimesService);
   private readonly lang = inject(LanguageService);
+  private readonly router = inject(Router, { optional: true });
 
   readonly isDesktop = (): boolean => {
     return typeof window !== 'undefined' && !!window.desktopApi?.isDesktop;
@@ -43,6 +47,7 @@ export class DesktopService {
 
   constructor() {
     this.setupTrayPrayerSync();
+    this.setupTrayNavigation();
   }
 
   private setupTrayPrayerSync(): void {
@@ -55,6 +60,16 @@ export class DesktopService {
         const waqt = this.lang.isBn() ? next.prayer.banglaName : next.prayer.name;
         const countdown = next.formattedCountdown;
         window.desktopApi.updatePrayerStatus(waqt, countdown);
+      }
+    });
+  }
+
+  private setupTrayNavigation(): void {
+    if (!this.isDesktop() || !window.desktopApi?.onNavigate) return;
+
+    window.desktopApi.onNavigate((route: string) => {
+      if (this.router) {
+        this.router.navigate([route]);
       }
     });
   }

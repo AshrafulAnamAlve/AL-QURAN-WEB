@@ -16,6 +16,8 @@ export interface DesktopApi {
     arch: string;
     isPackaged: boolean;
   }>;
+  onNavigate: (callback: (route: string) => void) => void;
+  onToggleAdhanMute: (callback: (muted: boolean) => void) => void;
 }
 
 const desktopApi: DesktopApi = {
@@ -41,6 +43,12 @@ const desktopApi: DesktopApi = {
   },
   getAppInfo: () => {
     return ipcRenderer.invoke('desktop:get-app-info');
+  },
+  onNavigate: (callback: (route: string) => void) => {
+    ipcRenderer.on('desktop:navigate', (_event, route) => callback(route));
+  },
+  onToggleAdhanMute: (callback: (muted: boolean) => void) => {
+    ipcRenderer.on('desktop:toggle-adhan-mute', (_event, muted) => callback(muted));
   },
 };
 

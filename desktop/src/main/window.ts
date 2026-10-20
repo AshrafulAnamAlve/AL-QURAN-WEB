@@ -1,8 +1,10 @@
 import { app, BrowserWindow, shell } from 'electron';
 import * as path from 'path';
+import { WindowStateManager } from './window-state';
 
 let mainWindow: BrowserWindow | null = null;
 let isQuitting = false;
+let windowStateManager: WindowStateManager | null = null;
 
 export function setIsQuitting(val: boolean): void {
   isQuitting = val;
@@ -19,9 +21,16 @@ export function getMainWindow(): BrowserWindow | null {
 export function createMainWindow(): BrowserWindow {
   const isDev = process.env['NODE_ENV'] === 'development' || process.argv.includes('--dev');
 
+  if (!windowStateManager) {
+    windowStateManager = new WindowStateManager();
+  }
+  const state = windowStateManager.getState();
+
   mainWindow = new BrowserWindow({
-    width: 1240,
-    height: 820,
+    width: state.width,
+    height: state.height,
+    x: state.x,
+    y: state.y,
     minWidth: 980,
     minHeight: 640,
     title: 'Al-Quran (কুরআন ও ইসলামিক টুলস)',
@@ -37,6 +46,8 @@ export function createMainWindow(): BrowserWindow {
       spellcheck: false,
     },
   });
+
+  windowStateManager.manage(mainWindow);
 
   // Graceful show to prevent white flash
   mainWindow.once('ready-to-show', () => {

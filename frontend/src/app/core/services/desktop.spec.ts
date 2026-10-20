@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
+import { Router } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DesktopService } from './desktop';
 import { LanguageService } from './language';
@@ -10,6 +11,7 @@ import { StorageService } from './storage';
 
 describe('DesktopService', () => {
   let service: DesktopService;
+  let mockRouter: { navigate: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     localStorage.clear();
@@ -17,6 +19,10 @@ describe('DesktopService', () => {
     const mockPrayerApi = {
       getTimings: vi.fn().mockReturnValue(of({ times: [] })),
       getMethods: vi.fn().mockReturnValue(of([])),
+    };
+
+    mockRouter = {
+      navigate: vi.fn().mockResolvedValue(true),
     };
 
     TestBed.configureTestingModule({
@@ -27,6 +33,7 @@ describe('DesktopService', () => {
         StorageService,
         LocationService,
         { provide: PrayerApiService, useValue: mockPrayerApi },
+        { provide: Router, useValue: mockRouter },
       ],
     });
 
@@ -65,6 +72,29 @@ describe('DesktopService', () => {
 
     desktopService.minimize();
     expect(minimizeSpy).toHaveBeenCalled();
+
+    delete (window as any).desktopApi;
+  });
+
+  it('subscribes to onNavigate and handles route changes', () => {
+    let navigateCallback: ((route: string) => void) | null = null;
+    (window as any).desktopApi = {
+      isDesktop: true,
+      platform: 'linux',
+      onNavigate: vi.fn((cb) => {
+        navigateCallback = cb;
+      }),
+    };
+
+    TestBed.runInInjectionContext(() => {
+      new DesktopService();
+      expect((window as any).desktopApi.onNavigate).toHaveBeenCalled();
+
+      if (navigateCallback) {
+        (navigateCallback as any)('/ruqyah');
+        expect(mockRouter.navigate).toHaveBeenCalledWith(['/ruqyah']);
+      }
+    });
 
     delete (window as any).desktopApi;
   });
