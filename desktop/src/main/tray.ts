@@ -18,6 +18,13 @@ export function updateTrayPrayerInfo(info: string): void {
   }
 }
 
+export function setAdhanMutedState(muted: boolean): void {
+  if (isAdhanMuted !== muted) {
+    isAdhanMuted = muted;
+    rebuildTrayMenu();
+  }
+}
+
 function navigateToRoute(route: string): void {
   const win = getMainWindow();
   if (win) {

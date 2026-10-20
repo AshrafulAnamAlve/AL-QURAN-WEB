@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import { registerIpcHandlers } from './ipc';
+import { registerGlobalMediaShortcuts } from './shortcuts';
 import { createTray } from './tray';
 import { createMainWindow, getMainWindow, setIsQuitting } from './window';
 
@@ -20,7 +21,11 @@ if (!gotTheLock) {
   });
 
   app.whenReady().then(() => {
+    if (process.platform === 'win32') {
+      app.setAppUserModelId('com.alquran.desktop');
+    }
     registerIpcHandlers();
+    registerGlobalMediaShortcuts();
     createMainWindow();
     createTray();
 

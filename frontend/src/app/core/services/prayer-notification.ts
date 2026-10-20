@@ -9,6 +9,7 @@ import {
   PrayerNotificationSettings,
 } from '../models/prayer-notification';
 import { PrayerTime } from '../models/prayer';
+import { DesktopService } from './desktop';
 import { LanguageService } from './language';
 import { LocationService } from './location';
 import { LoggerService } from './logger';
@@ -22,6 +23,7 @@ export class PrayerNotificationService implements OnDestroy {
   private readonly locationService = inject(LocationService);
   private readonly language = inject(LanguageService);
   private readonly logger = inject(LoggerService);
+  private readonly desktopService = inject(DesktopService);
 
   private checkIntervalId: ReturnType<typeof setInterval> | null = null;
   private snoozeTimeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -38,8 +40,12 @@ export class PrayerNotificationService implements OnDestroy {
   // Permission state
   private readonly _permission = signal<NotificationPermission>(this.detectPermission());
   readonly permission = this._permission.asReadonly();
-  readonly isPermissionGranted = computed(() => this._permission() === 'granted');
-  readonly isPermissionDenied = computed(() => this._permission() === 'denied');
+  readonly isPermissionGranted = computed(
+    () => this.desktopService.isDesktop() || this._permission() === 'granted',
+  );
+  readonly isPermissionDenied = computed(
+    () => !this.desktopService.isDesktop() && this._permission() === 'denied',
+  );
 
   // In-App Adhan Modal State
   private readonly _activeAdhanModal = signal<AdhanModalState | null>(null);
@@ -57,6 +63,25 @@ export class PrayerNotificationService implements OnDestroy {
 
   constructor() {
     this.startScheduler();
+    this.initDesktopIntegration();
+  }
+
+  private initDesktopIntegration(): void {
+    if (!this.desktopService.isDesktop()) return;
+
+    // Sync Adhan mute state between desktop tray and app settings
+    this.desktopService.setTrayAdhanMuted(this._settings().defaultMuted);
+
+    this.desktopService.onToggleAdhanMute((muted) => {
+      this.setDefaultMuted(muted);
+    });
+
+    this.desktopService.onNotificationClick(() => {
+      const next = this.prayerTimes.nextPrayer();
+      if (next) {
+        this.openAdhanModal(next.prayer);
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -105,6 +130,10 @@ export class PrayerNotificationService implements OnDestroy {
     };
     this._settings.set(updated);
     this.storage.write(STORAGE_KEYS.prayerNotifications, updated);
+
+    if (partial.defaultMuted !== undefined && this.desktopService.isDesktop()) {
+      this.desktopService.setTrayAdhanMuted(partial.defaultMuted);
+    }
   }
 
   setAdhanVoice(voice: AdhanVoiceId): void {
@@ -214,7 +243,7 @@ export class PrayerNotificationService implements OnDestroy {
    * Sends desktop notification with prayer details and audio/focus actions.
    */
   sendDesktopNotification(prayer: PrayerTime): Notification | null {
-    if (typeof window !== 'undefined' && window.desktopApi?.isDesktop) {
+    if (this.desktopService.isDesktop()) {
       const loc = this.locationService.location();
       const city = loc.city || loc.displayName || (this.language.isBn() ? 'আপনার এলাকা' : 'your area');
       const time12h = this.prayerTimes.format12h(prayer.time, false);
@@ -229,7 +258,7 @@ export class PrayerNotificationService implements OnDestroy {
         ? `${city}-এ এখন ${prayer.banglaName} নামাজের সময় (${time12hBn})।`
         : `It is now time for ${prayer.name} prayer (${time12h}) in ${city}.`;
 
-      window.desktopApi.notify(title, body);
+      this.desktopService.sendNotification(title, body);
       return null;
     }
 

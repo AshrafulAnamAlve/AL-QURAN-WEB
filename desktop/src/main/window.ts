@@ -38,12 +38,27 @@ export function createMainWindow(): BrowserWindow {
     backgroundColor: '#0a1914', // Emerald dark theme
     show: false, // Show gracefully on ready-to-show
     autoHideMenuBar: true,
+    titleBarStyle:
+      process.platform === 'win32'
+        ? 'hidden'
+        : process.platform === 'darwin'
+          ? 'hiddenInset'
+          : 'default',
+    titleBarOverlay:
+      process.platform === 'win32'
+        ? {
+            color: '#071611',
+            symbolColor: '#d4af37',
+            height: 48,
+          }
+        : undefined,
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: false,
       spellcheck: false,
+      backgroundThrottling: false, // Ensures unhindered background timers & prayer audio
     },
   });
 

@@ -1,15 +1,19 @@
 import { app, ipcMain, Notification } from 'electron';
-import { updateTrayPrayerInfo } from './tray';
+import * as path from 'path';
+import { setAdhanMutedState, updateTrayPrayerInfo } from './tray';
 import { getMainWindow, setIsQuitting } from './window';
 
 export function registerIpcHandlers(): void {
   // Show native desktop notification (Adhan / Task reminder)
   ipcMain.on('desktop:notify', (_event, { title, body, icon }) => {
     if (Notification.isSupported()) {
+      const defaultIcon = path.join(__dirname, '../../assets/icons/icon.png');
+      const iconPath = icon && path.isAbsolute(icon) ? icon : defaultIcon;
+
       const notification = new Notification({
         title: title || 'Al-Quran',
         body: body || '',
-        icon: icon || undefined,
+        icon: iconPath,
         silent: false,
       });
 
@@ -18,11 +22,17 @@ export function registerIpcHandlers(): void {
         if (win) {
           if (!win.isVisible()) win.show();
           win.focus();
+          win.webContents.send('desktop:notification-clicked');
         }
       });
 
       notification.show();
     }
+  });
+
+  // Keep system tray mute toggle in sync with Angular settings
+  ipcMain.on('desktop:set-adhan-mute', (_event, muted: boolean) => {
+    setAdhanMutedState(Boolean(muted));
   });
 
   // Update tray tooltip & status from Angular PrayerService

@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AudioPlayerService } from './audio-player';
 import { DesktopService } from './desktop';
 import { LanguageService } from './language';
 import { LocationService } from './location';
@@ -12,6 +13,11 @@ import { StorageService } from './storage';
 describe('DesktopService', () => {
   let service: DesktopService;
   let mockRouter: { navigate: ReturnType<typeof vi.fn> };
+  let mockAudioPlayer: {
+    toggle: ReturnType<typeof vi.fn>;
+    next: ReturnType<typeof vi.fn>;
+    previous: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
     localStorage.clear();
@@ -25,6 +31,12 @@ describe('DesktopService', () => {
       navigate: vi.fn().mockResolvedValue(true),
     };
 
+    mockAudioPlayer = {
+      toggle: vi.fn(),
+      next: vi.fn(),
+      previous: vi.fn(),
+    };
+
     TestBed.configureTestingModule({
       providers: [
         DesktopService,
@@ -34,6 +46,7 @@ describe('DesktopService', () => {
         LocationService,
         { provide: PrayerApiService, useValue: mockPrayerApi },
         { provide: Router, useValue: mockRouter },
+        { provide: AudioPlayerService, useValue: mockAudioPlayer },
       ],
     });
 
@@ -94,6 +107,61 @@ describe('DesktopService', () => {
         (navigateCallback as any)('/ruqyah');
         expect(mockRouter.navigate).toHaveBeenCalledWith(['/ruqyah']);
       }
+    });
+
+    delete (window as any).desktopApi;
+  });
+
+  it('wires up media controls to AudioPlayerService in desktop mode', () => {
+    let mediaCb: ((action: 'play-pause' | 'next' | 'prev') => void) | null = null;
+    (window as any).desktopApi = {
+      isDesktop: true,
+      platform: 'win32',
+      onMediaControl: vi.fn((cb) => {
+        mediaCb = cb;
+      }),
+    };
+
+    TestBed.runInInjectionContext(() => {
+      new DesktopService();
+      expect((window as any).desktopApi.onMediaControl).toHaveBeenCalled();
+
+      mediaCb?.('play-pause');
+      expect(mockAudioPlayer.toggle).toHaveBeenCalled();
+
+      mediaCb?.('next');
+      expect(mockAudioPlayer.next).toHaveBeenCalled();
+
+      mediaCb?.('prev');
+      expect(mockAudioPlayer.previous).toHaveBeenCalled();
+    });
+
+    delete (window as any).desktopApi;
+  });
+
+  it('delegates adhan mute and notification clicks', () => {
+    const setAdhanMutedSpy = vi.fn();
+
+    (window as any).desktopApi = {
+      isDesktop: true,
+      platform: 'win32',
+      setAdhanMuted: setAdhanMutedSpy,
+      onToggleAdhanMute: vi.fn(),
+      onNotificationClick: vi.fn(),
+    };
+
+    TestBed.runInInjectionContext(() => {
+      const desktop = new DesktopService();
+      desktop.setTrayAdhanMuted(true);
+      expect(setAdhanMutedSpy).toHaveBeenCalledWith(true);
+
+      const muteCallback = vi.fn();
+      desktop.onToggleAdhanMute(muteCallback);
+      expect((window as any).desktopApi.onToggleAdhanMute).toHaveBeenCalledWith(muteCallback);
+
+      const notifHandler = vi.fn();
+      desktop.onNotificationClick(notifHandler);
+      expect((window as any).desktopApi.onNotificationClick).toHaveBeenCalledWith(notifHandler);
     });
 
     delete (window as any).desktopApi;

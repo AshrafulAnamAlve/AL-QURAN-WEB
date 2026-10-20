@@ -18,6 +18,9 @@ export interface DesktopApi {
   }>;
   onNavigate: (callback: (route: string) => void) => void;
   onToggleAdhanMute: (callback: (muted: boolean) => void) => void;
+  setAdhanMuted: (muted: boolean) => void;
+  onNotificationClick: (callback: () => void) => void;
+  onMediaControl: (callback: (action: 'play-pause' | 'next' | 'prev') => void) => void;
 }
 
 const desktopApi: DesktopApi = {
@@ -49,6 +52,15 @@ const desktopApi: DesktopApi = {
   },
   onToggleAdhanMute: (callback: (muted: boolean) => void) => {
     ipcRenderer.on('desktop:toggle-adhan-mute', (_event, muted) => callback(muted));
+  },
+  setAdhanMuted: (muted: boolean) => {
+    ipcRenderer.send('desktop:set-adhan-mute', muted);
+  },
+  onNotificationClick: (callback: () => void) => {
+    ipcRenderer.on('desktop:notification-clicked', () => callback());
+  },
+  onMediaControl: (callback: (action: 'play-pause' | 'next' | 'prev') => void) => {
+    ipcRenderer.on('desktop:media-control', (_event, action) => callback(action));
   },
 };
 

@@ -8,7 +8,7 @@
   "scripts": {
     "build:main": "tsc",
     "watch:main": "tsc -w",
-    "build:frontend": "cd ../frontend && npm run build:desktop",
+    "build:frontend": "npm --prefix ../frontend run build:desktop",
     "start": "npm run build:main && electron .",
     "start:dev": "npm run build:main && electron . --dev",
     "package:win": "npm run build:frontend && npm run build:main && electron-builder --win",

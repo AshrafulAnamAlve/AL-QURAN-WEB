@@ -510,3 +510,24 @@
     opacity: 1;
   }
 }
+
+// --- Desktop App (Electron) Integrations -----------------------------------
+:host-context(body.is-desktop) {
+  .header {
+    -webkit-app-region: drag;
+  }
+
+  .brand,
+  .desktop-nav,
+  .actions,
+  button,
+  a {
+    -webkit-app-region: no-drag;
+  }
+
+  @media (min-width: 768px) {
+    .header__inner {
+      padding-right: 140px; // Offset for native Windows 11/10 titleBarOverlay buttons
+    }
+  }
+}

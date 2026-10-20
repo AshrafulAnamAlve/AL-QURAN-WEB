@@ -1,5 +1,6 @@
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { AudioPlayerService } from './audio-player';
 import { LanguageService } from './language';
 import { PrayerTimesService } from './prayer';
 
@@ -25,6 +26,9 @@ declare global {
       getAppInfo: () => Promise<DesktopAppInfo>;
       onNavigate: (callback: (route: string) => void) => void;
       onToggleAdhanMute: (callback: (muted: boolean) => void) => void;
+      setAdhanMuted: (muted: boolean) => void;
+      onNotificationClick: (callback: () => void) => void;
+      onMediaControl: (callback: (action: 'play-pause' | 'next' | 'prev') => void) => void;
     };
   }
 }
@@ -34,6 +38,7 @@ export class DesktopService {
   private readonly prayerService = inject(PrayerTimesService);
   private readonly lang = inject(LanguageService);
   private readonly router = inject(Router, { optional: true });
+  private readonly audioPlayer = inject(AudioPlayerService, { optional: true });
 
   readonly isDesktop = (): boolean => {
     return typeof window !== 'undefined' && !!window.desktopApi?.isDesktop;
@@ -46,8 +51,16 @@ export class DesktopService {
   };
 
   constructor() {
+    this.setupDesktopStyles();
     this.setupTrayPrayerSync();
     this.setupTrayNavigation();
+    this.setupMediaControl();
+  }
+
+  private setupDesktopStyles(): void {
+    if (this.isDesktop() && typeof document !== 'undefined') {
+      document.body.classList.add('is-desktop');
+    }
   }
 
   private setupTrayPrayerSync(): void {
@@ -72,6 +85,42 @@ export class DesktopService {
         this.router.navigate([route]);
       }
     });
+  }
+
+  private setupMediaControl(): void {
+    if (!this.isDesktop() || !window.desktopApi?.onMediaControl) return;
+
+    window.desktopApi.onMediaControl((action) => {
+      if (!this.audioPlayer) return;
+      if (action === 'play-pause') {
+        this.audioPlayer.toggle();
+      } else if (action === 'next') {
+        this.audioPlayer.next();
+      } else if (action === 'prev') {
+        this.audioPlayer.previous();
+      }
+    });
+  }
+
+  /** Bi-directional sync: Notify system tray about Adhan mute state */
+  setTrayAdhanMuted(muted: boolean): void {
+    if (this.isDesktop() && window.desktopApi?.setAdhanMuted) {
+      window.desktopApi.setAdhanMuted(muted);
+    }
+  }
+
+  /** Subscribe to Adhan mute toggle initiated from system tray context menu */
+  onToggleAdhanMute(callback: (muted: boolean) => void): void {
+    if (this.isDesktop() && window.desktopApi?.onToggleAdhanMute) {
+      window.desktopApi.onToggleAdhanMute(callback);
+    }
+  }
+
+  /** Subscribe to native desktop notification click events */
+  onNotificationClick(callback: () => void): void {
+    if (this.isDesktop() && window.desktopApi?.onNotificationClick) {
+      window.desktopApi.onNotificationClick(callback);
+    }
   }
 
   /** Triggers a native OS notification banner */
