@@ -285,11 +285,48 @@
   box-shadow: var(--aq-shadow-md);
 }
 
-.alignment-banner {
-  min-height: 38px;
+// Real-time Facing HUD & Turn Guidance
+.facing-hud {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  max-width: 440px;
+  text-align: center;
+
+  &__current {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.95rem;
+    background: var(--aq-bg-subtle);
+    border: 1px solid var(--aq-border);
+    border-radius: 9999px;
+    font-size: 0.8125rem;
+    color: var(--aq-text-muted);
+  }
+
+  &__label {
+    opacity: 0.85;
+  }
+
+  &__value {
+    color: var(--aq-text);
+    font-weight: 700;
+  }
+
+  &__cardinal {
+    color: var(--aq-gold, #d4af37);
+    font-weight: 700;
+  }
+}
+
+.turn-guidance {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 42px;
 
   .aligned-badge {
     display: inline-flex;
@@ -305,17 +342,41 @@
     animation: alignedPulse 1.8s ease-in-out infinite;
   }
 
-  .orienting-badge {
+  .turn-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
-    padding: 0.4rem 1rem;
-    background: var(--aq-bg-subtle);
-    border: 1px solid var(--aq-border);
-    color: var(--aq-text-muted);
+    gap: 0.5rem;
+    padding: 0.45rem 1rem;
     border-radius: 9999px;
-    font-size: 0.8125rem;
-    font-weight: 600;
+    font-size: 0.875rem;
+    font-weight: 700;
+    transition: all 0.2s ease;
+
+    .turn-arrow {
+      font-size: 1.15rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    &--left {
+      background: color-mix(in srgb, #3b82f6 15%, var(--aq-surface));
+      border: 1.5px solid color-mix(in srgb, #3b82f6 50%, transparent);
+      color: #3b82f6;
+
+      .turn-arrow {
+        color: #3b82f6;
+      }
+    }
+
+    &--right {
+      background: color-mix(in srgb, #f59e0b 15%, var(--aq-surface));
+      border: 1.5px solid color-mix(in srgb, #f59e0b 50%, transparent);
+      color: #f59e0b;
+
+      .turn-arrow {
+        color: #f59e0b;
+      }
+    }
   }
 }
 
@@ -335,10 +396,19 @@
   position: relative;
   width: 290px;
   height: 290px;
+  margin-top: 1.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
   transition: all 0.3s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  @media (max-width: 359px) {
+    width: 260px;
+    height: 260px;
+  }
 
   @media (min-width: 480px) {
     width: 330px;
@@ -353,6 +423,51 @@
   &.is-aligned .compass-ring {
     border-color: var(--aq-gold, #d4af37);
     box-shadow: 0 0 35px rgba(212, 175, 55, 0.45), inset 0 0 20px rgba(16, 185, 129, 0.25);
+  }
+}
+
+// Fixed Phone Facing Pointer (Top 12 o'clock)
+.phone-heading-pointer {
+  position: absolute;
+  top: -26px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none;
+
+  &__arrow {
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--aq-gold, #d4af37);
+    filter: drop-shadow(0 2px 4px rgba(212, 175, 55, 0.5));
+    animation: bouncePointer 2s ease-in-out infinite;
+  }
+
+  &__label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--aq-gold, #d4af37);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--aq-surface);
+    padding: 0.12rem 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in srgb, var(--aq-gold, #d4af37) 40%, transparent);
+    white-space: nowrap;
+    box-shadow: var(--aq-shadow-sm);
+    margin-top: -2px;
+  }
+}
+
+@keyframes bouncePointer {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
   }
 }
 
@@ -579,6 +694,65 @@
     letter-spacing: 0.04em;
     margin-top: 0.2rem;
   }
+}
+
+// Feedback Toolbar (Vibration & Chime Controls)
+.feedback-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  width: 100%;
+}
+
+.feedback-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--aq-text-muted);
+  background: var(--aq-bg-subtle);
+  border: 1px solid var(--aq-border);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    color: var(--aq-text);
+    border-color: var(--aq-primary);
+  }
+
+  &.is-active {
+    background: color-mix(in srgb, var(--aq-primary) 12%, var(--aq-surface));
+    border-color: var(--aq-primary);
+    color: var(--aq-primary);
+    font-weight: 700;
+  }
+
+  &--test {
+    background: color-mix(in srgb, var(--aq-gold, #d4af37) 12%, var(--aq-surface));
+    border-color: color-mix(in srgb, var(--aq-gold, #d4af37) 40%, transparent);
+    color: var(--aq-gold, #d4af37);
+
+    &:active {
+      transform: scale(0.96);
+    }
+  }
+
+  @include m.focus-visible;
+}
+
+.haptic-notice {
+  margin: 0.35rem 0 0;
+  font-size: 0.75rem;
+  color: var(--aq-text-muted);
+  text-align: center;
+  max-width: 440px;
+  line-height: 1.45;
 }
 
 // Map View Card

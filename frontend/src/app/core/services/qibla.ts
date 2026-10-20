@@ -81,6 +81,13 @@ export function getCardinalDirection(bearing: number): {
   return CARDINALS[index];
 }
 
+export interface TurnGuidance {
+  status: 'aligned' | 'turn-left' | 'turn-right';
+  diffDegrees: number;
+  textBn: string;
+  textEn: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class QiblaService {
   private readonly settings = inject(SettingsService);
@@ -110,6 +117,20 @@ export class QiblaService {
   /** Sensor lifecycle / permission state */
   readonly sensorState = signal<CompassSensorState>('unsupported');
 
+  /** Whether navigator.vibrate is supported by this browser/OS */
+  readonly vibrationSupported =
+    typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function';
+
+  /** User preference toggles for feedback */
+  readonly vibrationEnabled = signal<boolean>(true);
+  readonly soundEnabled = signal<boolean>(true);
+  readonly userActivated = signal<boolean>(false);
+
+  /** The cardinal direction corresponding to what the device is currently pointing at */
+  readonly currentFacingCardinal = computed(() => {
+    return getCardinalDirection(this.deviceHeading());
+  });
+
   /** Whether the user is holding the device oriented towards the Kaaba (±3.5°) */
   readonly isAligned = computed<boolean>(() => {
     if (this.sensorState() !== 'active') return false;
@@ -124,8 +145,53 @@ export class QiblaService {
     return (qibla - heading + 360) % 360;
   });
 
-  private lastVibrateTime = 0;
+  /** Detailed turn guidance informing user which way to turn and how many degrees */
+  readonly turnGuidance = computed<TurnGuidance>(() => {
+    if (this.sensorState() !== 'active') {
+      return {
+        status: 'aligned',
+        diffDegrees: 0,
+        textBn: 'কম্পাস সক্রিয় নয় (ম্যাপ ভিউ দেখুন)',
+        textEn: 'Compass sensor inactive (use Map View)',
+      };
+    }
+
+    const qibla = this.qiblaData().bearing;
+    const heading = this.deviceHeading();
+    let diff = (qibla - heading + 360) % 360;
+    if (diff > 180) diff -= 360;
+
+    const absDiff = Math.abs(diff);
+    const rounded = Math.round(absDiff);
+
+    if (absDiff <= 3.5) {
+      return {
+        status: 'aligned',
+        diffDegrees: 0,
+        textBn: 'আলহামদুলিল্লাহ! আপনি সরাসরি কিবলামুখী হয়েছেন',
+        textEn: 'Alhamdulillah! Facing the Holy Kaaba',
+      };
+    } else if (diff < 0) {
+      return {
+        status: 'turn-left',
+        diffDegrees: rounded,
+        textBn: `${rounded}° বামে ঘুরুন`,
+        textEn: `Turn ${rounded}° Left`,
+      };
+    } else {
+      return {
+        status: 'turn-right',
+        diffDegrees: rounded,
+        textBn: `${rounded}° ডানে ঘুরুন`,
+        textEn: `Turn ${rounded}° Right`,
+      };
+    }
+  });
+
+  private lastFeedbackTime = 0;
+  private wasAligned = false;
   private orientationListener: ((e: DeviceOrientationEvent) => void) | null = null;
+  private audioCtx: AudioContext | null = null;
 
   constructor() {
     this.checkSensorSupport();
@@ -231,20 +297,98 @@ export class QiblaService {
     }
   }
 
-  private triggerHapticIfAligned(): void {
-    if (!this.isAligned()) return;
+  /**
+   * Directly test and warm up vibration & audio on user gesture
+   */
+  testHaptic(): boolean {
+    this.userActivated.set(true);
+    let didVibrate = false;
 
+    if (this.vibrationSupported && typeof navigator !== 'undefined' && navigator.vibrate) {
+      try {
+        didVibrate = navigator.vibrate([60, 40, 60]);
+      } catch {
+        didVibrate = false;
+      }
+    }
+
+    if (this.soundEnabled()) {
+      this.playAlignmentChime();
+    }
+
+    return didVibrate;
+  }
+
+  toggleVibration(): void {
+    this.vibrationEnabled.update((v) => !v);
+  }
+
+  toggleSound(): void {
+    this.soundEnabled.update((s) => !s);
+  }
+
+  /**
+   * Synthesize a subtle spiritual chime using Web Audio API (cross-platform, works on iOS too)
+   */
+  playAlignmentChime(): void {
+    if (typeof window === 'undefined') return;
+    try {
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtx) return;
+      if (!this.audioCtx) {
+        this.audioCtx = new AudioCtx();
+      }
+      if (this.audioCtx.state === 'suspended') {
+        this.audioCtx.resume();
+      }
+
+      const now = this.audioCtx.currentTime;
+      const osc = this.audioCtx.createOscillator();
+      const gain = this.audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.12);
+
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+      osc.connect(gain);
+      gain.connect(this.audioCtx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.45);
+    } catch {
+      // Ignore
+    }
+  }
+
+  private triggerHapticIfAligned(): void {
+    const alignedNow = this.isAligned();
+
+    // Trigger feedback when entering aligned state or every 2.5s while staying aligned
     const now = Date.now();
-    // Throttle haptic pulse to at most once every 3 seconds to avoid battery/annoyance
-    if (now - this.lastVibrateTime > 3000) {
-      this.lastVibrateTime = now;
-      if (typeof navigator !== 'undefined' && navigator.vibrate) {
-        try {
-          navigator.vibrate([40, 50, 40]);
-        } catch {
-          // Ignore
+    if (alignedNow) {
+      const shouldTrigger = !this.wasAligned || now - this.lastFeedbackTime > 2500;
+      if (shouldTrigger) {
+        this.lastFeedbackTime = now;
+
+        // 1. Vibration
+        if (this.vibrationEnabled() && typeof navigator !== 'undefined' && navigator.vibrate) {
+          try {
+            navigator.vibrate([60, 40, 60]);
+          } catch {
+            // Ignore
+          }
+        }
+
+        // 2. Chime (works on iPhone/iOS too)
+        if (this.soundEnabled()) {
+          this.playAlignmentChime();
         }
       }
     }
+
+    this.wasAligned = alignedNow;
   }
 }

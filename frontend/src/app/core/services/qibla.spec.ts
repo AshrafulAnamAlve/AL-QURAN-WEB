@@ -85,4 +85,31 @@ describe('QiblaService Math & Utilities', () => {
     expect(qibla.cardinalKey).toBeDefined();
     expect(service.deviceHeading()).toBe(0);
   });
+
+  it('provides turn guidance and feedback controls', () => {
+    TestBed.configureTestingModule({
+      providers: [QiblaService, SettingsService],
+    });
+
+    const service = TestBed.inject(QiblaService);
+
+    // Initial sensor state is not active in headless test runner
+    expect(service.turnGuidance().status).toBe('aligned');
+
+    // Test facing cardinal direction
+    const cardinal = service.currentFacingCardinal();
+    expect(cardinal.key).toBeDefined();
+
+    // Test feedback controls
+    expect(service.vibrationEnabled()).toBe(true);
+    service.toggleVibration();
+    expect(service.vibrationEnabled()).toBe(false);
+
+    expect(service.soundEnabled()).toBe(true);
+    service.toggleSound();
+    expect(service.soundEnabled()).toBe(false);
+
+    // Test haptic warmup does not crash
+    expect(() => service.testHaptic()).not.toThrow();
+  });
 });

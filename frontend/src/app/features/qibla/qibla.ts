@@ -71,6 +71,38 @@ export class QiblaPage implements OnInit, AfterViewInit, OnDestroy {
     return this.qibla.qiblaData().bearing;
   });
 
+  /** What direction the phone is currently pointing towards */
+  readonly facingInfo = computed(() => {
+    const heading = this.qibla.deviceHeading();
+    const cardinal = this.qibla.currentFacingCardinal();
+    return {
+      degrees: heading,
+      cardinalKey: cardinal.key,
+      cardinalBn: cardinal.bn,
+      cardinalEn: cardinal.en,
+    };
+  });
+
+  readonly turnGuidance = this.qibla.turnGuidance;
+
+  testVibration(): void {
+    this.qibla.testHaptic();
+  }
+
+  toggleSound(): void {
+    this.qibla.soundEnabled.update((v) => !v);
+    if (this.qibla.soundEnabled()) {
+      this.qibla.playAlignmentChime();
+    }
+  }
+
+  toggleVibration(): void {
+    this.qibla.vibrationEnabled.update((v) => !v);
+    if (this.qibla.vibrationEnabled()) {
+      this.qibla.testHaptic();
+    }
+  }
+
   constructor() {
     // Whenever location changes, update map path if map is active
     effect(() => {

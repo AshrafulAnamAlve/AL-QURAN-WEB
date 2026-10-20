@@ -56,4 +56,20 @@ describe('QiblaPage Component', () => {
     expect(component.kaabaPointerAngle()).toBeGreaterThan(0);
     expect(component.kaabaPointerAngle()).toBeLessThan(360);
   });
+
+  it('renders phone facing indicator and feedback toolbar', () => {
+    const el = fixture.nativeElement as HTMLElement;
+    expect(el.querySelector('.facing-hud')).toBeTruthy();
+    expect(el.querySelector('.phone-heading-pointer')).toBeTruthy();
+    expect(el.querySelector('.feedback-toolbar')).toBeTruthy();
+
+    const facing = component.facingInfo();
+    expect(facing.degrees).toBeDefined();
+    expect(facing.cardinalEn).toBeDefined();
+    expect(facing.cardinalBn).toBeDefined();
+
+    expect(() => component.testVibration()).not.toThrow();
+    expect(() => component.toggleVibration()).not.toThrow();
+    expect(() => component.toggleSound()).not.toThrow();
+  });
 });

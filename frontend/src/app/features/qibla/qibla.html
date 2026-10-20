@@ -115,27 +115,50 @@
         </div>
       }
 
-      <!-- Status Pill above Compass -->
-      <div class="alignment-banner" [class.is-aligned]="qibla.isAligned()">
-        @if (qibla.isAligned()) {
-          <span class="aligned-badge">
-            <aq-icon name="check" [size]="18" />
-            <span>{{ isBn() ? 'আলহামদুলিল্লাহ! আপনি সরাসরি কিবলামুখী হয়েছেন' : 'Facing the Holy Kaaba!' }}</span>
-          </span>
-        } @else {
-          <span class="orienting-badge">
-            <aq-icon name="compass" [size]="16" />
-            <span>
-              {{ isBn()
-                ? 'কা\'বার দিক: ' + qibla.qiblaData().bearing + '° (' + qibla.qiblaData().cardinalBn + ')'
-                : 'Qibla Bearing: ' + qibla.qiblaData().bearing + '° (' + qibla.qiblaData().cardinalKey + ')' }}
+      <!-- Real-time Facing Direction & Turn Guidance HUD -->
+      <div class="facing-hud">
+        <div class="facing-hud__current">
+          <span class="facing-hud__label">{{ isBn() ? 'আপনি যেদিকে মুখ করে আছেন:' : 'You are currently facing:' }}</span>
+          <strong class="facing-hud__value">
+            {{ facingInfo().degrees }}°
+            <span class="facing-hud__cardinal">({{ isBn() ? facingInfo().cardinalBn : facingInfo().cardinalEn }})</span>
+          </strong>
+        </div>
+
+        <!-- Dynamic Turn Guidance -->
+        <div class="turn-guidance" [class.is-aligned]="qibla.isAligned()">
+          @if (turnGuidance().status === 'aligned') {
+            <span class="aligned-badge">
+              <aq-icon name="check" [size]="18" />
+              <span>{{ isBn() ? 'আলহামদুলিল্লাহ! আপনি সরাসরি কিবলামুখী হয়েছেন' : 'Facing the Holy Kaaba!' }}</span>
             </span>
-          </span>
-        }
+          } @else if (turnGuidance().status === 'turn-left') {
+            <span class="turn-badge turn-badge--left">
+              <span class="turn-arrow">⟲</span>
+              <span>{{ isBn() ? turnGuidance().textBn : turnGuidance().textEn }}</span>
+            </span>
+          } @else {
+            <span class="turn-badge turn-badge--right">
+              <span>{{ isBn() ? turnGuidance().textBn : turnGuidance().textEn }}</span>
+              <span class="turn-arrow">⟳</span>
+            </span>
+          }
+        </div>
       </div>
 
       <!-- THE COMPASS DIAL -->
-      <div class="compass-wrapper" [class.is-aligned]="qibla.isAligned()">
+      <div
+        class="compass-wrapper"
+        [class.is-aligned]="qibla.isAligned()"
+        (click)="testVibration()"
+        [title]="isBn() ? 'ভাইব্রেশন ও সাউন্ড সক্রিয় করতে ট্যাপ করুন' : 'Tap to test vibration and audio feedback'"
+      >
+        <!-- Fixed Phone Facing Pointer (Top 12 o'clock - never rotates, shows phone's look direction) -->
+        <div class="phone-heading-pointer" aria-hidden="true">
+          <span class="phone-heading-pointer__arrow">▲</span>
+          <span class="phone-heading-pointer__label">{{ isBn() ? 'আপনার সামনের দিক' : 'Phone Top' }}</span>
+        </div>
+
         <!-- Outer Glow Ring -->
         <div class="compass-ring"></div>
 
@@ -208,6 +231,47 @@
           </span>
         </div>
       </div>
+
+      <!-- Feedback Toolbar: Vibration & Audio Chime -->
+      <div class="feedback-toolbar">
+        <button
+          type="button"
+          class="feedback-btn"
+          [class.is-active]="qibla.vibrationEnabled()"
+          (click)="toggleVibration()"
+          [title]="isBn() ? 'ভাইব্রেশন অ্যালার্ট টগল' : 'Toggle Vibration'"
+        >
+          <span>📳</span>
+          <span>{{ isBn() ? 'ভাইব্রেশন: ' + (qibla.vibrationEnabled() ? 'চালু' : 'বন্ধ') : 'Vibrate: ' + (qibla.vibrationEnabled() ? 'On' : 'Off') }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="feedback-btn"
+          [class.is-active]="qibla.soundEnabled()"
+          (click)="toggleSound()"
+          [title]="isBn() ? 'অ্যালার্ট সাউন্ড টগল' : 'Toggle Chime'"
+        >
+          <span>🔔</span>
+          <span>{{ isBn() ? 'সাউন্ড: ' + (qibla.soundEnabled() ? 'চালু' : 'বন্ধ') : 'Sound: ' + (qibla.soundEnabled() ? 'On' : 'Off') }}</span>
+        </button>
+
+        <button
+          type="button"
+          class="feedback-btn feedback-btn--test"
+          (click)="testVibration()"
+          [title]="isBn() ? 'ভাইব্রেশন ও সাউন্ড টেস্ট করুন' : 'Test vibration and sound'"
+        >
+          <span>⚡</span>
+          <span>{{ isBn() ? 'টেস্ট করুন' : 'Test' }}</span>
+        </button>
+      </div>
+
+      @if (!qibla.vibrationSupported) {
+        <p class="haptic-notice">
+          ℹ️ {{ isBn() ? 'এই ব্রাউজারে ভাইব্রেশন সাপোর্ট নেই (যেমন iOS Safari), তবে কিবলামুখী হলে মিষ্টি সাউন্ড অ্যালার্ট বাজবে।' : 'Vibration is unsupported by this browser (e.g. iOS Safari), so audio chime alert is active.' }}
+        </p>
+      }
     </div>
   }
 
