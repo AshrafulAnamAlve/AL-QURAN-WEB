@@ -13,6 +13,7 @@
     "main": "dist/main/index.js"
   },
   "win": {
+    "icon": "assets/icons/icon.ico",
     "target": [
       {
         "target": "nsis",

@@ -1,13 +1,48 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
-// Expose secure desktop APIs to Angular renderer
-contextBridge.exposeInMainWorld('desktopApi', {
+export interface DesktopApi {
+  platform: NodeJS.Platform;
+  isDesktop: boolean;
+  notify: (title: string, body: string, icon?: string) => void;
+  updatePrayerStatus: (waqtName: string, countdownText: string) => void;
+  minimize: () => void;
+  maximize: () => void;
+  close: () => void;
+  quit: () => void;
+  getAppInfo: () => Promise<{
+    version: string;
+    name: string;
+    platform: string;
+    arch: string;
+    isPackaged: boolean;
+  }>;
+}
+
+const desktopApi: DesktopApi = {
   platform: process.platform,
   isDesktop: true,
-  sendNotification: (title: string, body: string) => {
-    ipcRenderer.send('desktop:notify', { title, body });
+  notify: (title: string, body: string, icon?: string) => {
+    ipcRenderer.send('desktop:notify', { title, body, icon });
   },
-  onPrayerCountdownUpdate: (callback: (data: any) => void) => {
-    ipcRenderer.on('desktop:prayer-update', (_event, data) => callback(data));
+  updatePrayerStatus: (waqtName: string, countdownText: string) => {
+    ipcRenderer.send('desktop:update-prayer', { waqtName, countdownText });
   },
-});
+  minimize: () => {
+    ipcRenderer.send('desktop:minimize');
+  },
+  maximize: () => {
+    ipcRenderer.send('desktop:maximize');
+  },
+  close: () => {
+    ipcRenderer.send('desktop:close');
+  },
+  quit: () => {
+    ipcRenderer.send('desktop:quit');
+  },
+  getAppInfo: () => {
+    return ipcRenderer.invoke('desktop:get-app-info');
+  },
+};
+
+// Expose secure API to Angular renderer
+contextBridge.exposeInMainWorld('desktopApi', desktopApi);

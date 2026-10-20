@@ -1,91 +1,47 @@
-import { app, BrowserWindow, ipcMain, Menu, nativeImage, Tray } from 'electron';
-import * as path from 'path';
+import { app, BrowserWindow } from 'electron';
+import { registerIpcHandlers } from './ipc';
+import { createTray } from './tray';
+import { createMainWindow, getMainWindow, setIsQuitting } from './window';
 
-let mainWindow: BrowserWindow | null = null;
-let tray: Tray | null = null;
-const isDev = process.env['NODE_ENV'] === 'development';
+// Single instance lock to prevent duplicate app launches
+const gotTheLock = app.requestSingleInstanceLock();
 
-function createWindow(): void {
-  mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
-    minWidth: 960,
-    minHeight: 600,
-    title: 'Al-Quran',
-    webPreferences: {
-      preload: path.join(__dirname, '../preload/index.js'),
-      contextIsolation: true,
-      nodeIntegration: false,
-    },
-  });
-
-  if (isDev) {
-    mainWindow.loadURL('http://localhost:4200');
-    mainWindow.webContents.openDevTools();
-  } else {
-    // In production, load the built Angular app
-    const indexPath = path.join(__dirname, '../../../frontend/dist/frontend/browser/index.html');
-    mainWindow.loadFile(indexPath);
-  }
-
-  mainWindow.on('close', (event) => {
-    // Minimize to tray instead of quitting if tray exists
-    if (tray && !(app as any).isQuitting) {
-      event.preventDefault();
-      mainWindow?.hide();
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    // Focus existing window if user tries to open a second instance
+    const win = getMainWindow();
+    if (win) {
+      if (win.isMinimized()) win.restore();
+      if (!win.isVisible()) win.show();
+      win.focus();
     }
   });
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
+  app.whenReady().then(() => {
+    registerIpcHandlers();
+    createMainWindow();
+    createTray();
+
+    app.on('activate', () => {
+      const win = getMainWindow();
+      if (BrowserWindow.getAllWindows().length === 0) {
+        createMainWindow();
+      } else {
+        win?.show();
+        win?.focus();
+      }
+    });
   });
-}
 
-function createTray(): void {
-  const icon = nativeImage.createEmpty(); // Will be replaced with real icon in Phase 20.3
-  tray = new Tray(icon);
-  tray.setToolTip('Al-Quran — কুরআন ও ইসলামিক টুলস');
-
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: 'Open Al-Quran (অ্যাপ খুলুন)',
-      click: () => {
-        mainWindow?.show();
-        mainWindow?.focus();
-      },
-    },
-    { type: 'separator' },
-    {
-      label: 'Exit (বন্ধ করুন)',
-      click: () => {
-        (app as any).isQuitting = true;
-        app.quit();
-      },
-    },
-  ]);
-
-  tray.setContextMenu(contextMenu);
-  tray.on('double-click', () => {
-    mainWindow?.show();
-    mainWindow?.focus();
+  app.on('before-quit', () => {
+    setIsQuitting(true);
   });
-}
 
-app.whenReady().then(() => {
-  createWindow();
-  createTray();
-
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    } else {
-      mainWindow?.show();
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit();
     }
   });
-});
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
+}
