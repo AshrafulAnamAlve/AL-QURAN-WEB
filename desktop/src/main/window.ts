@@ -81,12 +81,15 @@ export function createMainWindow(): BrowserWindow {
   if (isDev) {
     mainWindow.loadURL('http://localhost:4200');
   } else {
-    // In production, load the built Angular app
-    const indexPath = path.join(__dirname, '../../../frontend/dist/frontend/browser/index.html');
-    mainWindow.loadFile(indexPath).catch(() => {
-      // Fallback relative path when packaged inside app.asar
-      mainWindow?.loadFile(path.join(app.getAppPath(), 'dist/frontend/browser/index.html'));
-    });
+    // In production or packaged mode, load the built Angular app
+    if (app.isPackaged) {
+      mainWindow.loadFile(path.join(app.getAppPath(), 'dist/frontend/browser/index.html'));
+    } else {
+      const indexPath = path.join(__dirname, '../../../frontend/dist/frontend/browser/index.html');
+      mainWindow.loadFile(indexPath).catch(() => {
+        mainWindow?.loadFile(path.join(app.getAppPath(), 'dist/frontend/browser/index.html'));
+      });
+    }
   }
 
   // Prevent app from closing completely on 'X' if minimized to tray is supported

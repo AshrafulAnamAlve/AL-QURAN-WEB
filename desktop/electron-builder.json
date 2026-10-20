@@ -8,7 +8,11 @@
   "files": [
     "dist/**/*",
     "assets/**/*",
-    "../frontend/dist/frontend/browser/**/*"
+    {
+      "from": "../frontend/dist/frontend/browser",
+      "to": "dist/frontend/browser",
+      "filter": ["**/*"]
+    }
   ],
   "extraMetadata": {
     "main": "dist/main/index.js"
