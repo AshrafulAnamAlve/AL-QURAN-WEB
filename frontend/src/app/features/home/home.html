@@ -608,6 +608,24 @@
         <span class="explore-card__arrow" aria-hidden="true">&rarr;</span>
       </a>
 
+      <a routerLink="/ruqyah" class="explore-card explore-card--ruqyah">
+        <div class="explore-card__icon-wrap">
+          <aq-icon name="shield" [size]="22" />
+        </div>
+        <div class="explore-card__content">
+          <div class="explore-card__badge-row">
+            <h3 class="explore-card__title">{{ isBn() ? 'রুকইয়াহ আশ-শারইয়াহ' : 'Ruqyah Shariah' }}</h3>
+            <span class="explore-card__badge explore-card__badge--ruqyah">{{ isBn() ? 'অডিও ও শিফা' : 'Audio & Shifa' }}</span>
+          </div>
+          <p class="explore-card__desc">
+            {{ isBn()
+              ? 'শারীরিক রোগমুক্তি, বদনজর ও অনিষ্ট থেকে সুরক্ষায় কুরআন ও সুন্নাহর বিশুদ্ধ আমল এবং প্রখ্যাত ক্বারিদের অডিও'
+              : 'Authentic prophetic remedies and full audio recitations for healing, evil eye protection, and tranquility' }}
+          </p>
+        </div>
+        <span class="explore-card__arrow" aria-hidden="true">&rarr;</span>
+      </a>
+
       <a routerLink="/prayer" class="explore-card">
         <div class="explore-card__icon-wrap">
           <aq-icon name="clock" [size]="22" />

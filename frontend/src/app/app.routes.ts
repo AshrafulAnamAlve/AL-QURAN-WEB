@@ -130,6 +130,23 @@ export const routes: Routes = [
     pathMatch: 'full',
   },
   {
+    path: 'ruqyah',
+    loadComponent: () => import('./features/ruqyah/ruqyah').then((m) => m.RuqyahPage),
+    data: {
+      meta: {
+        title: 'Ruqyah Shariah — রুকইয়াহ আশ-শারইয়াহ (অডিও ও পঠন)',
+        description:
+          'Authentic Ruqyah Shariah verses and prophetic supplications for healing, protection ' +
+          'from evil eye (nazar), witchcraft, anxiety, with full audio recitations and interactive repetition counters.',
+      },
+    },
+  },
+  {
+    path: 'roqya',
+    redirectTo: 'ruqyah',
+    pathMatch: 'full',
+  },
+  {
     path: 'calendar',
     loadComponent: () => import('./features/calendar/calendar').then((m) => m.CalendarPage),
     data: {

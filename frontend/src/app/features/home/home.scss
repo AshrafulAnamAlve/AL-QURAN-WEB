@@ -1308,5 +1308,23 @@
   }
 }
 
+.explore-card--ruqyah {
+  border-color: color-mix(in srgb, var(--aq-primary) 40%, var(--aq-border));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--aq-primary) 5%, var(--aq-surface)) 0%, var(--aq-surface) 100%);
+
+  &:hover {
+    border-color: var(--aq-primary);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.12);
+  }
+
+  .explore-card__badge--ruqyah {
+    background: var(--aq-primary);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.55rem;
+  }
+}
+
 
 

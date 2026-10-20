@@ -1,0 +1,529 @@
+<div class="ruqyah-container">
+  <!-- Breadcrumbs & Header -->
+  <header class="ruqyah-header">
+    <nav class="breadcrumb" [attr.aria-label]="isBn() ? 'ন্যাভিগেশন' : 'Breadcrumbs'">
+      <a routerLink="/" class="breadcrumb__link">{{ isBn() ? 'হোম' : 'Home' }}</a>
+      <span class="breadcrumb__separator" aria-hidden="true">/</span>
+      <span class="breadcrumb__current">{{ isBn() ? 'রুকইয়াহ আশ-শারইয়াহ' : 'Ruqyah Shariah' }}</span>
+    </nav>
+
+    <div class="ruqyah-hero">
+      <div class="ruqyah-hero__badge">
+        <aq-icon name="shield" [size]="16" />
+        <span>{{ isBn() ? 'কুরআন ও সহিহ সুন্নাহ ভিত্তিক সুরক্ষা ও শিফা' : 'Quranic & Sunnah Spiritual Healing' }}</span>
+      </div>
+      <h1 class="ruqyah-hero__title">
+        <span class="ruqyah-hero__title-bn">{{ isBn() ? 'রুকইয়াহ আশ-শারইয়াহ' : 'Ruqyah Shariah' }}</span>
+        <span class="ruqyah-hero__title-ar" dir="rtl" lang="ar">الرُّقْيَةُ الشَّرْعِيَّةُ</span>
+      </h1>
+      <p class="ruqyah-hero__desc">
+        {{
+          isBn()
+            ? 'শারীরিক রোগমুক্তি, বদনজর (আইন), যাদু-টোনা ও মানসিক অস্থিরতা থেকে পরিত্রাণে পবিত্র কুরআন ও রাসূলুল্লাহ (ﷺ)-এর বিশুদ্ধ মাসনূন আমল ও পূর্ণাঙ্গ অডিও তিলাওয়াত।'
+            : 'Authentic prophetic remedies and Quranic verses for physical illness, evil eye protection, anxiety relief, and spiritual tranquility.'
+        }}
+      </p>
+
+      <!-- Stats Bar -->
+      <div class="ruqyah-stats">
+        <div class="stat-pill">
+          <aq-icon name="check" [size]="14" />
+          <span>{{ isBn() ? 'সম্পন্ন আমল:' : 'Completed:' }}</span>
+          <strong class="aq-numeral">{{ isBn() ? toBnDigits(totalCompletedCount()) : totalCompletedCount() }}/{{ isBn() ? toBnDigits(ruqyahService.allItems.length) : ruqyahService.allItems.length }}</strong>
+        </div>
+        <div class="stat-pill">
+          <aq-icon name="headphones" [size]="14" />
+          <span>{{ isBn() ? 'ক্বারি:' : 'Reciters:' }}</span>
+          <strong class="aq-numeral">{{ isBn() ? toBnDigits(audioTracks.length) : audioTracks.length }}</strong>
+        </div>
+        @if (bookmarksCount() > 0) {
+          <div class="stat-pill stat-pill--gold">
+            <aq-icon name="bookmark" [size]="14" />
+            <span>{{ isBn() ? 'সংরক্ষিত:' : 'Bookmarks:' }}</span>
+            <strong class="aq-numeral">{{ isBn() ? toBnDigits(bookmarksCount()) : bookmarksCount() }}</strong>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Mode Switcher Tabs -->
+    <div class="tab-switcher" role="tablist" [attr.aria-label]="isBn() ? 'রুকইয়াহ বিভাগ' : 'Ruqyah Sections'">
+      <button
+        type="button"
+        role="tab"
+        class="tab-btn"
+        [class.tab-btn--active]="activeTab() === 'reading'"
+        [attr.aria-selected]="activeTab() === 'reading'"
+        (click)="setTab('reading')"
+      >
+        <aq-icon name="bookOpen" [size]="16" />
+        <span>{{ isBn() ? 'পঠন ও আমল' : 'Verses & Reading' }}</span>
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        class="tab-btn"
+        [class.tab-btn--active]="activeTab() === 'audio'"
+        [attr.aria-selected]="activeTab() === 'audio'"
+        (click)="setTab('audio')"
+      >
+        <aq-icon name="headphones" [size]="16" />
+        <span>{{ isBn() ? 'পূর্ণাঙ্গ অডিও' : 'Full Audio' }}</span>
+        @if (isPlaying()) {
+          <span class="playing-dot" title="Now Playing"></span>
+        }
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        class="tab-btn"
+        [class.tab-btn--active]="activeTab() === 'guide'"
+        [attr.aria-selected]="activeTab() === 'guide'"
+        (click)="setTab('guide')"
+      >
+        <aq-icon name="info" [size]="16" />
+        <span>{{ isBn() ? 'শরয়ী নিয়মাবলী' : 'Guidelines' }}</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Persistent / Docked Audio Player Card -->
+  @if (activeTrack()) {
+    <section class="ruqyah-player-bar" aria-label="Audio Player">
+      <div class="player-inner">
+        <!-- Track Info -->
+        <div class="player-info">
+          <div class="player-info__icon">
+            <aq-icon name="headphones" [size]="20" />
+          </div>
+          <div class="player-info__meta">
+            <h2 class="player-info__title">{{ isBn() ? activeTrack()?.titleBn : activeTrack()?.titleEn }}</h2>
+            <p class="player-info__reciter">{{ isBn() ? activeTrack()?.reciterBn : activeTrack()?.reciterEn }}</p>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="player-controls">
+          <button
+            type="button"
+            class="ctrl-btn ctrl-btn--skip"
+            (click)="skip(-10)"
+            [title]="isBn() ? '১০ সেকেন্ড পেছনে' : 'Rewind 10s'"
+          >
+            <aq-icon name="skipBack" [size]="18" />
+          </button>
+
+          <button
+            type="button"
+            class="ctrl-btn ctrl-btn--play"
+            (click)="togglePlayPause()"
+            [attr.aria-label]="isPlaying() ? (isBn() ? 'পজ' : 'Pause') : (isBn() ? 'প্লে' : 'Play')"
+          >
+            <aq-icon [name]="isPlaying() ? 'pause' : 'play'" [size]="20" />
+          </button>
+
+          <button
+            type="button"
+            class="ctrl-btn ctrl-btn--skip"
+            (click)="skip(10)"
+            [title]="isBn() ? '১০ সেকেন্ড সামনে' : 'Forward 10s'"
+          >
+            <aq-icon name="skipForward" [size]="18" />
+          </button>
+        </div>
+
+        <!-- Progress Timeline -->
+        <div class="player-timeline">
+          <span class="timeline-time aq-numeral">{{ formattedCurrentTime() }}</span>
+          <div class="timeline-slider-wrap">
+            <input
+              type="range"
+              class="timeline-slider"
+              min="0"
+              [max]="duration() || 100"
+              [value]="currentTime()"
+              (input)="onSeekChange($event)"
+              [attr.aria-label]="isBn() ? 'অডিও ট্র্যাকার' : 'Audio seek bar'"
+            />
+            <div class="timeline-track-fill" [style.width.%]="audioProgressPercent()"></div>
+          </div>
+          <span class="timeline-time aq-numeral">{{ formattedDuration() }}</span>
+        </div>
+
+        <!-- Extra Tools (Loop, Sleep Timer, Speed) -->
+        <div class="player-tools">
+          <!-- Loop Toggle -->
+          <button
+            type="button"
+            class="tool-btn"
+            [class.tool-btn--active]="isLooping()"
+            (click)="toggleLoop()"
+            [title]="isBn() ? 'একটানা পুনরাবৃত্তি (লুপ)' : 'Repeat audio'"
+          >
+            <aq-icon name="repeat" [size]="16" />
+          </button>
+
+          <!-- Sleep Timer -->
+          <div class="tool-dropdown-wrap">
+            <button
+              type="button"
+              class="tool-btn"
+              [class.tool-btn--active]="sleepTimerMinutes() !== null"
+              (click)="showTimerMenu.set(!showTimerMenu())"
+              [title]="isBn() ? 'স্লিপ টাইমার' : 'Sleep timer'"
+            >
+              <aq-icon name="clock" [size]="16" />
+              @if (timerCountdownDisplay()) {
+                <span class="tool-badge aq-numeral">{{ timerCountdownDisplay() }}</span>
+              }
+            </button>
+
+            @if (showTimerMenu()) {
+              <div class="dropdown-menu">
+                <p class="dropdown-title">{{ isBn() ? 'স্লিপ টাইমার' : 'Sleep Timer' }}</p>
+                @for (opt of sleepOptions; track opt) {
+                  <button
+                    type="button"
+                    class="dropdown-item"
+                    [class.dropdown-item--active]="sleepTimerMinutes() === opt"
+                    (click)="setSleepTimer(opt)"
+                  >
+                    @if (opt === null) {
+                      {{ isBn() ? 'টাইমার বন্ধ' : 'Off' }}
+                    } @else {
+                      {{ isBn() ? toBnDigits(opt) + ' মিনিট' : opt + ' min' }}
+                    }
+                  </button>
+                }
+              </div>
+            }
+          </div>
+
+          <!-- Playback Speed -->
+          <div class="tool-dropdown-wrap">
+            <button
+              type="button"
+              class="tool-btn"
+              (click)="showSpeedMenu.set(!showSpeedMenu())"
+              [title]="isBn() ? 'গতি পরিবর্তন' : 'Playback speed'"
+            >
+              <span class="speed-label aq-numeral">{{ playbackRate() }}x</span>
+            </button>
+
+            @if (showSpeedMenu()) {
+              <div class="dropdown-menu">
+                <p class="dropdown-title">{{ isBn() ? 'প্লেব্যাক গতি' : 'Speed' }}</p>
+                @for (rate of speedOptions; track rate) {
+                  <button
+                    type="button"
+                    class="dropdown-item"
+                    [class.dropdown-item--active]="playbackRate() === rate"
+                    (click)="setPlaybackRate(rate)"
+                  >
+                    {{ rate }}x
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      @if (audioError()) {
+        <div class="player-error" role="alert">
+          <aq-icon name="alert" [size]="14" />
+          <span>{{ audioError() }}</span>
+        </div>
+      }
+    </section>
+  }
+
+  <!-- TAB 1: READING & VERSES -->
+  @if (activeTab() === 'reading') {
+    <!-- Simple Filter Toolbar -->
+    <section class="ruqyah-toolbar" aria-label="Filter Toolbar">
+      <!-- Search -->
+      <div class="search-box">
+        <aq-icon name="search" [size]="18" class="search-box__icon" />
+        <input
+          type="text"
+          class="search-box__input"
+          [placeholder]="isBn() ? 'আয়াত, দু’আ বা বিষয় খুঁজুন…' : 'Search verses, duas…'"
+          [value]="searchInput()"
+          (input)="onSearchInput($event)"
+          [attr.aria-label]="isBn() ? 'রুকইয়াহ অনুসন্ধান' : 'Search Ruqyah'"
+        />
+        @if (searchInput()) {
+          <button
+            type="button"
+            class="search-box__clear"
+            (click)="clearSearch()"
+            [attr.aria-label]="isBn() ? 'অনুসন্ধান মুছুন' : 'Clear search'"
+          >
+            <aq-icon name="close" [size]="16" />
+          </button>
+        }
+      </div>
+
+      <!-- Compact Topic Select Dropdown -->
+      <div class="topic-select-wrap">
+        <select
+          class="topic-select"
+          [value]="selectedCategory()"
+          (change)="onCategorySelectChange($event)"
+          [attr.aria-label]="isBn() ? 'বিষয় নির্বাচন করুন' : 'Filter by category'"
+        >
+          @for (cat of categories; track cat.id) {
+            <option [value]="cat.id">
+              {{ cat.icon }} {{ isBn() ? cat.nameBn : cat.nameEn }}
+            </option>
+          }
+        </select>
+        <aq-icon name="chevronDown" [size]="14" class="topic-select-arrow" aria-hidden="true" />
+      </div>
+
+      <!-- Bookmarks Filter Toggle -->
+      <button
+        type="button"
+        class="simple-toggle-btn"
+        [class.simple-toggle-btn--active]="showBookmarksOnly()"
+        (click)="toggleBookmarksOnly()"
+        [title]="isBn() ? 'শুধুমাত্র সংরক্ষিত আয়াতগুলো দেখুন' : 'Show bookmarked only'"
+      >
+        <aq-icon name="bookmark" [size]="15" />
+        <span>{{ isBn() ? 'বুকমার্ক' : 'Saved' }}</span>
+        @if (bookmarksCount() > 0) {
+          <span class="count-pill aq-numeral">{{ isBn() ? toBnDigits(bookmarksCount()) : bookmarksCount() }}</span>
+        }
+      </button>
+
+      @if (selectedCategory() !== 'all' || searchInput() || showBookmarksOnly()) {
+        <button type="button" class="reset-link-btn" (click)="resetFilters()" [title]="isBn() ? 'ফিল্টার রিসেট' : 'Reset filters'">
+          <aq-icon name="refresh" [size]="13" />
+          <span>{{ isBn() ? 'রিসেট' : 'Reset' }}</span>
+        </button>
+      }
+    </section>
+
+    <!-- Verses Count Status -->
+    <div class="results-bar">
+      <span class="results-bar__count">
+        {{
+          isBn()
+            ? (toBnDigits(filteredItems().length) + 'টি রুকইয়াহ আয়াত ও দু’আ পাওয়া গেছে')
+            : (filteredItems().length + ' verses & duas found')
+        }}
+      </span>
+    </div>
+
+    <!-- Ruqyah Item Cards -->
+    <main class="ruqyah-cards-grid" aria-label="Ruqyah Verses List">
+      @for (item of filteredItems(); track item.id) {
+        @let isDone = getItemCount(item.id) >= item.targetCount;
+        <article
+          class="ruqyah-card"
+          [class.ruqyah-card--done]="isDone"
+          (click)="onCardTap(item)"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="(isBn() ? item.titleBn : item.titleEn) + ' - কাউন্টার বৃদ্ধি করতে ক্লিক করুন'"
+          (keydown.enter)="onCardTap(item)"
+          (keydown.space)="onCardTap(item); $event.preventDefault()"
+        >
+          <!-- Top Row -->
+          <div class="ruqyah-card__header">
+            <div class="ruqyah-card__badge-group">
+              <span class="ruqyah-card__ref-pill">{{ item.reference }}</span>
+              <span class="ruqyah-card__target-pill aq-numeral">
+                {{ isBn() ? 'আমল: ' + toBnDigits(item.targetCount) + ' বার' : 'Target: ' + item.targetCount + 'x' }}
+              </span>
+            </div>
+
+            <div class="ruqyah-card__actions" (click)="$event.stopPropagation()">
+              <button
+                type="button"
+                class="action-btn"
+                [class.action-btn--bookmarked]="ruqyahService.isBookmarked(item.id)"
+                (click)="toggleBookmark($event, item.id)"
+                [title]="ruqyahService.isBookmarked(item.id) ? (isBn() ? 'বুকমার্ক মুছুন' : 'Remove bookmark') : (isBn() ? 'বুকমার্ক করুন' : 'Bookmark')"
+              >
+                <aq-icon name="bookmark" [size]="16" />
+              </button>
+
+              <button
+                type="button"
+                class="action-btn"
+                (click)="copyItem($event, item)"
+                [title]="isBn() ? 'অনুলিপি করুন' : 'Copy'"
+              >
+                <aq-icon name="copy" [size]="16" />
+              </button>
+            </div>
+          </div>
+
+          <!-- Title -->
+          <h2 class="ruqyah-card__title">
+            {{ isBn() ? item.titleBn : item.titleEn }}
+          </h2>
+
+          <!-- Arabic Text -->
+          <div class="ruqyah-card__arabic aq-arabic" dir="rtl" lang="ar">
+            {{ item.arabic }}
+          </div>
+
+          <!-- Pronunciation (Bangla) -->
+          <div class="ruqyah-card__pronunciation">
+            <span class="label">{{ isBn() ? 'উচ্চারণ:' : 'Transliteration:' }}</span>
+            <span class="text">{{ item.pronunciationBn }}</span>
+          </div>
+
+          <!-- Translation -->
+          <div class="ruqyah-card__translation">
+            <p class="translation-bn">{{ item.translationBn }}</p>
+            @if (!isBn()) {
+              <p class="translation-en">{{ item.translationEn }}</p>
+            }
+          </div>
+
+          <!-- Instructions Box -->
+          <div class="ruqyah-card__instruction">
+            <aq-icon name="info" [size]="14" class="inst-icon" />
+            <span>{{ item.instructionsBn }}</span>
+          </div>
+
+          <!-- Tap Counter Action Footer -->
+          <div class="ruqyah-card__counter-row" (click)="$event.stopPropagation()">
+            <button
+              type="button"
+              class="counter-btn"
+              [class.counter-btn--completed]="isDone"
+              (click)="onCardTap(item)"
+            >
+              @if (isDone) {
+                <aq-icon name="check" [size]="16" />
+                <span>{{ isBn() ? 'সম্পূর্ণ (' + toBnDigits(getItemCount(item.id)) + '/' + toBnDigits(item.targetCount) + ')' : 'Completed (' + getItemCount(item.id) + '/' + item.targetCount + ')' }}</span>
+              } @else {
+                <aq-icon name="tasbih" [size]="16" />
+                <span>{{ isBn() ? 'ট্যাপ করুন (' + toBnDigits(getItemCount(item.id)) + '/' + toBnDigits(item.targetCount) + ')' : 'Tap to Count (' + getItemCount(item.id) + '/' + item.targetCount + ')' }}</span>
+              }
+            </button>
+
+            @if (getItemCount(item.id) > 0) {
+              <button
+                type="button"
+                class="reset-count-btn"
+                (click)="resetCounter($event, item.id)"
+                [title]="isBn() ? 'কাউন্টার রিসেট' : 'Reset count'"
+              >
+                <aq-icon name="refresh" [size]="14" />
+              </button>
+            }
+          </div>
+        </article>
+      } @empty {
+        <div class="ruqyah-empty">
+          <aq-icon name="inbox" [size]="40" />
+          <p>{{ isBn() ? 'কোনো আয়াত বা দু’আ পাওয়া যায়নি।' : 'No verses found matching your criteria.' }}</p>
+          <button type="button" class="btn btn-outline" (click)="resetFilters()">
+            {{ isBn() ? 'সকল ফিল্টার মুছুন' : 'Reset Filters' }}
+          </button>
+        </div>
+      }
+    </main>
+  }
+
+  <!-- TAB 2: FULL AUDIO RECITATIONS -->
+  @if (activeTab() === 'audio') {
+    <section class="ruqyah-audio-section" aria-label="Audio Recitations">
+      <div class="audio-hero-card">
+        <div class="audio-hero-content">
+          <h2 class="audio-hero-title">
+            <aq-icon name="headphones" [size]="20" />
+            <span>{{ isBn() ? 'প্রখ্যাত ক্বারিদের কণ্ঠে দীর্ঘ ও পূর্ণাঙ্গ রুকইয়াহ' : 'Authentic Full Ruqyah Recitations' }}</span>
+          </h2>
+          <p class="audio-hero-subtitle">
+            {{
+              isBn()
+                ? 'বদনজর, অসুস্থতা বা ঘুমের আগে মনোযোগ দিয়ে তিলাওয়াত শোনা সুন্নাহ ও আত্মিক প্রশান্তির প্রধান মাধ্যম। স্লিপ টাইমার ও রিপিটেশন মোড ব্যবহার করে একটানা শুনতে পারেন।'
+                : 'Listen to continuous authentic Ruqyah recitations by world-renowned Qaris. Use sleep timer and loop features for bedside relaxation.'
+            }}
+          </p>
+        </div>
+      </div>
+
+      <div class="audio-tracks-grid">
+        @for (track of audioTracks; track track.id) {
+          @let isCurrent = activeTrack()?.id === track.id;
+          <div class="track-card" [class.track-card--active]="isCurrent">
+            <div class="track-card__icon-wrap">
+              <button
+                type="button"
+                class="track-play-btn"
+                [class.track-play-btn--playing]="isCurrent && isPlaying()"
+                (click)="playTrack(track)"
+                [attr.aria-label]="isCurrent && isPlaying() ? (isBn() ? 'পজ' : 'Pause') : (isBn() ? 'প্লে করুন' : 'Play')"
+              >
+                <aq-icon [name]="isCurrent && isPlaying() ? 'pause' : 'play'" [size]="22" />
+              </button>
+            </div>
+
+            <div class="track-card__content">
+              <div class="track-card__header-line">
+                <h3 class="track-card__title">{{ isBn() ? track.titleBn : track.titleEn }}</h3>
+                <span class="track-card__duration aq-numeral">{{ track.duration }}</span>
+              </div>
+              <p class="track-card__reciter">{{ isBn() ? track.reciterBn : track.reciterEn }}</p>
+              <p class="track-card__desc">{{ track.descriptionBn }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- TAB 3: SHARIAH GUIDELINES & ADAB -->
+  @if (activeTab() === 'guide') {
+    <section class="ruqyah-guide-section" aria-label="Ruqyah Guidelines">
+      <div class="guide-banner">
+        <aq-icon name="shield" [size]="24" class="guide-banner__icon" />
+        <div>
+          <h2 class="guide-banner__title">{{ isBn() ? 'রুকইয়াহ আশ-শারইয়াহর মূলনীতি ও আদব' : 'Rules & Principles of Ruqyah' }}</h2>
+          <p class="guide-banner__subtitle">
+            {{
+              isBn()
+                ? 'রুকইয়াহ কেবল কুরআন ও সহিহ হাদিসের দু’আ দ্বারাই বৈধ। কোনো কবিরাজি নকশা, তাবিজ বা শিরকি কুসংস্কার থেকে দূরে থাকা আবশ্যক।'
+                : 'Authentic Ruqyah strictly relies on Quranic verses and prophetic supplications. Avoid superstitious amulets, taweez, and shirk.'
+            }}
+          </p>
+        </div>
+      </div>
+
+      <div class="guide-cards-grid">
+        @for (guide of guides; track guide.titleBn) {
+          <article class="guide-card">
+            <h3 class="guide-card__title">{{ isBn() ? guide.titleBn : guide.titleEn }}</h3>
+            <p class="guide-card__content">{{ guide.contentBn }}</p>
+            <ul class="guide-card__bullets">
+              @for (point of guide.bulletPointsBn; track point) {
+                <li>
+                  <aq-icon name="check" [size]="14" class="bullet-icon" />
+                  <span>{{ point }}</span>
+                </li>
+              }
+            </ul>
+          </article>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- Toast Pop-up -->
+  @if (toastMessage()) {
+    <div class="ruqyah-toast" role="status" aria-live="polite">
+      <aq-icon name="check" [size]="16" />
+      <span>{{ toastMessage() }}</span>
+    </div>
+  }
+</div>

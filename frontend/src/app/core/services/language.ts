@@ -17,6 +17,7 @@ export const TRANSLATIONS = {
   'nav.prayer': { en: 'Prayer Times', bn: 'নামাজের সময়সূচি' },
   'nav.mosques': { en: 'Mosques', bn: 'মসজিদ' },
   'nav.bookmarks': { en: 'Bookmarks', bn: 'বুকমার্ক' },
+  'nav.ruqyah': { en: 'Ruqyah', bn: 'রুকইয়াহ' },
   'nav.settings': { en: 'Settings', bn: 'সেটিংস' },
   'nav.search': { en: 'Search', bn: 'অনুসন্ধান' },
   'brand.tag': { en: 'Read · Listen · Reflect', bn: 'পড়ুন · শুনুন · অনুধাবন করুন' },
