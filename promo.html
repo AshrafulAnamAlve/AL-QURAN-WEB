@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Al-Quran Web — 30s Official 9:16 Promotional Video</title>
+  <title>Al-Quran Web — Complete All-Features 9:16 Promotional Video</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Hind+Siliguri:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
@@ -36,17 +36,16 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 1.25rem 1rem;
+      padding: 1rem 0.5rem;
       overflow-x: hidden;
       background-image:
-        radial-gradient(circle at 50% 20%, rgba(16, 185, 129, 0.12) 0%, transparent 60%),
-        radial-gradient(circle at 80% 80%, rgba(201, 162, 39, 0.08) 0%, transparent 50%);
+        radial-gradient(circle at 50% 15%, rgba(16, 185, 129, 0.15) 0%, transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(201, 162, 39, 0.1) 0%, transparent 50%);
     }
 
-    /* Top Studio Bar */
     .studio-header {
       text-align: center;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.6rem;
     }
 
     .studio-header h1 {
@@ -57,23 +56,23 @@
       -webkit-text-fill-color: transparent;
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
 
     .studio-header p {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--aq-text-muted);
       margin-top: 0.15rem;
     }
 
-    /* 9:16 Video Container (Scaleable to fit desktop screens, true 1080x1920 ratio) */
+    /* 9:16 Video Container (Phone Frame) */
     .video-stage {
       position: relative;
       width: 380px;
-      height: 675px; /* 9:16 ratio */
+      height: 675px;
       border-radius: 42px;
       background: #04140e;
-      box-shadow: 0 25px 70px -15px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(245, 215, 127, 0.35);
+      box-shadow: 0 25px 70px -15px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(245, 215, 127, 0.4);
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -86,7 +85,6 @@
       }
     }
 
-    /* Device Mockup Shell (Phone Frame) */
     .phone-screen {
       position: relative;
       width: 100%;
@@ -97,7 +95,6 @@
       flex-direction: column;
     }
 
-    /* Top Phone Dynamic Island & Status Bar */
     .phone-notch {
       position: absolute;
       top: 10px;
@@ -129,7 +126,6 @@
       background: #10b981;
     }
 
-    /* Persistent Top Banner inside Video */
     .video-top-tag {
       position: absolute;
       top: 42px;
@@ -146,23 +142,21 @@
       align-items: center;
       gap: 0.35rem;
       padding: 0.2rem 0.75rem;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(245, 215, 127, 0.3);
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(245, 215, 127, 0.35);
       border-radius: 9999px;
       font-size: 0.7rem;
       font-weight: 700;
       color: #facc15;
       backdrop-filter: blur(8px);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
     }
 
-    /* Persistent App Header (Shown in scenes 2 through 6) */
     .app-header-mock {
       position: absolute;
-      top: 75px;
+      top: 72px;
       left: 0;
       right: 0;
-      height: 52px;
+      height: 50px;
       background: rgba(4, 20, 14, 0.95);
       border-bottom: 1px solid var(--aq-border);
       backdrop-filter: blur(10px);
@@ -173,7 +167,7 @@
       z-index: 80;
       opacity: 0;
       transform: translateY(-10px);
-      transition: opacity 0.5s ease, transform 0.5s ease;
+      transition: opacity 0.4s ease, transform 0.4s ease;
     }
 
     .app-header-mock.active {
@@ -185,7 +179,6 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      text-decoration: none;
     }
 
     .mock-brand-badge {
@@ -198,7 +191,6 @@
       place-items: center;
       font-size: 1.1rem;
       font-weight: 700;
-      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
     }
 
     .mock-brand-info {
@@ -247,7 +239,7 @@
       color: #94a3b8;
     }
 
-    /* SCENE WRAPPER & SLIDES */
+    /* SCENE SLIDES CONTAINER */
     .scene-container {
       position: relative;
       flex: 1;
@@ -262,12 +254,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 1.25rem 1rem;
+      justify-content: flex-start;
+      padding: 130px 1rem 1rem;
       opacity: 0;
       pointer-events: none;
       transform: scale(0.96) translateY(12px);
-      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      gap: 0.65rem;
     }
 
     .scene-slide.active {
@@ -278,14 +271,16 @@
 
     /* SCENE 1: THE EXACT SPLASH SCREEN BOOK & LOGO */
     .scene-splash {
+      padding: 1rem !important;
+      justify-content: center !important;
       background: radial-gradient(circle at center, #08281c 0%, #04140e 65%, #020b08 100%);
       z-index: 50;
     }
 
     .splash-stage {
       position: relative;
-      width: 180px;
-      height: 180px;
+      width: 175px;
+      height: 175px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -434,223 +429,46 @@
       margin-top: 0.25rem;
     }
 
-    /* SCENE 2: REAL HOME DASHBOARD */
-    .scene-home {
-      padding-top: 135px;
-      justify-content: flex-start;
-      gap: 0.75rem;
-    }
-
-    .home-hero-card {
+    /* CARD STYLES */
+    .feature-banner {
       width: 100%;
-      background: linear-gradient(145deg, #063523 0%, #031c13 100%);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      border-radius: 20px;
-      padding: 1rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(245, 158, 11, 0.15));
+      border: 1px solid rgba(245, 215, 127, 0.35);
+      border-radius: 18px;
+      padding: 0.65rem 0.85rem;
+      text-align: center;
     }
 
-    .hero-salaam {
-      font-family: 'Amiri Quran', serif;
-      font-size: 1.25rem;
+    .fb-title {
+      font-size: 1rem;
+      font-weight: 800;
       color: #facc15;
     }
 
-    .hero-heading {
-      font-size: 1.05rem;
-      font-weight: 800;
-      line-height: 1.3;
-      margin: 0.25rem 0 0.65rem;
-      color: #fff;
+    .fb-sub {
+      font-size: 0.7rem;
+      color: #cbd5e1;
+      margin-top: 0.15rem;
     }
 
-    .hero-waqt-pill {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.45rem 0.75rem;
-      background: rgba(0, 0, 0, 0.45);
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      font-size: 0.75rem;
-    }
-
-    .waqt-current {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .waqt-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 8px #10b981;
-    }
-
-    .hero-streak-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 0.6rem;
-      padding: 0.4rem 0.75rem;
-      background: rgba(245, 158, 11, 0.15);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      border-radius: 12px;
-      font-size: 0.75rem;
-      color: #fef08a;
-      font-weight: 700;
-    }
-
-    .feature-grid-mock {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
+    .generic-card {
       width: 100%;
-    }
-
-    .feat-card {
       background: #0f172a;
       border: 1px solid var(--aq-border);
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 0.75rem;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 0.5rem;
-    }
-
-    .feat-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      font-size: 1rem;
-      background: rgba(16, 185, 129, 0.15);
-      color: #34d399;
-    }
-
-    .feat-title {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .feat-sub {
-      font-size: 0.65rem;
-      color: var(--aq-text-muted);
-    }
-
-    /* SCENE 3: REAL SURAH READER & AUDIO */
-    .scene-quran {
-      padding-top: 135px;
-      justify-content: flex-start;
-      gap: 0.75rem;
-    }
-
-    .surah-card-mock {
-      width: 100%;
-      background: #09171b;
-      border: 1px solid rgba(245, 215, 127, 0.3);
-      border-radius: 20px;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .surah-header-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--aq-border);
-      padding-bottom: 0.5rem;
-    }
-
-    .surah-name-bn {
-      font-weight: 800;
-      font-size: 1rem;
-      color: #34d399;
-    }
-
-    .surah-name-ar {
-      font-family: 'Amiri Quran', serif;
-      font-size: 1.15rem;
-      color: #facc15;
-    }
-
-    .ayah-box {
-      background: rgba(0, 0, 0, 0.35);
-      border-radius: 14px;
-      padding: 0.85rem;
-      border-left: 3px solid #10b981;
-    }
-
-    .ayah-arabic {
-      font-family: 'Amiri Quran', serif;
-      font-size: 1.35rem;
-      text-align: right;
-      color: #ffffff;
-      line-height: 1.7;
-    }
-
-    .ayah-bangla {
-      font-size: 0.78rem;
-      color: #cbd5e1;
-      margin-top: 0.4rem;
-      line-height: 1.4;
-    }
-
-    /* Floating Real Audio Player Bar */
-    .audio-player-mock {
-      width: 100%;
-      background: #0f172a;
-      border: 1px solid rgba(52, 211, 153, 0.4);
-      border-radius: 16px;
-      padding: 0.6rem 0.85rem;
-      display: flex;
-      align-items: center;
-      gap: 0.65rem;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-    }
-
-    .audio-play-btn {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: #10b981;
-      color: #fff;
-      display: grid;
-      place-items: center;
-      font-size: 0.9rem;
-      flex-shrink: 0;
-    }
-
-    .audio-reciter-info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .reciter-name {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .reciter-ayah {
-      font-size: 0.65rem;
-      color: #facc15;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
     }
 
     .equalizer-wave {
       display: flex;
       align-items: center;
       gap: 3px;
-      height: 20px;
+      height: 18px;
     }
-
     .eq-bar {
       width: 3px;
       height: 100%;
@@ -658,331 +476,42 @@
       border-radius: 2px;
       animation: eqBounce 0.8s infinite ease-in-out alternate;
     }
-
     .eq-bar:nth-child(2) { animation-delay: 0.2s; }
     .eq-bar:nth-child(3) { animation-delay: 0.4s; }
     .eq-bar:nth-child(4) { animation-delay: 0.1s; }
     .eq-bar:nth-child(5) { animation-delay: 0.3s; }
+    @keyframes eqBounce { 0% { height: 4px; } 100% { height: 16px; } }
 
-    @keyframes eqBounce {
-      0% { height: 4px; }
-      100% { height: 18px; }
-    }
-
-    /* SCENE 4: 36,000+ HADITH LIBRARY */
-    .scene-hadith {
-      padding-top: 135px;
-      justify-content: flex-start;
-      gap: 0.65rem;
-    }
-
-    .hadith-hero-title {
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: #facc15;
-      text-align: center;
-    }
-
-    .hadith-hero-sub {
-      font-size: 0.72rem;
-      color: var(--aq-text-muted);
-      text-align: center;
-      margin-bottom: 0.25rem;
-    }
-
-    .hadith-search-mock {
-      width: 100%;
-      background: #0f172a;
-      border: 1px solid #facc15;
-      border-radius: 9999px;
-      padding: 0.5rem 0.85rem;
-      display: flex;
-      align-items: center;
-      gap: 0.45rem;
-      font-size: 0.75rem;
-      color: #fff;
-    }
-
-    .hadith-books-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.45rem;
-      width: 100%;
-    }
-
-    .hadith-book-card {
-      background: #09171b;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      padding: 0.55rem;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .hb-name {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .hb-count {
-      font-size: 0.65rem;
-      font-weight: 600;
-      color: #f59e0b;
-      margin-top: 0.15rem;
-    }
-
-    .hadith-result-card {
-      width: 100%;
-      background: rgba(6, 78, 59, 0.4);
-      border: 1px solid #10b981;
-      border-radius: 16px;
-      padding: 0.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
-
-    .hr-header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: #facc15;
-    }
-
-    .hr-grade {
-      background: #10b981;
-      color: #04140e;
-      padding: 0.1rem 0.4rem;
-      border-radius: 4px;
-      font-weight: 800;
-    }
-
-    .hr-text {
-      font-size: 0.75rem;
-      color: #f8fafc;
-      line-height: 1.35;
-    }
-
-    /* SCENE 5: PRAYER & QIBLA */
-    .scene-prayer {
-      padding-top: 135px;
-      justify-content: flex-start;
-      gap: 0.75rem;
-    }
-
-    .compass-mock-wrap {
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      border: 3px solid rgba(245, 215, 127, 0.4);
-      position: relative;
-      display: grid;
-      place-items: center;
-      background: radial-gradient(circle, #08281c 0%, #03140d 100%);
-      margin: 0 auto;
-    }
-
-    .compass-needle {
-      position: absolute;
-      width: 6px;
-      height: 95px;
-      transform: rotate(276deg);
-      transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .needle-n {
-      width: 0;
-      height: 0;
-      border-left: 6px solid transparent;
-      border-right: 6px solid transparent;
-      border-bottom: 48px solid #ef4444;
-    }
-
-    .needle-s {
-      width: 0;
-      height: 0;
-      border-left: 6px solid transparent;
-      border-right: 6px solid transparent;
-      border-top: 48px solid #10b981;
-    }
-
-    .compass-center {
-      position: absolute;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: #facc15;
-      box-shadow: 0 0 8px #facc15;
-    }
-
-    .prayer-table-mock {
-      width: 100%;
-      background: #0f172a;
-      border: 1px solid var(--aq-border);
-      border-radius: 18px;
-      padding: 0.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-
-    .prayer-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.35rem 0.5rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-    }
-
-    .prayer-row.active {
-      background: rgba(16, 185, 129, 0.2);
-      border: 1px solid #10b981;
-      font-weight: 700;
-      color: #34d399;
-    }
-
-    /* SCENE 6: DIGITAL TASBIH & HABITS */
-    .scene-tasbih {
-      padding-top: 135px;
-      justify-content: flex-start;
-      gap: 0.85rem;
-    }
-
-    .tasbih-disc-wrap {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      border: 6px solid #10b981;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle, #08281c 0%, #03140d 100%);
-      box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
-      margin: 0 auto;
-    }
-
-    .tasbih-count-big {
-      font-size: 2.8rem;
-      font-weight: 900;
-      color: #fff;
-      line-height: 1;
-    }
-
-    .tasbih-target {
-      font-size: 0.7rem;
-      color: #facc15;
-      font-weight: 700;
-      margin-top: 0.25rem;
-    }
-
-    .tasbih-phrase {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: #38bdf8;
-      text-align: center;
-    }
-
-    /* SCENE 7: GRAND OUTRO & CTA */
-    .scene-outro {
-      justify-content: center;
-      gap: 0.85rem;
-      text-align: center;
-      background: radial-gradient(circle at center, #08281c 0%, #020b08 100%);
-    }
-
-    .outro-badge {
-      width: 64px;
-      height: 64px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, #10b981, #047857);
-      color: #fff;
-      display: grid;
-      place-items: center;
-      font-size: 2rem;
-      font-weight: 700;
-      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
-      margin: 0 auto;
-    }
-
-    .outro-title {
-      font-size: 1.55rem;
-      font-weight: 800;
-      color: #fff;
-      line-height: 1.2;
-    }
-
-    .outro-sub {
-      font-size: 0.82rem;
-      color: #34d399;
-      font-weight: 600;
-    }
-
-    .outro-cta-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.75rem 1.75rem;
-      background: linear-gradient(135deg, #f59e0b 0%, #10b981 100%);
-      color: #020617;
-      font-weight: 800;
-      font-size: 0.95rem;
-      border-radius: 9999px;
-      box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
-      animation: pulseBtn 1.5s infinite alternate;
-    }
-
-    @keyframes pulseBtn {
-      from { transform: scale(1); }
-      to { transform: scale(1.05); }
-    }
-
-    .outro-url-box {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      padding: 0.35rem 0.85rem;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid rgba(250, 204, 21, 0.4);
-      border-radius: 12px;
-      color: #facc15;
-      font-size: 0.75rem;
-      font-weight: 700;
-    }
-
-    /* Bottom Control Bar */
+    /* CONTROLS DOCK */
     .controls-panel {
       width: 100%;
       max-width: 440px;
       background: #0f172a;
       border: 1px solid #1e293b;
       border-radius: 20px;
-      padding: 0.85rem 1.25rem;
-      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      margin-top: 0.75rem;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 0.65rem;
       box-shadow: 0 15px 35px rgba(0,0,0,0.5);
     }
 
     .timeline-track {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.65rem;
     }
 
     .time-readout {
       font-family: monospace;
       font-weight: 700;
       color: #facc15;
-      font-size: 0.85rem;
-      min-width: 80px;
+      font-size: 0.8rem;
+      min-width: 85px;
       text-align: center;
       background: #020617;
-      padding: 0.2rem 0.45rem;
+      padding: 0.2rem 0.4rem;
       border-radius: 6px;
       border: 1px solid #334155;
     }
@@ -994,19 +523,18 @@
       border-radius: 4px;
       overflow: hidden;
       cursor: pointer;
-      position: relative;
     }
 
     .progress-bar-fill {
       height: 100%;
       width: 0%;
       background: linear-gradient(90deg, #f59e0b, #10b981);
-      transition: width 0.1s linear;
+      transition: width 0.08s linear;
     }
 
     .scene-jumpers {
       display: flex;
-      gap: 4px;
+      gap: 3px;
     }
 
     .jumper-dot {
@@ -1030,18 +558,18 @@
     }
 
     .btn {
-      padding: 0.6rem 1rem;
+      padding: 0.55rem 0.85rem;
       border-radius: 12px;
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       border: none;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 0.35rem;
-      transition: all 0.2s ease;
       color: #fff;
+      transition: all 0.2s ease;
     }
 
     .btn-play {
@@ -1049,25 +577,16 @@
       flex: 1;
     }
 
-    .btn-play:hover {
-      background: #475569;
-    }
-
     .btn-replay {
       background: #1e293b;
-      padding: 0.6rem 0.8rem;
+      padding: 0.55rem 0.75rem;
     }
 
     .btn-record {
       background: linear-gradient(135deg, #f59e0b 0%, #10b981 100%);
       color: #020617;
       flex: 1.5;
-      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
-    }
-
-    .btn-record:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+      font-weight: 800;
     }
 
     .btn-record.recording {
@@ -1075,31 +594,33 @@
       color: #fff;
       animation: pulseBtn 0.8s infinite alternate;
     }
+
+    @keyframes pulseBtn {
+      from { transform: scale(1); }
+      to { transform: scale(1.04); }
+    }
   </style>
 </head>
 <body>
 
   <header class="studio-header">
-    <h1><span>۩</span> Al-Quran Web — 30s Official Promotional Video</h1>
-    <p>৯:১৬ ভার্টিক্যাল প্রফেশনাল মোশন ভিডিও • রিলস, শর্টস ও টিকটক রেডি</p>
+    <h1><span>۩</span> Al-Quran Web — Complete 15-Feature Showcase</h1>
+    <p>সাইটের সমস্ত ১৪+ ফিচার সমন্বিত ৯:১৬ প্রমোশনাল ভিডিও • ফুল এইচডি এক্সপোর্ট</p>
   </header>
 
   <div class="video-stage" id="videoStage">
     <div class="phone-screen">
-      <!-- Phone Notch -->
       <div class="phone-notch">
         <div class="notch-camera"></div>
         <div class="notch-indicator"></div>
       </div>
 
-      <!-- Persistent Watermark Badge -->
       <div class="video-top-tag">
         <div class="video-top-pill">
           <span>✨</span> আল-কুরআন ওয়েব প্লাটফর্ম
         </div>
       </div>
 
-      <!-- Persistent Header (Scenes 2-6) -->
       <div class="app-header-mock" id="appHeaderMock">
         <div class="mock-brand">
           <div class="mock-brand-badge">۩</div>
@@ -1115,10 +636,9 @@
         </div>
       </div>
 
-      <!-- SCENES WRAPPER -->
       <div class="scene-container">
-        <!-- SCENE 1: THE EXACT SPLASH SCREEN BOOK & LOGO (0.0s - 4.5s) -->
-        <div class="scene-slide scene-splash active" id="scene1">
+        <!-- 1. EXACT SPLASH & LOGO (0 - 4.5s) -->
+        <div class="scene-slide scene-splash active" id="sc1">
           <div class="splash-stage" id="spStage">
             <svg viewBox="0 0 512 512" width="165" height="165" class="splash-svg">
               <defs>
@@ -1174,210 +694,324 @@
           </div>
         </div>
 
-        <!-- SCENE 2: REAL HOME DASHBOARD (4.5s - 9.0s) -->
-        <div class="scene-slide scene-home" id="scene2">
-          <div class="home-hero-card">
-            <div class="hero-salaam">ٱلسَّلَامُ عَلَيْكُمْ</div>
-            <h3 class="hero-heading">কুরআন তিলাওয়াত করুন, শুনুন এবং অনুধাবন করুন</h3>
-            <div class="hero-waqt-pill">
-              <div class="waqt-current">
-                <span class="waqt-dot"></span>
-                <span>বর্তমান ওয়াক্ত: <strong>আসর</strong> (৪:৩০ PM)</span>
-              </div>
+        <!-- 2. HOME DASHBOARD & DAILY STREAK (4.5 - 9.5s) -->
+        <div class="scene-slide" id="sc2">
+          <div class="feature-banner">
+            <div class="fb-title">হোম ড্যাশবোর্ড ও প্রতিদিনের অভ্যাস</div>
+            <div class="fb-sub">লাইভ ওয়াক্ত • দৈনিক কুরআন তিলাওয়াত ট্র্যাকার</div>
+          </div>
+          <div class="generic-card" style="background: linear-gradient(145deg, #063523 0%, #031c13 100%); border-color: rgba(16, 185, 129, 0.35);">
+            <div style="font-family: 'Amiri Quran', serif; font-size: 1.15rem; color: #facc15;">ٱلسَّلَامُ عَلَيْكُمْ</div>
+            <div style="font-size: 0.95rem; font-weight: 800; color: #fff;">কুরআন তিলাওয়াত করুন, শুনুন এবং অনুধাবন করুন</div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; padding: 0.4rem 0.6rem; background: rgba(0,0,0,0.4); border-radius: 10px;">
+              <span>বর্তমান ওয়াক্ত: <strong style="color: #34d399;">আসর</strong> (৪:৩০ PM)</span>
               <span style="color: #facc15;">পরবর্তী: মাগরিব ➔</span>
             </div>
-            <div class="hero-streak-row">
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; padding: 0.35rem 0.6rem; background: rgba(245, 158, 11, 0.15); border-radius: 10px; color: #fef08a; font-weight: 700;">
               <span>🔥 ৭ দিনের ধারাবাহিক স্ট্রিক</span>
-              <span style="color: #34d399;">৮৫% সম্পন্ন</span>
-            </div>
-          </div>
-
-          <div class="feature-grid-mock">
-            <div class="feat-card">
-              <div class="feat-icon">📖</div>
-              <div>
-                <div class="feat-title">কুরআন মাজীদ</div>
-                <div class="feat-sub">১১৪টি পূর্ণাঙ্গ সূরা</div>
-              </div>
-            </div>
-            <div class="feat-card">
-              <div class="feat-icon">✨</div>
-              <div>
-                <div class="feat-title">সহীহ হাদিস</div>
-                <div class="feat-sub">৩৬,০০০+ হাদিস</div>
-              </div>
-            </div>
-            <div class="feat-card">
-              <div class="feat-icon">🕒</div>
-              <div>
-                <div class="feat-title">নামাজের ওয়াক্ত</div>
-                <div class="feat-sub">সঠিক আজান টাইম</div>
-              </div>
-            </div>
-            <div class="feat-card">
-              <div class="feat-icon">🧭</div>
-              <div>
-                <div class="feat-title">কিবলা কম্পাস</div>
-                <div class="feat-sub">জিপিএস ডিরেকশন</div>
-              </div>
+              <span style="color: #34d399;">আজকের লক্ষ্য: ৮৫% সম্পন্ন</span>
             </div>
           </div>
         </div>
 
-        <!-- SCENE 3: REAL SURAH READER & AUDIO (9.0s - 13.5s) -->
-        <div class="scene-slide scene-quran" id="scene3">
-          <div class="surah-card-mock">
-            <div class="surah-header-row">
-              <div>
-                <div class="surah-name-bn">সূরা আর-রহমান</div>
-                <div style="font-size: 0.65rem; color: #94a3b8;">মাক্কী • আয়াত ৭৮</div>
-              </div>
-              <div class="surah-name-ar">سُورَةُ الرَّحْمَٰن</div>
+        <!-- 3. QURAN 114 SURAHS & AUDIO RECITER (9.5 - 15.0s) -->
+        <div class="scene-slide" id="sc3">
+          <div class="feature-banner">
+            <div class="fb-title">১১৪টি পূর্ণাঙ্গ সূরা ও মধুর তিলাওয়াত</div>
+            <div class="fb-sub">শব্দার্থে বাংলা অনুবাদ • বিশ্বখ্যাত ক্বারীদের অডিও</div>
+          </div>
+          <div class="generic-card" style="border-color: rgba(245, 215, 127, 0.35);">
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--aq-border); padding-bottom: 0.35rem;">
+              <span style="font-weight: 800; color: #34d399; font-size: 0.95rem;">সূরা আর-রহমান</span>
+              <span style="font-family: 'Amiri Quran', serif; color: #facc15; font-size: 1.1rem;">سُورَةُ الرَّحْمَٰن</span>
             </div>
-
-            <div class="ayah-box">
-              <div class="ayah-arabic">فَبِأَيِّ آلَاءِ رَبِّكُمَا تُكَذِّبَانِ ﴿١٣﴾</div>
-              <div class="ayah-bangla">“অতএব, তোমরা উভয়ে তোমাদের রবের কোন কোন অনুগ্রহকে অস্বীকার করবে?”</div>
+            <div style="background: rgba(0,0,0,0.35); border-left: 3px solid #10b981; padding: 0.65rem; border-radius: 10px;">
+              <div style="font-family: 'Amiri Quran', serif; font-size: 1.25rem; text-align: right; color: #fff; line-height: 1.6;">فَبِأَيِّ آلَاءِ رَبِّكُمَا تُكَذِّبَانِ ﴿١٣﴾</div>
+              <div style="font-size: 0.75rem; color: #cbd5e1; margin-top: 0.3rem;">“অতএব, তোমরা উভয়ে তোমাদের রবের কোন কোন অনুগ্রহকে অস্বীকার করবে?”</div>
             </div>
-
-            <div class="audio-player-mock">
-              <div class="audio-play-btn">▶</div>
-              <div class="audio-reciter-info">
-                <span class="reciter-name">মিশারী রশিদ আলাফাসী</span>
-                <span class="reciter-ayah">সূরা আর-রহমান: আয়াত ১৩</span>
+            <div style="display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0.6rem; background: rgba(0,0,0,0.5); border-radius: 12px;">
+              <div style="width: 30px; height: 30px; border-radius: 50%; background: #10b981; color: #fff; display: grid; place-items: center; font-size: 0.8rem;">▶</div>
+              <div style="flex: 1;">
+                <div style="font-size: 0.72rem; font-weight: 700; color: #fff;">মিশারী রশিদ আলাফাসী</div>
+                <div style="font-size: 0.62rem; color: #facc15;">সূরা আর-রহমান: আয়াত ১৩</div>
               </div>
               <div class="equalizer-wave">
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
-                <div class="eq-bar"></div>
+                <div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div><div class="eq-bar"></div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- SCENE 4: 36,000+ HADITH LIBRARY (13.5s - 18.0s) -->
-        <div class="scene-slide scene-hadith" id="scene4">
-          <div class="hadith-hero-title">৩৬,০০০+ সহীহ হাদিস সম্ভার</div>
-          <div class="hadith-hero-sub">বুখারী, মুসলিম, তিরমিযী সহ ৯টি মূল হাদিস গ্রন্থ</div>
+        <!-- 4. 30 JUZ / PARA NAVIGATOR (15.0 - 20.0s) -->
+        <div class="scene-slide" id="sc4">
+          <div class="feature-banner">
+            <div class="fb-title">৩০ পারা (Juz) নেভিগেটর</div>
+            <div class="fb-sub">যেকোনো পারায় দ্রুত প্রবেশ ও খতম ট্র্যাকিং</div>
+          </div>
+          <div class="generic-card">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;">
+              <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; border-radius: 12px; padding: 0.5rem;">
+                <div style="font-size: 0.75rem; font-weight: 800; color: #fff;">পারা ১: আলিফ-লাম-মীম</div>
+                <div style="font-size: 0.65rem; color: #34d399;">সূরা আল-ফাতিহা - আল-বাকারা</div>
+                <div style="font-size: 0.62rem; color: #facc15; margin-top: 0.2rem;">১৪৮ আয়াত • ১০০% সম্পন্ন</div>
+              </div>
+              <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--aq-border); border-radius: 12px; padding: 0.5rem;">
+                <div style="font-size: 0.75rem; font-weight: 800; color: #fff;">পারা ২: সাইয়াকুলু</div>
+                <div style="font-size: 0.65rem; color: var(--aq-text-muted);">সূরা আল-বাকারা (১৪২-২৫২)</div>
+                <div style="font-size: 0.62rem; color: #38bdf8; margin-top: 0.2rem;">১১১ আয়াত • চলমান</div>
+              </div>
+              <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--aq-border); border-radius: 12px; padding: 0.5rem;">
+                <div style="font-size: 0.75rem; font-weight: 800; color: #fff;">পারা ২৯: তাবারাকাল্লাযী</div>
+                <div style="font-size: 0.65rem; color: var(--aq-text-muted);">সূরা আল-মুলক - আল-মুরসালাত</div>
+                <div style="font-size: 0.62rem; color: #facc15; margin-top: 0.2rem;">১১টি সূরা • ৪৩১ আয়াত</div>
+              </div>
+              <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; border-radius: 12px; padding: 0.5rem;">
+                <div style="font-size: 0.75rem; font-weight: 800; color: #fff;">পারা ৩০: আম্মা ইয়াতাসা'আলুন</div>
+                <div style="font-size: 0.65rem; color: #fef08a;">সূরা আন-নাবা - আন-নাস</div>
+                <div style="font-size: 0.62rem; color: #10b981; margin-top: 0.2rem;">৩৭টি ছোট সূরা • ৫৬৪ আয়াত</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-          <div class="hadith-search-mock">
+        <!-- 5. 36,000+ HADITH LIBRARY (20.0 - 25.5s) -->
+        <div class="scene-slide" id="sc5">
+          <div class="feature-banner">
+            <div class="fb-title">৩৬,০০০+ সহীহ হাদিস সম্ভার</div>
+            <div class="fb-sub">বুখারী, মুসলিম, তিরমিযী সহ ৯টি প্রধান হাদিস গ্রন্থ</div>
+          </div>
+          <div style="width: 100%; background: #0f172a; border: 1px solid #facc15; border-radius: 9999px; padding: 0.45rem 0.8rem; display: flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; color: #fff;">
             <span>🔍</span>
-            <span id="typeQuery">দোয়া ও ক্ষমা প্রার্থনা...</span>
+            <span>দোয়া ও ক্ষমা প্রার্থনা...</span>
           </div>
-
-          <div class="hadith-books-grid">
-            <div class="hadith-book-card" style="border-color: rgba(245, 158, 11, 0.4);">
-              <span class="hb-name">সহীহ বুখারী</span>
-              <span class="hb-count">৭,৫৬৩ হাদিস</span>
-            </div>
-            <div class="hadith-book-card" style="border-color: rgba(16, 185, 129, 0.4);">
-              <span class="hb-name">সহীহ মুসলিম</span>
-              <span class="hb-count">৭,৫০০ হাদিস</span>
-            </div>
-          </div>
-
-          <div class="hadith-result-card">
-            <div class="hr-header">
+          <div class="generic-card" style="background: rgba(6, 78, 59, 0.4); border-color: #10b981;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 700; color: #facc15;">
               <span>সহীহ বুখারী • হাদিস নং ১</span>
-              <span class="hr-grade">সহীহ</span>
+              <span style="background: #10b981; color: #04140e; padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 800;">সহীহ</span>
             </div>
-            <div class="hr-text">
+            <div style="font-size: 0.75rem; color: #f8fafc; line-height: 1.35;">
               “সকল আমল নিয়তের ওপর নির্ভরশীল, এবং প্রত্যেক ব্যক্তি যা নিয়ত করেছে কেবল তাই পাবে...”
             </div>
           </div>
         </div>
 
-        <!-- SCENE 5: PRAYER & QIBLA (18.0s - 22.5s) -->
-        <div class="scene-slide scene-prayer" id="scene5">
-          <div style="font-weight: 800; font-size: 1rem; color: #facc15; text-align: center;">
-            নামাজের সময় ও ৩ডি কিবলা কম্পাস
+        <!-- 6. PRAYER TIMES & AZAN (25.5 - 30.5s) -->
+        <div class="scene-slide" id="sc6">
+          <div class="feature-banner">
+            <div class="fb-title">নামাজের সঠিক সময় ও আজান অ্যালার্ট</div>
+            <div class="fb-sub">জিপিএস ভিত্তিক নির্ভুল ওয়াক্ত • মাসিক ক্যালেন্ডার</div>
           </div>
-
-          <div class="compass-mock-wrap">
-            <div class="compass-needle">
-              <div class="needle-n"></div>
-              <div class="needle-s"></div>
+          <div class="generic-card">
+            <div style="display: flex; justify-content: space-between; padding: 0.35rem 0.5rem; font-size: 0.72rem;">
+              <span>ফজর (Fajr)</span><span style="font-weight: 700;">০৪:৫২ AM</span>
             </div>
-            <div class="compass-center"></div>
-          </div>
-          <div style="text-align: center; font-size: 0.75rem; color: #34d399; font-weight: 700;">
-            🕋 কিবলা দিক: ২৭৬° পশ্চিম (ঢাকা, বাংলাদেশ)
-          </div>
-
-          <div class="prayer-table-mock">
-            <div class="prayer-row">
-              <span>ফজর (Fajr)</span>
-              <span>০৪:৫২ AM</span>
+            <div style="display: flex; justify-content: space-between; padding: 0.35rem 0.5rem; font-size: 0.72rem;">
+              <span>যোহর (Dhuhr)</span><span style="font-weight: 700;">১২:০২ PM</span>
             </div>
-            <div class="prayer-row">
-              <span>যোহর (Dhuhr)</span>
-              <span>১২:০২ PM</span>
+            <div style="display: flex; justify-content: space-between; padding: 0.4rem 0.5rem; font-size: 0.75rem; background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; border-radius: 8px; color: #34d399; font-weight: 800;">
+              <span>আসর (Asr) • বর্তমান ওয়াক্ত</span><span>০৪:৩০ PM</span>
             </div>
-            <div class="prayer-row active">
-              <span>আসর (Asr) • বর্তমান ওয়াক্ত</span>
-              <span>০৪:৩০ PM</span>
+            <div style="display: flex; justify-content: space-between; padding: 0.35rem 0.5rem; font-size: 0.72rem;">
+              <span>মাগরিব (Maghrib)</span><span style="font-weight: 700;">০৫:৪৩ PM</span>
             </div>
-            <div class="prayer-row">
-              <span>মাগরিব (Maghrib)</span>
-              <span>০৫:৪৩ PM</span>
+            <div style="display: flex; justify-content: space-between; padding: 0.35rem 0.5rem; font-size: 0.72rem;">
+              <span>ইশা (Isha)</span><span style="font-weight: 700;">০৬:৫৭ PM</span>
             </div>
           </div>
         </div>
 
-        <!-- SCENE 6: DIGITAL TASBIH & HABITS (22.5s - 26.5s) -->
-        <div class="scene-slide scene-tasbih" id="scene6">
-          <div style="font-weight: 800; font-size: 1.05rem; color: #facc15; text-align: center;">
-            ডিজিটাল তসবিহ ও ডেইলি হ্যাবিট
+        <!-- 7. 3D QIBLA COMPASS (30.5 - 35.5s) -->
+        <div class="scene-slide" id="sc7">
+          <div class="feature-banner">
+            <div class="fb-title">৩ডি জিপিএস কিবলা কম্পাস</div>
+            <div class="fb-sub">লাইভ সেন্সর • মক্কার দিকে সরাসরি দিকনির্দেশনা</div>
           </div>
-
-          <div class="tasbih-disc-wrap">
-            <div class="tasbih-count-big" id="tasbihCount">৩৩</div>
-            <div class="tasbih-target">টার্গেট: ৩৩ বার</div>
+          <div style="width: 130px; height: 130px; border-radius: 50%; border: 3px solid rgba(245, 215, 127, 0.4); position: relative; display: grid; place-items: center; background: radial-gradient(circle, #08281c 0%, #03140d 100%); margin: 0 auto;">
+            <div style="position: absolute; width: 6px; height: 95px; transform: rotate(276deg);">
+              <div style="width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 48px solid #ef4444;"></div>
+              <div style="width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 48px solid #10b981;"></div>
+            </div>
+            <div style="position: absolute; width: 14px; height: 14px; border-radius: 50%; background: #facc15;"></div>
           </div>
-          <div class="tasbih-phrase">سُبْحَانَ اللَّهِ (সুবহানাল্লাহ)</div>
-
-          <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 14px; padding: 0.75rem; text-align: center;">
-            <div style="font-size: 0.85rem; font-weight: 800; color: #fef08a;">🔥 ৭ দিনের ধারাবাহিক স্ট্রিক!</div>
-            <div style="font-size: 0.7rem; color: #cbd5e1; margin-top: 0.2rem;">প্রতিদিনের ২০ আয়াত তিলাওয়াত লক্ষ্য সফলভাবে অর্জিত</div>
+          <div style="text-align: center; font-size: 0.78rem; color: #34d399; font-weight: 800;">
+            🕋 কিবলা দিক: ২৭৬° পশ্চিম • মক্কা থেকে ৪,৯২০ কিমি
           </div>
         </div>
 
-        <!-- SCENE 7: GRAND OUTRO & CTA (26.5s - 30.0s) -->
-        <div class="scene-slide scene-outro" id="scene7">
-          <div class="outro-badge">۩</div>
-          <h2 class="outro-title">Al-Quran Web</h2>
-          <p class="outro-sub">আপনার পূর্ণাঙ্গ ডিজিটাল ইসলামিক জীবনবিধান</p>
+        <!-- 8. DIGITAL TASBIH COUNTER (35.5 - 40.5s) -->
+        <div class="scene-slide" id="sc8">
+          <div class="feature-banner">
+            <div class="fb-title">ডিজিটাল তসবিহ ও যিকির কাউন্টার</div>
+            <div class="fb-sub">টার্গেট ৩৩ / ১০০ • ভাইব্রেশন ও সাউন্ড ফিডব্যাক</div>
+          </div>
+          <div style="width: 140px; height: 140px; border-radius: 50%; border: 6px solid #10b981; display: flex; flex-direction: column; align-items: center; justify-content: center; background: radial-gradient(circle, #08281c 0%, #03140d 100%); box-shadow: 0 0 25px rgba(16, 185, 129, 0.4); margin: 0 auto;">
+            <div style="font-size: 2.6rem; font-weight: 900; color: #fff; line-height: 1;">৩৩</div>
+            <div style="font-size: 0.68rem; color: #facc15; font-weight: 700; margin-top: 0.2rem;">টার্গেট: ৩৩ বার</div>
+          </div>
+          <div style="font-size: 0.9rem; font-weight: 800; color: #38bdf8; text-align: center;">
+            سُبْحَانَ اللَّهِ (সুবহানাল্লাহ)
+          </div>
+        </div>
 
-          <a href="#" class="outro-cta-btn">ওয়েবসাইটে প্রবেশ করুন ➔</a>
+        <!-- 9. RUQYAH & SHIFA (40.5 - 45.5s) -->
+        <div class="scene-slide" id="sc9">
+          <div class="feature-banner">
+            <div class="fb-title">রুকইয়াহ ও শিফা (Ruqyah & Shifa)</div>
+            <div class="fb-sub">বদনজর, জাদু ও রোগ মুক্তির কুরআনীয় আয়াত ও অডিও</div>
+          </div>
+          <div class="generic-card" style="border-left: 4px solid #f59e0b;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 800; color: #facc15;">
+              <span>🛡️ আয়াতুল কুরসী (Ayat al-Kursi)</span>
+              <span style="color: #34d399;">৩ বার পাঠ</span>
+            </div>
+            <div style="font-family: 'Amiri Quran', serif; font-size: 1.15rem; color: #fff; text-align: right; line-height: 1.5;">اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ...</div>
+            <div style="font-size: 0.7rem; color: #94a3b8;">সুরক্ষা ও হেফাজতের জন্য সকাল-সন্ধ্যা তিলাওয়াত</div>
+          </div>
+        </div>
 
-          <div class="outro-url-box">
+        <!-- 10. ASMA-UL-HUSNA 99 NAMES OF ALLAH (45.5 - 50.5s) -->
+        <div class="scene-slide" id="sc10">
+          <div class="feature-banner">
+            <div class="fb-title">আসমাউল হুসনা — আল্লাহর ৯৯টি গুণবাচক নাম</div>
+            <div class="fb-sub">আরবি ক্যালিগ্রাফি • অর্থ ও ফজিলত সহ অডিও</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; width: 100%;">
+            <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid #10b981; border-radius: 12px; padding: 0.5rem; text-align: center;">
+              <div style="font-family: 'Amiri Quran', serif; font-size: 1.25rem; color: #facc15;">الرَّحْمَٰنُ</div>
+              <div style="font-size: 0.75rem; font-weight: 800; color: #fff;">আর-রহমান</div>
+              <div style="font-size: 0.65rem; color: #34d399;">পরম দয়ালু</div>
+            </div>
+            <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid #f59e0b; border-radius: 12px; padding: 0.5rem; text-align: center;">
+              <div style="font-family: 'Amiri Quran', serif; font-size: 1.25rem; color: #facc15;">الرَّحِيمُ</div>
+              <div style="font-size: 0.75rem; font-weight: 800; color: #fff;">আর-রহীম</div>
+              <div style="font-size: 0.65rem; color: #fef08a;">অসীম দাতা</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 11. ISLAMIC CALENDAR & EVENTS (50.5 - 55.5s) -->
+        <div class="scene-slide" id="sc11">
+          <div class="feature-banner">
+            <div class="fb-title">ইসলামিক হিজরি ক্যালেন্ডার ও উৎসব</div>
+            <div class="fb-sub">রমজান, ঈদ ও গুরুত্বপূর্ণ ইসলামিক দিনক্ষণ ট্র্যাকার</div>
+          </div>
+          <div class="generic-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--aq-border); padding-bottom: 0.35rem;">
+              <span style="font-weight: 800; color: #facc15; font-size: 0.85rem;">📅 রজব / শা'বান ১৪৪৭ হিজরি</span>
+              <span style="font-size: 0.7rem; color: #34d399;">২০২৬</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; padding: 0.3rem 0;">
+              <span>🌙 পবিত্র রমজানুল মোবারক</span>
+              <span style="color: #facc15; font-weight: 700;">কাউন্টডাউন শুরু</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; padding: 0.3rem 0;">
+              <span>✨ ঈদুল ফিতর ও ঈদুল আযহা</span>
+              <span style="color: #34d399; font-weight: 700;">ছুটির তালিকা</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 12. NEARBY MOSQUES FINDER (55.5 - 60.5s) -->
+        <div class="scene-slide" id="sc12">
+          <div class="feature-banner">
+            <div class="fb-title">নিকটস্থ মসজিদ ট্র্যাকার (Interactive Maps)</div>
+            <div class="fb-sub">জিপিএস লোকেশন দিয়ে নিকটবর্তী মসজিদের দূরত্ব ও পথনির্দেশ</div>
+          </div>
+          <div class="generic-card" style="border-color: #38bdf8;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <div style="font-size: 1.5rem;">🕌</div>
+              <div>
+                <div style="font-size: 0.82rem; font-weight: 800; color: #fff;">বায়তুল মুকাররম জাতীয় মসজিদ</div>
+                <div style="font-size: 0.68rem; color: #38bdf8;">দূরত্ব: ১.২ কিমি • হাঁটার পথ: ১৪ মিনিট</div>
+              </div>
+            </div>
+            <div style="background: rgba(56, 189, 248, 0.15); border-radius: 8px; padding: 0.35rem 0.6rem; font-size: 0.7rem; color: #7dd3fc; text-align: center;">
+              📍 মানচিত্রে সরাসরি দিকনির্দেশনা ও জামাআতের সময়
+            </div>
+          </div>
+        </div>
+
+        <!-- 13. BOOKMARKS & CUSTOM SETTINGS (60.5 - 65.5s) -->
+        <div class="scene-slide" id="sc13">
+          <div class="feature-banner">
+            <div class="fb-title">বুকমার্ক, লাস্ট রিড ও সেটিংস</div>
+            <div class="fb-sub">ডার্ক/লাইট থিম • দ্বিভাষিক (বাংলা/English) • ফন্ট সাইজ</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; width: 100%;">
+            <div style="background: #0f172a; border: 1px solid var(--aq-border); border-radius: 12px; padding: 0.6rem;">
+              <div style="font-size: 0.75rem; font-weight: 700; color: #facc15;">🔖 বুকমার্ক ও হিস্ট্রি</div>
+              <div style="font-size: 0.65rem; color: #94a3b8; margin-top: 0.2rem;">যেকোনো আয়াত সেভ রাখুন</div>
+            </div>
+            <div style="background: #0f172a; border: 1px solid var(--aq-border); border-radius: 12px; padding: 0.6rem;">
+              <div style="font-size: 0.75rem; font-weight: 700; color: #34d399;">🌗 ডার্ক ও লাইট থিম</div>
+              <div style="font-size: 0.65rem; color: #94a3b8; margin-top: 0.2rem;">চোখের আরামদায়ক রিডিং</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 14. PWA MOBILE & WINDOWS DESKTOP APP (65.5 - 70.5s) -->
+        <div class="scene-slide" id="sc14">
+          <div class="feature-banner">
+            <div class="fb-title">সব ডিভাইসে ইনস্টলযোগ্য অ্যাপ</div>
+            <div class="fb-sub">মোবাইল PWA ও Windows 10/11 ডেস্কটপ অ্যাপ (.exe)</div>
+          </div>
+          <div class="generic-card">
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+              <div style="font-size: 1.5rem;">💻</div>
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 800; color: #fff;">Windows Desktop App (.exe)</div>
+                <div style="font-size: 0.68rem; color: #facc15;">কীবোর্ড শর্টকাট • ফুল অফলাইন ক্যাশ</div>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.6rem; border-top: 1px solid var(--aq-border); padding-top: 0.4rem;">
+              <div style="font-size: 1.5rem;">📱</div>
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 800; color: #fff;">মোবাইল PWA App</div>
+                <div style="font-size: 0.68rem; color: #34d399;">Android ও iPhone-এ ১ ক্লিকে ইনস্টল</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 15. GRAND OUTRO & CALL TO ACTION (70.5 - 76.0s) -->
+        <div class="scene-slide" id="sc15" style="justify-content: center; gap: 0.8rem; text-align: center; background: radial-gradient(circle at center, #08281c 0%, #020b08 100%);">
+          <div style="width: 65px; height: 65px; border-radius: 18px; background: linear-gradient(135deg, #10b981, #047857); color: #fff; display: grid; place-items: center; font-size: 2.2rem; font-weight: 700; margin: 0 auto; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);">۩</div>
+          <h2 style="font-size: 1.6rem; font-weight: 800; color: #fff; line-height: 1.2;">Al-Quran Web</h2>
+          <p style="font-size: 0.85rem; color: #34d399; font-weight: 600;">আপনার পূর্ণাঙ্গ ডিজিটাল ইসলামিক জীবনবিধান</p>
+          <div style="display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1.8rem; background: linear-gradient(135deg, #f59e0b 0%, #10b981 100%); color: #020617; font-weight: 800; font-size: 0.95rem; border-radius: 9999px; box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4); margin: 0 auto;">
+            ওয়েবসাইটে প্রবেশ করুন ➔
+          </div>
+          <div style="display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.85rem; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(250, 204, 21, 0.4); border-radius: 12px; color: #facc15; font-size: 0.75rem; font-weight: 700; margin: 0 auto;">
             <span>🌐</span> al-quran-web.vercel.app
           </div>
-
-          <div style="font-size: 0.7rem; color: #94a3b8; font-weight: 600;">
-            মোবাইল PWA ও Windows ডেস্কটপ অ্যাপ • ১০০% ফ্রি
-          </div>
+          <div style="font-size: 0.72rem; color: #94a3b8; font-weight: 600;">১০০% ফ্রি ও বিজ্ঞাপনমুক্ত</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- CONTROLS & TIMELINE DOCK -->
+  <!-- TIMELINE CONTROLLER -->
   <div class="controls-panel">
     <div class="scene-jumpers" id="sceneJumpers">
       <div class="jumper-dot active" title="1: Splash & Logo"></div>
-      <div class="jumper-dot" title="2: Home Dashboard"></div>
+      <div class="jumper-dot" title="2: Home & Streak"></div>
       <div class="jumper-dot" title="3: Quran & Audio"></div>
-      <div class="jumper-dot" title="4: Hadith Library"></div>
-      <div class="jumper-dot" title="5: Prayer & Qibla"></div>
-      <div class="jumper-dot" title="6: Tasbih & Habits"></div>
-      <div class="jumper-dot" title="7: Grand Outro"></div>
+      <div class="jumper-dot" title="4: 30 Juz / Para"></div>
+      <div class="jumper-dot" title="5: 36,000+ Hadith"></div>
+      <div class="jumper-dot" title="6: Prayer Times"></div>
+      <div class="jumper-dot" title="7: Qibla Compass"></div>
+      <div class="jumper-dot" title="8: Digital Tasbih"></div>
+      <div class="jumper-dot" title="9: Ruqyah & Shifa"></div>
+      <div class="jumper-dot" title="10: 99 Names"></div>
+      <div class="jumper-dot" title="11: Islamic Calendar"></div>
+      <div class="jumper-dot" title="12: Mosque Finder"></div>
+      <div class="jumper-dot" title="13: Bookmarks & Settings"></div>
+      <div class="jumper-dot" title="14: PWA & Desktop App"></div>
+      <div class="jumper-dot" title="15: Grand Outro"></div>
     </div>
 
     <div class="timeline-track">
-      <span class="time-readout" id="timeReadout">00:00 / 00:30</span>
+      <span class="time-readout" id="timeReadout">00:00 / 01:16</span>
       <div class="progress-bar-wrap" id="progressWrap">
         <div class="progress-bar-fill" id="progressFill"></div>
       </div>
@@ -1391,7 +1025,7 @@
   </div>
 
   <script>
-    const DURATION = 30.0;
+    const DURATION = 76.0; // 76 seconds covering all 15 features
     let currentTime = 0;
     let isPlaying = true;
     let lastTimestamp = performance.now();
@@ -1399,7 +1033,6 @@
     let mediaRecorder = null;
     let recordedChunks = [];
 
-    // DOM Elements
     const timeReadout = document.getElementById('timeReadout');
     const progressFill = document.getElementById('progressFill');
     const progressWrap = document.getElementById('progressWrap');
@@ -1410,16 +1043,41 @@
     const appHeaderMock = document.getElementById('appHeaderMock');
 
     const scenes = [
-      document.getElementById('scene1'),
-      document.getElementById('scene2'),
-      document.getElementById('scene3'),
-      document.getElementById('scene4'),
-      document.getElementById('scene5'),
-      document.getElementById('scene6'),
-      document.getElementById('scene7')
+      document.getElementById('sc1'),
+      document.getElementById('sc2'),
+      document.getElementById('sc3'),
+      document.getElementById('sc4'),
+      document.getElementById('sc5'),
+      document.getElementById('sc6'),
+      document.getElementById('sc7'),
+      document.getElementById('sc8'),
+      document.getElementById('sc9'),
+      document.getElementById('sc10'),
+      document.getElementById('sc11'),
+      document.getElementById('sc12'),
+      document.getElementById('sc13'),
+      document.getElementById('sc14'),
+      document.getElementById('sc15')
     ];
 
-    // Splash animation components
+    const sceneTimeStamps = [
+      0.0,   // 1. Splash & Logo
+      4.5,   // 2. Home & Streak
+      9.5,   // 3. Quran 114 Surahs & Audio
+      15.0,  // 4. 30 Juz / Para
+      20.0,  // 5. 36k+ Hadith Library
+      25.5,  // 6. Prayer Times & Azan
+      30.5,  // 7. Qibla Compass
+      35.5,  // 8. Digital Tasbih
+      40.5,  // 9. Ruqyah & Shifa
+      45.5,  // 10. Asma-ul-Husna (99 Names)
+      50.5,  // 11. Islamic Calendar & Events
+      55.5,  // 12. Mosque Finder (Maps)
+      60.5,  // 13. Bookmarks & Settings
+      65.5,  // 14. PWA & Desktop App
+      70.5   // 15. Grand Outro & CTA
+    ];
+
     const spStage = document.getElementById('spStage');
     const spBrand = document.getElementById('spBrand');
     const spWingL = document.getElementById('spWingL');
@@ -1428,34 +1086,29 @@
     const spPages = document.getElementById('spTurningPages');
 
     function updateScene(t) {
-      let activeIndex = 0;
-      if (t < 4.5) activeIndex = 0;
-      else if (t < 9.0) activeIndex = 1;
-      else if (t < 13.5) activeIndex = 2;
-      else if (t < 18.0) activeIndex = 3;
-      else if (t < 22.5) activeIndex = 4;
-      else if (t < 26.5) activeIndex = 5;
-      else activeIndex = 6;
+      let activeIdx = 0;
+      for (let i = sceneTimeStamps.length - 1; i >= 0; i--) {
+        if (t >= sceneTimeStamps[i]) {
+          activeIdx = i;
+          break;
+        }
+      }
 
-      // Toggle Header
-      if (activeIndex >= 1 && activeIndex <= 5) {
+      if (activeIdx >= 1 && activeIdx <= 13) {
         appHeaderMock.classList.add('active');
       } else {
         appHeaderMock.classList.remove('active');
       }
 
-      // Toggle Active Scene
       scenes.forEach((s, idx) => {
-        s.classList.toggle('active', idx === activeIndex);
+        s.classList.toggle('active', idx === activeIdx);
       });
 
-      // Toggle Jumpers
       jumperDots.forEach((d, idx) => {
-        d.classList.toggle('active', idx === activeIndex);
+        d.classList.toggle('active', idx === activeIdx);
       });
 
-      // Control Splash sequence timing
-      if (activeIndex === 0) {
+      if (activeIdx === 0) {
         if (t > 0.1) {
           spWingL.style.transform = 'scaleX(1)';
           spWingR.style.transform = 'scaleX(1)';
@@ -1475,11 +1128,11 @@
         }
       }
 
-      // Update UI Progress
       const p = (t / DURATION) * 100;
       progressFill.style.width = p + '%';
+      const mins = Math.floor(t / 60);
       const secs = Math.floor(t % 60);
-      timeReadout.textContent = `00:${secs < 10 ? '0' + secs : secs} / 00:30`;
+      timeReadout.textContent = `0${mins}:${secs < 10 ? '0' + secs : secs} / 01:16`;
     }
 
     function loop(now) {
@@ -1500,7 +1153,6 @@
       requestAnimationFrame(loop);
     }
 
-    // Controls
     btnPlay.addEventListener('click', () => {
       isPlaying = !isPlaying;
       btnPlay.textContent = isPlaying ? '⏸ বিরতি' : '▶ প্লে করুন';
@@ -1528,15 +1180,11 @@
 
     jumperDots.forEach((dot, idx) => {
       dot.addEventListener('click', () => {
-        const times = [0, 4.5, 9.0, 13.5, 18.0, 22.5, 26.5];
-        currentTime = times[idx];
+        currentTime = sceneTimeStamps[idx];
         updateScene(currentTime);
       });
     });
 
-    // ===============================================
-    // SCREEN & DISPLAY RECORDING ENGINE (1-CLICK HD)
-    // ===============================================
     btnRecord.addEventListener('click', async () => {
       if (isRecording) {
         stopRecording();
@@ -1544,7 +1192,6 @@
       }
 
       try {
-        // High quality display capture stream
         const stream = await navigator.mediaDevices.getDisplayMedia({
           video: {
             displaySurface: 'browser',
@@ -1569,7 +1216,7 @@
           const a = document.createElement('a');
           a.style.display = 'none';
           a.href = url;
-          a.download = 'al-quran-official-promo-30s.webm';
+          a.download = 'al-quran-complete-promo.webm';
           document.body.appendChild(a);
           a.click();
           setTimeout(() => {
@@ -1588,7 +1235,6 @@
         btnRecord.textContent = '⏹ রেকর্ডিং থামান';
         mediaRecorder.start();
 
-        // Restart video sequence from beginning
         currentTime = 0;
         isPlaying = true;
         btnPlay.textContent = '⏸ বিরতি';
@@ -1596,7 +1242,7 @@
         updateScene(0);
 
       } catch (err) {
-        alert('রেকর্ডিং শুরু করতে স্ক্রিন সিলেক্ট করুন। আপনি চাইলে সরাসরি যেকোনো স্ক্রিন রেকর্ডার (OBS / Windows Game Bar - Win+Alt+R) দিয়েও সরাসরি আল্ট্রা-এইচডি রেকর্ড করে নিতে পারেন!');
+        alert('রেকর্ডিং শুরু করতে আপনার ব্রাউজার উইন্ডো বা ট্যাব সিলেক্ট করুন।');
       }
     });
 
@@ -1606,7 +1252,6 @@
       }
     }
 
-    // Auto start playback on load
     requestAnimationFrame(loop);
   </script>
 </body>
