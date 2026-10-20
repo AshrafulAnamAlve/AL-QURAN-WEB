@@ -54,10 +54,10 @@ describe('HadithPage', () => {
     expect(heroCard?.textContent).toContain('আজকের নির্বাচিত হাদিস');
   });
 
-  it('renders category filter chips and switches category', () => {
+  it('renders category filter options and switches category', () => {
     const el: HTMLElement = fixture.nativeElement;
-    const chips = el.querySelectorAll('.chip[role="tab"]');
-    expect(chips.length).toBeGreaterThan(5);
+    const options = el.querySelectorAll('.topic-select option');
+    expect(options.length).toBeGreaterThan(5);
 
     // Select 'salah' category
     component.selectCategory('salah');

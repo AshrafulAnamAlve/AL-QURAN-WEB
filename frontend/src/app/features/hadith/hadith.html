@@ -154,106 +154,76 @@
       </section>
     }
 
-    <!-- Search & Filter Controls -->
-    <section class="controls-section hadith-filter-card">
-      <!-- Top Row: Search Box & Reading Segments -->
-      <div class="filter-toolbar">
-        <div class="search-box">
-          <span class="search-box__icon" aria-hidden="true">
-            <aq-icon name="search" [size]="18" />
-          </span>
-          <input
-            type="search"
-            class="search-box__input"
-            [value]="searchInput()"
-            (input)="onSearchChange($event)"
-            [placeholder]="isBn() ? 'হাদিস বা বিষয় অনুসন্ধান করুন...' : 'Search by topic, text, or narrator...'"
-            [attr.aria-label]="isBn() ? 'হাদিস খুঁজুন' : 'Search Hadiths'"
-          />
-          @if (searchInput()) {
-            <button
-              type="button"
-              class="search-box__clear"
-              (click)="clearSearch()"
-              [attr.aria-label]="isBn() ? 'অনুসন্ধান মুছুন' : 'Clear search'"
-            >
-              <aq-icon name="close" [size]="16" />
-            </button>
+    <!-- Simple, Clean Filter Toolbar -->
+    <section class="hadith-simple-bar" aria-label="হাদিস অনুসন্ধান ও ফিল্টার">
+      <div class="search-box">
+        <span class="search-box__icon" aria-hidden="true">
+          <aq-icon name="search" [size]="18" />
+        </span>
+        <input
+          type="search"
+          class="search-box__input"
+          [value]="searchInput()"
+          (input)="onSearchChange($event)"
+          [placeholder]="isBn() ? 'হাদিস খুঁজুন (যেমন: নিয়ত, নামাজ, রোজা)...' : 'Search hadiths (e.g. intention, prayer)...'"
+          [attr.aria-label]="isBn() ? 'হাদিস খুঁজুন' : 'Search Hadiths'"
+        />
+        @if (searchInput()) {
+          <button
+            type="button"
+            class="search-box__clear"
+            (click)="clearSearch()"
+            [attr.aria-label]="isBn() ? 'অনুসন্ধান মুছুন' : 'Clear search'"
+          >
+            <aq-icon name="close" [size]="16" />
+          </button>
+        }
+      </div>
+
+      <!-- Compact Topic Select Dropdown -->
+      <div class="topic-select-wrap">
+        <select
+          class="topic-select"
+          [value]="selectedCategory()"
+          (change)="onCategorySelectChange($event)"
+          [attr.aria-label]="isBn() ? 'বিষয় নির্বাচন করুন' : 'Filter by topic'"
+        >
+          @for (cat of categories; track cat.id) {
+            <option [value]="cat.id">
+              {{ cat.icon }} {{ isBn() ? cat.nameBn : cat.nameEn }}
+            </option>
           }
-        </div>
-
-        <!-- Reading View Segments (সকল | অপঠিত | পঠিত) -->
-        <div class="reading-segments" role="tablist" aria-label="হাদিস পড়ার অবস্থা">
-          <button
-            type="button"
-            role="tab"
-            class="segment-tab"
-            [class.segment-tab--active]="readingFilter() === 'all'"
-            (click)="setReadingFilter('all')"
-            [attr.aria-selected]="readingFilter() === 'all'"
-          >
-            <span>{{ isBn() ? 'সকল' : 'All' }}</span>
-            <span class="segment-tab__badge aq-numeral">{{ isBn() ? toBnDigits(curatedTotalCount()) : curatedTotalCount() }}</span>
-          </button>
-
-          <button
-            type="button"
-            role="tab"
-            class="segment-tab segment-tab--unread"
-            [class.segment-tab--active]="readingFilter() === 'unread'"
-            (click)="setReadingFilter('unread')"
-            [attr.aria-selected]="readingFilter() === 'unread'"
-            [title]="isBn() ? 'শুধুমাত্র অপঠিত হাদিস দেখুন (পড়া হাদিস বাদ দেওয়া হবে)' : 'Show only unread hadiths'"
-          >
-            <aq-icon name="bookOpen" [size]="13" />
-            <span>{{ isBn() ? 'অপঠিত' : 'Unread' }}</span>
-            <span class="segment-tab__badge aq-numeral">{{ isBn() ? toBnDigits(curatedUnreadCount()) : curatedUnreadCount() }}</span>
-          </button>
-
-          <button
-            type="button"
-            role="tab"
-            class="segment-tab segment-tab--read"
-            [class.segment-tab--active]="readingFilter() === 'read'"
-            (click)="setReadingFilter('read')"
-            [attr.aria-selected]="readingFilter() === 'read'"
-            [title]="isBn() ? 'আপনার পঠিত হাদিসগুলো দেখুন' : 'Show read hadiths'"
-          >
-            <aq-icon name="check" [size]="13" />
-            <span>{{ isBn() ? 'পঠিত' : 'Read' }}</span>
-            <span class="segment-tab__badge aq-numeral">{{ isBn() ? toBnDigits(curatedReadCount()) : curatedReadCount() }}</span>
-          </button>
-        </div>
+        </select>
+        <aq-icon name="chevronDown" [size]="14" class="topic-select-arrow" aria-hidden="true" />
       </div>
 
-      <!-- Category Filter Chips (Wrapping cleanly, no scrollbar!) -->
-      <div class="category-chips-wrap" role="tablist" aria-label="বিষয়ভিত্তিক হাদিস">
-        @for (cat of categories; track cat.id) {
-          <button
-            type="button"
-            role="tab"
-            class="chip"
-            [class.chip--active]="selectedCategory() === cat.id"
-            (click)="selectCategory(cat.id)"
-            [attr.aria-selected]="selectedCategory() === cat.id"
-          >
-            <span class="chip__icon" aria-hidden="true">{{ cat.icon }}</span>
-            <span class="chip__label">{{ isBn() ? cat.nameBn : cat.nameEn }}</span>
-          </button>
+      <!-- Quick Unread Filter Toggle -->
+      <button
+        type="button"
+        class="simple-toggle-btn"
+        [class.simple-toggle-btn--active]="readingFilter() === 'unread'"
+        (click)="toggleUnreadFilter()"
+        [title]="isBn() ? 'পড়া হাদিসগুলো লুকিয়ে শুধুমাত্র অপঠিত হাদিস দেখুন' : 'Filter out read hadiths'"
+      >
+        <aq-icon name="bookOpen" [size]="15" />
+        <span>{{ isBn() ? 'অপঠিত' : 'Unread' }}</span>
+        @if (curatedUnreadCount() > 0) {
+          <span class="count-pill aq-numeral">{{ isBn() ? toBnDigits(curatedUnreadCount()) : curatedUnreadCount() }}</span>
         }
-      </div>
+      </button>
 
-      <!-- Results bar -->
-      <div class="results-bar">
-        <span class="results-bar__count">{{ resultCountText() }}</span>
-        @if (selectedCategory() !== 'all' || searchInput() || showBookmarksOnly() || readingFilter() !== 'all') {
-          <button type="button" class="results-bar__reset" (click)="resetFilters()">
-            <aq-icon name="refresh" [size]="14" />
-            <span>{{ isBn() ? 'ফিল্টার রিসেট' : 'Reset Filters' }}</span>
-          </button>
-        }
-      </div>
+      @if (selectedCategory() !== 'all' || searchInput() || showBookmarksOnly() || readingFilter() !== 'all') {
+        <button type="button" class="reset-link-btn" (click)="resetFilters()" [title]="isBn() ? 'ফিল্টার রিসেট' : 'Reset filters'">
+          <aq-icon name="refresh" [size]="13" />
+          <span>{{ isBn() ? 'রিসেট' : 'Reset' }}</span>
+        </button>
+      }
     </section>
+
+    <!-- Results bar -->
+    <div class="results-bar">
+      <span class="results-bar__count">{{ resultCountText() }}</span>
+    </div>
 
     <!-- Hadith Cards List -->
     <main class="hadith-list" aria-label="Hadith Collection List">

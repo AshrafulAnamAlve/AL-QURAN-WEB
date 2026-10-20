@@ -229,6 +229,11 @@ export class HadithPage {
     this.hadithService.setCategory(category);
   }
 
+  onCategorySelectChange(event: Event): void {
+    const val = (event.target as HTMLSelectElement).value as HadithCategory;
+    this.selectCategory(val);
+  }
+
   selectBook(book: string): void {
     this.hadithService.setBook(book);
   }
