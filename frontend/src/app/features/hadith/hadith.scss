@@ -66,6 +66,8 @@
     font-size: 1.5rem;
     color: var(--aq-gold-600);
     line-height: 1.2;
+    text-align: left;
+    direction: ltr;
 
     :host-context([data-theme='dark']) & {
       color: var(--aq-gold-400);
@@ -100,7 +102,7 @@
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   border-radius: 9999px;
-  background: var(--aq-surface-raised, #ffffff);
+  background: var(--aq-surface);
   border: 1px solid var(--aq-border);
   color: var(--aq-text);
   font-size: 0.875rem;
@@ -119,7 +121,7 @@
 
   &:hover {
     border-color: var(--aq-gold-500);
-    background: var(--aq-surface-hover, #f8fafc);
+    background: var(--aq-surface-2);
   }
 
   &--active {
@@ -141,11 +143,18 @@
   padding: 1.75rem;
   border-radius: 1.25rem;
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(217, 119, 6, 0.08) 100%),
-    var(--aq-surface-raised, #ffffff);
+    var(--aq-surface);
   border: 1.5px solid var(--aq-gold-400);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   position: relative;
   overflow: hidden;
+
+  :host-context([data-theme='dark']) & {
+    background: linear-gradient(135deg, rgba(47, 163, 122, 0.12) 0%, rgba(217, 119, 6, 0.1) 100%),
+      var(--aq-surface);
+    border-color: var(--aq-gold-500);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  }
 
   &::before {
     content: '';
@@ -285,7 +294,7 @@
   &:hover {
     border-color: var(--aq-primary);
     color: var(--aq-primary);
-    background: var(--aq-surface-hover);
+    background: var(--aq-surface-2);
   }
 
   &--bookmarked {
@@ -323,7 +332,7 @@
     padding: 0 2.5rem 0 2.75rem;
     border-radius: 0.75rem;
     border: 1px solid var(--aq-border);
-    background: var(--aq-surface-raised, #ffffff);
+    background: var(--aq-surface);
     color: var(--aq-text);
     font-size: 0.95rem;
     outline: none;
@@ -335,7 +344,7 @@
 
     &:focus {
       border-color: var(--aq-primary);
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+      box-shadow: 0 0 0 3px var(--aq-primary-soft);
     }
   }
 
@@ -354,7 +363,7 @@
     border-radius: 9999px;
 
     &:hover {
-      background: var(--aq-surface-hover);
+      background: var(--aq-surface-2);
       color: var(--aq-text);
     }
   }
@@ -398,7 +407,7 @@
   gap: 0.4rem;
   padding: 0.45rem 0.85rem;
   border-radius: 9999px;
-  background: var(--aq-surface-raised, #ffffff);
+  background: var(--aq-surface);
   border: 1px solid var(--aq-border);
   color: var(--aq-text);
   font-size: 0.85rem;
@@ -413,13 +422,13 @@
 
   &:hover {
     border-color: var(--aq-primary);
-    background: var(--aq-surface-hover);
+    background: var(--aq-surface-2);
   }
 
   &--active {
     background: var(--aq-primary);
     border-color: var(--aq-primary);
-    color: #ffffff;
+    color: var(--aq-on-primary, #ffffff);
 
     &:hover {
       background: var(--aq-primary);
@@ -461,7 +470,7 @@
     border-radius: 0.375rem;
 
     &:hover {
-      background: var(--aq-surface-hover);
+      background: var(--aq-surface-2);
     }
   }
 }
@@ -479,7 +488,7 @@
   gap: 1.15rem;
   padding: 1.5rem;
   border-radius: 1rem;
-  background: var(--aq-surface-raised, #ffffff);
+  background: var(--aq-surface);
   border: 1px solid var(--aq-border);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -487,6 +496,11 @@
   &:hover {
     border-color: var(--aq-gold-400);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  :host-context([data-theme='dark']) &:hover {
+    border-color: var(--aq-gold-500);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
   }
 
   &__header {
@@ -519,7 +533,7 @@
       font-size: 0.75rem;
       padding: 0.15rem 0.5rem;
       border-radius: 9999px;
-      background: var(--aq-surface);
+      background: var(--aq-surface-2);
       color: var(--aq-text-muted);
       border: 1px solid var(--aq-border);
     }
@@ -592,7 +606,7 @@
     gap: 0.35rem;
     padding: 0.4rem 0.65rem;
     border-radius: 0.5rem;
-    background: var(--aq-surface);
+    background: var(--aq-surface-2);
     border: 1px solid var(--aq-border);
     color: var(--aq-text);
     font-size: 0.8rem;
@@ -603,7 +617,7 @@
     &:hover {
       border-color: var(--aq-primary);
       color: var(--aq-primary);
-      background: var(--aq-surface-hover);
+      background: var(--aq-surface);
     }
 
     &--bookmarked {
@@ -623,7 +637,7 @@
   text-align: center;
   padding: 3.5rem 1.5rem;
   border-radius: 1rem;
-  background: var(--aq-surface-raised, #ffffff);
+  background: var(--aq-surface);
   border: 1px dashed var(--aq-border);
   gap: 0.75rem;
 
