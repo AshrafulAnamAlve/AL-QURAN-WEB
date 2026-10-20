@@ -189,6 +189,12 @@ const ICON_DEFINITIONS = {
   shield: {
     paths: ['M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'],
   },
+  compass: {
+    paths: [
+      'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20Z',
+      'm16.24 7.76-2.12 6.36-6.36 2.12 2.12-6.36 6.36-2.12Z',
+    ],
+  },
 } as const;
 
 /** Every icon name, as a literal union - misspellings fail at compile time. */

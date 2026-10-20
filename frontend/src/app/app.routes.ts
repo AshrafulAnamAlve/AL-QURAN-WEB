@@ -183,6 +183,17 @@ export const routes: Routes = [
     },
   },
   {
+    path: 'qibla',
+    loadComponent: () => import('./features/qibla/qibla').then((m) => m.QiblaPage),
+    data: {
+      meta: {
+        title: 'Qibla Direction & Compass — কিবলা দিকনির্ণয়',
+        description:
+          'Accurate Qibla compass towards the Holy Kaaba with real-time motion sensor, exact angle, distance and interactive map.',
+      },
+    },
+  },
+  {
     path: 'bookmarks',
     loadComponent: () => import('./features/bookmarks/bookmarks').then((m) => m.BookmarksPage),
     data: {

@@ -35,6 +35,7 @@ import { LanguageService } from '../../core/services/language';
               <li><a routerLink="/hadith">{{ isBn() ? 'হাদিস শরীফ' : 'Hadith' }}</a></li>
               <li><a routerLink="/ruqyah">{{ isBn() ? 'রুকইয়াহ' : 'Ruqyah' }}</a></li>
               <li><a routerLink="/prayer">{{ isBn() ? 'নামাজের সময়' : 'Prayer times' }}</a></li>
+              <li><a routerLink="/qibla">{{ isBn() ? 'কিবলা দিকনির্ণয়' : 'Qibla direction' }}</a></li>
               <li><a routerLink="/calendar">{{ isBn() ? 'ইসলামিক ক্যালেন্ডার' : 'Islamic calendar' }}</a></li>
               <li><a routerLink="/mosques">{{ isBn() ? 'নিকটস্থ মসজিদ' : 'Nearby mosques' }}</a></li>
               <li>

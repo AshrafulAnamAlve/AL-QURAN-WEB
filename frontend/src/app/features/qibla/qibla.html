@@ -1,0 +1,378 @@
+<div class="qibla-container">
+  <!-- Header & Quran Ayah -->
+  <header class="qibla-header">
+    <div class="qibla-header__badge">
+      <aq-icon name="compass" [size]="16" />
+      <span>{{ isBn() ? 'কিবলা দিকনির্ণয় ও কম্পাস' : 'Qibla Direction & Compass' }}</span>
+    </div>
+
+    <h1 class="qibla-header__title">
+      {{ isBn() ? 'পবিত্র কা\'বা শরীফের সঠিক দিক ও দূরত্ব' : 'Accurate Qibla Direction towards Kaaba' }}
+    </h1>
+
+    <blockquote class="qibla-header__ayah">
+      <span class="qibla-header__ayah-arabic">
+        فَوَلِّ وَجْهَكَ شَطْرَ الْمَسْجِدِ الْحَرَامِ ۚ وَحَيْثُ مَا كُنتُمْ فَوَلُّوا وُجُوهَكُمْ شَطْرَهُ
+      </span>
+      <p class="qibla-header__ayah-trans">
+        {{ isBn()
+          ? '“কাজেই আপনি আপনার মুখ মসজিদুল হারামের দিকে ফিরান এবং তোমরা যেখানেই থাক না কেন, তোমাদের মুখ সেদিকেই ফিরাও।” — (সূরা আল-বাক্বারাহ: ১৪৪)'
+          : '"So turn your face toward al-Masjid al-Haram. And wherever you are, turn your faces toward it." — (Surah Al-Baqarah: 144)' }}
+      </p>
+    </blockquote>
+  </header>
+
+  <!-- Location & Mode Controls -->
+  <div class="qibla-controls">
+    <div class="location-pill">
+      <aq-icon name="mapPin" [size]="18" />
+      <span class="location-pill__name">{{ settings.location().displayName }}</span>
+
+      <div class="location-pill__actions">
+        <button
+          type="button"
+          class="location-pill__btn"
+          (click)="useGps()"
+          [disabled]="locationService.isDetecting()"
+          [attr.aria-label]="isBn() ? 'জিপিএস শনাক্ত করুন' : 'Locate via GPS'"
+          [title]="isBn() ? 'জিপিএস শনাক্ত করুন' : 'Locate via GPS'"
+        >
+          <aq-icon name="crosshair" [size]="16" />
+        </button>
+
+        <button
+          type="button"
+          class="location-pill__btn"
+          (click)="openCityModal()"
+          [attr.aria-label]="isBn() ? 'শহর পরিবর্তন' : 'Change City'"
+        >
+          <span>{{ isBn() ? 'পরিবর্তন' : 'Change' }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="mode-switcher" role="tablist" [attr.aria-label]="isBn() ? 'ভিউ মোড' : 'View Mode'">
+      <button
+        type="button"
+        role="tab"
+        class="mode-btn"
+        [class.is-active]="viewMode() === 'compass'"
+        [attr.aria-selected]="viewMode() === 'compass'"
+        (click)="setViewMode('compass')"
+      >
+        <aq-icon name="compass" [size]="16" />
+        <span>{{ isBn() ? 'কম্পাস ভিউ' : 'Compass View' }}</span>
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        class="mode-btn"
+        [class.is-active]="viewMode() === 'map'"
+        [attr.aria-selected]="viewMode() === 'map'"
+        (click)="setViewMode('map')"
+      >
+        <aq-icon name="mapPin" [size]="16" />
+        <span>{{ isBn() ? 'ম্যাপ ভিউ' : 'Map View' }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- SENSOR PERMISSION PROMPT (e.g. iOS Safari) -->
+  @if (qibla.sensorState() === 'prompt') {
+    <div class="sensor-prompt-banner">
+      <div class="sensor-prompt-banner__icon">🧭</div>
+      <div class="sensor-prompt-banner__info">
+        <h3>{{ isBn() ? 'রিয়েল-টাইম কম্পাস সক্রিয় করুন' : 'Enable Real-time Compass Sensor' }}</h3>
+        <p>
+          {{ isBn()
+            ? 'ডিভাইসের মোশন সেন্সর ব্যবহারের অনুমতি দিন যাতে ফোন ঘোরানোর সাথে সাথে কম্পাস সঠিক দিক প্রদর্শন করতে পারে।'
+            : 'Allow motion sensor access so the compass needle smoothly updates as you orient your phone.' }}
+        </p>
+      </div>
+      <button type="button" class="sensor-prompt-btn" (click)="requestCompassPermission()">
+        <aq-icon name="sparkles" [size]="18" />
+        <span>{{ isBn() ? 'অনুমতি দিন' : 'Enable Compass' }}</span>
+      </button>
+    </div>
+  }
+
+  <!-- MAIN VIEW: COMPASS MODE -->
+  @if (viewMode() === 'compass') {
+    <div class="compass-showcase">
+      <!-- Unsupported notice if on desktop without magnetometer -->
+      @if (qibla.sensorState() === 'unsupported') {
+        <div class="unsupported-hint">
+          <aq-icon name="info" [size]="16" />
+          <span>
+            {{ isBn()
+              ? 'আপনার ডিভাইসে ম্যাগনেটিক সেন্সর নেই। নিচে দেওয়া কিবলা ডিগ্রি (' + qibla.qiblaData().bearing + '°) অনুযায়ী মুখ করুন অথবা সরাসরি ম্যাপ ভিউ ব্যবহার করুন।'
+              : 'Compass sensor unavailable on this device. Face ' + qibla.qiblaData().bearing + '° from North or switch to Map View.' }}
+          </span>
+          <button type="button" class="unsupported-link" (click)="setViewMode('map')">
+            {{ isBn() ? 'ম্যাপ ভিউ দেখুন →' : 'Switch to Map →' }}
+          </button>
+        </div>
+      }
+
+      <!-- Status Pill above Compass -->
+      <div class="alignment-banner" [class.is-aligned]="qibla.isAligned()">
+        @if (qibla.isAligned()) {
+          <span class="aligned-badge">
+            <aq-icon name="check" [size]="18" />
+            <span>{{ isBn() ? 'আলহামদুলিল্লাহ! আপনি সরাসরি কিবলামুখী হয়েছেন' : 'Facing the Holy Kaaba!' }}</span>
+          </span>
+        } @else {
+          <span class="orienting-badge">
+            <aq-icon name="compass" [size]="16" />
+            <span>
+              {{ isBn()
+                ? 'কা\'বার দিক: ' + qibla.qiblaData().bearing + '° (' + qibla.qiblaData().cardinalBn + ')'
+                : 'Qibla Bearing: ' + qibla.qiblaData().bearing + '° (' + qibla.qiblaData().cardinalKey + ')' }}
+            </span>
+          </span>
+        }
+      </div>
+
+      <!-- THE COMPASS DIAL -->
+      <div class="compass-wrapper" [class.is-aligned]="qibla.isAligned()">
+        <!-- Outer Glow Ring -->
+        <div class="compass-ring"></div>
+
+        <!-- Rotating Dial (rotates counter-clockwise as phone turns) -->
+        <div class="compass-dial" [style.transform]="'rotate(' + dialRotation() + 'deg)'">
+          <!-- Cardinal Points -->
+          <span class="cardinal-point cardinal-n" [attr.aria-label]="isBn() ? 'উত্তর' : 'North'">
+            <span class="cardinal-mark">N</span>
+            <span class="cardinal-bn">উ</span>
+          </span>
+          <span class="cardinal-point cardinal-e" [attr.aria-label]="isBn() ? 'পূর্ব' : 'East'">
+            <span class="cardinal-mark">E</span>
+            <span class="cardinal-bn">পূ</span>
+          </span>
+          <span class="cardinal-point cardinal-s" [attr.aria-label]="isBn() ? 'দক্ষিণ' : 'South'">
+            <span class="cardinal-mark">S</span>
+            <span class="cardinal-bn">দ</span>
+          </span>
+          <span class="cardinal-point cardinal-w" [attr.aria-label]="isBn() ? 'পশ্চিম' : 'West'">
+            <span class="cardinal-mark">W</span>
+            <span class="cardinal-bn">প</span>
+          </span>
+
+          <!-- Degree Ticks -->
+          <div class="degree-ticks" aria-hidden="true">
+            <span class="tick tick-0"></span>
+            <span class="tick tick-30"></span>
+            <span class="tick tick-60"></span>
+            <span class="tick tick-90"></span>
+            <span class="tick tick-120"></span>
+            <span class="tick tick-150"></span>
+            <span class="tick tick-180"></span>
+            <span class="tick tick-210"></span>
+            <span class="tick tick-240"></span>
+            <span class="tick tick-270"></span>
+            <span class="tick tick-300"></span>
+            <span class="tick tick-330"></span>
+          </div>
+
+          <!-- True North Needle -->
+          <div class="north-needle" aria-hidden="true">
+            <div class="needle-tip needle-tip--north"></div>
+            <div class="needle-tip needle-tip--south"></div>
+          </div>
+
+          <!-- THE KAABA INDICATOR ON THE RIM (At exact Qibla bearing) -->
+          <div
+            class="kaaba-pointer-container"
+            [style.transform]="'rotate(' + kaabaPointerAngle() + 'deg)'"
+            aria-hidden="true"
+          >
+            <div class="kaaba-pointer-line"></div>
+            <div class="kaaba-pointer-badge" [title]="isBn() ? 'পবিত্র কা\'বা শরীফ' : 'Holy Kaaba'">
+              <span class="kaaba-emoji">🕋</span>
+              <span class="kaaba-arrow">▲</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center Hub with Heading Display -->
+        <div class="compass-center">
+          <div class="compass-center__degrees">
+            <span class="degree-number">{{ qibla.sensorState() === 'active' ? qibla.deviceHeading() : qibla.qiblaData().bearing }}</span>
+            <span class="degree-unit">°</span>
+          </div>
+          <span class="compass-center__sub">
+            {{ qibla.sensorState() === 'active'
+              ? (isBn() ? 'হেডিং' : 'Heading')
+              : (isBn() ? 'কিবলা কোণ' : 'Qibla Bearing') }}
+          </span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- MAIN VIEW: LEAFLET GEODESIC MAP MODE -->
+  <div class="map-view-card" [class.is-hidden]="viewMode() !== 'map'">
+    <div class="map-view-card__header">
+      <div class="map-view-card__info">
+        <aq-icon name="mapPin" [size]="18" />
+        <strong>{{ isBn() ? 'কিবলা জিওডেসিক পথ (Geodesic Qibla Path)' : 'Geodesic Great-Circle Path to Kaaba' }}</strong>
+      </div>
+      <span class="map-view-card__dist">
+        {{ isBn() ? 'দূরত্ব: ' + (qibla.qiblaData().distanceKm | number) + ' কিমি' : 'Distance: ' + qibla.qiblaData().distanceKm + ' km' }}
+      </span>
+    </div>
+
+    <div #mapContainer class="qibla-map-canvas" [attr.aria-label]="isBn() ? 'কিবলা ম্যাপ' : 'Qibla Map'"></div>
+  </div>
+
+  <!-- STATS GRID CARDS -->
+  <section class="stats-grid" aria-labelledby="qibla-stats-heading">
+    <h2 id="qibla-stats-heading" class="visually-hidden">
+      {{ isBn() ? 'কিবলা সংক্রান্ত তথ্য' : 'Qibla Information & Metrics' }}
+    </h2>
+
+    <div class="stat-card">
+      <div class="stat-card__icon stat-card__icon--gold">
+        <aq-icon name="compass" [size]="20" />
+      </div>
+      <div>
+        <span class="stat-card__label">{{ isBn() ? 'কিবলা কোণ' : 'Qibla Angle' }}</span>
+        <strong class="stat-card__value">{{ qibla.qiblaData().bearing }}°</strong>
+        <span class="stat-card__sub">{{ isBn() ? qibla.qiblaData().cardinalBn : qibla.qiblaData().cardinalEn }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card__icon stat-card__icon--green">
+        <aq-icon name="mapPin" [size]="20" />
+      </div>
+      <div>
+        <span class="stat-card__label">{{ isBn() ? 'কা\'বা শরীফের দূরত্ব' : 'Distance to Kaaba' }}</span>
+        <strong class="stat-card__value">
+          {{ isBn() ? (qibla.qiblaData().distanceKm | number) : qibla.qiblaData().distanceKm }}
+          <span class="unit">{{ isBn() ? 'কিমি' : 'km' }}</span>
+        </strong>
+        <span class="stat-card__sub">{{ isBn() ? 'মক্কা আল-মুকাররমা' : 'Makkah al-Mukarramah' }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card__icon stat-card__icon--blue">
+        <aq-icon name="crosshair" [size]="20" />
+      </div>
+      <div>
+        <span class="stat-card__label">{{ isBn() ? 'বর্তমান ডিভাইস হেডিং' : 'Current Heading' }}</span>
+        <strong class="stat-card__value">{{ qibla.deviceHeading() }}°</strong>
+        <span class="stat-card__sub">
+          {{ qibla.sensorState() === 'active'
+            ? (isBn() ? 'সেন্সর সক্রিয়' : 'Sensor Active')
+            : (isBn() ? 'স্ট্যাটিক রেফারেন্স' : 'Static Reference') }}
+        </span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card__icon stat-card__icon--purple">
+        <aq-icon name="mosque" [size]="20" />
+      </div>
+      <div>
+        <span class="stat-card__label">{{ isBn() ? 'কা\'বার স্থানাঙ্ক' : 'Kaaba Coordinates' }}</span>
+        <strong class="stat-card__value">21.42° N</strong>
+        <span class="stat-card__sub">39.83° E (Makkah)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACCURACY & CALIBRATION GUIDE -->
+  <section class="guide-card">
+    <div class="guide-card__header">
+      <div class="guide-card__icon">💡</div>
+      <h3 class="guide-card__title">
+        {{ isBn() ? 'সঠিক ফলাফল পাওয়ার জন্য দিকনির্দেশনা' : 'Tips for Maximum Compass Accuracy' }}
+      </h3>
+    </div>
+
+    <div class="guide-steps">
+      <div class="guide-step">
+        <span class="guide-step__num">১</span>
+        <p>
+          {{ isBn()
+            ? 'ফোনটি আপনার হাতের তালুতে রেখে মেঝ বা সমতল টেবিলের সমান্তরালে (Flat Surface) সোজা করে ধরুন।'
+            : 'Hold your mobile device flat and parallel to the ground in your palm or on a flat surface.' }}
+        </p>
+      </div>
+
+      <div class="guide-step">
+        <span class="guide-step__num">২</span>
+        <p>
+          {{ isBn()
+            ? 'ল্যাপটপ, টিভি, চুম্বক বা বড় ধাতব বস্তু থেকে অন্তত কয়েক ফুট দূরে থাকুন, যাতে চৌম্বকীয় বিকৃতি না ঘটে।'
+            : 'Keep away from large metallic objects, laptops, and magnets that cause magnetic interference.' }}
+        </p>
+      </div>
+
+      <div class="guide-step">
+        <span class="guide-step__num">৩</span>
+        <p>
+          {{ isBn()
+            ? 'যদি কম্পাস ভুল দিক দেখায়, তবে ফোনটি ধরে বাতাসে ‘৮’ (Figure-8) এর মতো কয়েকবার ঘোরান (Sensor Calibration)।'
+            : 'If the heading drifts, move your phone gently in a Figure-8 motion in the air to calibrate the magnetometer.' }}
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- CITY SWITCHER MODAL -->
+@if (showCityModal()) {
+  <div class="modal-backdrop" (click)="closeCityModal()" aria-hidden="true"></div>
+  <div class="city-modal" role="dialog" aria-modal="true" [attr.aria-label]="isBn() ? 'শহর নির্ধারণ' : 'Select City'">
+    <div class="city-modal__header">
+      <h2 class="city-modal__title">{{ isBn() ? 'কিবলার জন্য শহর নির্বাচন করুন' : 'Select City for Qibla' }}</h2>
+      <button type="button" class="aq-icon-btn" (click)="closeCityModal()" [attr.aria-label]="isBn() ? 'বন্ধ করুন' : 'Close'">
+        <aq-icon name="close" [size]="20" />
+      </button>
+    </div>
+
+    <!-- Quick Popular Cities -->
+    <div class="city-modal__popular">
+      <span class="city-modal__sub">{{ isBn() ? 'জনপ্রিয় শহরসমূহ' : 'Popular Cities' }}</span>
+      <div class="popular-pills">
+        @for (city of popularCities; track city.displayName) {
+          <button type="button" class="popular-pill" (click)="selectPlace(city)">
+            {{ city.name }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Search Input -->
+    <div class="city-modal__search">
+      <aq-filter-field
+        [placeholder]="isBn() ? 'শহরের নাম লিখে অনুসন্ধান করুন…' : 'Type to search city…'"
+        (valueChange)="onCitySearchChange($event)"
+      />
+    </div>
+
+    <!-- Results List -->
+    <div class="city-modal__results">
+      @if (isSearchingCities()) {
+        <p class="city-modal__status">{{ isBn() ? 'শহর খোঁজা হচ্ছে…' : 'Searching cities…' }}</p>
+      } @else if (searchResults().length > 0) {
+        <ul class="places-list">
+          @for (place of searchResults(); track place.displayName) {
+            <li>
+              <button type="button" class="place-item" (click)="selectPlace(place)">
+                <aq-icon name="mapPin" [size]="18" />
+                <span>{{ place.displayName }}</span>
+              </button>
+            </li>
+          }
+        </ul>
+      } @else if (citySearchQuery().trim().length >= 2) {
+        <p class="city-modal__status">{{ isBn() ? 'কোনো শহর পাওয়া যায়নি।' : 'No matching cities found.' }}</p>
+      }
+    </div>
+  </div>
+}

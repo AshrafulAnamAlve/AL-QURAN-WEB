@@ -76,6 +76,10 @@
         <aq-icon name="clock" [size]="18" />
         {{ isBn() ? 'নামাজের সময়সূচি' : 'Prayer Times' }}
       </a>
+      <a routerLink="/qibla" class="aq-btn aq-btn--secondary aq-btn--lg">
+        <aq-icon name="compass" [size]="18" />
+        {{ isBn() ? 'কিবলা কম্পাস' : 'Qibla Direction' }}
+      </a>
       <a routerLink="/calendar" [queryParams]="{ tab: 'habit' }" class="aq-btn aq-btn--secondary aq-btn--lg hero__habit-btn">
         <span class="hero__habit-fire" aria-hidden="true">🔥</span>
         {{ isBn() ? 'দৈনিক লক্ষ্য ও অভ্যাস' : 'Daily Goal & Habits' }}
