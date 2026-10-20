@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Al-Quran Web — 30s Official 9:16 Promotional Video</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Hind+Siliguri:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --aq-primary: #10b981;
+      --aq-primary-soft: rgba(16, 185, 129, 0.15);
+      --aq-gold: #f5d77f;
+      --aq-gold-deep: #c9a227;
+      --aq-surface: #0f172a;
+      --aq-surface-2: #1e293b;
+      --aq-border: rgba(255, 255, 255, 0.1);
+      --aq-text: #f8fafc;
+      --aq-text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background: #020617;
+      color: var(--aq-text);
+      font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem 1rem;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(circle at 50% 20%, rgba(16, 185, 129, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 80% 80%, rgba(201, 162, 39, 0.08) 0%, transparent 50%);
+    }
+
+    /* Top Studio Bar */
+    .studio-header {
+      text-align: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .studio-header h1 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #facc15 0%, #34d399 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .studio-header p {
+      font-size: 0.8rem;
+      color: var(--aq-text-muted);
+      margin-top: 0.15rem;
+    }
+
+    /* 9:16 Video Container (Scaleable to fit desktop screens, true 1080x1920 ratio) */
+    .video-stage {
+      position: relative;
+      width: 380px;
+      height: 675px; /* 9:16 ratio */
+      border-radius: 42px;
+      background: #04140e;
+      box-shadow: 0 25px 70px -15px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(245, 215, 127, 0.35);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (max-height: 860px) {
+      .video-stage {
+        width: 330px;
+        height: 586px;
+      }
+    }
+
+    /* Device Mockup Shell (Phone Frame) */
+    .phone-screen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #04140e;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Phone Dynamic Island & Status Bar */
+    .phone-notch {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 105px;
+      height: 25px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+    }
+
+    .notch-camera {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #111;
+      border: 1px solid #222;
+    }
+
+    .notch-indicator {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+    }
+
+    /* Persistent Top Banner inside Video */
+    .video-top-tag {
+      position: absolute;
+      top: 42px;
+      left: 0;
+      right: 0;
+      z-index: 90;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .video-top-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.75rem;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(245, 215, 127, 0.3);
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #facc15;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Persistent App Header (Shown in scenes 2 through 6) */
+    .app-header-mock {
+      position: absolute;
+      top: 75px;
+      left: 0;
+      right: 0;
+      height: 52px;
+      background: rgba(4, 20, 14, 0.95);
+      border-bottom: 1px solid var(--aq-border);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      z-index: 80;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .app-header-mock.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .mock-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .mock-brand-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #10b981, #047857);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+    }
+
+    .mock-brand-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .mock-brand-name {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #fff;
+    }
+
+    .mock-brand-sub {
+      font-size: 0.65rem;
+      color: #34d399;
+      font-weight: 600;
+    }
+
+    .mock-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .mock-lang-btn {
+      padding: 0.15rem 0.45rem;
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #facc15;
+    }
+
+    .mock-icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--aq-border);
+      display: grid;
+      place-items: center;
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+
+    /* SCENE WRAPPER & SLIDES */
+    .scene-container {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .scene-slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem 1rem;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.96) translateY(12px);
+      transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .scene-slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1) translateY(0);
+    }
+
+    /* SCENE 1: THE EXACT SPLASH SCREEN BOOK & LOGO */
+    .scene-splash {
+      background: radial-gradient(circle at center, #08281c 0%, #04140e 65%, #020b08 100%);
+      z-index: 50;
+    }
+
+    .splash-stage {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1000px;
+    }
+
+    .splash-svg {
+      overflow: visible;
+    }
+
+    .sp-badge-bg {
+      opacity: 0;
+      transform: scale(0.75);
+      transform-origin: 256px 256px;
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .sp-badge-border {
+      opacity: 0;
+      stroke-dasharray: 1800;
+      stroke-dashoffset: 1800;
+      transition: stroke-dashoffset 1.1s ease, opacity 0.5s ease;
+    }
+    .st-assemble .sp-badge-bg {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .st-assemble .sp-badge-border {
+      opacity: 0.65;
+      stroke-dashoffset: 0;
+    }
+    .sp-arch {
+      stroke-dasharray: 600;
+      stroke-dashoffset: 600;
+      opacity: 0;
+      transition: stroke-dashoffset 1.1s ease, opacity 0.4s ease;
+    }
+    .st-arch .sp-arch {
+      opacity: 1;
+      stroke-dashoffset: 0;
+    }
+    .sp-sajdah {
+      opacity: 0;
+      transform: scale(0.2);
+      transform-origin: 256px 250px;
+      transition: all 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .st-mark .sp-sajdah {
+      opacity: 1;
+      transform: scale(1);
+      filter: drop-shadow(0 0 14px rgba(245, 215, 127, 0.9));
+    }
+    .sp-static-pages {
+      opacity: 0;
+      transition: opacity 0.6s ease;
+    }
+    .st-pages .sp-static-pages {
+      opacity: 0.75;
+    }
+    .sp-leaf {
+      transform-origin: 0px 45px;
+      transform-style: preserve-3d;
+      opacity: 0;
+    }
+    .st-flipping .sp-leaf-1 {
+      animation: promoFlip 1.4s cubic-bezier(0.3, 0.05, 0.2, 1) forwards;
+    }
+    .st-flipping .sp-leaf-2 {
+      animation: promoFlip 1.4s cubic-bezier(0.3, 0.05, 0.2, 1) 0.25s forwards;
+    }
+    .st-flipping .sp-leaf-3 {
+      animation: promoFlip 1.4s cubic-bezier(0.3, 0.05, 0.2, 1) 0.5s forwards;
+    }
+    @keyframes promoFlip {
+      0% { opacity: 0; transform: rotateY(0deg); }
+      10% { opacity: 0.95; }
+      50% { transform: rotateY(-90deg) translateZ(24px); opacity: 1; filter: drop-shadow(0 0 12px rgba(245, 215, 127, 0.8)); }
+      95% { transform: rotateY(-180deg); opacity: 0.85; }
+      100% { transform: rotateY(-180deg); opacity: 0; }
+    }
+    .sp-wing-l, .sp-wing-r {
+      transform-origin: 0px 45px;
+      transform: scaleX(0.05);
+      transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .sp-spine {
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    .splash-brand-block {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+      margin-top: 1.25rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .splash-brand-block.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .sp-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .sp-arabic {
+      font-family: 'Amiri Quran', serif;
+      color: #f5d77f;
+      font-size: 1.35rem;
+    }
+
+    .sp-tagline-bn {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #6ee7b7;
+      margin-top: 0.2rem;
+    }
+
+    .sp-motto-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      margin-top: 0.45rem;
+      padding: 0.2rem 0.75rem;
+      border-radius: 9999px;
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid rgba(212, 175, 55, 0.45);
+      color: #fef08a;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .sp-motto-sub {
+      font-size: 0.7rem;
+      color: rgba(167, 243, 208, 0.8);
+      margin-top: 0.25rem;
+    }
+
+    /* SCENE 2: REAL HOME DASHBOARD */
+    .scene-home {
+      padding-top: 135px;
+      justify-content: flex-start;
+      gap: 0.75rem;
+    }
+
+    .home-hero-card {
+      width: 100%;
+      background: linear-gradient(145deg, #063523 0%, #031c13 100%);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 20px;
+      padding: 1rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    }
+
+    .hero-salaam {
+      font-family: 'Amiri Quran', serif;
+      font-size: 1.25rem;
+      color: #facc15;
+    }
+
+    .hero-heading {
+      font-size: 1.05rem;
+      font-weight: 800;
+      line-height: 1.3;
+      margin: 0.25rem 0 0.65rem;
+      color: #fff;
+    }
+
+    .hero-waqt-pill {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.45rem 0.75rem;
+      background: rgba(0, 0, 0, 0.45);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.75rem;
+    }
+
+    .waqt-current {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .waqt-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .hero-streak-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.6rem;
+      padding: 0.4rem 0.75rem;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 12px;
+      font-size: 0.75rem;
+      color: #fef08a;
+      font-weight: 700;
+    }
+
+    .feature-grid-mock {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .feat-card {
+      background: #0f172a;
+      border: 1px solid var(--aq-border);
+      border-radius: 16px;
+      padding: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .feat-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+    }
+
+    .feat-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .feat-sub {
+      font-size: 0.65rem;
+      color: var(--aq-text-muted);
+    }
+
+    /* SCENE 3: REAL SURAH READER & AUDIO */
+    .scene-quran {
+      padding-top: 135px;
+      justify-content: flex-start;
+      gap: 0.75rem;
+    }
+
+    .surah-card-mock {
+      width: 100%;
+      background: #09171b;
+      border: 1px solid rgba(245, 215, 127, 0.3);
+      border-radius: 20px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .surah-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--aq-border);
+      padding-bottom: 0.5rem;
+    }
+
+    .surah-name-bn {
+      font-weight: 800;
+      font-size: 1rem;
+      color: #34d399;
+    }
+
+    .surah-name-ar {
+      font-family: 'Amiri Quran', serif;
+      font-size: 1.15rem;
+      color: #facc15;
+    }
+
+    .ayah-box {
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 14px;
+      padding: 0.85rem;
+      border-left: 3px solid #10b981;
+    }
+
+    .ayah-arabic {
+      font-family: 'Amiri Quran', serif;
+      font-size: 1.35rem;
+      text-align: right;
+      color: #ffffff;
+      line-height: 1.7;
+    }
+
+    .ayah-bangla {
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      margin-top: 0.4rem;
+      line-height: 1.4;
+    }
+
+    /* Floating Real Audio Player Bar */
+    .audio-player-mock {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      border-radius: 16px;
+      padding: 0.6rem 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+    }
+
+    .audio-play-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #10b981;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .audio-reciter-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .reciter-name {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .reciter-ayah {
+      font-size: 0.65rem;
+      color: #facc15;
+    }
+
+    .equalizer-wave {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 20px;
+    }
+
+    .eq-bar {
+      width: 3px;
+      height: 100%;
+      background: #10b981;
+      border-radius: 2px;
+      animation: eqBounce 0.8s infinite ease-in-out alternate;
+    }
+
+    .eq-bar:nth-child(2) { animation-delay: 0.2s; }
+    .eq-bar:nth-child(3) { animation-delay: 0.4s; }
+    .eq-bar:nth-child(4) { animation-delay: 0.1s; }
+    .eq-bar:nth-child(5) { animation-delay: 0.3s; }
+
+    @keyframes eqBounce {
+      0% { height: 4px; }
+      100% { height: 18px; }
+    }
+
+    /* SCENE 4: 36,000+ HADITH LIBRARY */
+    .scene-hadith {
+      padding-top: 135px;
+      justify-content: flex-start;
+      gap: 0.65rem;
+    }
+
+    .hadith-hero-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #facc15;
+      text-align: center;
+    }
+
+    .hadith-hero-sub {
+      font-size: 0.72rem;
+      color: var(--aq-text-muted);
+      text-align: center;
+      margin-bottom: 0.25rem;
+    }
+
+    .hadith-search-mock {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #facc15;
+      border-radius: 9999px;
+      padding: 0.5rem 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.75rem;
+      color: #fff;
+    }
+
+    .hadith-books-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.45rem;
+      width: 100%;
+    }
+
+    .hadith-book-card {
+      background: #09171b;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 0.55rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hb-name {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .hb-count {
+      font-size: 0.65rem;
+      font-weight: 600;
+      color: #f59e0b;
+      margin-top: 0.15rem;
+    }
+
+    .hadith-result-card {
+      width: 100%;
+      background: rgba(6, 78, 59, 0.4);
+      border: 1px solid #10b981;
+      border-radius: 16px;
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .hr-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #facc15;
+    }
+
+    .hr-grade {
+      background: #10b981;
+      color: #04140e;
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      font-weight: 800;
+    }
+
+    .hr-text {
+      font-size: 0.75rem;
+      color: #f8fafc;
+      line-height: 1.35;
+    }
+
+    /* SCENE 5: PRAYER & QIBLA */
+    .scene-prayer {
+      padding-top: 135px;
+      justify-content: flex-start;
+      gap: 0.75rem;
+    }
+
+    .compass-mock-wrap {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      border: 3px solid rgba(245, 215, 127, 0.4);
+      position: relative;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle, #08281c 0%, #03140d 100%);
+      margin: 0 auto;
+    }
+
+    .compass-needle {
+      position: absolute;
+      width: 6px;
+      height: 95px;
+      transform: rotate(276deg);
+      transition: transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .needle-n {
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 48px solid #ef4444;
+    }
+
+    .needle-s {
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 48px solid #10b981;
+    }
+
+    .compass-center {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #facc15;
+      box-shadow: 0 0 8px #facc15;
+    }
+
+    .prayer-table-mock {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid var(--aq-border);
+      border-radius: 18px;
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .prayer-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.35rem 0.5rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
+    }
+
+    .prayer-row.active {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid #10b981;
+      font-weight: 700;
+      color: #34d399;
+    }
+
+    /* SCENE 6: DIGITAL TASBIH & HABITS */
+    .scene-tasbih {
+      padding-top: 135px;
+      justify-content: flex-start;
+      gap: 0.85rem;
+    }
+
+    .tasbih-disc-wrap {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 6px solid #10b981;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, #08281c 0%, #03140d 100%);
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+      margin: 0 auto;
+    }
+
+    .tasbih-count-big {
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .tasbih-target {
+      font-size: 0.7rem;
+      color: #facc15;
+      font-weight: 700;
+      margin-top: 0.25rem;
+    }
+
+    .tasbih-phrase {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #38bdf8;
+      text-align: center;
+    }
+
+    /* SCENE 7: GRAND OUTRO & CTA */
+    .scene-outro {
+      justify-content: center;
+      gap: 0.85rem;
+      text-align: center;
+      background: radial-gradient(circle at center, #08281c 0%, #020b08 100%);
+    }
+
+    .outro-badge {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #10b981, #047857);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 2rem;
+      font-weight: 700;
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+      margin: 0 auto;
+    }
+
+    .outro-title {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .outro-sub {
+      font-size: 0.82rem;
+      color: #34d399;
+      font-weight: 600;
+    }
+
+    .outro-cta-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.75rem;
+      background: linear-gradient(135deg, #f59e0b 0%, #10b981 100%);
+      color: #020617;
+      font-weight: 800;
+      font-size: 0.95rem;
+      border-radius: 9999px;
+      box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
+      animation: pulseBtn 1.5s infinite alternate;
+    }
+
+    @keyframes pulseBtn {
+      from { transform: scale(1); }
+      to { transform: scale(1.05); }
+    }
+
+    .outro-url-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.85rem;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(250, 204, 21, 0.4);
+      border-radius: 12px;
+      color: #facc15;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    /* Bottom Control Bar */
+    .controls-panel {
+      width: 100%;
+      max-width: 440px;
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 20px;
+      padding: 0.85rem 1.25rem;
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    }
+
+    .timeline-track {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .time-readout {
+      font-family: monospace;
+      font-weight: 700;
+      color: #facc15;
+      font-size: 0.85rem;
+      min-width: 80px;
+      text-align: center;
+      background: #020617;
+      padding: 0.2rem 0.45rem;
+      border-radius: 6px;
+      border: 1px solid #334155;
+    }
+
+    .progress-bar-wrap {
+      flex: 1;
+      height: 8px;
+      background: #1e293b;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f59e0b, #10b981);
+      transition: width 0.1s linear;
+    }
+
+    .scene-jumpers {
+      display: flex;
+      gap: 4px;
+    }
+
+    .jumper-dot {
+      flex: 1;
+      height: 4px;
+      background: #334155;
+      border-radius: 2px;
+      transition: background 0.2s ease;
+      cursor: pointer;
+    }
+
+    .jumper-dot.active {
+      background: #facc15;
+      box-shadow: 0 0 6px #facc15;
+    }
+
+    .buttons-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      padding: 0.6rem 1rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      transition: all 0.2s ease;
+      color: #fff;
+    }
+
+    .btn-play {
+      background: #334155;
+      flex: 1;
+    }
+
+    .btn-play:hover {
+      background: #475569;
+    }
+
+    .btn-replay {
+      background: #1e293b;
+      padding: 0.6rem 0.8rem;
+    }
+
+    .btn-record {
+      background: linear-gradient(135deg, #f59e0b 0%, #10b981 100%);
+      color: #020617;
+      flex: 1.5;
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-record:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+    }
+
+    .btn-record.recording {
+      background: #ef4444;
+      color: #fff;
+      animation: pulseBtn 0.8s infinite alternate;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="studio-header">
+    <h1><span>۩</span> Al-Quran Web — 30s Official Promotional Video</h1>
+    <p>৯:১৬ ভার্টিক্যাল প্রফেশনাল মোশন ভিডিও • রিলস, শর্টস ও টিকটক রেডি</p>
+  </header>
+
+  <div class="video-stage" id="videoStage">
+    <div class="phone-screen">
+      <!-- Phone Notch -->
+      <div class="phone-notch">
+        <div class="notch-camera"></div>
+        <div class="notch-indicator"></div>
+      </div>
+
+      <!-- Persistent Watermark Badge -->
+      <div class="video-top-tag">
+        <div class="video-top-pill">
+          <span>✨</span> আল-কুরআন ওয়েব প্লাটফর্ম
+        </div>
+      </div>
+
+      <!-- Persistent Header (Scenes 2-6) -->
+      <div class="app-header-mock" id="appHeaderMock">
+        <div class="mock-brand">
+          <div class="mock-brand-badge">۩</div>
+          <div class="mock-brand-info">
+            <span class="mock-brand-name">Al-Quran</span>
+            <span class="mock-brand-sub">পড়ুন · শুনুন · অনুধাবন করুন</span>
+          </div>
+        </div>
+        <div class="mock-actions">
+          <div class="mock-lang-btn">বাং / EN</div>
+          <div class="mock-icon-btn">🔍</div>
+          <div class="mock-icon-btn">🌙</div>
+        </div>
+      </div>
+
+      <!-- SCENES WRAPPER -->
+      <div class="scene-container">
+        <!-- SCENE 1: THE EXACT SPLASH SCREEN BOOK & LOGO (0.0s - 4.5s) -->
+        <div class="scene-slide scene-splash active" id="scene1">
+          <div class="splash-stage" id="spStage">
+            <svg viewBox="0 0 512 512" width="165" height="165" class="splash-svg">
+              <defs>
+                <linearGradient id="spBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#14603c"/>
+                  <stop offset="100%" stop-color="#093621"/>
+                </linearGradient>
+                <linearGradient id="spGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#f5d77f"/>
+                  <stop offset="50%" stop-color="#c9a227"/>
+                  <stop offset="100%" stop-color="#9a7a1c"/>
+                </linearGradient>
+              </defs>
+              <rect class="sp-badge-bg" width="512" height="512" rx="108" fill="url(#spBg)"></rect>
+              <rect class="sp-badge-border" x="28" y="28" width="456" height="456" rx="88" fill="none" stroke="url(#spGold)" stroke-width="4.5"></rect>
+              <g transform="translate(256, 256)">
+                <path class="sp-arch" d="M0 -150 C55 -105 80 -70 80 0 C80 30 70 50 0 50 C-70 50 -80 30 -80 0 C-80 -70 -55 -105 0 -150 Z" fill="none" stroke="url(#spGold)" stroke-width="8.5" stroke-linecap="round"></path>
+                <text class="sp-sajdah" x="0" y="8" font-family="'Amiri Quran', serif" font-size="78" fill="url(#spGold)" text-anchor="middle" dominant-baseline="central">۩</text>
+                <g class="sp-static-pages">
+                  <path d="M-6 12 C-24 -4 -64 -22 -106 -4 L-106 58 C-64 40 -24 58 -6 74" fill="none" stroke="url(#spGold)" stroke-width="2.5" opacity="0.45"></path>
+                  <path d="M6 12 C24 -4 64 -22 106 -4 L106 58 C64 40 24 58 6 74" fill="none" stroke="url(#spGold)" stroke-width="2.5" opacity="0.45"></path>
+                </g>
+                <g class="sp-turning-pages" id="spTurningPages">
+                  <g class="sp-leaf sp-leaf-1">
+                    <path d="M4 10 C22 -8 68 -26 110 -8 L110 60 C68 42 22 60 4 78 Z" fill="rgba(212, 175, 55, 0.15)" stroke="url(#spGold)" stroke-width="3"></path>
+                  </g>
+                  <g class="sp-leaf sp-leaf-2">
+                    <path d="M4 10 C22 -8 68 -26 110 -8 L110 60 C68 42 22 60 4 78 Z" fill="rgba(245, 215, 127, 0.18)" stroke="url(#spGold)" stroke-width="3"></path>
+                  </g>
+                  <g class="sp-leaf sp-leaf-3">
+                    <path d="M4 10 C22 -8 68 -26 110 -8 L110 60 C68 42 22 60 4 78 Z" fill="rgba(212, 175, 55, 0.22)" stroke="url(#spGold)" stroke-width="3.5"></path>
+                  </g>
+                </g>
+                <path class="sp-wing-l" id="spWingL" d="M0 0 C-20 -20 -70 -40 -120 -20 L-120 70 C-70 50 -20 70 0 90 Z" fill="none" stroke="url(#spGold)" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"></path>
+                <path class="sp-wing-r" id="spWingR" d="M0 0 C20 -20 70 -40 120 -20 L120 70 C70 50 20 70 0 90 Z" fill="none" stroke="url(#spGold)" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"></path>
+                <line class="sp-spine" id="spSpine" x1="0" y1="0" x2="0" y2="90" stroke="url(#spGold)" stroke-width="12" stroke-linecap="round"></line>
+              </g>
+            </svg>
+          </div>
+
+          <div class="splash-brand-block" id="spBrand">
+            <h2 class="sp-title">
+              <span>Al-Quran</span>
+              <span class="sp-arabic">القرآن</span>
+            </h2>
+            <p class="sp-tagline-bn">পড়ুন · শুনুন · অনুধাবন করুন</p>
+            <div class="sp-motto-badge">
+              <span>✦</span>
+              <span>The Complete Way of Life</span>
+              <span>✦</span>
+            </div>
+            <p class="sp-motto-sub">মানবজাতির পূর্ণাঙ্গ জীবনবিধান</p>
+          </div>
+        </div>
+
+        <!-- SCENE 2: REAL HOME DASHBOARD (4.5s - 9.0s) -->
+        <div class="scene-slide scene-home" id="scene2">
+          <div class="home-hero-card">
+            <div class="hero-salaam">ٱلسَّلَامُ عَلَيْكُمْ</div>
+            <h3 class="hero-heading">কুরআন তিলাওয়াত করুন, শুনুন এবং অনুধাবন করুন</h3>
+            <div class="hero-waqt-pill">
+              <div class="waqt-current">
+                <span class="waqt-dot"></span>
+                <span>বর্তমান ওয়াক্ত: <strong>আসর</strong> (৪:৩০ PM)</span>
+              </div>
+              <span style="color: #facc15;">পরবর্তী: মাগরিব ➔</span>
+            </div>
+            <div class="hero-streak-row">
+              <span>🔥 ৭ দিনের ধারাবাহিক স্ট্রিক</span>
+              <span style="color: #34d399;">৮৫% সম্পন্ন</span>
+            </div>
+          </div>
+
+          <div class="feature-grid-mock">
+            <div class="feat-card">
+              <div class="feat-icon">📖</div>
+              <div>
+                <div class="feat-title">কুরআন মাজীদ</div>
+                <div class="feat-sub">১১৪টি পূর্ণাঙ্গ সূরা</div>
+              </div>
+            </div>
+            <div class="feat-card">
+              <div class="feat-icon">✨</div>
+              <div>
+                <div class="feat-title">সহীহ হাদিস</div>
+                <div class="feat-sub">৩৬,০০০+ হাদিস</div>
+              </div>
+            </div>
+            <div class="feat-card">
+              <div class="feat-icon">🕒</div>
+              <div>
+                <div class="feat-title">নামাজের ওয়াক্ত</div>
+                <div class="feat-sub">সঠিক আজান টাইম</div>
+              </div>
+            </div>
+            <div class="feat-card">
+              <div class="feat-icon">🧭</div>
+              <div>
+                <div class="feat-title">কিবলা কম্পাস</div>
+                <div class="feat-sub">জিপিএস ডিরেকশন</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENE 3: REAL SURAH READER & AUDIO (9.0s - 13.5s) -->
+        <div class="scene-slide scene-quran" id="scene3">
+          <div class="surah-card-mock">
+            <div class="surah-header-row">
+              <div>
+                <div class="surah-name-bn">সূরা আর-রহমান</div>
+                <div style="font-size: 0.65rem; color: #94a3b8;">মাক্কী • আয়াত ৭৮</div>
+              </div>
+              <div class="surah-name-ar">سُورَةُ الرَّحْمَٰن</div>
+            </div>
+
+            <div class="ayah-box">
+              <div class="ayah-arabic">فَبِأَيِّ آلَاءِ رَبِّكُمَا تُكَذِّبَانِ ﴿١٣﴾</div>
+              <div class="ayah-bangla">“অতএব, তোমরা উভয়ে তোমাদের রবের কোন কোন অনুগ্রহকে অস্বীকার করবে?”</div>
+            </div>
+
+            <div class="audio-player-mock">
+              <div class="audio-play-btn">▶</div>
+              <div class="audio-reciter-info">
+                <span class="reciter-name">মিশারী রশিদ আলাফাসী</span>
+                <span class="reciter-ayah">সূরা আর-রহমান: আয়াত ১৩</span>
+              </div>
+              <div class="equalizer-wave">
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+                <div class="eq-bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENE 4: 36,000+ HADITH LIBRARY (13.5s - 18.0s) -->
+        <div class="scene-slide scene-hadith" id="scene4">
+          <div class="hadith-hero-title">৩৬,০০০+ সহীহ হাদিস সম্ভার</div>
+          <div class="hadith-hero-sub">বুখারী, মুসলিম, তিরমিযী সহ ৯টি মূল হাদিস গ্রন্থ</div>
+
+          <div class="hadith-search-mock">
+            <span>🔍</span>
+            <span id="typeQuery">দোয়া ও ক্ষমা প্রার্থনা...</span>
+          </div>
+
+          <div class="hadith-books-grid">
+            <div class="hadith-book-card" style="border-color: rgba(245, 158, 11, 0.4);">
+              <span class="hb-name">সহীহ বুখারী</span>
+              <span class="hb-count">৭,৫৬৩ হাদিস</span>
+            </div>
+            <div class="hadith-book-card" style="border-color: rgba(16, 185, 129, 0.4);">
+              <span class="hb-name">সহীহ মুসলিম</span>
+              <span class="hb-count">৭,৫০০ হাদিস</span>
+            </div>
+          </div>
+
+          <div class="hadith-result-card">
+            <div class="hr-header">
+              <span>সহীহ বুখারী • হাদিস নং ১</span>
+              <span class="hr-grade">সহীহ</span>
+            </div>
+            <div class="hr-text">
+              “সকল আমল নিয়তের ওপর নির্ভরশীল, এবং প্রত্যেক ব্যক্তি যা নিয়ত করেছে কেবল তাই পাবে...”
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENE 5: PRAYER & QIBLA (18.0s - 22.5s) -->
+        <div class="scene-slide scene-prayer" id="scene5">
+          <div style="font-weight: 800; font-size: 1rem; color: #facc15; text-align: center;">
+            নামাজের সময় ও ৩ডি কিবলা কম্পাস
+          </div>
+
+          <div class="compass-mock-wrap">
+            <div class="compass-needle">
+              <div class="needle-n"></div>
+              <div class="needle-s"></div>
+            </div>
+            <div class="compass-center"></div>
+          </div>
+          <div style="text-align: center; font-size: 0.75rem; color: #34d399; font-weight: 700;">
+            🕋 কিবলা দিক: ২৭৬° পশ্চিম (ঢাকা, বাংলাদেশ)
+          </div>
+
+          <div class="prayer-table-mock">
+            <div class="prayer-row">
+              <span>ফজর (Fajr)</span>
+              <span>০৪:৫২ AM</span>
+            </div>
+            <div class="prayer-row">
+              <span>যোহর (Dhuhr)</span>
+              <span>১২:০২ PM</span>
+            </div>
+            <div class="prayer-row active">
+              <span>আসর (Asr) • বর্তমান ওয়াক্ত</span>
+              <span>০৪:৩০ PM</span>
+            </div>
+            <div class="prayer-row">
+              <span>মাগরিব (Maghrib)</span>
+              <span>০৫:৪৩ PM</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCENE 6: DIGITAL TASBIH & HABITS (22.5s - 26.5s) -->
+        <div class="scene-slide scene-tasbih" id="scene6">
+          <div style="font-weight: 800; font-size: 1.05rem; color: #facc15; text-align: center;">
+            ডিজিটাল তসবিহ ও ডেইলি হ্যাবিট
+          </div>
+
+          <div class="tasbih-disc-wrap">
+            <div class="tasbih-count-big" id="tasbihCount">৩৩</div>
+            <div class="tasbih-target">টার্গেট: ৩৩ বার</div>
+          </div>
+          <div class="tasbih-phrase">سُبْحَانَ اللَّهِ (সুবহানাল্লাহ)</div>
+
+          <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 14px; padding: 0.75rem; text-align: center;">
+            <div style="font-size: 0.85rem; font-weight: 800; color: #fef08a;">🔥 ৭ দিনের ধারাবাহিক স্ট্রিক!</div>
+            <div style="font-size: 0.7rem; color: #cbd5e1; margin-top: 0.2rem;">প্রতিদিনের ২০ আয়াত তিলাওয়াত লক্ষ্য সফলভাবে অর্জিত</div>
+          </div>
+        </div>
+
+        <!-- SCENE 7: GRAND OUTRO & CTA (26.5s - 30.0s) -->
+        <div class="scene-slide scene-outro" id="scene7">
+          <div class="outro-badge">۩</div>
+          <h2 class="outro-title">Al-Quran Web</h2>
+          <p class="outro-sub">আপনার পূর্ণাঙ্গ ডিজিটাল ইসলামিক জীবনবিধান</p>
+
+          <a href="#" class="outro-cta-btn">ওয়েবসাইটে প্রবেশ করুন ➔</a>
+
+          <div class="outro-url-box">
+            <span>🌐</span> al-quran-web.vercel.app
+          </div>
+
+          <div style="font-size: 0.7rem; color: #94a3b8; font-weight: 600;">
+            মোবাইল PWA ও Windows ডেস্কটপ অ্যাপ • ১০০% ফ্রি
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROLS & TIMELINE DOCK -->
+  <div class="controls-panel">
+    <div class="scene-jumpers" id="sceneJumpers">
+      <div class="jumper-dot active" title="1: Splash & Logo"></div>
+      <div class="jumper-dot" title="2: Home Dashboard"></div>
+      <div class="jumper-dot" title="3: Quran & Audio"></div>
+      <div class="jumper-dot" title="4: Hadith Library"></div>
+      <div class="jumper-dot" title="5: Prayer & Qibla"></div>
+      <div class="jumper-dot" title="6: Tasbih & Habits"></div>
+      <div class="jumper-dot" title="7: Grand Outro"></div>
+    </div>
+
+    <div class="timeline-track">
+      <span class="time-readout" id="timeReadout">00:00 / 00:30</span>
+      <div class="progress-bar-wrap" id="progressWrap">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <div class="buttons-row">
+      <button class="btn btn-replay" id="btnReplay" title="শুরু থেকে দেখুন">↺</button>
+      <button class="btn btn-play" id="btnPlay">⏸ বিরতি</button>
+      <button class="btn btn-record" id="btnRecord">⏺ ভিডিও রেকর্ড ও ডাউনলোড</button>
+    </div>
+  </div>
+
+  <script>
+    const DURATION = 30.0;
+    let currentTime = 0;
+    let isPlaying = true;
+    let lastTimestamp = performance.now();
+    let isRecording = false;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+
+    // DOM Elements
+    const timeReadout = document.getElementById('timeReadout');
+    const progressFill = document.getElementById('progressFill');
+    const progressWrap = document.getElementById('progressWrap');
+    const btnPlay = document.getElementById('btnPlay');
+    const btnReplay = document.getElementById('btnReplay');
+    const btnRecord = document.getElementById('btnRecord');
+    const jumperDots = document.querySelectorAll('.jumper-dot');
+    const appHeaderMock = document.getElementById('appHeaderMock');
+
+    const scenes = [
+      document.getElementById('scene1'),
+      document.getElementById('scene2'),
+      document.getElementById('scene3'),
+      document.getElementById('scene4'),
+      document.getElementById('scene5'),
+      document.getElementById('scene6'),
+      document.getElementById('scene7')
+    ];
+
+    // Splash animation components
+    const spStage = document.getElementById('spStage');
+    const spBrand = document.getElementById('spBrand');
+    const spWingL = document.getElementById('spWingL');
+    const spWingR = document.getElementById('spWingR');
+    const spSpine = document.getElementById('spSpine');
+    const spPages = document.getElementById('spTurningPages');
+
+    function updateScene(t) {
+      let activeIndex = 0;
+      if (t < 4.5) activeIndex = 0;
+      else if (t < 9.0) activeIndex = 1;
+      else if (t < 13.5) activeIndex = 2;
+      else if (t < 18.0) activeIndex = 3;
+      else if (t < 22.5) activeIndex = 4;
+      else if (t < 26.5) activeIndex = 5;
+      else activeIndex = 6;
+
+      // Toggle Header
+      if (activeIndex >= 1 && activeIndex <= 5) {
+        appHeaderMock.classList.add('active');
+      } else {
+        appHeaderMock.classList.remove('active');
+      }
+
+      // Toggle Active Scene
+      scenes.forEach((s, idx) => {
+        s.classList.toggle('active', idx === activeIndex);
+      });
+
+      // Toggle Jumpers
+      jumperDots.forEach((d, idx) => {
+        d.classList.toggle('active', idx === activeIndex);
+      });
+
+      // Control Splash sequence timing
+      if (activeIndex === 0) {
+        if (t > 0.1) {
+          spWingL.style.transform = 'scaleX(1)';
+          spWingR.style.transform = 'scaleX(1)';
+          spSpine.style.opacity = '1';
+          spStage.classList.add('st-pages');
+        }
+        if (t > 0.6) {
+          spPages.classList.add('st-flipping');
+        }
+        if (t > 1.4) {
+          spStage.classList.add('st-arch');
+          spStage.classList.add('st-mark');
+        }
+        if (t > 2.0) {
+          spStage.classList.add('st-assemble');
+          spBrand.classList.add('show');
+        }
+      }
+
+      // Update UI Progress
+      const p = (t / DURATION) * 100;
+      progressFill.style.width = p + '%';
+      const secs = Math.floor(t % 60);
+      timeReadout.textContent = `00:${secs < 10 ? '0' + secs : secs} / 00:30`;
+    }
+
+    function loop(now) {
+      const delta = (now - lastTimestamp) / 1000;
+      lastTimestamp = now;
+
+      if (isPlaying) {
+        currentTime += delta;
+        if (currentTime >= DURATION) {
+          currentTime = DURATION;
+          isPlaying = false;
+          btnPlay.textContent = '▶ প্লে করুন';
+          if (isRecording) stopRecording();
+        }
+        updateScene(currentTime);
+      }
+
+      requestAnimationFrame(loop);
+    }
+
+    // Controls
+    btnPlay.addEventListener('click', () => {
+      isPlaying = !isPlaying;
+      btnPlay.textContent = isPlaying ? '⏸ বিরতি' : '▶ প্লে করুন';
+      if (isPlaying && currentTime >= DURATION) {
+        currentTime = 0;
+      }
+      lastTimestamp = performance.now();
+    });
+
+    btnReplay.addEventListener('click', () => {
+      currentTime = 0;
+      isPlaying = true;
+      btnPlay.textContent = '⏸ বিরতি';
+      lastTimestamp = performance.now();
+      updateScene(0);
+    });
+
+    progressWrap.addEventListener('click', (e) => {
+      const rect = progressWrap.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+      currentTime = ratio * DURATION;
+      updateScene(currentTime);
+    });
+
+    jumperDots.forEach((dot, idx) => {
+      dot.addEventListener('click', () => {
+        const times = [0, 4.5, 9.0, 13.5, 18.0, 22.5, 26.5];
+        currentTime = times[idx];
+        updateScene(currentTime);
+      });
+    });
+
+    // ===============================================
+    // SCREEN & DISPLAY RECORDING ENGINE (1-CLICK HD)
+    // ===============================================
+    btnRecord.addEventListener('click', async () => {
+      if (isRecording) {
+        stopRecording();
+        return;
+      }
+
+      try {
+        // High quality display capture stream
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: {
+            displaySurface: 'browser',
+            frameRate: { ideal: 60, max: 60 }
+          },
+          audio: false
+        });
+
+        recordedChunks = [];
+        let mime = 'video/webm;codecs=vp9';
+        if (!MediaRecorder.isTypeSupported(mime)) mime = 'video/webm';
+
+        mediaRecorder = new MediaRecorder(stream, { mimeType: mime });
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(recordedChunks, { type: 'video/webm' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = url;
+          a.download = 'al-quran-official-promo-30s.webm';
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(() => {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+          }, 100);
+
+          stream.getTracks().forEach(track => track.stop());
+          btnRecord.classList.remove('recording');
+          btnRecord.textContent = '⏺ ভিডিও রেকর্ড ও ডাউনলোড';
+          isRecording = false;
+        };
+
+        isRecording = true;
+        btnRecord.classList.add('recording');
+        btnRecord.textContent = '⏹ রেকর্ডিং থামান';
+        mediaRecorder.start();
+
+        // Restart video sequence from beginning
+        currentTime = 0;
+        isPlaying = true;
+        btnPlay.textContent = '⏸ বিরতি';
+        lastTimestamp = performance.now();
+        updateScene(0);
+
+      } catch (err) {
+        alert('রেকর্ডিং শুরু করতে স্ক্রিন সিলেক্ট করুন। আপনি চাইলে সরাসরি যেকোনো স্ক্রিন রেকর্ডার (OBS / Windows Game Bar - Win+Alt+R) দিয়েও সরাসরি আল্ট্রা-এইচডি রেকর্ড করে নিতে পারেন!');
+      }
+    });
+
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+      }
+    }
+
+    // Auto start playback on load
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
