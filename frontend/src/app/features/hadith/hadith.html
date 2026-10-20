@@ -39,14 +39,14 @@
 
         <button
           type="button"
-          class="bookmark-filter-btn unread-filter-btn"
-          [class.unread-filter-btn--active]="showUnreadOnly()"
-          (click)="toggleUnreadFilter()"
-          [attr.aria-pressed]="showUnreadOnly()"
-          [title]="isBn() ? 'পড়া হাদিসগুলো লুকিয়ে শুধুমাত্র অপঠিত নতুন হাদিস দেখুন' : 'Hide already read hadiths and show only unread'"
+          class="bookmark-filter-btn read-filter-btn"
+          [class.read-filter-btn--active]="readingFilter() === 'read'"
+          (click)="setReadingFilter(readingFilter() === 'read' ? 'all' : 'read')"
+          [attr.aria-pressed]="readingFilter() === 'read'"
+          [title]="isBn() ? 'পঠিত হাদিসের তালিকা দেখুন' : 'View read hadiths history'"
         >
           <aq-icon name="check" [size]="16" />
-          <span>{{ isBn() ? 'অপঠিত হাদিস' : 'Unread' }}</span>
+          <span>{{ isBn() ? 'পঠিত তালিকা' : 'Read' }}</span>
           @if (readCount() > 0) {
             <span class="badge badge--read aq-numeral" [title]="isBn() ? toBnDigits(readCount()) + 'টি হাদিস পঠিত' : readCount() + ' read'">
               {{ isBn() ? toBnDigits(readCount()) : readCount() }}
@@ -218,10 +218,55 @@
         </div>
       </div>
 
+      <!-- Reading View Segments (সকল হাদিস | অপঠিত | পঠিত) -->
+      <div class="reading-filter-bar">
+        <div class="reading-segments" role="tablist" aria-label="হাদিস পড়ার অবস্থা">
+          <button
+            type="button"
+            role="tab"
+            class="segment-tab"
+            [class.segment-tab--active]="readingFilter() === 'all'"
+            (click)="setReadingFilter('all')"
+            [attr.aria-selected]="readingFilter() === 'all'"
+          >
+            <span>{{ isBn() ? 'সকল হাদিস' : 'All' }}</span>
+            <span class="segment-tab__badge aq-numeral">{{ isBn() ? toBnDigits(curatedTotalCount()) : curatedTotalCount() }}</span>
+          </button>
+
+          <button
+            type="button"
+            role="tab"
+            class="segment-tab segment-tab--unread"
+            [class.segment-tab--active]="readingFilter() === 'unread'"
+            (click)="setReadingFilter('unread')"
+            [attr.aria-selected]="readingFilter() === 'unread'"
+            [title]="isBn() ? 'শুধুমাত্র অপঠিত হাদিস দেখুন (পড়া হাদিস বাদ দেওয়া হবে)' : 'Show only unread hadiths'"
+          >
+            <aq-icon name="bookOpen" [size]="14" />
+            <span>{{ isBn() ? 'অপঠিত' : 'Unread' }}</span>
+            <span class="segment-tab__badge aq-numeral">{{ isBn() ? toBnDigits(curatedUnreadCount()) : curatedUnreadCount() }}</span>
+          </button>
+
+          <button
+            type="button"
+            role="tab"
+            class="segment-tab segment-tab--read"
+            [class.segment-tab--active]="readingFilter() === 'read'"
+            (click)="setReadingFilter('read')"
+            [attr.aria-selected]="readingFilter() === 'read'"
+            [title]="isBn() ? 'আপনার পঠিত হাদিসগুলো দেখুন' : 'Show read hadiths'"
+          >
+            <aq-icon name="check" [size]="14" />
+            <span>{{ isBn() ? 'পঠিত' : 'Read' }}</span>
+            <span class="segment-tab__badge aq-numeral">{{ isBn() ? toBnDigits(curatedReadCount()) : curatedReadCount() }}</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Results bar -->
       <div class="results-bar">
         <span class="results-bar__count">{{ resultCountText() }}</span>
-        @if (selectedCategory() !== 'all' || selectedBook() !== 'all' || searchInput() || showBookmarksOnly()) {
+        @if (selectedCategory() !== 'all' || selectedBook() !== 'all' || searchInput() || showBookmarksOnly() || readingFilter() !== 'all') {
           <button type="button" class="results-bar__reset" (click)="resetFilters()">
             <aq-icon name="refresh" [size]="14" />
             <span>{{ isBn() ? 'ফিল্টার রিসেট করুন' : 'Reset Filters' }}</span>
@@ -233,7 +278,7 @@
     <!-- Hadith Cards List -->
     <main class="hadith-list" aria-label="Hadith Collection List">
       @for (item of displayedHadiths(); track item.id) {
-        <article class="hadith-card" [id]="'hadith-' + item.id">
+        <article class="hadith-card" [class.hadith-card--is-read]="isRead(item.id)" [id]="'hadith-' + item.id">
           <!-- Top meta header -->
           <header class="hadith-card__header">
             <div class="source-info">
@@ -248,6 +293,12 @@
 
             <div class="header-badges">
               <span class="grade-pill grade-pill--sahih">{{ isBn() ? item.gradeBn : item.gradeEn }}</span>
+              @if (isRead(item.id)) {
+                <span class="hadith-read-tag">
+                  <aq-icon name="check" [size]="12" />
+                  <span>{{ isBn() ? 'পঠিত' : 'Read' }}</span>
+                </span>
+              }
             </div>
           </header>
 
@@ -324,16 +375,26 @@
         </article>
       } @empty {
         <div class="empty-state">
-          <div class="empty-state__icon" aria-hidden="true">{{ showUnreadOnly() ? '✨' : '📖' }}</div>
+          <div class="empty-state__icon" aria-hidden="true">
+            {{ readingFilter() === 'unread' ? '✨' : (readingFilter() === 'read' ? '📖' : '🔍') }}
+          </div>
           <h3 class="empty-state__title">
-            {{ showUnreadOnly()
-              ? (isBn() ? 'মাশাআল্লাহ! সব হাদিস পড়া সম্পন্ন হয়েছে' : 'All Hadiths Completed!')
-              : (isBn() ? 'কোনো হাদিস পাওয়া যায়নি' : 'No Hadiths Found') }}
+            @if (readingFilter() === 'unread') {
+              {{ isBn() ? 'মাশাআল্লাহ! সব হাদিস পড়া সম্পন্ন হয়েছে' : 'All Hadiths Completed!' }}
+            } @else if (readingFilter() === 'read') {
+              {{ isBn() ? 'এখনো কোনো হাদিস পড়া হিসেবে চিহ্নিত করেননি' : 'No Hadiths Marked as Read' }}
+            } @else {
+              {{ isBn() ? 'কোনো হাদিস পাওয়া যায়নি' : 'No Hadiths Found' }}
+            }
           </h3>
           <p class="empty-state__desc">
-            {{ showUnreadOnly()
-              ? (isBn() ? 'আপনি এই বিষয়ের সকল হাদিস পড়ে ফেলেছেন। সব হাদিস পুনরায় দেখতে ফিল্টার রিসেট করুন।' : 'You have completed all hadiths in this category. Click below to reset filter and view all.')
-              : (isBn() ? 'আপনার অনুসন্ধান বা নির্বাচিত ফিল্টারের সাথে মিলে এমন কোনো হাদিস পাওয়া যায়নি।' : 'No Hadiths matched your search or selected filter combination.') }}
+            @if (readingFilter() === 'unread') {
+              {{ isBn() ? 'আপনি এই বিষয়ের সকল হাদিস পড়ে ফেলেছেন। সব হাদিস পুনরায় দেখতে নিচের বাটনে ক্লিক করুন।' : 'You have completed all hadiths in this category. Click below to view all.' }}
+            } @else if (readingFilter() === 'read') {
+              {{ isBn() ? 'হাদিস পড়ার পর কার্ডের নিচে "পড়লাম" বাটনে ক্লিক করলে তা এখানে সংরক্ষিত থাকবে।' : 'When you finish reading a hadith, tap "Mark Read" to save it here.' }}
+            } @else {
+              {{ isBn() ? 'আপনার অনুসন্ধান বা নির্বাচিত ফিল্টারের সাথে মিলে এমন কোনো হাদিস পাওয়া যায়নি।' : 'No Hadiths matched your search or selected filter combination.' }}
+            }
           </p>
           <button type="button" class="aq-btn aq-btn--primary" (click)="resetFilters()">
             {{ isBn() ? 'সকল হাদিস দেখুন' : 'Show All Hadiths' }}
@@ -488,27 +549,54 @@
             {{ isBn() ? currentCanonicalBook().nameBn : currentCanonicalBook().nameEn }} &rsaquo;
             {{ isBn() ? (currentCanonicalChapter()?.nameBn || 'অধ্যায় ' + toBnDigits(selectedChapterNumber())) : (currentCanonicalChapter()?.nameEn || 'Chapter ' + selectedChapterNumber()) }}
           </span>
-          <div class="chapter-summary-actions">
+
+          <div class="reading-segments reading-segments--compact" role="tablist" aria-label="অধ্যায়ের হাদিস ফিল্টার">
             <button
               type="button"
-              class="unread-toggle-pill"
-              [class.unread-toggle-pill--active]="showUnreadOnly()"
-              (click)="toggleUnreadFilter()"
-              [title]="isBn() ? 'পড়া হাদিসগুলো লুকিয়ে শুধুমাত্র অপঠিত হাদিস দেখুন' : 'Filter out read hadiths'"
+              role="tab"
+              class="segment-tab segment-tab--sm"
+              [class.segment-tab--active]="readingFilter() === 'all'"
+              (click)="setReadingFilter('all')"
+              [attr.aria-selected]="readingFilter() === 'all'"
             >
-              <aq-icon name="check" [size]="14" />
-              <span>{{ isBn() ? (showUnreadOnly() ? 'শুধুমাত্র অপঠিত' : 'অপঠিত ফিল্টার') : (showUnreadOnly() ? 'Unread Only' : 'Filter Unread') }}</span>
+              <span>{{ isBn() ? 'সকল' : 'All' }}</span>
+              <span class="segment-tab__badge aq-numeral">{{ isBn() ? toBnDigits(canonicalTotalInChapter()) : canonicalTotalInChapter() }}</span>
             </button>
-            <span class="chapter-summary-count aq-numeral">
-              {{ isBn() ? 'মোট ' + toBnDigits(totalCanonicalCountInChapter()) + 'টি হাদিস' : totalCanonicalCountInChapter() + ' Hadiths' }}
-            </span>
+
+            <button
+              type="button"
+              role="tab"
+              class="segment-tab segment-tab--sm segment-tab--unread"
+              [class.segment-tab--active]="readingFilter() === 'unread'"
+              (click)="setReadingFilter('unread')"
+              [attr.aria-selected]="readingFilter() === 'unread'"
+              [title]="isBn() ? 'শুধুমাত্র অপঠিত হাদিস দেখুন' : 'Show only unread hadiths'"
+            >
+              <aq-icon name="bookOpen" [size]="13" />
+              <span>{{ isBn() ? 'অপঠিত' : 'Unread' }}</span>
+              <span class="segment-tab__badge aq-numeral">{{ isBn() ? toBnDigits(canonicalUnreadInChapter()) : canonicalUnreadInChapter() }}</span>
+            </button>
+
+            <button
+              type="button"
+              role="tab"
+              class="segment-tab segment-tab--sm segment-tab--read"
+              [class.segment-tab--active]="readingFilter() === 'read'"
+              (click)="setReadingFilter('read')"
+              [attr.aria-selected]="readingFilter() === 'read'"
+              [title]="isBn() ? 'পঠিত হাদিস দেখুন' : 'Show read hadiths'"
+            >
+              <aq-icon name="check" [size]="13" />
+              <span>{{ isBn() ? 'পঠিত' : 'Read' }}</span>
+              <span class="segment-tab__badge aq-numeral">{{ isBn() ? toBnDigits(canonicalReadInChapter()) : canonicalReadInChapter() }}</span>
+            </button>
           </div>
         </div>
 
         <!-- Canonical Hadith Cards -->
         <div class="hadith-list" aria-label="Canonical Hadiths">
           @for (item of displayedCanonicalHadiths(); track item.id) {
-            <article class="hadith-card" [id]="'canonical-' + item.id">
+            <article class="hadith-card" [class.hadith-card--is-read]="isRead(item.id)" [id]="'canonical-' + item.id">
               <header class="hadith-card__header">
                 <div class="source-info">
                   <span class="book-name">{{ isBn() ? item.bookNameBn : item.bookNameEn }}</span>
@@ -520,6 +608,12 @@
 
                 <div class="header-badges">
                   <span class="grade-pill grade-pill--sahih">{{ isBn() ? (item.grade === 'Sahih' ? 'সহিহ' : item.grade) : item.grade }}</span>
+                  @if (isRead(item.id)) {
+                    <span class="hadith-read-tag">
+                      <aq-icon name="check" [size]="12" />
+                      <span>{{ isBn() ? 'পঠিত' : 'Read' }}</span>
+                    </span>
+                  }
                 </div>
               </header>
 
@@ -595,19 +689,29 @@
             </article>
           } @empty {
             <div class="empty-state">
-              <div class="empty-state__icon" aria-hidden="true">{{ showUnreadOnly() ? '✨' : '📖' }}</div>
+              <div class="empty-state__icon" aria-hidden="true">
+                {{ readingFilter() === 'unread' ? '✨' : (readingFilter() === 'read' ? '📖' : '🔍') }}
+              </div>
               <h3 class="empty-state__title">
-                {{ showUnreadOnly()
-                  ? (isBn() ? 'মাশাআল্লাহ! এই অধ্যায়ের সব হাদিস পড়া সম্পন্ন হয়েছে' : 'All Hadiths in this Chapter Read!')
-                  : (isBn() ? 'এই অধ্যায়ে কোনো হাদিস পাওয়া যায়নি' : 'No Hadiths Found in this Chapter') }}
+                @if (readingFilter() === 'unread') {
+                  {{ isBn() ? 'মাশাআল্লাহ! এই অধ্যায়ের সব হাদিস পড়া সম্পন্ন হয়েছে' : 'All Hadiths in this Chapter Read!' }}
+                } @else if (readingFilter() === 'read') {
+                  {{ isBn() ? 'এই অধ্যায়ের কোনো হাদিস এখনো পড়া হয়নি' : 'No Read Hadiths in this Chapter' }}
+                } @else {
+                  {{ isBn() ? 'এই অধ্যায়ে কোনো হাদিস পাওয়া যায়নি' : 'No Hadiths Found in this Chapter' }}
+                }
               </h3>
               <p class="empty-state__desc">
-                {{ showUnreadOnly()
-                  ? (isBn() ? 'আপনি এই অধ্যায়ের সব হাদিস পড়ে ফেলেছেন। সব হাদিস পুনরায় দেখতে অপঠিত ফিল্টার বন্ধ করুন।' : 'You have completed all hadiths in this chapter. Toggle the unread filter to view all.')
-                  : (isBn() ? 'আপনার অনুসন্ধানের সাথে মিলছে এমন কোনো হাদিস পাওয়া যায়নি।' : 'No hadiths matched your search query in this chapter.') }}
+                @if (readingFilter() === 'unread') {
+                  {{ isBn() ? 'আপনি এই অধ্যায়ের সব হাদিস পড়ে ফেলেছেন। সব হাদিস পুনরায় দেখতে "সকল" বাটনে ক্লিক করুন।' : 'You have completed all hadiths in this chapter. Click "All" to view all hadiths.' }}
+                } @else if (readingFilter() === 'read') {
+                  {{ isBn() ? 'হাদিস পড়ার পর কার্ডের নিচে "পড়লাম" বাটনে ক্লিক করলে তা এখানে সংরক্ষিত থাকবে।' : 'Tap "Mark Read" on any hadith card to track it.' }}
+                } @else {
+                  {{ isBn() ? 'আপনার অনুসন্ধানের সাথে মিলছে এমন কোনো হাদিস পাওয়া যায়নি।' : 'No hadiths matched your search query in this chapter.' }}
+                }
               </p>
-              @if (showUnreadOnly()) {
-                <button type="button" class="aq-btn aq-btn--primary" (click)="toggleUnreadFilter()">
+              @if (readingFilter() !== 'all') {
+                <button type="button" class="aq-btn aq-btn--primary" (click)="setReadingFilter('all')">
                   {{ isBn() ? 'সকল হাদিস দেখুন' : 'Show All Hadiths' }}
                 </button>
               } @else if (canonicalSearch()) {

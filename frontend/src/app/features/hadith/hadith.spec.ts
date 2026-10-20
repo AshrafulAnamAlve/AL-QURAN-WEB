@@ -170,6 +170,19 @@ describe('HadithPage', () => {
     component.toggleUnreadFilter();
     fixture.detectChanges();
     expect(component.displayedHadiths().length).toBe(totalHadiths);
+
+    // Switch to read filter
+    component.setReadingFilter('read');
+    fixture.detectChanges();
+    expect(component.showReadOnly()).toBe(true);
+    expect(component.displayedHadiths().length).toBe(1);
+    expect(component.displayedHadiths()[0].id).toBe(firstHadithId);
+
+    // Reset filters
+    component.resetFilters();
+    fixture.detectChanges();
+    expect(component.readingFilter()).toBe('all');
+    expect(component.displayedHadiths().length).toBe(totalHadiths);
   });
 });
 

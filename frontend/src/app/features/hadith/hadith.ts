@@ -40,7 +40,11 @@ export class HadithPage {
   // Search input binding for Curated
   readonly searchInput = signal<string>('');
   readonly showBookmarksOnly = signal<boolean>(false);
-  readonly showUnreadOnly = signal<boolean>(false);
+
+  // Reading view filter: 'all' = all hadiths, 'unread' = only unread, 'read' = only read
+  readonly readingFilter = signal<'all' | 'unread' | 'read'>('all');
+  readonly showUnreadOnly = computed<boolean>(() => this.readingFilter() === 'unread');
+  readonly showReadOnly = computed<boolean>(() => this.readingFilter() === 'read');
 
   // Canonical Library State
   readonly canonicalBooks = CANONICAL_BOOKS;
@@ -69,25 +73,58 @@ export class HadithPage {
   readonly bookmarksCount = this.hadithService.bookmarksCount;
   readonly readCount = this.hadithService.readCount;
 
+  // Curated Counts (reactive to current category & book filters)
+  readonly curatedTotalCount = computed<number>(() => {
+    return this.hadithService.filteredHadiths().length;
+  });
+
+  readonly curatedReadCount = computed<number>(() => {
+    const list = this.hadithService.filteredHadiths();
+    return list.filter((h) => this.hadithService.isRead(h.id)).length;
+  });
+
+  readonly curatedUnreadCount = computed<number>(() => {
+    return Math.max(0, this.curatedTotalCount() - this.curatedReadCount());
+  });
+
   // Filtered hadiths for Curated tab
   readonly displayedHadiths = computed<readonly Hadith[]>(() => {
     let list = this.hadithService.filteredHadiths();
     if (this.showBookmarksOnly()) {
       list = list.filter((h) => this.hadithService.isBookmarked(h.id));
     }
-    if (this.showUnreadOnly()) {
+    const filter = this.readingFilter();
+    if (filter === 'unread') {
       list = list.filter((h) => !this.hadithService.isRead(h.id));
+    } else if (filter === 'read') {
+      list = list.filter((h) => this.hadithService.isRead(h.id));
     }
     return list;
   });
 
   readonly resultCountText = computed(() => {
     const count = this.displayedHadiths().length;
-    const total = this.hadithService.allHadiths().length;
+    const total = this.curatedTotalCount();
+    const read = this.curatedReadCount();
+    const unread = this.curatedUnreadCount();
+
     if (this.isBn()) {
-      return `মোট ${this.toBnDigits(total)}টি হাদিসের মধ্যে ${this.toBnDigits(count)}টি দেখানো হচ্ছে`;
+      if (this.readingFilter() === 'unread') {
+        return `অপঠিত ${this.toBnDigits(count)}টি হাদিস দেখানো হচ্ছে (${this.toBnDigits(read)}টি পঠিত হাদিস লুকানো)`;
+      }
+      if (this.readingFilter() === 'read') {
+        return `পঠিত ${this.toBnDigits(count)}টি হাদিস দেখানো হচ্ছে`;
+      }
+      return `মোট ${this.toBnDigits(total)}টি হাদিস · পঠিত: ${this.toBnDigits(read)} · অপঠিত: ${this.toBnDigits(unread)}`;
     }
-    return `Showing ${count} of ${total} Hadiths`;
+
+    if (this.readingFilter() === 'unread') {
+      return `Showing ${count} unread Hadiths (${read} read hidden)`;
+    }
+    if (this.readingFilter() === 'read') {
+      return `Showing ${count} read Hadiths`;
+    }
+    return `Total ${total} Hadiths · Read: ${read} · Unread: ${unread}`;
   });
 
   // Current canonical book metadata
@@ -102,13 +139,29 @@ export class HadithPage {
     return this.chapters().find((c) => c.number === num);
   });
 
-  // Canonical hadiths filtered by search, unread filter and limited by displayLimit
+  // Canonical Counts for current chapter
+  readonly canonicalTotalInChapter = computed<number>(() => {
+    return this.canonicalHadiths().length;
+  });
+
+  readonly canonicalReadInChapter = computed<number>(() => {
+    return this.canonicalHadiths().filter((h) => this.hadithService.isRead(h.id)).length;
+  });
+
+  readonly canonicalUnreadInChapter = computed<number>(() => {
+    return Math.max(0, this.canonicalTotalInChapter() - this.canonicalReadInChapter());
+  });
+
+  // Canonical hadiths filtered by search, reading filter and limited by displayLimit
   readonly displayedCanonicalHadiths = computed<readonly CanonicalHadithItem[]>(() => {
     const query = this.canonicalSearch().trim().toLowerCase();
     let items = this.canonicalHadiths();
 
-    if (this.showUnreadOnly()) {
+    const filter = this.readingFilter();
+    if (filter === 'unread') {
       items = items.filter((h) => !this.hadithService.isRead(h.id));
+    } else if (filter === 'read') {
+      items = items.filter((h) => this.hadithService.isRead(h.id));
     }
 
     if (query) {
@@ -126,8 +179,11 @@ export class HadithPage {
   readonly totalCanonicalCountInChapter = computed<number>(() => {
     const query = this.canonicalSearch().trim().toLowerCase();
     let items = this.canonicalHadiths();
-    if (this.showUnreadOnly()) {
+    const filter = this.readingFilter();
+    if (filter === 'unread') {
       items = items.filter((h) => !this.hadithService.isRead(h.id));
+    } else if (filter === 'read') {
+      items = items.filter((h) => this.hadithService.isRead(h.id));
     }
     if (!query) return items.length;
     return items.filter((h) => {
@@ -177,12 +233,26 @@ export class HadithPage {
     this.hadithService.setBook(book);
   }
 
+  setReadingFilter(filter: 'all' | 'unread' | 'read'): void {
+    this.readingFilter.set(filter);
+    if (filter !== 'all') {
+      this.showBookmarksOnly.set(false);
+    }
+  }
+
   toggleBookmarksFilter(): void {
     this.showBookmarksOnly.update((v) => !v);
+    if (this.showBookmarksOnly()) {
+      this.readingFilter.set('all');
+    }
   }
 
   toggleUnreadFilter(): void {
-    this.showUnreadOnly.update((v) => !v);
+    if (this.readingFilter() === 'unread') {
+      this.readingFilter.set('all');
+    } else {
+      this.setReadingFilter('unread');
+    }
   }
 
   isRead(id: number | string): boolean {
@@ -207,7 +277,7 @@ export class HadithPage {
     this.hadithService.setCategory('all');
     this.hadithService.setBook('all');
     this.showBookmarksOnly.set(false);
-    this.showUnreadOnly.set(false);
+    this.readingFilter.set('all');
   }
 
   // --- Canonical Library Actions ---
