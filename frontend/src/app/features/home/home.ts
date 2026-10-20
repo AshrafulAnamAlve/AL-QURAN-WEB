@@ -9,6 +9,8 @@ import { ReadingProgressService } from '../../core/services/reading-progress';
 import { TaskService } from '../../core/services/task';
 import { PrayerNotificationService } from '../../core/services/prayer-notification';
 import { CorePrayerAlertKey } from '../../core/models/prayer-notification';
+import { HadithService } from '../../core/services/hadith';
+import { ShareService } from '../../core/services/share';
 import { IconComponent } from '../../shared/components/icon/icon';
 import { TaskGoalModalComponent } from '../../shared/components/task-goal-modal/task-goal-modal';
 import { DailyHadithModalComponent } from '../../shared/components/daily-hadith-modal/daily-hadith-modal';
@@ -35,6 +37,11 @@ export class HomePage {
   protected readonly dailyAyahService = inject(DailyAyahService);
   protected readonly taskService = inject(TaskService);
   protected readonly notificationService = inject(PrayerNotificationService);
+  protected readonly hadithService = inject(HadithService);
+  private readonly shareService = inject(ShareService);
+
+  readonly dailyHadith = this.hadithService.dailyHadith;
+  readonly hadithShareOutcome = signal<string | null>(null);
 
   readonly isBn = this.lang.isBn;
   readonly showGoalModal = signal<boolean>(false);
@@ -198,5 +205,35 @@ export class HomePage {
 
   closeGoalModal(): void {
     this.showGoalModal.set(false);
+  }
+
+  toggleHadithBookmark(): void {
+    const h = this.dailyHadith();
+    this.hadithService.toggleBookmark(h.id);
+  }
+
+  isHadithBookmarked(): boolean {
+    return this.hadithService.isBookmarked(this.dailyHadith().id);
+  }
+
+  async copyDailyHadith(): Promise<void> {
+    const h = this.dailyHadith();
+    const reference = `${this.isBn() ? h.bookBn : h.book} (${this.isBn() ? this.toBnDigits(h.hadithNumber) : h.hadithNumber})`;
+    const text = [
+      `【 ${reference} — ${this.isBn() ? h.gradeBn : h.gradeEn} 】`,
+      '',
+      h.arabic,
+      '',
+      `বাংলা অনুবাদ: ${h.bangla}`,
+      '',
+      `বর্ণনাকারী: ${this.isBn() ? h.narratorBn : h.narratorEn}`,
+      '',
+      'Al-Quran App',
+    ].join('\n');
+    const ok = await this.shareService.copy(text);
+    if (ok) {
+      this.hadithShareOutcome.set(this.isBn() ? 'হাদিস অনুলিপি করা হয়েছে!' : 'Hadith copied!');
+      setTimeout(() => this.hadithShareOutcome.set(null), 2500);
+    }
   }
 }

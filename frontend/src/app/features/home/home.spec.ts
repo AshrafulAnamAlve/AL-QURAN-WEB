@@ -261,4 +261,23 @@ describe('HomePage', () => {
     expect(banner?.textContent).toContain('Time for your daily Quran reading!');
     expect(banner?.textContent).toContain('Read Now');
   });
+
+  it('renders prominent Hadith action button in hero and Hadith of the Day card', () => {
+    const el: HTMLElement = fixture.nativeElement;
+
+    // Hero button
+    const hadithHeroBtn = el.querySelector('.hero__hadith-btn');
+    expect(hadithHeroBtn).not.toBeNull();
+    expect(hadithHeroBtn?.getAttribute('href')).toBe('/hadith');
+
+    // Hadith of the day card
+    const hadithCard = el.querySelector('.daily-hadith-home-card');
+    expect(hadithCard).not.toBeNull();
+    expect(hadithCard?.textContent).toContain('Hadith of the Day');
+
+    // Bookmark and copy action buttons
+    const buttons = hadithCard?.querySelectorAll('button');
+    expect(buttons?.length).toBeGreaterThanOrEqual(2);
+  });
 });
+

@@ -68,6 +68,10 @@
         <aq-icon name="bookOpen" [size]="18" />
         {{ isBn() ? 'কুরআন তিলাওয়াত' : 'Read Quran' }}
       </a>
+      <a routerLink="/hadith" class="aq-btn aq-btn--primary aq-btn--lg hero__hadith-btn">
+        <aq-icon name="sparkles" [size]="18" />
+        {{ isBn() ? 'হাদিস শরীফ (৩৬,০০০+)' : 'Hadith Sharif (36k+)' }}
+      </a>
       <a routerLink="/prayer" class="aq-btn aq-btn--secondary aq-btn--lg">
         <aq-icon name="clock" [size]="18" />
         {{ isBn() ? 'নামাজের সময়সূচি' : 'Prayer Times' }}
@@ -437,6 +441,89 @@
     </section>
   }
 
+  <!-- Hadith of the Day Card (Phase 18) -->
+  @if (dailyHadith(); as hadith) {
+    <section class="panel daily-hadith-home-card" aria-labelledby="daily-hadith-heading">
+      <div class="daily-hadith-home-card__header">
+        <div class="daily-hadith-home-card__title-row">
+          <div class="hadith-pill-badge">
+            <aq-icon name="sparkles" [size]="13" />
+            <span>{{ isBn() ? 'আজকের নির্বাচিত হাদিস' : 'Hadith of the Day' }}</span>
+          </div>
+          <h2 id="daily-hadith-heading" class="daily-hadith-home-card__title">
+            <a routerLink="/hadith" class="daily-hadith-home-card__link">
+              {{ isBn() ? hadith.bookBn : hadith.book }} : {{ isBn() ? toBnDigits(hadith.hadithNumber) : hadith.hadithNumber }}
+            </a>
+            <span class="grade-pill grade-pill--sahih">{{ isBn() ? hadith.gradeBn : hadith.gradeEn }}</span>
+          </h2>
+        </div>
+
+        <div class="daily-hadith-home-card__actions">
+          <a
+            routerLink="/hadith"
+            class="aq-btn aq-btn--primary aq-btn--sm"
+            [title]="isBn() ? '৩৬,০০০+ হাদিস লাইব্রেরিতে পড়ুন' : 'Read in 36k+ Hadiths Library'"
+          >
+            <aq-icon name="bookOpen" [size]="15" />
+            <span>{{ isBn() ? '৩৬,০০০+ হাদিস পড়ুন' : '36k+ Hadiths' }}</span>
+          </a>
+
+          <button
+            type="button"
+            class="aq-icon-btn"
+            (click)="toggleHadithBookmark()"
+            [class.is-bookmarked]="isHadithBookmarked()"
+            [attr.aria-label]="isHadithBookmarked() ? (isBn() ? 'বুকমার্ক সরানো' : 'Remove bookmark') : (isBn() ? 'বুকমার্ক করুন' : 'Bookmark hadith')"
+            [title]="isHadithBookmarked() ? (isBn() ? 'সংরক্ষিত' : 'Bookmarked') : (isBn() ? 'বুকমার্ক' : 'Bookmark')"
+          >
+            <aq-icon name="bookmark" [size]="18" />
+          </button>
+
+          <button
+            type="button"
+            class="aq-icon-btn"
+            (click)="copyDailyHadith()"
+            [attr.aria-label]="isBn() ? 'হাদিস কপি করুন' : 'Copy hadith'"
+            title="Copy / অনুলিপি"
+          >
+            <aq-icon name="copy" [size]="18" />
+          </button>
+        </div>
+      </div>
+
+      @if (hadithShareOutcome(); as msg) {
+        <div class="share-toast aq-card" role="status">
+          <aq-icon name="check" [size]="14" />
+          <span>{{ msg }}</span>
+        </div>
+      }
+
+      <!-- Arabic Hadith Text -->
+      <div class="daily-hadith-home-card__arabic aq-arabic" dir="rtl" lang="ar">
+        {{ hadith.arabic }}
+      </div>
+
+      <!-- Bangla Translation with Narrator Chain -->
+      <div class="daily-hadith-home-card__translation">
+        <p class="aq-bangla">
+          {{ hadith.bangla }}
+        </p>
+      </div>
+
+      <!-- Footer CTA to the 36,000+ Library -->
+      <div class="daily-hadith-home-card__footer">
+        <div class="narrator-meta">
+          <span class="narrator-label">{{ isBn() ? 'বর্ণনায়:' : 'Narrator:' }}</span>
+          <strong class="narrator-name">{{ isBn() ? hadith.narratorBn : hadith.narratorEn }}</strong>
+        </div>
+        <a routerLink="/hadith" class="library-cta-link">
+          <span>{{ isBn() ? 'বুখারী, মুসলিম সহ ৩৬,০০০+ প্রামাণ্য হাদিস গ্রন্থাবলী দেখুন' : 'Explore 36,000+ Canonical Hadith Library' }}</span>
+          <span aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </section>
+  }
+
   <!-- Professional Features & Services Section -->
   <section class="explore-section" aria-labelledby="explore-heading">
     <div class="explore-section__header">
@@ -467,19 +554,19 @@
         <span class="explore-card__arrow" aria-hidden="true">&rarr;</span>
       </a>
 
-      <a routerLink="/hadith" class="explore-card">
+      <a routerLink="/hadith" class="explore-card explore-card--hadith">
         <div class="explore-card__icon-wrap">
-          <aq-icon name="book" [size]="22" />
+          <aq-icon name="bookOpen" [size]="22" />
         </div>
         <div class="explore-card__content">
           <div class="explore-card__badge-row">
             <h3 class="explore-card__title">{{ isBn() ? 'হাদিস শরীফ' : 'Hadith Sharif' }}</h3>
-            <span class="explore-card__badge">{{ isBn() ? 'সহিহ সংকলন' : 'Authentic' }}</span>
+            <span class="explore-card__badge explore-card__badge--hadith">{{ isBn() ? '৩৬,০০০+ হাদিস · ৮টি কিতাব' : '36k+ Hadiths · 8 Books' }}</span>
           </div>
           <p class="explore-card__desc">
             {{ isBn()
-              ? 'বুখারী, মুসলিম ও রিয়াদুস সালেহীন থেকে বিশুদ্ধ হাদিস ও দৈনিক হাদিস পড়ুন'
-              : 'Authentic prophetic traditions from Bukhari, Muslim & Riyad as-Salihin' }}
+              ? 'সহিহ বুখারী, মুসলিম, তিরমিযী সহ ৮টি প্রামাণ্য কিতাব থেকে পূর্ণ সনদ ও অর্থসহ বিশুদ্ধ হাদিস পড়ুন'
+              : 'Authentic prophetic traditions across 8 canonical books with full Sanad & Matn' }}
           </p>
         </div>
         <span class="explore-card__arrow" aria-hidden="true">&rarr;</span>

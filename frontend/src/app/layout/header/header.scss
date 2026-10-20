@@ -297,8 +297,27 @@
       color: var(--aq-primary);
     }
 
-    span {
+    > span:first-of-type {
       flex: 1 1 auto;
+    }
+
+    .drawer__badge {
+      flex: 0 0 auto;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.15rem 0.55rem;
+      border-radius: 9999px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(217, 119, 6, 0.15) 100%);
+      color: var(--aq-primary);
+      border: 1px solid var(--aq-primary);
+      white-space: nowrap;
+      margin-right: 0.25rem;
+
+      :host-context([data-theme='dark']) & {
+        background: rgba(16, 185, 129, 0.2);
+        color: var(--aq-gold-400);
+        border-color: var(--aq-gold-500);
+      }
     }
 
     aq-icon:last-child {

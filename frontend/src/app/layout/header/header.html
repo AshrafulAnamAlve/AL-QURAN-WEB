@@ -135,6 +135,9 @@
         >
           <aq-icon [name]="item.icon" [size]="20" />
           <span>{{ isBn() ? item.labelBn : item.label }}</span>
+          @if (item.path === '/hadith') {
+            <span class="drawer__badge drawer__badge--gold">{{ isBn() ? '৩৬,০০০+ হাদিস' : '36k+ Hadiths' }}</span>
+          }
           <aq-icon name="chevronRight" [size]="16" />
         </a>
       </li>
