@@ -124,4 +124,24 @@ describe('HadithPage', () => {
     expect(shareService.copy).toHaveBeenCalled();
     expect(component.toastMessage()).toContain('অনুলিপি করা হয়েছে');
   });
+
+  it('switches between curated and canonical library tabs', () => {
+    expect(component.activeTab()).toBe('curated');
+
+    // Switch to library
+    component.switchTab('library');
+    fixture.detectChanges();
+
+    expect(component.activeTab()).toBe('library');
+    const el: HTMLElement = fixture.nativeElement;
+    expect(el.querySelector('.canonical-library')).not.toBeNull();
+    expect(el.querySelectorAll('.book-pill').length).toBe(8);
+
+    // Switch back to curated
+    component.switchTab('curated');
+    fixture.detectChanges();
+    expect(component.activeTab()).toBe('curated');
+    expect(el.querySelector('.daily-hero-card')).not.toBeNull();
+  });
 });
+

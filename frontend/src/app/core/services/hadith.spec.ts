@@ -102,4 +102,25 @@ describe('HadithService', () => {
     const storedDate = storage.read<string>('alquran.daily_hadith_dismissed', '');
     expect(storedDate).toBe('');
   });
+
+  it('exposes 8 canonical Hadith collections totaling over 36,000 hadiths', () => {
+    expect(service.canonicalBooks.length).toBe(8);
+    const total = service.canonicalBooks.reduce((sum, b) => sum + b.totalHadiths, 0);
+    expect(total).toBeGreaterThan(36000);
+    const bukhari = service.canonicalBooks.find((b) => b.id === 'bukhari');
+    expect(bukhari).toBeDefined();
+    expect(bukhari?.totalHadiths).toBe(7563);
+  });
+
+  it('handles canonical string ID bookmarking', () => {
+    expect(service.isBookmarked('bukhari-1')).toBe(false);
+    service.toggleBookmark('bukhari-1');
+    expect(service.isBookmarked('bukhari-1')).toBe(true);
+    expect(service.bookmarksCount()).toBe(1);
+
+    service.toggleBookmark('bukhari-1');
+    expect(service.isBookmarked('bukhari-1')).toBe(false);
+    expect(service.bookmarksCount()).toBe(0);
+  });
 });
+
