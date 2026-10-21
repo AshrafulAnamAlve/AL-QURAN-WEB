@@ -13,32 +13,33 @@ describe('LanguageService', () => {
     return TestBed.inject(LanguageService);
   };
 
-  it('defaults to English when no preference is stored', () => {
+  it('defaults to Bangla when no preference is stored', () => {
+    const service = create();
+    expect(service.language()).toBe('bn');
+    expect(service.isBn()).toBe(true);
+    expect(document.documentElement.lang).toBe('bn');
+  });
+
+  it('restores English when stored in localStorage', () => {
+    localStorage.setItem('alquran.' + STORAGE_KEYS.language, JSON.stringify('en'));
     const service = create();
     expect(service.language()).toBe('en');
     expect(service.isBn()).toBe(false);
   });
 
-  it('restores Bangla when stored in localStorage', () => {
-    localStorage.setItem('alquran.' + STORAGE_KEYS.language, JSON.stringify('bn'));
-    const service = create();
-    expect(service.language()).toBe('bn');
-    expect(service.isBn()).toBe(true);
-  });
-
   it('toggles language back and forth and saves to storage', () => {
     const service = create();
-    expect(service.language()).toBe('en');
-
-    service.toggleLanguage();
     expect(service.language()).toBe('bn');
-    expect(service.isBn()).toBe(true);
-    expect(localStorage.getItem('alquran.' + STORAGE_KEYS.language)).toBe(JSON.stringify('bn'));
 
     service.toggleLanguage();
     expect(service.language()).toBe('en');
     expect(service.isBn()).toBe(false);
     expect(localStorage.getItem('alquran.' + STORAGE_KEYS.language)).toBe(JSON.stringify('en'));
+
+    service.toggleLanguage();
+    expect(service.language()).toBe('bn');
+    expect(service.isBn()).toBe(true);
+    expect(localStorage.getItem('alquran.' + STORAGE_KEYS.language)).toBe(JSON.stringify('bn'));
   });
 
   it('sets language directly and updates document.documentElement.lang', () => {
@@ -54,6 +55,10 @@ describe('LanguageService', () => {
 
   it('translates authentic Islamic terminology accurately', () => {
     const service = create();
+    expect(service.translate('nav.prayer')).toBe('নামাজের সময়সূচি');
+    expect(service.translate('prayer.currentPrayer')).toBe('বর্তমান ওয়াক্ত');
+
+    service.setLanguage('en');
     expect(service.translate('nav.prayer')).toBe('Prayer Times');
     expect(service.translate('prayer.currentPrayer')).toBe('Current Prayer');
 

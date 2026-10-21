@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="bn">
   <head>
     <meta charset="utf-8" />
     <base href="/" />
@@ -69,18 +69,29 @@
     />
 
     <!--
-      Applies the saved theme before Angular boots so the page never flashes
-      light before switching to dark. Keep this tiny and dependency free.
+      Applies the saved theme & language before Angular boots so the page never flashes
+      light or wrong language before switching. Keep this tiny and dependency free.
     -->
     <script>
       (function () {
         try {
-          var saved = localStorage.getItem('alquran.theme');
-          if (saved === 'dark' || saved === 'light') {
-            document.documentElement.setAttribute('data-theme', saved);
+          var savedTheme = localStorage.getItem('alquran.theme');
+          if (savedTheme === 'dark' || savedTheme === 'light') {
+            document.documentElement.setAttribute('data-theme', savedTheme);
+          }
+          var savedLang = localStorage.getItem('alquran.language');
+          if (savedLang) {
+            try {
+              var parsed = JSON.parse(savedLang);
+              if (parsed === 'en' || parsed === 'bn') {
+                document.documentElement.setAttribute('lang', parsed);
+              }
+            } catch (e) {}
+          } else {
+            document.documentElement.setAttribute('lang', 'bn');
           }
         } catch (e) {
-          /* private mode or storage disabled - fall back to the system theme */
+          /* private mode or storage disabled - fall back to defaults */
         }
       })();
     </script>

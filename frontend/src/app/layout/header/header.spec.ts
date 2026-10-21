@@ -27,7 +27,7 @@ describe('HeaderComponent', () => {
 
     const toggleBtn = el.querySelector('.lang-pill-btn') as HTMLButtonElement;
     expect(toggleBtn).toBeTruthy();
-    expect(el.querySelector('.lang-pill--active')?.textContent).toBe('EN');
+    expect(el.querySelector('.lang-pill--active')?.textContent).toBe('বাং');
   });
 
   it('toggles language when toggleLanguage is called', () => {
@@ -37,10 +37,10 @@ describe('HeaderComponent', () => {
     toggleBtn.click();
     fixture.detectChanges();
 
-    expect(languageService.language()).toBe('bn');
-    expect(languageService.isBn()).toBe(true);
-    expect(el.querySelector('.lang-pill--active')?.textContent).toBe('বাং');
-    expect(el.querySelector('.brand__tag')?.textContent).toContain('পড়ুন · শুনুন · অনুধাবন করুন');
+    expect(languageService.language()).toBe('en');
+    expect(languageService.isBn()).toBe(false);
+    expect(el.querySelector('.lang-pill--active')?.textContent).toBe('EN');
+    expect(el.querySelector('.brand__tag')?.textContent).toContain('Read · Listen · Reflect');
   });
 
   it('closes mobile drawer when escape key is pressed', () => {

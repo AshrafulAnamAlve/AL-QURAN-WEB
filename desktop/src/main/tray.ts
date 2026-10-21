@@ -5,6 +5,9 @@ import { getMainWindow, setIsQuitting } from './window';
 let tray: Tray | null = null;
 let currentPrayerInfo = 'নামাজের সময়সূচি লোড হচ্ছে…';
 let isAdhanMuted = false;
+let isAdhanPlaying = false;
+let prayerAlertsEnabled = true;
+let autoAdhanEnabled = true;
 
 export function getTray(): Tray | null {
   return tray;
@@ -21,6 +24,27 @@ export function updateTrayPrayerInfo(info: string): void {
 export function setAdhanMutedState(muted: boolean): void {
   if (isAdhanMuted !== muted) {
     isAdhanMuted = muted;
+    rebuildTrayMenu();
+  }
+}
+
+export function setAdhanPlayingState(playing: boolean): void {
+  if (isAdhanPlaying !== playing) {
+    isAdhanPlaying = playing;
+    rebuildTrayMenu();
+  }
+}
+
+export function setPrayerAlertsState(enabled: boolean): void {
+  if (prayerAlertsEnabled !== enabled) {
+    prayerAlertsEnabled = enabled;
+    rebuildTrayMenu();
+  }
+}
+
+export function setAutoAdhanState(enabled: boolean): void {
+  if (autoAdhanEnabled !== enabled) {
+    autoAdhanEnabled = enabled;
     rebuildTrayMenu();
   }
 }
@@ -52,6 +76,18 @@ export function rebuildTrayMenu(): void {
       enabled: false,
     },
     { type: 'separator' },
+    // Stop Adhan quick button when actively playing
+    ...(isAdhanPlaying
+      ? [
+          {
+            label: '⏹️ আজান বন্ধ করুন (Stop Adhan)',
+            click: () => {
+              mainWindow?.webContents.send('desktop:stop-adhan');
+            },
+          },
+          { type: 'separator' as const },
+        ]
+      : []),
     {
       label: isVisible ? 'Hide to Tray (উইন্ডো লুকান)' : 'Open Al-Quran (উইন্ডো খুলুন)',
       click: () => {
@@ -88,10 +124,39 @@ export function rebuildTrayMenu(): void {
     },
     { type: 'separator' },
     {
+      label: prayerAlertsEnabled ? '🔔 নামাজের অ্যালার্ট: চালু' : '🔕 নামাজের অ্যালার্ট: বন্ধ',
+      type: 'checkbox',
+      checked: prayerAlertsEnabled,
+      click: () => {
+        prayerAlertsEnabled = !prayerAlertsEnabled;
+        mainWindow?.webContents.send('desktop:toggle-prayer-alerts', prayerAlertsEnabled);
+        rebuildTrayMenu();
+      },
+    },
+    {
+      label: autoAdhanEnabled ? '🔊 ওয়াক্তে আজান বাজানো: চালু' : '🔇 ওয়াক্তে আজান বাজানো: বন্ধ',
+      type: 'checkbox',
+      checked: autoAdhanEnabled,
+      click: () => {
+        autoAdhanEnabled = !autoAdhanEnabled;
+        mainWindow?.webContents.send('desktop:toggle-auto-adhan', autoAdhanEnabled);
+        rebuildTrayMenu();
+      },
+    },
+    {
       label: isAdhanMuted ? '🔊 আযান আনমিউট করুন (Unmute Adhan)' : '🔇 আযান মিউট করুন (Mute Adhan)',
       click: () => {
         isAdhanMuted = !isAdhanMuted;
         mainWindow?.webContents.send('desktop:toggle-adhan-mute', isAdhanMuted);
+        rebuildTrayMenu();
+      },
+    },
+    {
+      label: '🚀 উইন্ডোজ স্টার্টআপে চালু রাখুন (Run on Startup)',
+      type: 'checkbox',
+      checked: app.getLoginItemSettings().openAtLogin,
+      click: (item) => {
+        app.setLoginItemSettings({ openAtLogin: item.checked, openAsHidden: true });
         rebuildTrayMenu();
       },
     },

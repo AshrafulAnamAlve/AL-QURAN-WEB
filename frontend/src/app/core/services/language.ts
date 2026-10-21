@@ -274,6 +274,16 @@ export const TRANSLATIONS = {
   'settings.notifications.denied': { en: 'Notifications Blocked', bn: 'নোটিফিকেশন ব্লক করা হয়েছে' },
   'settings.notifications.request': { en: 'Enable Notifications', bn: 'নোটিফিকেশন চালু করুন' },
   'settings.notifications.masterToggle': { en: 'Enable Daily Prayer Alerts', bn: 'দৈনিক নামাজের নোটিফিকেশন সক্রিয় করুন' },
+  'settings.notifications.autoAdhanSound': { en: 'Auto-Play Azan Audio', bn: 'ওয়াক্তের শুরুতে স্বয়ংক্রিয় আজান বাজান' },
+  'settings.notifications.autoAdhanSoundDesc': {
+    en: 'Play full Azan audio when prayer time starts, even if the app window is closed or in the background.',
+    bn: 'ওয়াক্ত শুরু হওয়ার সাথে সাথে সুরসহ সম্পূর্ণ আজান বাজবে — অ্যাপ উইন্ডো বন্ধ বা ব্যাকগ্রাউন্ডে থাকলেও।',
+  },
+  'settings.notifications.autostart': { en: 'Launch Al-Quran on Windows Startup', bn: 'উইন্ডোজ স্টার্টআপে স্বয়ংক্রিয় চালু' },
+  'settings.notifications.autostartDesc': {
+    en: 'Keep Al-Quran running in the background when your computer turns on, ensuring you never miss a prayer or Azan.',
+    bn: 'কম্পিউটার চালু হওয়ার সাথে সাথে আল-কুরআন ব্যাকগ্রাউন্ডে সক্রিয় থাকবে, ফলে কোনো নামাজের ওয়াক্ত বা আজান মিস হবে না।',
+  },
   'settings.notifications.autoModal': { en: 'Auto-open In-App Adhan Modal on prayer time', bn: 'নামাজের সময়ে স্বয়ংক্রিয়ভাবে আজান প্লেয়ার দেখান' },
   'settings.notifications.defaultMuted': {
     en: 'Start Adhan muted by default (Quiet environment safe)',
@@ -300,6 +310,12 @@ export class LanguageService {
   readonly language = this._language.asReadonly();
   readonly isBn = computed(() => this._language() === 'bn');
 
+  constructor() {
+    if (typeof document !== 'undefined') {
+      document.documentElement.lang = this._language();
+    }
+  }
+
   setLanguage(lang: AppLanguage): void {
     this._language.set(lang);
     this.storage.write(STORAGE_KEYS.language, lang);
@@ -324,6 +340,6 @@ export class LanguageService {
     if (saved === 'en' || saved === 'bn') {
       return saved;
     }
-    return 'en';
+    return 'bn';
   }
 }

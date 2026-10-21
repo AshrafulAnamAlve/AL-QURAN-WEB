@@ -104,6 +104,9 @@ export class SettingsPage implements OnInit {
 
   ngOnInit(): void {
     this.reciterService.loadList();
+    if (this.desktop.isDesktop()) {
+      this.desktop.getAutostart().then((val) => this.isAutostart.set(val));
+    }
     this.seo.apply({
       title: this.isBn() ? 'সেটিংস' : 'Settings',
       description:
@@ -405,9 +408,28 @@ export class SettingsPage implements OnInit {
     }
   }
 
+  protected readonly isAutostart = signal(false);
+
   toggleMasterPrayerAlerts(): void {
     const current = this.prayerNotifications.settings().enabled;
     this.prayerNotifications.toggleMaster(!current);
+  }
+
+  toggleAutoAdhanSound(): void {
+    const current = this.prayerNotifications.settings().autoPlayAdhan;
+    this.prayerNotifications.toggleAutoAdhan(!current);
+  }
+
+  async toggleAutostart(): Promise<void> {
+    const next = !this.isAutostart();
+    const result = await this.desktop.setAutostart(next);
+    this.isAutostart.set(result);
+    this.showToast(
+      this.isBn()
+        ? (result ? 'উইন্ডোজ স্টার্টআপে স্বয়ংক্রিয় চালু সক্রিয় করা হয়েছে' : 'উইন্ডোজ স্টার্টআপ বন্ধ করা হয়েছে')
+        : (result ? 'Run at Windows startup enabled' : 'Run at Windows startup disabled'),
+      'success',
+    );
   }
 
   togglePrayerAlert(key: CorePrayerAlertKey): void {

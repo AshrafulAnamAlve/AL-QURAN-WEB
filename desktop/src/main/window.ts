@@ -1,10 +1,11 @@
-import { app, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, Notification, shell } from 'electron';
 import * as path from 'path';
 import { WindowStateManager } from './window-state';
 
 let mainWindow: BrowserWindow | null = null;
 let isQuitting = false;
 let windowStateManager: WindowStateManager | null = null;
+let hasShownCloseNotice = false;
 
 export function setIsQuitting(val: boolean): void {
   isQuitting = val;
@@ -105,6 +106,18 @@ export function createMainWindow(): BrowserWindow {
     if (!isQuitting) {
       event.preventDefault();
       mainWindow?.hide();
+
+      if (!hasShownCloseNotice && Notification.isSupported()) {
+        hasShownCloseNotice = true;
+        const defaultIcon = path.join(__dirname, '../../assets/icons/icon.png');
+        const notice = new Notification({
+          title: 'Al-Quran (আল-কুরআন)',
+          body: 'অ্যাপটি ব্যাকগ্রাউন্ডে সক্রিয় রয়েছে। নামাজের সময় নোটিফিকেশন আসবে এবং স্বয়ংক্রিয়ভাবে আজান বাজবে।',
+          icon: defaultIcon,
+          silent: true,
+        });
+        notice.show();
+      }
     }
   });
 

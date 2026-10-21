@@ -21,6 +21,15 @@ export interface DesktopApi {
   setAdhanMuted: (muted: boolean) => void;
   onNotificationClick: (callback: () => void) => void;
   onMediaControl: (callback: (action: 'play-pause' | 'next' | 'prev') => void) => void;
+  // Prayer & Background Adhan methods
+  setAutostart: (enabled: boolean) => Promise<boolean>;
+  getAutostart: () => Promise<boolean>;
+  notifyAdhanState: (isPlaying: boolean) => void;
+  onStopAdhan: (callback: () => void) => void;
+  onTogglePrayerAlerts: (callback: (enabled: boolean) => void) => void;
+  onToggleAutoAdhan: (callback: (enabled: boolean) => void) => void;
+  setPrayerAlertsEnabled: (enabled: boolean) => void;
+  setAutoAdhanEnabled: (enabled: boolean) => void;
 }
 
 const desktopApi: DesktopApi = {
@@ -61,6 +70,30 @@ const desktopApi: DesktopApi = {
   },
   onMediaControl: (callback: (action: 'play-pause' | 'next' | 'prev') => void) => {
     ipcRenderer.on('desktop:media-control', (_event, action) => callback(action));
+  },
+  setAutostart: (enabled: boolean) => {
+    return ipcRenderer.invoke('desktop:set-autostart', enabled);
+  },
+  getAutostart: () => {
+    return ipcRenderer.invoke('desktop:get-autostart');
+  },
+  notifyAdhanState: (isPlaying: boolean) => {
+    ipcRenderer.send('desktop:notify-adhan-state', isPlaying);
+  },
+  onStopAdhan: (callback: () => void) => {
+    ipcRenderer.on('desktop:stop-adhan', () => callback());
+  },
+  onTogglePrayerAlerts: (callback: (enabled: boolean) => void) => {
+    ipcRenderer.on('desktop:toggle-prayer-alerts', (_event, enabled) => callback(enabled));
+  },
+  onToggleAutoAdhan: (callback: (enabled: boolean) => void) => {
+    ipcRenderer.on('desktop:toggle-auto-adhan', (_event, enabled) => callback(enabled));
+  },
+  setPrayerAlertsEnabled: (enabled: boolean) => {
+    ipcRenderer.send('desktop:set-prayer-alerts', enabled);
+  },
+  setAutoAdhanEnabled: (enabled: boolean) => {
+    ipcRenderer.send('desktop:set-auto-adhan', enabled);
   },
 };
 

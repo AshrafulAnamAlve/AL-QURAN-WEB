@@ -68,6 +68,12 @@ describe('SettingsPage', () => {
     expect(component['prayerNotifications'].activeAdhanModal()).not.toBeNull();
   });
 
+  it('toggles auto adhan sound setting', () => {
+    const initial = component['prayerNotifications'].settings().autoPlayAdhan;
+    component.toggleAutoAdhanSound();
+    expect(component['prayerNotifications'].settings().autoPlayAdhan).toBe(!initial);
+  });
+
   it('toggles daily task reminder setting', () => {
     const taskService = TestBed.inject(TaskService);
     const initial = taskService.settings().reminderEnabled;
@@ -114,7 +120,7 @@ describe('SettingsPage', () => {
     fixture.detectChanges();
 
     expect((fixture.nativeElement as HTMLElement).querySelector('.modal-dialog')).toBeNull();
-    expect(component['toastMessage']()).toContain('bookmark');
+    expect(component['toastMessage']()).toContain('বুকমার্ক');
   });
 
   it('cancels confirmation modal without changes', () => {

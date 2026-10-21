@@ -143,16 +143,22 @@
         </div>
 
         <div class="countdown-hero__adhan-bar">
-          <div class="countdown-hero__adhan-status" [class.is-active]="isNextAdhanActive()" [class.is-off]="!isNextAdhanActive()">
-            <span class="countdown-hero__adhan-icon" aria-hidden="true">{{ isNextAdhanActive() ? '🔔' : '🔕' }}</span>
+          <div class="countdown-hero__adhan-status" [class.is-active]="isNextAlertActive() || isNextAdhanActive()" [class.is-off]="!isNextAlertActive() && !isNextAdhanActive()">
+            <span class="countdown-hero__adhan-icon" aria-hidden="true">{{ (isNextAlertActive() || isNextAdhanActive()) ? '🔔' : '🔕' }}</span>
             <div class="countdown-hero__adhan-info">
               <strong class="countdown-hero__adhan-title">
-                {{ isNextAdhanActive() ? (isBn() ? 'স্বয়ংক্রিয় আজান অ্যালার্ট: সক্রিয়' : 'Auto-Adhan Alert: ON') : (isBn() ? 'স্বয়ংক্রিয় আজান অ্যালার্ট: বন্ধ' : 'Auto-Adhan Alert: OFF') }}
+                {{ isNextAdhanActive()
+                  ? (isBn() ? 'আজান অডিও ও নোটিফিকেশন: চালু' : 'Adhan Audio & Alerts: ON')
+                  : (isNextAlertActive()
+                    ? (isBn() ? 'নোটিফিকেশন অ্যালার্ট: চালু (আজান অডিও বন্ধ)' : 'Alerts: ON (Adhan Audio: OFF)')
+                    : (isBn() ? 'নোটিফিকেশন ও আজান: বন্ধ' : 'Alerts & Adhan: OFF')) }}
               </strong>
               <span class="countdown-hero__adhan-desc">
                 {{ isNextAdhanActive()
-                  ? (isBn() ? (next.prayer.banglaName + ' ওয়াক্তে (' + formatTime12h(next.prayer.time) + ') স্বয়ংক্রিয়ভাবে আজান বাজবে') : ('Adhan will play automatically at ' + formatTime12h(next.prayer.time)))
-                  : (isBn() ? 'ওয়াক্তের সময় আজান বাজবে না (নীরব)' : 'Adhan will not play automatically') }}
+                  ? (isBn() ? (next.prayer.banglaName + ' ওয়াক্তে (' + formatTime12h(next.prayer.time) + ') নোটিফিকেশন আসবে এবং ব্যাকগ্রাউন্ডে স্বয়ংক্রিয়ভাবে আজান বাজবে।') : ('Adhan audio will play and notification will arrive at ' + formatTime12h(next.prayer.time) + ' even if the app is closed to tray.'))
+                  : (isNextAlertActive()
+                    ? (isBn() ? (next.prayer.banglaName + ' ওয়াক্তে (' + formatTime12h(next.prayer.time) + ') নোটিফিকেশন আসবে।') : ('Notification alert will arrive at ' + formatTime12h(next.prayer.time) + '.'))
+                    : (isBn() ? 'ওয়াক্তের সময় কোনো অ্যালার্ট বা আজান বাজবে না।' : 'No notification or audio will trigger for this prayer.')) }}
               </span>
             </div>
           </div>
@@ -160,13 +166,24 @@
             <button
               type="button"
               class="aq-btn aq-btn--sm"
-              [class.aq-btn--secondary]="isNextAdhanActive()"
-              [class.aq-btn--primary]="!isNextAdhanActive()"
+              [class.aq-btn--secondary]="isNextAlertActive()"
+              [class.aq-btn--primary]="!isNextAlertActive()"
               (click)="togglePrayerAlert(next.prayer.key, $event)"
-              [attr.aria-label]="isNextAdhanActive() ? (isBn() ? 'আজান বন্ধ করুন' : 'Turn off Adhan') : (isBn() ? 'আজান চালু করুন' : 'Turn on Adhan')"
+              [attr.aria-label]="isNextAlertActive() ? (isBn() ? 'ওয়াক্তের নোটিফিকেশন বন্ধ করুন' : 'Turn off notification alert') : (isBn() ? 'ওয়াক্তের নোটিফিকেশন চালু করুন' : 'Turn on notification alert')"
             >
-              <aq-icon [name]="isNextAdhanActive() ? 'volumeOff' : 'bell'" [size]="14" />
-              <span>{{ isNextAdhanActive() ? (isBn() ? 'বন্ধ করুন' : 'Turn OFF') : (isBn() ? 'চালু করুন' : 'Turn ON') }}</span>
+              <aq-icon [name]="isNextAlertActive() ? 'bell' : 'volumeOff'" [size]="14" />
+              <span>{{ isNextAlertActive() ? (isBn() ? 'অ্যালার্ট বন্ধ' : 'Alert OFF') : (isBn() ? 'অ্যালার্ট চালু' : 'Alert ON') }}</span>
+            </button>
+            <button
+              type="button"
+              class="aq-btn aq-btn--sm"
+              [class.aq-btn--secondary]="isAutoAdhanActive()"
+              [class.aq-btn--primary]="!isAutoAdhanActive()"
+              (click)="toggleAutoAdhan($event)"
+              [attr.aria-label]="isAutoAdhanActive() ? (isBn() ? 'স্বয়ংক্রিয় আজান অডিও বন্ধ করুন' : 'Turn off Auto-Adhan audio') : (isBn() ? 'স্বয়ংক্রিয় আজান অডিও চালু করুন' : 'Turn on Auto-Adhan audio')"
+            >
+              <aq-icon [name]="isAutoAdhanActive() ? 'volume2' : 'volumeOff'" [size]="14" />
+              <span>{{ isAutoAdhanActive() ? (isBn() ? 'আজান সাউন্ড বন্ধ' : 'Adhan Sound OFF') : (isBn() ? 'আজান সাউন্ড চালু' : 'Adhan Sound ON') }}</span>
             </button>
             <button
               type="button"
@@ -175,7 +192,7 @@
               [attr.aria-label]="isBn() ? 'এখনই আজান শুনুন' : 'Play Adhan Now'"
             >
               <aq-icon name="volume2" [size]="14" />
-              <span>{{ isBn() ? 'আজান শুনুন' : 'Play Adhan Now' }}</span>
+              <span>{{ isBn() ? 'আজান শুনুন' : 'Play Adhan' }}</span>
             </button>
           </div>
         </div>
@@ -225,10 +242,10 @@
                     class="timing-card__alert-toggle"
                     [class.is-active]="isPrayerAlertActive(item.key)"
                     (click)="togglePrayerAlert(item.key, $event)"
-                    [title]="isPrayerAlertActive(item.key) ? (isBn() ? 'আজান অ্যালার্ট চালু — বন্ধ করতে ক্লিক করুন' : 'Adhan alert ON — click to mute') : (isBn() ? 'আজান অ্যালার্ট বন্ধ — চালু করতে ক্লিক করুন' : 'Adhan alert OFF — click to enable')"
-                    [attr.aria-label]="isPrayerAlertActive(item.key) ? 'Adhan alert ON' : 'Adhan alert OFF'"
+                    [title]="isPrayerAlertActive(item.key) ? (isBn() ? 'ওয়াক্তের অ্যালার্ট চালু — বন্ধ করতে ক্লিক করুন' : 'Prayer alert ON — click to mute') : (isBn() ? 'ওয়াক্তের অ্যালার্ট বন্ধ — চালু করতে ক্লিক করুন' : 'Prayer alert OFF — click to enable')"
+                    [attr.aria-label]="isPrayerAlertActive(item.key) ? 'Prayer alert ON' : 'Prayer alert OFF'"
                   >
-                    <span aria-hidden="true">{{ isPrayerAlertActive(item.key) ? '🔔 আজান চালু' : '🔕 বন্ধ' }}</span>
+                    <span aria-hidden="true">{{ isPrayerAlertActive(item.key) ? '🔔 অ্যালার্ট চালু' : '🔕 অ্যালার্ট বন্ধ' }}</span>
                   </button>
                 }
               </div>

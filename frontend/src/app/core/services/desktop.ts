@@ -29,6 +29,15 @@ declare global {
       setAdhanMuted: (muted: boolean) => void;
       onNotificationClick: (callback: () => void) => void;
       onMediaControl: (callback: (action: 'play-pause' | 'next' | 'prev') => void) => void;
+      // Background Adhan & Prayer Alerts
+      setAutostart: (enabled: boolean) => Promise<boolean>;
+      getAutostart: () => Promise<boolean>;
+      notifyAdhanState: (isPlaying: boolean) => void;
+      onStopAdhan: (callback: () => void) => void;
+      onTogglePrayerAlerts: (callback: (enabled: boolean) => void) => void;
+      onToggleAutoAdhan: (callback: (enabled: boolean) => void) => void;
+      setPrayerAlertsEnabled: (enabled: boolean) => void;
+      setAutoAdhanEnabled: (enabled: boolean) => void;
     };
   }
 }
@@ -189,6 +198,64 @@ export class DesktopService {
     if (this.isDesktop() && window.desktopApi?.onNotificationClick) {
       window.desktopApi.onNotificationClick(callback);
     }
+  }
+
+  /** Informs desktop tray about active Adhan playing state */
+  notifyAdhanPlaying(isPlaying: boolean): void {
+    if (this.isDesktop() && window.desktopApi?.notifyAdhanState) {
+      window.desktopApi.notifyAdhanState(isPlaying);
+    }
+  }
+
+  /** Subscribe to Stop Adhan requested from desktop system tray */
+  onStopAdhan(callback: () => void): void {
+    if (this.isDesktop() && window.desktopApi?.onStopAdhan) {
+      window.desktopApi.onStopAdhan(callback);
+    }
+  }
+
+  /** Subscribe to Prayer Alerts toggle requested from desktop system tray */
+  onTogglePrayerAlerts(callback: (enabled: boolean) => void): void {
+    if (this.isDesktop() && window.desktopApi?.onTogglePrayerAlerts) {
+      window.desktopApi.onTogglePrayerAlerts(callback);
+    }
+  }
+
+  /** Subscribe to Auto Adhan toggle requested from desktop system tray */
+  onToggleAutoAdhan(callback: (enabled: boolean) => void): void {
+    if (this.isDesktop() && window.desktopApi?.onToggleAutoAdhan) {
+      window.desktopApi.onToggleAutoAdhan(callback);
+    }
+  }
+
+  /** Sync prayer alerts enabled state to desktop tray */
+  setPrayerAlertsEnabled(enabled: boolean): void {
+    if (this.isDesktop() && window.desktopApi?.setPrayerAlertsEnabled) {
+      window.desktopApi.setPrayerAlertsEnabled(enabled);
+    }
+  }
+
+  /** Sync auto adhan enabled state to desktop tray */
+  setAutoAdhanEnabled(enabled: boolean): void {
+    if (this.isDesktop() && window.desktopApi?.setAutoAdhanEnabled) {
+      window.desktopApi.setAutoAdhanEnabled(enabled);
+    }
+  }
+
+  /** Get Windows startup autostart state */
+  async getAutostart(): Promise<boolean> {
+    if (this.isDesktop() && window.desktopApi?.getAutostart) {
+      return window.desktopApi.getAutostart();
+    }
+    return false;
+  }
+
+  /** Set Windows startup autostart state */
+  async setAutostart(enabled: boolean): Promise<boolean> {
+    if (this.isDesktop() && window.desktopApi?.setAutostart) {
+      return window.desktopApi.setAutostart(enabled);
+    }
+    return false;
   }
 
   /** Triggers a native OS notification banner */

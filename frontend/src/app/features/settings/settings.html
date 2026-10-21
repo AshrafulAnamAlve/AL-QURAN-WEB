@@ -530,6 +530,54 @@
           </div>
         </div>
 
+        <!-- Auto-Play Azan Audio on Prayer Time -->
+        <div class="setting-row">
+          <div class="setting-row__info">
+            <span class="setting-row__title">
+              {{ language.translate('settings.notifications.autoAdhanSound') }}
+            </span>
+            <span class="setting-row__desc">
+              {{ language.translate('settings.notifications.autoAdhanSoundDesc') }}
+            </span>
+          </div>
+          <div class="setting-row__control">
+            <button
+              type="button"
+              class="aq-btn aq-btn--sm"
+              [class.aq-btn--primary]="prayerNotifications.settings().autoPlayAdhan"
+              [class.aq-btn--secondary]="!prayerNotifications.settings().autoPlayAdhan"
+              (click)="toggleAutoAdhanSound()"
+            >
+              {{ prayerNotifications.settings().autoPlayAdhan ? (isBn() ? 'সক্রিয়' : 'Enabled') : (isBn() ? 'নিষ্ক্রিয়' : 'Disabled') }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Launch at Windows Startup (Desktop only) -->
+        @if (desktop.isDesktop()) {
+          <div class="setting-row">
+            <div class="setting-row__info">
+              <span class="setting-row__title">
+                {{ language.translate('settings.notifications.autostart') }}
+              </span>
+              <span class="setting-row__desc">
+                {{ language.translate('settings.notifications.autostartDesc') }}
+              </span>
+            </div>
+            <div class="setting-row__control">
+              <button
+                type="button"
+                class="aq-btn aq-btn--sm"
+                [class.aq-btn--primary]="isAutostart()"
+                [class.aq-btn--secondary]="!isAutostart()"
+                (click)="toggleAutostart()"
+              >
+                {{ isAutostart() ? (isBn() ? 'সক্রিয়' : 'Enabled') : (isBn() ? 'নিষ্ক্রিয়' : 'Disabled') }}
+              </button>
+            </div>
+          </div>
+        }
+
         <!-- Permission Status & Request -->
         <div class="setting-row">
           <div class="setting-row__info">

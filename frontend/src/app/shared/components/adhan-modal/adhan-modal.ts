@@ -263,11 +263,13 @@ export class AdhanModalComponent implements OnInit, OnDestroy {
 
   snooze(): void {
     this.destroyAudio();
+    this.notificationService.stopAdhan();
     this.notificationService.snooze(10);
   }
 
   dismiss(): void {
     this.destroyAudio();
+    this.notificationService.stopAdhan();
     this.notificationService.closeAdhanModal();
   }
 }

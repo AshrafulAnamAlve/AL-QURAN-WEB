@@ -1,6 +1,12 @@
 import { app, ipcMain, Notification } from 'electron';
 import * as path from 'path';
-import { setAdhanMutedState, updateTrayPrayerInfo } from './tray';
+import {
+  setAdhanMutedState,
+  setAdhanPlayingState,
+  setAutoAdhanState,
+  setPrayerAlertsState,
+  updateTrayPrayerInfo,
+} from './tray';
 import { getMainWindow, setIsQuitting } from './window';
 
 export function registerIpcHandlers(): void {
@@ -33,6 +39,34 @@ export function registerIpcHandlers(): void {
   // Keep system tray mute toggle in sync with Angular settings
   ipcMain.on('desktop:set-adhan-mute', (_event, muted: boolean) => {
     setAdhanMutedState(Boolean(muted));
+  });
+
+  // Keep system tray informed about active Adhan audio playback
+  ipcMain.on('desktop:notify-adhan-state', (_event, isPlaying: boolean) => {
+    setAdhanPlayingState(Boolean(isPlaying));
+  });
+
+  // Sync master prayer notification alerts toggle to tray
+  ipcMain.on('desktop:set-prayer-alerts', (_event, enabled: boolean) => {
+    setPrayerAlertsState(Boolean(enabled));
+  });
+
+  // Sync auto Adhan audio toggle to tray
+  ipcMain.on('desktop:set-auto-adhan', (_event, enabled: boolean) => {
+    setAutoAdhanState(Boolean(enabled));
+  });
+
+  // Autostart on Windows Login
+  ipcMain.handle('desktop:get-autostart', () => {
+    return app.getLoginItemSettings().openAtLogin;
+  });
+
+  ipcMain.handle('desktop:set-autostart', (_event, enabled: boolean) => {
+    app.setLoginItemSettings({
+      openAtLogin: Boolean(enabled),
+      openAsHidden: true, // Start minimized to system tray on login
+    });
+    return app.getLoginItemSettings().openAtLogin;
   });
 
   // Update tray tooltip & status from Angular PrayerService

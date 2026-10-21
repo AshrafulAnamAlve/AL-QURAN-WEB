@@ -37,6 +37,23 @@ export class PrayerNotificationService implements OnDestroy {
   );
   readonly settings = this._settings.asReadonly();
 
+  // Active Background / In-App Audio Engine
+  private audio: HTMLAudioElement | null = null;
+  private readonly _isAdhanPlaying = signal<boolean>(false);
+  readonly isAdhanPlaying = this._isAdhanPlaying.asReadonly();
+
+  private readonly _adhanCurrentTime = signal<number>(0);
+  readonly adhanCurrentTime = this._adhanCurrentTime.asReadonly();
+
+  private readonly _adhanDuration = signal<number>(0);
+  readonly adhanDuration = this._adhanDuration.asReadonly();
+
+  private readonly _adhanAudioError = signal<string | null>(null);
+  readonly adhanAudioError = this._adhanAudioError.asReadonly();
+
+  private readonly _currentAdhanPrayer = signal<PrayerTime | null>(null);
+  readonly currentAdhanPrayer = this._currentAdhanPrayer.asReadonly();
+
   // Permission state
   private readonly _permission = signal<NotificationPermission>(this.detectPermission());
   readonly permission = this._permission.asReadonly();
@@ -69,22 +86,37 @@ export class PrayerNotificationService implements OnDestroy {
   private initDesktopIntegration(): void {
     if (!this.desktopService.isDesktop()) return;
 
-    // Sync Adhan mute state between desktop tray and app settings
+    // Sync Adhan mute & prayer alert states between desktop tray and app settings
     this.desktopService.setTrayAdhanMuted(this._settings().defaultMuted);
+    this.desktopService.setPrayerAlertsEnabled(this._settings().enabled);
+    this.desktopService.setAutoAdhanEnabled(this._settings().autoPlayAdhan);
 
     this.desktopService.onToggleAdhanMute((muted) => {
       this.setDefaultMuted(muted);
     });
 
+    this.desktopService.onTogglePrayerAlerts((enabled) => {
+      this.toggleMaster(enabled);
+    });
+
+    this.desktopService.onToggleAutoAdhan((enabled) => {
+      this.toggleAutoAdhan(enabled);
+    });
+
+    this.desktopService.onStopAdhan(() => {
+      this.stopAdhan();
+    });
+
     this.desktopService.onNotificationClick(() => {
-      const next = this.prayerTimes.nextPrayer();
-      if (next) {
-        this.openAdhanModal(next.prayer);
+      const active = this._currentAdhanPrayer() || this.prayerTimes.nextPrayer()?.prayer;
+      if (active) {
+        this.openAdhanModal(active);
       }
     });
   }
 
   ngOnDestroy(): void {
+    this.stopAdhan();
     if (this.checkIntervalId !== null) {
       clearInterval(this.checkIntervalId);
       this.checkIntervalId = null;
@@ -131,8 +163,25 @@ export class PrayerNotificationService implements OnDestroy {
     this._settings.set(updated);
     this.storage.write(STORAGE_KEYS.prayerNotifications, updated);
 
-    if (partial.defaultMuted !== undefined && this.desktopService.isDesktop()) {
-      this.desktopService.setTrayAdhanMuted(partial.defaultMuted);
+    if (partial.defaultMuted !== undefined) {
+      if (this.audio) {
+        this.audio.muted = partial.defaultMuted;
+      }
+      if (this.desktopService.isDesktop()) {
+        this.desktopService.setTrayAdhanMuted(partial.defaultMuted);
+      }
+    }
+
+    if (partial.volume !== undefined && this.audio) {
+      this.audio.volume = partial.volume;
+    }
+
+    if (partial.enabled !== undefined && this.desktopService.isDesktop()) {
+      this.desktopService.setPrayerAlertsEnabled(partial.enabled);
+    }
+
+    if (partial.autoPlayAdhan !== undefined && this.desktopService.isDesktop()) {
+      this.desktopService.setAutoAdhanEnabled(partial.autoPlayAdhan);
     }
   }
 
@@ -146,6 +195,11 @@ export class PrayerNotificationService implements OnDestroy {
 
   toggleMaster(enabled: boolean): void {
     this.updateSettings({ enabled });
+  }
+
+  toggleAutoAdhan(enabled?: boolean): void {
+    const next = enabled !== undefined ? enabled : !this._settings().autoPlayAdhan;
+    this.updateSettings({ autoPlayAdhan: next });
   }
 
   /**
@@ -331,7 +385,124 @@ export class PrayerNotificationService implements OnDestroy {
   }
 
   /**
-   * Triggers a test alert immediately with desktop notification and in-app modal.
+   * Plays Adhan audio recitation. Runs reliably even if the app window is hidden or minimized to tray.
+   */
+  playAdhan(prayer: PrayerTime, voiceId?: AdhanVoiceId): void {
+    if (typeof window === 'undefined') return;
+
+    this.stopAdhan();
+    this._adhanAudioError.set(null);
+    this._currentAdhanPrayer.set(prayer);
+
+    const voice = (voiceId ? this.voices.find((v) => v.id === voiceId) : null) ?? this.currentVoice();
+    const url = voice.audioUrl;
+
+    try {
+      this.audio = new Audio(url);
+      this.audio.preload = 'auto';
+      this.audio.volume = this._settings().volume;
+      this.audio.muted = this._settings().defaultMuted;
+
+      this.audio.addEventListener('play', () => {
+        this._isAdhanPlaying.set(true);
+        this.desktopService.notifyAdhanPlaying(true);
+      });
+
+      this.audio.addEventListener('pause', () => {
+        this._isAdhanPlaying.set(false);
+        this.desktopService.notifyAdhanPlaying(false);
+      });
+
+      this.audio.addEventListener('ended', () => {
+        this._isAdhanPlaying.set(false);
+        this._adhanCurrentTime.set(0);
+        this.desktopService.notifyAdhanPlaying(false);
+      });
+
+      this.audio.addEventListener('timeupdate', () => {
+        if (this.audio) {
+          this._adhanCurrentTime.set(this.audio.currentTime);
+          this._adhanDuration.set(this.audio.duration || 0);
+        }
+      });
+
+      this.audio.addEventListener('loadedmetadata', () => {
+        if (this.audio) {
+          this._adhanDuration.set(this.audio.duration || 0);
+        }
+      });
+
+      this.audio.addEventListener('error', () => {
+        this._adhanAudioError.set('Could not load audio stream');
+        this._isAdhanPlaying.set(false);
+        this.desktopService.notifyAdhanPlaying(false);
+      });
+
+      const playPromise = this.audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => {
+          this.logger.warn('Audio play was interrupted or restricted', err);
+          this._isAdhanPlaying.set(false);
+          this.desktopService.notifyAdhanPlaying(false);
+        });
+      }
+    } catch (err) {
+      this.logger.warn('Failed to initialize Audio', err);
+      this._adhanAudioError.set('Audio playback failed');
+    }
+  }
+
+  /**
+   * Stops Adhan audio playback completely.
+   */
+  stopAdhan(): void {
+    if (this.audio) {
+      try {
+        this.audio.pause();
+        this.audio.currentTime = 0;
+        this.audio.removeAttribute('src');
+        this.audio.load();
+      } catch {
+        // Ignored
+      }
+      this.audio = null;
+    }
+    this._isAdhanPlaying.set(false);
+    this._adhanCurrentTime.set(0);
+    this.desktopService.notifyAdhanPlaying(false);
+  }
+
+  /**
+   * Toggles play/pause for active Adhan playback.
+   */
+  toggleAdhanPlayback(): void {
+    if (!this.audio) {
+      const p = this._currentAdhanPrayer() || this.prayerTimes.nextPrayer()?.prayer;
+      if (p) {
+        this.playAdhan(p);
+      }
+      return;
+    }
+    if (this._isAdhanPlaying()) {
+      this.audio.pause();
+    } else {
+      this.audio.play().catch(() => {});
+    }
+  }
+
+  /**
+   * Toggles mute/unmute for Adhan audio.
+   */
+  toggleAdhanMute(): void {
+    const nextMuted = !this._settings().defaultMuted;
+    this.setDefaultMuted(nextMuted);
+    if (this.audio) {
+      this.audio.muted = nextMuted;
+    }
+  }
+
+  /**
+   * Triggers a test alert immediately with desktop notification, auto Adhan audio, and in-app modal.
    */
   triggerTestAlert(prayerKey = 'asr'): void {
     const table = this.prayerTimes.timetable();
@@ -346,7 +517,12 @@ export class PrayerNotificationService implements OnDestroy {
         isPrayer: true,
       };
 
-    this.sendDesktopNotification(target);
+    if (this._settings().enabled) {
+      this.sendDesktopNotification(target);
+    }
+    if (this._settings().autoPlayAdhan && !this._settings().defaultMuted) {
+      this.playAdhan(target);
+    }
     this.openAdhanModal(target, true);
   }
 
@@ -363,7 +539,8 @@ export class PrayerNotificationService implements OnDestroy {
 
   private checkPrayerTimes(): void {
     const settings = this._settings();
-    if (!settings.enabled) return;
+    // Proceed if either notification alerts OR auto-play Adhan audio is enabled
+    if (!settings.enabled && !settings.autoPlayAdhan) return;
 
     const table = this.prayerTimes.timetable();
     if (!table || table.times.length === 0) return;
@@ -391,10 +568,17 @@ export class PrayerNotificationService implements OnDestroy {
         this.notifiedPrayers.add(dedupeKey);
         this.logger.info(`Prayer alert triggered for: ${pKey}`);
 
-        // 1. Emit native desktop/PWA notification
-        this.sendDesktopNotification(prayer);
+        // 1. Emit native desktop/PWA notification (if alerts are enabled)
+        if (settings.enabled) {
+          this.sendDesktopNotification(prayer);
+        }
 
-        // 2. Open in-app Adhan modal if auto-popup is active
+        // 2. Automatically play Azan audio (even when app window is closed / in system tray)
+        if (settings.autoPlayAdhan && !settings.defaultMuted) {
+          this.playAdhan(prayer);
+        }
+
+        // 3. Open in-app Adhan modal if auto-popup is active
         if (settings.autoPlayAdhanModal) {
           this.openAdhanModal(prayer);
         }

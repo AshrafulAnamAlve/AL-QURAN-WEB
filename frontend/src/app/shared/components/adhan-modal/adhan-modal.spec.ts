@@ -99,7 +99,7 @@ describe('AdhanModalComponent', () => {
     expect(component).toBeTruthy();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('.prayer-arabic')?.textContent).toContain('العصر');
-    expect(compiled.querySelector('.prayer-title')?.textContent).toContain('Asr');
+    expect(compiled.querySelector('.prayer-title')?.textContent).toContain('আসর');
   });
 
   it('should start muted when startMuted is specified', () => {

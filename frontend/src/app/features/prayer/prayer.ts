@@ -98,12 +98,6 @@ export class PrayerPage implements OnInit {
 
   readonly isBn = this.languageService.isBn;
 
-  readonly isNextAdhanActive = computed<boolean>(() => {
-    const next = this.nextPrayer();
-    if (!next) return false;
-    return this.notificationService.isPrayerAlertActive(next.prayer.key);
-  });
-
   readonly timetable = this.prayerTimes.timetable;
   readonly loading = this.prayerTimes.loading;
   readonly error = this.prayerTimes.error;
@@ -250,8 +244,31 @@ export class PrayerPage implements OnInit {
     return this.prayerTimes.toBnDigits(val);
   }
 
+  readonly isAutoAdhanActive = computed(() => this.notificationService.settings().autoPlayAdhan);
+
+  readonly isNextAlertActive = computed(() => {
+    const next = this.nextPrayer();
+    if (!next) return this.notificationService.settings().enabled;
+    return this.notificationService.isPrayerAlertActive(next.prayer.key);
+  });
+
+  readonly isNextAdhanActive = computed(() => {
+    const next = this.nextPrayer();
+    const settings = this.notificationService.settings();
+    if (!settings.autoPlayAdhan || settings.defaultMuted) return false;
+    if (!next) return true;
+    return this.notificationService.isPrayerAlertActive(next.prayer.key);
+  });
+
   isPrayerAlertActive(key: string): boolean {
     return this.notificationService.isPrayerAlertActive(key);
+  }
+
+  toggleAutoAdhan(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.notificationService.toggleAutoAdhan();
   }
 
   async togglePrayerAlert(key: string, event?: Event): Promise<void> {

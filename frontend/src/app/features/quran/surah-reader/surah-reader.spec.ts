@@ -113,8 +113,8 @@ describe('SurahReaderPage', () => {
     const text = fixture.nativeElement.textContent as string;
 
     expect(text).toContain('Al-Fatihah');
-    expect(text).toContain('Surah 1');
-    expect(text).toContain('7 ayahs');
+    expect(text).toContain('সূরা 1');
+    expect(text).toContain('7 আয়াত');
   });
 
   it('renders every ayah of a short surah', async () => {
@@ -276,7 +276,7 @@ describe('SurahReaderPage', () => {
 
     const modal = fixture.nativeElement.querySelector('.resume-dialog');
     expect(modal).not.toBeNull();
-    expect(modal.textContent).toContain('5');
+    expect(modal.textContent).toContain('৫');
 
     // Click continue button
     const continueBtn = modal.querySelector('.aq-btn--primary') as HTMLButtonElement;
@@ -301,7 +301,7 @@ describe('SurahReaderPage', () => {
 
     const playBtn = fixture.nativeElement.querySelector('.reader__listen-btn') as HTMLButtonElement;
     expect(playBtn).toBeTruthy();
-    expect(playBtn.textContent?.trim()).toContain('Play');
+    expect(playBtn.textContent?.trim()).toContain('শুনুন');
 
     // Click play button
     playBtn.click();
@@ -310,7 +310,7 @@ describe('SurahReaderPage', () => {
 
     const audio = TestBed.inject(AudioPlayerService);
     expect(audio.current()?.surahNumber).toBe(1);
-    expect(playBtn.textContent?.trim()).toContain('Pause');
+    expect(playBtn.textContent?.trim()).toContain('বিরতি');
 
     playStub.mockRestore();
   });
@@ -341,6 +341,6 @@ describe('SurahReaderPage', () => {
     const progressEl = fixture.nativeElement.querySelector('.reader__progress');
     expect(progressEl).toBeTruthy();
     expect(progressEl.getAttribute('aria-valuenow')).toBe('43');
-    expect(progressEl.textContent).toContain('43%');
+    expect(progressEl.textContent).toContain('৪৩%');
   });
 });

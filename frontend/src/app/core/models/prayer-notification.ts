@@ -85,7 +85,8 @@ export const ADHAN_VOICE_OPTIONS: readonly AdhanVoiceOption[] = [
 ];
 
 export interface PrayerNotificationSettings {
-  readonly enabled: boolean;
+  readonly enabled: boolean; // Master alert toggle for notifications
+  readonly autoPlayAdhan: boolean; // Master toggle to auto-play Azan sound on prayer time
   readonly fajr: boolean;
   readonly sunrise: boolean;
   readonly dhuhr: boolean;
@@ -100,6 +101,7 @@ export interface PrayerNotificationSettings {
 
 export const DEFAULT_PRAYER_NOTIFICATION_SETTINGS: PrayerNotificationSettings = {
   enabled: true,
+  autoPlayAdhan: true, // Default to true so user gets Azan audio automatically
   fajr: true,
   sunrise: false, // Sunrise is not a prayer, optional alert
   dhuhr: true,
@@ -108,7 +110,7 @@ export const DEFAULT_PRAYER_NOTIFICATION_SETTINGS: PrayerNotificationSettings = 
   isha: true,
   autoPlayAdhanModal: true,
   adhanVoice: 'makkah',
-  defaultMuted: true, // Adheres to browser autoplay policy & quiet environments
+  defaultMuted: false, // Default to audible so Azan plays with sound!
   volume: 0.8,
 };
 

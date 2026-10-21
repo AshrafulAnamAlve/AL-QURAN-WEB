@@ -156,8 +156,8 @@ describe('HomePage', () => {
 
   it('renders hero greeting and navigation buttons', () => {
     const el: HTMLElement = fixture.nativeElement;
-    expect(el.textContent).toContain('Read, listen to and reflect on the Quran');
-    expect(el.textContent).toContain('Read Quran');
+    expect(el.textContent).toContain('কুরআন তিলাওয়াত করুন, শুনুন এবং অনুধাবন করুন');
+    expect(el.textContent).toContain('কুরআন তিলাওয়াত');
   });
 
   it('renders current prayer waqt badge in hero section', () => {
@@ -168,11 +168,11 @@ describe('HomePage', () => {
     const el: HTMLElement = fixture.nativeElement;
     const waqtCard = el.querySelector('.hero__waqt-card');
     expect(waqtCard).not.toBeNull();
-    expect(waqtCard?.textContent).toContain('Current Waqt:');
-    expect(waqtCard?.textContent).toContain('Dhuhr');
-    expect(waqtCard?.textContent).toContain('11:45 AM');
-    expect(waqtCard?.textContent).toContain('Next: Asr');
-    expect(waqtCard?.textContent).toContain('left');
+    expect(waqtCard?.textContent).toContain('বর্তমান ওয়াক্ত:');
+    expect(waqtCard?.textContent).toContain('যোহর');
+    expect(waqtCard?.textContent).toContain('১১:৪৫ AM');
+    expect(waqtCard?.textContent).toContain('পরবর্তী আসর');
+    expect(waqtCard?.textContent).toContain('বাকি');
   });
 
   it('renders prayer times card with live countdown', () => {
@@ -183,9 +183,9 @@ describe('HomePage', () => {
     const el: HTMLElement = fixture.nativeElement;
     const prayerCard = el.querySelector('.prayer-home-card');
     expect(prayerCard).not.toBeNull();
-    expect(prayerCard?.textContent).toContain('Fajr');
-    expect(prayerCard?.textContent).toContain('01:30:00');
-    expect(prayerCard?.textContent).toContain('Timetable');
+    expect(prayerCard?.textContent).toContain('ফজর');
+    expect(prayerCard?.textContent).toContain('০১:৩০:০০');
+    expect(prayerCard?.textContent).toContain('পূর্ণ সময়সূচি');
   });
 
   it('does not show Continue Reading card when there is no last read position', () => {
@@ -207,17 +207,17 @@ describe('HomePage', () => {
     const el: HTMLElement = fixture.nativeElement;
     const card = el.querySelector('.continue-card');
     expect(card).not.toBeNull();
-    expect(card?.textContent).toContain('Al-Baqarah');
+    expect(card?.textContent).toContain('আল-বাকারা');
     expect(card?.textContent).toContain('255');
-    expect(card?.textContent).toContain('Resume');
+    expect(card?.textContent).toContain('পড়ুন');
   });
 
   it('renders Ayah of the Day card', () => {
     const el: HTMLElement = fixture.nativeElement;
     const dailyCard = el.querySelector('.daily-ayah-card');
     expect(dailyCard).not.toBeNull();
-    expect(dailyCard?.textContent).toContain('Al-Baqarah');
-    expect(dailyCard?.textContent).toContain('255');
+    expect(dailyCard?.textContent).toContain('আল-বাকারা');
+    expect(dailyCard?.textContent).toContain('২৫৫');
   });
 
   it('renders explore features grid with navigation cards', () => {
@@ -232,9 +232,9 @@ describe('HomePage', () => {
     const el: HTMLElement = fixture.nativeElement;
     const taskCard = el.querySelector('.daily-task-home-card');
     expect(taskCard).not.toBeNull();
-    expect(taskCard?.textContent).toContain("Today's Quran Goal");
-    expect(taskCard?.textContent).toContain('Day Streak');
-    expect(taskCard?.textContent).toContain('Edit Goal');
+    expect(taskCard?.textContent).toContain('আজকের কুরআন রুটিন');
+    expect(taskCard?.textContent).toContain('দিনের স্ট্রিক');
+    expect(taskCard?.textContent).toContain('রুটিন সেটিং');
   });
 
   it('allows opening and closing the task goal modal', () => {
@@ -258,8 +258,8 @@ describe('HomePage', () => {
     const el: HTMLElement = fixture.nativeElement;
     const banner = el.querySelector('.task-reminder-banner');
     expect(banner).not.toBeNull();
-    expect(banner?.textContent).toContain('Time for your daily Quran reading!');
-    expect(banner?.textContent).toContain('Read Now');
+    expect(banner?.textContent).toContain('দৈনিক তিলাওয়াতের সময় হয়েছে!');
+    expect(banner?.textContent).toContain('এখনই পড়ুন');
   });
 
   it('renders prominent Hadith action button in hero and Hadith of the Day card', () => {
@@ -273,7 +273,7 @@ describe('HomePage', () => {
     // Hadith of the day card
     const hadithCard = el.querySelector('.daily-hadith-home-card');
     expect(hadithCard).not.toBeNull();
-    expect(hadithCard?.textContent).toContain('Hadith of the Day');
+    expect(hadithCard?.textContent).toContain('আজকের নির্বাচিত হাদিস');
 
     // Bookmark and copy action buttons
     const buttons = hadithCard?.querySelectorAll('button');

@@ -59,7 +59,8 @@ describe('PrayerNotificationService', () => {
     expect(service.settings().asr).toBe(true);
     expect(service.settings().maghrib).toBe(true);
     expect(service.settings().isha).toBe(true);
-    expect(service.settings().defaultMuted).toBe(true);
+    expect(service.settings().defaultMuted).toBe(false);
+    expect(service.settings().autoPlayAdhan).toBe(true);
   });
 
   it('should update and persist settings', () => {
@@ -79,6 +80,9 @@ describe('PrayerNotificationService', () => {
 
     service.toggleMaster(false);
     expect(service.settings().enabled).toBe(false);
+
+    service.toggleAutoAdhan(false);
+    expect(service.settings().autoPlayAdhan).toBe(false);
 
     service.toggleModalAutoPopup(false);
     expect(service.settings().autoPlayAdhanModal).toBe(false);

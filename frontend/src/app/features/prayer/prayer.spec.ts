@@ -99,7 +99,7 @@ describe('PrayerPage', () => {
   it('creates the prayer page and renders title and location', () => {
     expect(component).toBeTruthy();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.prayer-header__title')?.textContent).toContain('Prayer Times');
+    expect(compiled.querySelector('.prayer-header__title')?.textContent).toContain('নামাজের সময়সূচি');
     expect(compiled.querySelector('.location-btn__name')?.textContent).toContain(DEFAULT_LOCATION.displayName);
   });
 
@@ -111,7 +111,7 @@ describe('PrayerPage', () => {
     const names = Array.from(cards).map(
       (c) => c.querySelector('.timing-card__title')?.textContent?.trim(),
     );
-    expect(names).toEqual(['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha']);
+    expect(names).toEqual(['ফজর', 'সূর্যোদয়', 'যোহর', 'আসর', 'মাগরিব', 'এশা']);
   });
 
   it('renders live next-prayer countdown card', () => {
@@ -123,15 +123,15 @@ describe('PrayerPage', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const countdownHero = compiled.querySelector('.countdown-hero');
     expect(countdownHero).toBeTruthy();
-    expect(countdownHero?.textContent).toContain('Fajr');
-    expect(compiled.querySelector('.countdown-hero__digits')?.textContent).toContain('01:30:00');
+    expect(countdownHero?.textContent).toContain('ফজর');
+    expect(compiled.querySelector('.countdown-hero__digits')?.textContent).toContain('০১:৩০:০০');
   });
 
   it('states the calculation method and school in use', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const calcSummary = compiled.querySelector('.calculation-bar__active');
     expect(calcSummary?.textContent).toContain('Islamic Society of North America (ISNA)');
-    expect(calcSummary?.textContent).toContain('Shafi');
+    expect(calcSummary?.textContent).toContain('শাফেঈ');
   });
 
   it('shows permission denied banner when location access is denied', () => {
@@ -142,7 +142,7 @@ describe('PrayerPage', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const banner = compiled.querySelector('.permission-banner');
     expect(banner).toBeTruthy();
-    expect(banner?.textContent).toContain('Location access is disabled or denied');
+    expect(banner?.textContent).toContain('লোকেশন ব্যবহারের অনুমতি পাওয়া যায়নি');
   });
 
   it('allows opening location picker and selecting a city', () => {
@@ -175,19 +175,19 @@ describe('PrayerPage', () => {
     );
   });
 
-  it('renders authentic Islamic Bangla terminology when language is Bangla', () => {
+  it('renders authentic English terminology when language is English', () => {
     const lang = TestBed.inject(LanguageService);
-    lang.setLanguage('bn');
+    lang.setLanguage('en');
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.prayer-header__title')?.textContent).toContain('নামাজের সময়সূচি');
-    expect(compiled.querySelector('.location-btn__change')?.textContent).toBe('পরিবর্তন');
+    expect(compiled.querySelector('.prayer-header__title')?.textContent).toContain('Prayer Times');
+    expect(compiled.querySelector('.location-btn__change')?.textContent).toBe('Change');
 
     const cards = compiled.querySelectorAll('.timing-card:not(.timing-card--skeleton)');
     const titles = Array.from(cards).map(
       (c) => c.querySelector('.timing-card__title')?.textContent?.trim(),
     );
-    expect(titles).toEqual(['ফজর', 'সূর্যোদয়', 'যোহর', 'আসর', 'মাগরিব', 'এশা']);
+    expect(titles).toEqual(['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha']);
   });
 });

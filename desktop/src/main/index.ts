@@ -4,6 +4,9 @@ import { registerGlobalMediaShortcuts } from './shortcuts';
 import { createTray } from './tray';
 import { createMainWindow, getMainWindow, setIsQuitting } from './window';
 
+// Unrestricted background and programmatic HTML5 audio for automatic Adhan playback
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+
 // Single instance lock to prevent duplicate app launches
 const gotTheLock = app.requestSingleInstanceLock();
 
