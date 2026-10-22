@@ -10,6 +10,7 @@ import { LanguageService } from './core/services/language';
 
 import { AdhanModalComponent } from './shared/components/adhan-modal/adhan-modal';
 import { DesktopModalComponent } from './shared/components/desktop-modal/desktop-modal';
+import { IslamicChatWidgetComponent } from './shared/components/islamic-chat-widget/islamic-chat-widget';
 import { DesktopService } from './core/services/desktop';
 import { PrayerNotificationService } from './core/services/prayer-notification';
 
@@ -32,6 +33,7 @@ import { PrayerNotificationService } from './core/services/prayer-notification';
     IconComponent,
     AdhanModalComponent,
     DesktopModalComponent,
+    IslamicChatWidgetComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',

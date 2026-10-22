@@ -1,0 +1,273 @@
+<!-- Floating Launcher Trigger Button (Available on Every Page) -->
+<button
+  type="button"
+  class="chat-launcher"
+  [class.chat-launcher--active]="isOpen()"
+  (click)="toggle()"
+  [attr.aria-label]="isBn() ? 'কুরআন ও হাদিস এআই চ্যাট খুলুন' : 'Open Quran & Hadith AI Chat'"
+  [title]="isBn() ? 'নূর এআই - কুরআন ও হাদিস সম্পর্কিত প্রশ্ন করুন' : 'Noor AI - Ask about Quran & Hadith'"
+>
+  <span class="chat-launcher__glow" aria-hidden="true"></span>
+  <span class="chat-launcher__icon-wrap">
+    @if (isOpen()) {
+      <aq-icon name="x" [size]="20" />
+    } @else {
+      <aq-icon name="sparkles" [size]="20" />
+    }
+  </span>
+  <span class="chat-launcher__label">
+    {{ isBn() ? 'নূর AI জিজ্ঞাসা' : 'Ask Noor AI' }}
+  </span>
+  @if (strikes() > 0 && !isBanned() && !isOpen()) {
+    <span class="chat-launcher__badge" title="অপ্রাসঙ্গিক সতর্কতা">!</span>
+  }
+</button>
+
+<!-- Main Chat Dialog Drawer -->
+@if (isOpen()) {
+  <div class="chat-backdrop" (click)="close()" aria-hidden="true"></div>
+
+  <section
+    class="chat-window aq-card"
+    role="dialog"
+    aria-labelledby="chat-heading"
+    aria-modal="true"
+  >
+    <!-- Header -->
+    <header class="chat-header">
+      <div class="chat-header__brand">
+        <div class="chat-header__avatar">
+          <aq-icon name="bot" [size]="22" />
+          <span class="chat-header__status-dot" aria-hidden="true"></span>
+        </div>
+        <div>
+          <h2 id="chat-heading" class="chat-header__title">
+            {{ isBn() ? 'নূর এআই (Noor AI)' : 'Noor AI' }}
+          </h2>
+          <p class="chat-header__subtitle">
+            {{ isBn() ? 'কুরআন ও সহিহ হাদিস জিজ্ঞাসা' : 'Quran & Hadith Assistant' }}
+          </p>
+        </div>
+      </div>
+
+      <div class="chat-header__actions">
+        <span class="chat-rate-pill" [title]="isBn() ? 'সর্বোচ্চ ১৫ বার্তা প্রতি মিনিটে' : 'Max 15 messages per minute'">
+          {{ isBn() ? '১৫/মি.' : '15/min' }}
+        </span>
+
+        @if (messages().length > 0) {
+          <button
+            type="button"
+            class="aq-icon-btn chat-header__btn"
+            (click)="clearHistory()"
+            [title]="isBn() ? 'কথোপকথন মুছে ফেলুন' : 'Clear Chat'"
+            [attr.aria-label]="isBn() ? 'কথোপকথন মুছুন' : 'Clear Chat'"
+          >
+            <aq-icon name="trash" [size]="16" />
+          </button>
+        }
+
+        <button
+          type="button"
+          class="aq-icon-btn chat-header__btn"
+          (click)="close()"
+          [title]="isBn() ? 'বন্ধ করুন' : 'Close'"
+          [attr.aria-label]="isBn() ? 'বন্ধ করুন' : 'Close'"
+        >
+          <aq-icon name="x" [size]="18" />
+        </button>
+      </div>
+    </header>
+
+    <!-- Scope Rules Notice -->
+    <div class="chat-rules-bar">
+      <aq-icon name="info" [size]="14" />
+      <span>
+        {{ isBn() ? 'শুধুমাত্র পবিত্র কুরআন ও সহিহ হাদিস সম্পর্কিত প্রশ্ন করুন।' : 'Strictly for questions about the Holy Quran & Hadith only.' }}
+      </span>
+    </div>
+
+    <!-- Strike Warning Banner (if strikes > 0 and not banned) -->
+    @if (strikes() > 0 && !isBanned()) {
+      <div class="chat-strike-banner" role="alert">
+        <aq-icon name="alert" [size]="16" />
+        <div>
+          <strong>
+            {{ isBn() ? 'অপ্রাসঙ্গিক প্রশ্ন সতর্কতা (' + toBanglaDigits(strikes()) + '/৩)' : 'Off-topic Warning (' + strikes() + '/3)' }}
+          </strong>
+          <p>
+            {{ isBn() ? 'কুরআন-হাদিসের বাইরের প্রশ্ন ৩ বার করলে চ্যাট সাময়িকভাবে নিষিদ্ধ (Ban) হবে।' : 'Asking off-topic questions 3 times will temporarily ban chat access.' }}
+          </p>
+        </div>
+      </div>
+    }
+
+    <!-- Copied feedback toast -->
+    @if (copyFeedback(); as feedback) {
+      <div class="chat-toast" role="status">
+        <aq-icon name="check" [size]="14" />
+        <span>{{ feedback }}</span>
+      </div>
+    }
+
+    <!-- Body / Messages -->
+    <div class="chat-body" #messagesContainer>
+      @if (isBanned()) {
+        <!-- BAN SCREEN -->
+        <div class="chat-ban-screen">
+          <div class="chat-ban-icon">
+            <aq-icon name="shieldAlert" [size]="48" />
+          </div>
+          <h3 class="chat-ban-title">
+            {{ isBn() ? 'চ্যাট সুবিধা সাময়িকভাবে স্থগিত' : 'Chat Temporarily Suspended' }}
+          </h3>
+          <p class="chat-ban-desc">
+            {{ isBn() ? 'বারবার কুরআন ও হাদিসের বাইরের অপ্রাসঙ্গিক প্রশ্ন করার কারণে চ্যাট এক্সেস সাময়িকভাবে স্থগিত করা হয়েছে।' : 'Chat access has been temporarily suspended due to repeated off-topic questions.' }}
+          </p>
+          <div class="chat-ban-timer-box">
+            <span class="chat-ban-timer-label">{{ isBn() ? 'পুনরায় সক্রিয় হতে বাকি:' : 'Cooldown remaining:' }}</span>
+            <strong class="chat-ban-timer-val aq-numeral">{{ banRemainingFormatted() }}</strong>
+          </div>
+          <p class="chat-ban-note">
+            {{ isBn() ? 'সময় শেষ হলে চ্যাট সুবিধা স্বয়ংক্রিয়ভাবে চালু হয়ে যাবে।' : 'Access will automatically restore once the timer reaches zero.' }}
+          </p>
+        </div>
+      } @else if (messages().length === 0) {
+        <!-- EMPTY / WELCOME SCREEN -->
+        <div class="chat-welcome">
+          <div class="chat-welcome__icon">
+            <aq-icon name="sparkles" [size]="32" />
+          </div>
+          <h3 class="chat-welcome__title">
+            {{ isBn() ? 'আসসালামু আলাইকুম ওয়া রাহমাতুল্লাহ' : 'Assalamu Alaikum wa Rahmatullah' }}
+          </h3>
+          <p class="chat-welcome__desc">
+            {{ isBn() ? 'পবিত্র কুরআন ও সহিহ হাদিসের আলোকে যেকোনো প্রশ্ন জিজ্ঞাসা করুন। প্রতিটি উত্তরের সাথে আয়াত বা হাদিসের স্পষ্ট রেফারেন্স প্রদান করা হবে।' : 'Ask any question based on the Holy Quran and authentic Hadith. Every response includes verified references.' }}
+          </p>
+
+          <div class="chat-welcome__prompts">
+            <span class="chat-welcome__prompts-title">
+              {{ isBn() ? 'প্রস্তাবিত কিছু প্রশ্ন:' : 'Suggested topics:' }}
+            </span>
+            <div class="chat-prompts-grid">
+              @for (prompt of quickPrompts; track prompt.id) {
+                <button
+                  type="button"
+                  class="chat-prompt-pill"
+                  (click)="selectPrompt(prompt)"
+                >
+                  <aq-icon name="bookOpen" [size]="14" />
+                  <span>{{ isBn() ? prompt.textBn : prompt.textEn }}</span>
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      } @else {
+        <!-- MESSAGES LIST -->
+        <div class="chat-messages-list">
+          @for (msg of messages(); track msg.id) {
+            <div
+              class="chat-bubble"
+              [class.chat-bubble--user]="msg.role === 'user'"
+              [class.chat-bubble--assistant]="msg.role === 'assistant'"
+              [class.chat-bubble--offtopic]="msg.isOffTopic"
+              [class.chat-bubble--error]="msg.error"
+            >
+              @if (msg.role === 'assistant') {
+                <div class="chat-bubble__avatar">
+                  <aq-icon name="bot" [size]="16" />
+                </div>
+              }
+
+              <div class="chat-bubble__content">
+                @if (msg.isOffTopic) {
+                  <span class="chat-offtopic-tag">
+                    <aq-icon name="alert" [size]="12" />
+                    {{ isBn() ? 'অপ্রাসঙ্গিক প্রশ্ন সতর্কবার্তা' : 'Off-Topic Warning' }}
+                  </span>
+                }
+
+                <div class="chat-bubble__text">{{ msg.content }}</div>
+
+                <div class="chat-bubble__meta">
+                  @if (msg.role === 'assistant' && !msg.error) {
+                    <button
+                      type="button"
+                      class="chat-copy-btn"
+                      (click)="copyMessage(msg.content)"
+                      [title]="isBn() ? 'অনুলিপি করুন' : 'Copy'"
+                    >
+                      <aq-icon name="copy" [size]="13" />
+                      <span>{{ isBn() ? 'কপি' : 'Copy' }}</span>
+                    </button>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Typing indicator -->
+          @if (isLoading()) {
+            <div class="chat-bubble chat-bubble--assistant chat-bubble--loading">
+              <div class="chat-bubble__avatar">
+                <aq-icon name="bot" [size]="16" />
+              </div>
+              <div class="chat-bubble__content chat-typing">
+                <span class="chat-typing__dot"></span>
+                <span class="chat-typing__dot"></span>
+                <span class="chat-typing__dot"></span>
+                <span class="chat-typing__label">
+                  {{ isBn() ? 'নূর এআই উত্তর প্রস্তুত করছে...' : 'Noor AI is searching Quran & Hadith...' }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Footer Input Area -->
+    @if (!isBanned()) {
+      <footer class="chat-footer">
+        <!-- Rate limit alert banner -->
+        @if (isRateLimited()) {
+          <div class="chat-rate-alert" role="status">
+            <aq-icon name="clock" [size]="14" />
+            <span>
+              {{ isBn() ? 'প্রতি মিনিটে ১৫টি বার্তার সীমা। দয়া করে ' + toBanglaDigits(rateLimitCountdown()) + ' সেকেন্ড অপেক্ষা করুন।' : 'Rate limit: 15 messages/min. Please wait ' + rateLimitCountdown() + 's.' }}
+            </span>
+          </div>
+        }
+
+        <div class="chat-input-row">
+          <textarea
+            #chatInput
+            class="chat-input"
+            rows="1"
+            [disabled]="isLoading() || isRateLimited()"
+            [(ngModel)]="userInput"
+            (keydown)="handleKeyDown($event)"
+            (input)="autoResize(chatInput)"
+            [placeholder]="isBn() ? 'কুরআন বা হাদিস সম্পর্কিত আপনার প্রশ্ন লিখুন...' : 'Ask a question about the Quran or Hadith...'"
+          ></textarea>
+
+          <button
+            type="button"
+            class="chat-send-btn aq-btn aq-btn--primary"
+            (click)="send()"
+            [disabled]="!userInput().trim() || isLoading() || isRateLimited()"
+            [attr.aria-label]="isBn() ? 'বার্তা পাঠান' : 'Send message'"
+            [title]="isBn() ? 'বার্তা পাঠান' : 'Send message'"
+          >
+            <aq-icon name="send" [size]="18" />
+          </button>
+        </div>
+
+        <p class="chat-disclaimer">
+          {{ isBn() ? 'পবিত্র কুরআন ও সহিহ হাদিসের রেফারেন্স সহ এআই উত্তর। গভীর ফতোয়ার ক্ষেত্রে যোগ্য আলেমের পরামর্শ নিন।' : 'AI-generated Islamic references. Consult qualified scholars for complex legal rulings.' }}
+        </p>
+      </footer>
+    }
+  </section>
+}
