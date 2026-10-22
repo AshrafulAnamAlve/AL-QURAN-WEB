@@ -189,33 +189,35 @@ export function rebuildTrayMenu(): void {
   tray.setContextMenu(contextMenu);
 }
 
-export function createTray(): Tray {
+export function createTray(): Tray | null {
   const iconPath = path.join(__dirname, '../../assets/icons/tray-icon.png');
+  const fallbackIconPath = path.join(__dirname, '../../assets/icons/icon.png');
   let icon = nativeImage.createFromPath(iconPath);
 
   if (icon.isEmpty()) {
-    icon = nativeImage.createEmpty();
+    icon = nativeImage.createFromPath(fallbackIconPath);
   }
 
-  // Optimize for high-DPI displays
-  icon = icon.resize({ width: 16, height: 16 });
+  try {
+    tray = new Tray(icon);
+    tray.setToolTip('Al-Quran — কুরআন ও ইসলামিক টুলস');
+    rebuildTrayMenu();
 
-  tray = new Tray(icon);
-  tray.setToolTip('Al-Quran — কুরআন ও ইসলামিক টুলস');
-  rebuildTrayMenu();
-
-  tray.on('double-click', () => {
-    const mainWindow = getMainWindow();
-    if (mainWindow) {
-      if (mainWindow.isVisible()) {
-        mainWindow.focus();
-      } else {
-        mainWindow.show();
-        mainWindow.focus();
+    tray.on('double-click', () => {
+      const mainWindow = getMainWindow();
+      if (mainWindow) {
+        if (mainWindow.isVisible()) {
+          mainWindow.focus();
+        } else {
+          mainWindow.show();
+          mainWindow.focus();
+        }
+        rebuildTrayMenu();
       }
-      rebuildTrayMenu();
-    }
-  });
+    });
+  } catch (err) {
+    console.warn('[Tray] Notice: Failed to initialize status tray icon:', err);
+  }
 
   return tray;
 }

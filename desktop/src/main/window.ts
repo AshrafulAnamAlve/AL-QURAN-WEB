@@ -1,4 +1,5 @@
 import { app, BrowserWindow, Notification, shell } from 'electron';
+import * as fs from 'fs';
 import * as path from 'path';
 import { WindowStateManager } from './window-state';
 
@@ -69,6 +70,40 @@ export function createMainWindow(): BrowserWindow {
   mainWindow.once('ready-to-show', () => {
     mainWindow?.show();
     mainWindow?.focus();
+
+    if (process.argv.includes('--run-self-test')) {
+      setTimeout(async () => {
+        try {
+          const result = await mainWindow?.webContents.executeJavaScript(`
+            (async () => {
+              const root = document.querySelector('aq-root');
+              const hasContent = root && root.innerHTML.length > 50;
+              const hasNav = Boolean(document.querySelector('nav') || document.querySelector('.navbar') || document.querySelector('aq-header') || document.querySelector('main'));
+              let shieldStatus = null;
+              if (window.desktopApi && window.desktopApi.getShieldStatus) {
+                try {
+                  shieldStatus = await window.desktopApi.getShieldStatus();
+                } catch (e) {
+                  shieldStatus = { error: String(e) };
+                }
+              }
+              return {
+                title: document.title,
+                hasContent,
+                hasNav,
+                shieldStatus
+              };
+            })()
+          `);
+          console.log('[SELF-TEST-SUCCESS]', JSON.stringify(result));
+        } catch (e) {
+          console.error('[SELF-TEST-ERROR]', e);
+        } finally {
+          setIsQuitting(true);
+          app.quit();
+        }
+      }, 2000);
+    }
   });
 
   // Open external links in user's default browser instead of electron window
@@ -87,18 +122,50 @@ export function createMainWindow(): BrowserWindow {
     }
   });
 
-  if (isDev) {
-    mainWindow.loadURL('http://localhost:4200');
-  } else {
-    // In production or packaged mode, load the built Angular app
-    if (app.isPackaged) {
-      mainWindow.loadFile(path.join(app.getAppPath(), 'dist/frontend/browser/index.html'));
-    } else {
-      const indexPath = path.join(__dirname, '../../../frontend/dist/frontend/browser/index.html');
-      mainWindow.loadFile(indexPath).catch(() => {
-        mainWindow?.loadFile(path.join(app.getAppPath(), 'dist/frontend/browser/index.html'));
-      });
+  // Fallback to ensure window is visible even if ready-to-show event takes too long
+  setTimeout(() => {
+    if (mainWindow && !mainWindow.isVisible()) {
+      mainWindow.show();
+      mainWindow.focus();
     }
+  }, 2500);
+
+  let hasFallenBack = false;
+  const loadBuiltFrontend = () => {
+    if (!mainWindow || hasFallenBack) return;
+    hasFallenBack = true;
+    const candidatePaths = [
+      path.join(__dirname, '../../../frontend/dist/frontend/browser/index.html'),
+      path.join(app.getAppPath(), '../frontend/dist/frontend/browser/index.html'),
+      path.join(app.getAppPath(), 'dist/frontend/browser/index.html'),
+    ];
+
+    for (const candidate of candidatePaths) {
+      if (fs.existsSync(candidate)) {
+        mainWindow.loadFile(candidate).catch((err) => {
+          console.error('[Window] Error loading file candidate:', candidate, err);
+        });
+        return;
+      }
+    }
+    console.error('[Window] No index.html found in candidate paths:', candidatePaths);
+  };
+
+  mainWindow.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
+    console.warn(`[Window] did-fail-load: ${validatedURL} (${errorCode}: ${errorDescription})`);
+    if (validatedURL.includes('localhost:4200')) {
+      console.warn('[Window] Dev server http://localhost:4200 is unavailable. Falling back to local built files...');
+      loadBuiltFrontend();
+    }
+  });
+
+  if (isDev) {
+    mainWindow.loadURL('http://localhost:4200').catch(() => {
+      console.warn('[Window] Could not connect to http://localhost:4200. Falling back to local built files...');
+      loadBuiltFrontend();
+    });
+  } else {
+    loadBuiltFrontend();
   }
 
   // Prevent app from closing completely on 'X' if minimized to tray is supported
