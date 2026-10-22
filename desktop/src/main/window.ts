@@ -135,9 +135,10 @@ export function createMainWindow(): BrowserWindow {
     if (!mainWindow || hasFallenBack) return;
     hasFallenBack = true;
     const candidatePaths = [
+      path.join(app.getAppPath(), 'dist/frontend/browser/index.html'),
+      path.join(__dirname, '../frontend/browser/index.html'),
       path.join(__dirname, '../../../frontend/dist/frontend/browser/index.html'),
       path.join(app.getAppPath(), '../frontend/dist/frontend/browser/index.html'),
-      path.join(app.getAppPath(), 'dist/frontend/browser/index.html'),
     ];
 
     for (const candidate of candidatePaths) {

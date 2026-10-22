@@ -8,7 +8,7 @@
   "scripts": {
     "build:main": "tsc",
     "watch:main": "tsc -w",
-    "build:frontend": "npm --prefix ../frontend run build:desktop",
+    "build:frontend": "npm --prefix ../frontend run build:desktop && node copy-frontend.cjs",
     "build": "npm run build:frontend && npm run build:main",
     "start": "npm run build:frontend && npm run build:main && electron .",
     "start:fast": "npm run build:main && electron .",
