@@ -599,3 +599,102 @@
   }
 }
 
+// Halal Shield Card
+.halal-shield-card {
+  border-left: 3px solid var(--aq-primary);
+}
+
+.halal-shield-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  &__title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+}
+
+.halal-shield-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--aq-radius-md);
+  background: var(--aq-primary-soft);
+  color: var(--aq-primary);
+  flex-shrink: 0;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &--active {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+
+    .status-dot {
+      background: #10b981;
+    }
+  }
+
+  &--inactive {
+    background: var(--aq-surface-2);
+    color: var(--aq-text-muted);
+    border: 1px solid var(--aq-border);
+
+    .status-dot {
+      background: var(--aq-text-subtle);
+    }
+  }
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.halal-shield-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  padding: 0.75rem;
+  background: var(--aq-bg-subtle);
+  border-radius: var(--aq-radius-md);
+  border: 1px solid var(--aq-border);
+}
+
+.shield-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--aq-text);
+
+  aq-icon {
+    color: var(--aq-green-600);
+    flex-shrink: 0;
+  }
+}
+
+.halal-shield-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+

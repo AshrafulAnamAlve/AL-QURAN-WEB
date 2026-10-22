@@ -1038,6 +1038,72 @@
         </div>
       </div>
 
+      <!-- Computer Halal Shield (System Blocker) -->
+      <div class="settings-card halal-shield-card">
+        <div class="halal-shield-header">
+          <div class="halal-shield-header__title-row">
+            <div class="halal-shield-icon" aria-hidden="true">
+              <aq-icon name="shield" [size]="22" />
+            </div>
+            <div>
+              <h3 class="card-subtitle">{{ isBn() ? 'কম্পিউটার হালাল শিল্ড (ব্লকার)' : 'Computer Halal Shield (Blocker)' }}</h3>
+              <p class="card-desc">
+                {{ isBn() ? 'পুরো কম্পিউটারের সকল ব্রাউজারে অশ্লীল সাইট প্রতিরোধ ও নিরাপদ অনুসন্ধান নিশ্চিত করুন।' : 'Blocks adult/explicit websites and locks SafeSearch across all browsers on this PC.' }}
+              </p>
+            </div>
+          </div>
+
+          <div class="halal-shield-status">
+            <span
+              class="status-pill"
+              [class.status-pill--active]="isShieldActive()"
+              [class.status-pill--inactive]="!isShieldActive()"
+            >
+              <span class="status-dot"></span>
+              {{ isShieldActive() ? (isBn() ? 'সুরক্ষিত' : 'Protected') : (isBn() ? 'নিষ্ক্রিয়' : 'Inactive') }}
+            </span>
+          </div>
+        </div>
+
+        <div class="halal-shield-features">
+          <div class="shield-feature-item">
+            <aq-icon name="check" [size]="15" />
+            <span>{{ isBn() ? 'সকল ব্রাউজারে (Chrome, Edge, Firefox) অশ্লীল সাইট ব্লক' : 'Adult & explicit sites blocked in all browsers' }}</span>
+          </div>
+          <div class="shield-feature-item">
+            <aq-icon name="check" [size]="15" />
+            <span>{{ isBn() ? 'গুগল ও ইউটিউবে SafeSearch স্বয়ংক্রিয়ভাবে সক্রিয়' : 'Strict SafeSearch enforced on Google & YouTube' }}</span>
+          </div>
+          <div class="shield-feature-item">
+            <aq-icon name="check" [size]="15" />
+            <span>{{ isBn() ? '১-ক্লিকে উইন্ডোজ সিস্টেম-লেভেল সুরক্ষা' : 'One-click Windows network-level protection' }}</span>
+          </div>
+        </div>
+
+        <div class="halal-shield-actions">
+          @if (desktop.isDesktop()) {
+            <button
+              type="button"
+              class="aq-btn aq-btn--sm"
+              [class.aq-btn--primary]="!isShieldActive()"
+              [class.aq-btn--secondary]="isShieldActive()"
+              [disabled]="isShieldLoading()"
+              (click)="toggleSystemShield()"
+            >
+              <aq-icon name="shield" [size]="16" />
+              <span>
+                {{ isShieldLoading() ? (isBn() ? 'প্রক্রিয়াধীন...' : 'Applying...') : (isShieldActive() ? (isBn() ? 'শিল্ড বন্ধ করুন' : 'Disable Shield') : (isBn() ? 'শিল্ড চালু করুন' : 'Enable Shield')) }}
+              </span>
+            </button>
+          } @else {
+            <button type="button" class="aq-btn aq-btn--primary aq-btn--sm" (click)="desktop.openDownloadModal('download')">
+              <aq-icon name="download" [size]="16" />
+              <span>{{ isBn() ? 'ডেস্কটপ অ্যাপে শিল্ড ব্যবহার করুন' : 'Available in Desktop App' }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
       <!-- Danger Zone -->
       <div class="settings-card settings-card--danger">
         <h3 class="card-subtitle card-subtitle--danger">

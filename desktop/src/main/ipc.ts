@@ -1,10 +1,12 @@
 import { app, ipcMain, Notification } from 'electron';
 import * as path from 'path';
+import { getSystemShieldStatus, setSystemShield } from './system-shield';
 import {
   setAdhanMutedState,
   setAdhanPlayingState,
   setAutoAdhanState,
   setPrayerAlertsState,
+  setShieldTrayState,
   updateTrayPrayerInfo,
 } from './tray';
 import { getMainWindow, setIsQuitting } from './window';
@@ -101,6 +103,17 @@ export function registerIpcHandlers(): void {
   ipcMain.on('desktop:quit', () => {
     setIsQuitting(true);
     app.quit();
+  });
+
+  // System-wide Halal Blocker Shield
+  ipcMain.handle('desktop:get-shield-status', async () => {
+    return await getSystemShieldStatus();
+  });
+
+  ipcMain.handle('desktop:set-shield', async (_event, enabled: boolean) => {
+    const result = await setSystemShield(Boolean(enabled));
+    setShieldTrayState(result.enabled);
+    return result;
   });
 
   // Diagnostic / App info

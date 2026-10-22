@@ -164,4 +164,12 @@ describe('SettingsPage', () => {
     fixture.detectChanges();
     expect((fixture.nativeElement as HTMLElement).querySelector('.city-modal')).toBeNull();
   });
+
+  it('renders computer halal shield blocker section', () => {
+    const el: HTMLElement = fixture.nativeElement;
+    const shieldCard = el.querySelector('.halal-shield-card');
+    expect(shieldCard).not.toBeNull();
+    expect(shieldCard?.textContent).toContain('কম্পিউটার হালাল শিল্ড');
+    expect(shieldCard?.textContent).toContain('অশ্লীল সাইট ব্লক');
+  });
 });

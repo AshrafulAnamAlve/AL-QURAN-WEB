@@ -30,6 +30,10 @@ export interface DesktopApi {
   onToggleAutoAdhan: (callback: (enabled: boolean) => void) => void;
   setPrayerAlertsEnabled: (enabled: boolean) => void;
   setAutoAdhanEnabled: (enabled: boolean) => void;
+  // System-wide Halal Blocker Shield
+  getShieldStatus: () => Promise<{ enabled: boolean; dnsServers: string[]; error?: string }>;
+  setShield: (enabled: boolean) => Promise<{ success: boolean; enabled: boolean; error?: string }>;
+  onToggleShieldFromTray: (callback: () => void) => void;
 }
 
 const desktopApi: DesktopApi = {
@@ -94,6 +98,15 @@ const desktopApi: DesktopApi = {
   },
   setAutoAdhanEnabled: (enabled: boolean) => {
     ipcRenderer.send('desktop:set-auto-adhan', enabled);
+  },
+  getShieldStatus: () => {
+    return ipcRenderer.invoke('desktop:get-shield-status');
+  },
+  setShield: (enabled: boolean) => {
+    return ipcRenderer.invoke('desktop:set-shield', enabled);
+  },
+  onToggleShieldFromTray: (callback: () => void) => {
+    ipcRenderer.on('desktop:toggle-shield-from-tray', () => callback());
   },
 };
 

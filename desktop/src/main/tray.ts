@@ -8,9 +8,17 @@ let isAdhanMuted = false;
 let isAdhanPlaying = false;
 let prayerAlertsEnabled = true;
 let autoAdhanEnabled = true;
+let isShieldEnabled = false;
 
 export function getTray(): Tray | null {
   return tray;
+}
+
+export function setShieldTrayState(enabled: boolean): void {
+  if (isShieldEnabled !== enabled) {
+    isShieldEnabled = enabled;
+    rebuildTrayMenu();
+  }
 }
 
 export function updateTrayPrayerInfo(info: string): void {
@@ -149,6 +157,14 @@ export function rebuildTrayMenu(): void {
         isAdhanMuted = !isAdhanMuted;
         mainWindow?.webContents.send('desktop:toggle-adhan-mute', isAdhanMuted);
         rebuildTrayMenu();
+      },
+    },
+    {
+      label: isShieldEnabled ? '🛡️ হালাল শিল্ড (কম্পিউটার ব্লকার): চালু' : '🛡️ হালাল শিল্ড (কম্পিউটার ব্লকার): বন্ধ',
+      type: 'checkbox',
+      checked: isShieldEnabled,
+      click: () => {
+        mainWindow?.webContents.send('desktop:toggle-shield-from-tray');
       },
     },
     {

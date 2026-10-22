@@ -38,6 +38,10 @@ declare global {
       onToggleAutoAdhan: (callback: (enabled: boolean) => void) => void;
       setPrayerAlertsEnabled: (enabled: boolean) => void;
       setAutoAdhanEnabled: (enabled: boolean) => void;
+      // System-wide Halal Blocker Shield
+      getShieldStatus: () => Promise<{ enabled: boolean; dnsServers: string[]; error?: string }>;
+      setShield: (enabled: boolean) => Promise<{ success: boolean; enabled: boolean; error?: string }>;
+      onToggleShieldFromTray: (callback: () => void) => void;
     };
   }
 }
@@ -132,6 +136,21 @@ export class DesktopService {
     this.setupTrayPrayerSync();
     this.setupTrayNavigation();
     this.setupMediaControl();
+    this.setupShieldSync();
+  }
+
+  private setupShieldSync(): void {
+    if (!this.isDesktop()) return;
+
+    // Check initial DNS shield status
+    this.checkShieldStatus();
+
+    // Listen for tray menu toggle clicks
+    if (window.desktopApi?.onToggleShieldFromTray) {
+      window.desktopApi.onToggleShieldFromTray(() => {
+        this.toggleShield();
+      });
+    }
   }
 
   private setupDesktopStyles(): void {
@@ -268,6 +287,51 @@ export class DesktopService {
       } catch {
         // Ignored
       }
+    }
+  }
+
+  // System-wide Halal Blocker Shield
+  readonly isShieldActive = signal<boolean>(false);
+  readonly isShieldLoading = signal<boolean>(false);
+  readonly shieldError = signal<string | null>(null);
+
+  /** Check current system-wide shield status on Windows */
+  async checkShieldStatus(): Promise<boolean> {
+    if (this.isDesktop() && window.desktopApi?.getShieldStatus) {
+      try {
+        const res = await window.desktopApi.getShieldStatus();
+        this.isShieldActive.set(res.enabled);
+        return res.enabled;
+      } catch (err) {
+        console.warn('[DesktopService] Could not check shield status:', err);
+      }
+    }
+    return false;
+  }
+
+  /** Enable or disable system-wide shield on Windows */
+  async toggleShield(targetState?: boolean): Promise<boolean> {
+    if (!this.isDesktop() || !window.desktopApi?.setShield) {
+      return false;
+    }
+
+    const next = typeof targetState === 'boolean' ? targetState : !this.isShieldActive();
+    this.isShieldLoading.set(true);
+    this.shieldError.set(null);
+
+    try {
+      const res = await window.desktopApi.setShield(next);
+      this.isShieldActive.set(res.enabled);
+      if (!res.success && res.error) {
+        this.shieldError.set(res.error);
+      }
+      return res.enabled;
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      this.shieldError.set(msg);
+      return this.isShieldActive();
+    } finally {
+      this.isShieldLoading.set(false);
     }
   }
 

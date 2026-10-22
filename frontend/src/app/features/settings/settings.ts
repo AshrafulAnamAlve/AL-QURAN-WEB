@@ -409,6 +409,30 @@ export class SettingsPage implements OnInit {
   }
 
   protected readonly isAutostart = signal(false);
+  readonly isShieldActive = this.desktop.isShieldActive;
+  readonly isShieldLoading = this.desktop.isShieldLoading;
+
+  async toggleSystemShield(): Promise<void> {
+    const next = !this.isShieldActive();
+    const result = await this.desktop.toggleShield(next);
+    const isBn = this.isBn();
+
+    if (result) {
+      this.showToast(
+        isBn
+          ? 'কম্পিউটার হালাল শিল্ড সক্রিয় করা হয়েছে! সকল ব্রাউজারে ক্ষতিকর সাইট ব্লক থাকবে।'
+          : 'Computer Halal Shield enabled! Adult content is now blocked across all browsers.',
+        'success',
+      );
+    } else {
+      this.showToast(
+        isBn
+          ? 'হালাল শিল্ড বন্ধ করা হয়েছে (সাধারণ ডিএনএস ফিরিয়ে আনা হয়েছে)।'
+          : 'Halal Shield disabled (DNS reset to default).',
+        'success',
+      );
+    }
+  }
 
   toggleMasterPrayerAlerts(): void {
     const current = this.prayerNotifications.settings().enabled;

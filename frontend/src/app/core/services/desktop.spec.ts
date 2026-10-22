@@ -166,4 +166,30 @@ describe('DesktopService', () => {
 
     delete (window as any).desktopApi;
   });
+
+  it('checks and toggles system-wide halal blocker shield', async () => {
+    const getShieldStatusSpy = vi.fn().mockResolvedValue({ enabled: true, dnsServers: ['1.1.1.3'] });
+    const setShieldSpy = vi.fn().mockResolvedValue({ success: true, enabled: false });
+
+    (window as any).desktopApi = {
+      isDesktop: true,
+      platform: 'win32',
+      getShieldStatus: getShieldStatusSpy,
+      setShield: setShieldSpy,
+    };
+
+    await TestBed.runInInjectionContext(async () => {
+      const desktop = new DesktopService();
+      const status = await desktop.checkShieldStatus();
+      expect(status).toBe(true);
+      expect(desktop.isShieldActive()).toBe(true);
+
+      const toggleResult = await desktop.toggleShield(false);
+      expect(toggleResult).toBe(false);
+      expect(desktop.isShieldActive()).toBe(false);
+      expect(setShieldSpy).toHaveBeenCalledWith(false);
+    });
+
+    delete (window as any).desktopApi;
+  });
 });
