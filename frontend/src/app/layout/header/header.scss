@@ -340,6 +340,60 @@
   }
 }
 
+.shield-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  background: var(--aq-bg-surface, rgba(255, 255, 255, 0.05));
+  color: var(--aq-text-muted);
+  border: 1px solid var(--aq-border);
+  border-radius: var(--aq-radius-pill);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+
+  .shield-pill-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #94a3b8;
+    transition: all 0.2s ease;
+
+    &--active {
+      background: #10b981;
+      box-shadow: 0 0 6px #10b981;
+    }
+  }
+
+  &:hover {
+    background: var(--aq-bg-subtle);
+    color: var(--aq-text);
+    border-color: var(--aq-text-muted);
+  }
+
+  &--active {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+    border-color: rgba(16, 185, 129, 0.35);
+
+    &:hover {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: #10b981;
+    }
+  }
+
+  @media (max-width: 680px) {
+    .shield-pill-label {
+      display: none;
+    }
+    padding: 0.35rem;
+  }
+}
+
 .desktop-pill-btn {
   display: none; // Hidden on mobile, only on desktop screens
   align-items: center;

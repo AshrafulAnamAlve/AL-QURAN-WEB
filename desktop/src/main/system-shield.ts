@@ -94,81 +94,103 @@ export async function setSystemShield(
   }
 
   try {
-    // Prepare temporary script file to avoid command-line quoting issues with large hosts content
     const tempDir = process.env.TEMP || 'C:\\Windows\\Temp';
     const scriptPath = path.join(tempDir, `alquran-shield-${Date.now()}.ps1`);
+    const shieldBlock = generateShieldHostsBlock();
+    const encodedBlock = Buffer.from(shieldBlock, 'utf-8').toString('base64');
 
-    let psScript = '';
+    const psScript = `
+# Al-Quran Halal Shield - Elevated Execution
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $isAdmin) {
+    try {
+        $p = Start-Process powershell.exe -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File \`"$PSCommandPath\`"" -Wait -PassThru
+        exit $p.ExitCode
+    } catch {
+        exit 1223
+    }
+}
 
-    if (enabled) {
-      const shieldBlock = generateShieldHostsBlock();
-      // Base64 encode the shield block so it never gets corrupted in the PS script
-      const encodedBlock = Buffer.from(shieldBlock, 'utf-8').toString('base64');
-
-      psScript = `
 $hostsPath = "${HOSTS_FILE_PATH}"
+if (Test-Path $hostsPath) {
+    $item = Get-Item $hostsPath
+    if ($item.IsReadOnly) {
+        $item.IsReadOnly = $false
+    }
+}
+
 $existing = Get-Content -Path $hostsPath -Raw -ErrorAction SilentlyContinue
 if (-not $existing) { $existing = "" }
 
-# Remove existing block if present
 $pattern = "(?s)\\r?\\n?# --- AL-QURAN HALAL SHIELD START ---.*?# --- AL-QURAN HALAL SHIELD END ---\\r?\\n?"
 $cleaned = [regex]::Replace($existing, $pattern, "")
 
-# Decode and append new shield block
+${
+  enabled
+    ? `
+# Enable Shield: Write hosts entries and Family DNS
 $decodedBytes = [System.Convert]::FromBase64String("${encodedBlock}")
 $newBlock = [System.Text.Encoding]::UTF8.GetString($decodedBytes)
 $finalContent = ($cleaned.TrimEnd() + "\`r\`n\`r\`n" + $newBlock + "\`r\`n").TrimStart()
-
 Set-Content -Path $hostsPath -Value $finalContent -Encoding UTF8 -Force
 
-# Also apply Family DNS on all active adapters
 Get-NetAdapter | Where-Object Status -eq 'Up' | ForEach-Object {
-  Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses ('${FAMILY_DNS_PRIMARY}','${FAMILY_DNS_SECONDARY}') -ErrorAction SilentlyContinue
+    Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ServerAddresses ('${FAMILY_DNS_PRIMARY}','${FAMILY_DNS_SECONDARY}') -ErrorAction SilentlyContinue
 }
+`
+    : `
+# Disable Shield: Restore hosts and reset DNS
+Set-Content -Path $hostsPath -Value $cleaned.TrimEnd() -Encoding UTF8 -Force
 
-Clear-DnsClientCache
-`;
-    } else {
-      psScript = `
-$hostsPath = "${HOSTS_FILE_PATH}"
-$existing = Get-Content -Path $hostsPath -Raw -ErrorAction SilentlyContinue
-if ($existing) {
-  $pattern = "(?s)\\r?\\n?# --- AL-QURAN HALAL SHIELD START ---.*?# --- AL-QURAN HALAL SHIELD END ---\\r?\\n?"
-  $cleaned = [regex]::Replace($existing, $pattern, "")
-  Set-Content -Path $hostsPath -Value $cleaned.TrimEnd() -Encoding UTF8 -Force
-}
-
-# Reset DNS to automatic/DHCP
 Get-NetAdapter | Where-Object Status -eq 'Up' | ForEach-Object {
-  Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ResetServerAddresses -ErrorAction SilentlyContinue
+    Set-DnsClientServerAddress -InterfaceIndex $_.ifIndex -ResetServerAddresses -ErrorAction SilentlyContinue
+}
+`
 }
 
-Clear-DnsClientCache
+Clear-DnsClientCache -ErrorAction SilentlyContinue
+ipconfig /flushdns | Out-Null
+exit 0
 `;
-    }
 
     fs.writeFileSync(scriptPath, psScript, 'utf-8');
 
-    // Execute script via PowerShell
+    // Execute script via PowerShell (handles self-elevation UAC prompt)
+    let userCancelled = false;
     try {
-      // Try direct execution first
-      await execAsync(`powershell -NoProfile -ExecutionPolicy Bypass -File "${scriptPath}"`, {
-        timeout: 10000,
+      await execAsync(`powershell.exe -NoProfile -ExecutionPolicy Bypass -File "${scriptPath}"`, {
+        timeout: 45000,
       });
-    } catch {
-      // If direct execution fails due to permissions, invoke with elevation UAC
-      const elevatedCmd = `powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Process powershell -Verb RunAs -ArgumentList \\"-NoProfile -ExecutionPolicy Bypass -File \`\"${scriptPath}\`\"\\" -Wait -WindowStyle Hidden"`;
-      await execAsync(elevatedCmd, { timeout: 25000 });
-    } finally {
-      // Clean up temp script file
-      try {
-        if (fs.existsSync(scriptPath)) {
-          fs.unlinkSync(scriptPath);
-        }
-      } catch {
-        // Ignore
+    } catch (execErr: unknown) {
+      const errStr = String(execErr);
+      if (errStr.includes('1223') || errStr.includes('canceled') || (execErr as { code?: number })?.code === 1223) {
+        userCancelled = true;
       }
+      console.warn('[SystemShield] Script execution note:', errStr);
+    } finally {
+      // Clean up temp script file after child process has completed
+      setTimeout(() => {
+        try {
+          if (fs.existsSync(scriptPath)) {
+            fs.unlinkSync(scriptPath);
+          }
+        } catch {
+          // Ignore
+        }
+      }, 5000);
     }
+
+    if (userCancelled) {
+      const current = await getSystemShieldStatus();
+      return {
+        success: false,
+        enabled: current.enabled,
+        error: 'Windows Administrator (UAC) permission was not granted.',
+      };
+    }
+
+    // Small delay to allow DNS/hosts changes to settle
+    await new Promise((resolve) => setTimeout(resolve, 800));
 
     // Verify updated status
     const updated = await getSystemShieldStatus();

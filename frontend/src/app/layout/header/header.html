@@ -74,6 +74,20 @@
     </nav>
 
     <div class="actions">
+      @if (isDesktopApp()) {
+        <a
+          routerLink="/shield"
+          class="shield-pill-btn"
+          [class.shield-pill-btn--active]="desktop.isShieldActive()"
+          [attr.aria-label]="isBn() ? 'হালাল শিল্ড সুরক্ষা' : 'Halal Shield Protection'"
+          [title]="isBn() ? 'হালাল শিল্ড: ' + (desktop.isShieldActive() ? 'সুরক্ষিত' : 'নিষ্ক্রিয়') : 'Halal Shield: ' + (desktop.isShieldActive() ? 'Protected' : 'Inactive')"
+        >
+          <aq-icon name="shield" [size]="15" />
+          <span class="shield-pill-label">{{ isBn() ? 'হালাল শিল্ড' : 'Halal Shield' }}</span>
+          <span class="shield-pill-dot" [class.shield-pill-dot--active]="desktop.isShieldActive()"></span>
+        </a>
+      }
+
       @if (!isDesktopApp()) {
         <button
           type="button"

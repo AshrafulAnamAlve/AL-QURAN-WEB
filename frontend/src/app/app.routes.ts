@@ -194,6 +194,17 @@ export const routes: Routes = [
     },
   },
   {
+    path: 'shield',
+    loadComponent: () => import('./features/shield/shield').then((m) => m.ShieldPage),
+    data: {
+      meta: {
+        title: 'Halal Shield — System Content & SafeSearch Blocker',
+        description:
+          'Free system-wide blocker protecting your family and PC from adult content, harmful websites, and enforcing SafeSearch across all browsers.',
+      },
+    },
+  },
+  {
     path: 'bookmarks',
     loadComponent: () => import('./features/bookmarks/bookmarks').then((m) => m.BookmarksPage),
     data: {

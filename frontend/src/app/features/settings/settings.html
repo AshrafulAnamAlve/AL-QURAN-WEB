@@ -1095,6 +1095,11 @@
                 {{ isShieldLoading() ? (isBn() ? 'প্রক্রিয়াধীন...' : 'Applying...') : (isShieldActive() ? (isBn() ? 'শিল্ড বন্ধ করুন' : 'Disable Shield') : (isBn() ? 'শিল্ড চালু করুন' : 'Enable Shield')) }}
               </span>
             </button>
+
+            <a routerLink="/shield" class="aq-btn aq-btn--secondary aq-btn--sm">
+              <aq-icon name="externalLink" [size]="14" />
+              <span>{{ isBn() ? 'বিস্তারিত ড্যাশবোর্ড' : 'Shield Dashboard' }}</span>
+            </a>
           } @else {
             <button type="button" class="aq-btn aq-btn--primary aq-btn--sm" (click)="desktop.openDownloadModal('download')">
               <aq-icon name="download" [size]="16" />

@@ -1,0 +1,190 @@
+<div class="shield-page aq-container">
+  <!-- Hero Section -->
+  <header class="shield-hero">
+    <div class="shield-hero__badge" [class.shield-hero__badge--active]="isShieldActive()">
+      <aq-icon name="shield" [size]="36" />
+    </div>
+    <h1 class="shield-hero__title">
+      {{ isBn() ? 'হালাল শিল্ড (Halal Shield)' : 'Halal Shield (System Blocker)' }}
+    </h1>
+    <p class="shield-hero__subtitle">
+      {{
+        isBn()
+          ? 'কম্পিউটার-লেভেল সুরক্ষা: সমস্ত ব্রাউজারে ক্ষতিকর ও প্রাপ্তবয়স্ক ওয়েবসাইট ব্লক এবং কঠোর SafeSearch প্রয়োগ।'
+          : 'System-wide protection: Blocks adult & explicit websites and enforces strict SafeSearch across all browsers on this PC.'
+      }}
+    </p>
+  </header>
+
+  <!-- Main Status Card -->
+  <section class="shield-main-card" [class.shield-main-card--active]="isShieldActive()">
+    <div class="shield-main-card__header">
+      <div class="shield-main-card__status-indicator">
+        <span class="status-indicator-dot" [class.status-indicator-dot--active]="isShieldActive()"></span>
+        <span class="status-indicator-text">
+          {{
+            isShieldActive()
+              ? (isBn() ? 'আপনার কম্পিউটার সম্পূর্ণ সুরক্ষিত' : 'Your PC is Fully Protected')
+              : (isBn() ? 'সুরক্ষা বর্তমানে বন্ধ রয়েছে' : 'Protection is Inactive')
+          }}
+        </span>
+      </div>
+
+      <span class="status-pill" [class.status-pill--active]="isShieldActive()">
+        {{ isShieldActive() ? (isBn() ? 'সুরক্ষিত' : 'Active') : (isBn() ? 'নিষ্ক্রিয়' : 'Inactive') }}
+      </span>
+    </div>
+
+    <p class="shield-main-card__desc">
+      {{
+        isShieldActive()
+          ? (isBn()
+              ? 'হালাল শিল্ড সক্রিয় আছে। ক্ষতিকর ওয়েবসাইট ও অ্যাডাল্ট ডোমেন ব্লক করা হচ্ছে এবং Google ও YouTube-এ SafeSearch লক রয়েছে।'
+              : 'Halal Shield is actively protecting this device. Explicit domains are filtered and SafeSearch is enforced on search engines.')
+          : (isBn()
+              ? 'এক ক্লিকে আপনার পুরো কম্পিউটারের সমস্ত ব্রাউজারে নিরাপদ ও হালাল ইন্টারনেট পরিবেশ চালু করুন।'
+              : 'One-click protection to safeguard your family and device across Chrome, Edge, Firefox and all browsers.')
+      }}
+    </p>
+
+    <!-- Error message if any -->
+    @if (shieldError()) {
+      <div class="shield-alert shield-alert--error" role="alert">
+        <aq-icon name="alert" [size]="18" />
+        <span>{{ shieldError() }}</span>
+      </div>
+    }
+
+    <!-- Verification status message -->
+    @if (verificationStatus()) {
+      <div class="shield-alert" [class.shield-alert--success]="isShieldActive()" [class.shield-alert--warning]="!isShieldActive()">
+        <aq-icon [name]="isShieldActive() ? 'check' : 'alert'" [size]="18" />
+        <span>{{ verificationStatus() }}</span>
+      </div>
+    }
+
+    <!-- Action Buttons -->
+    <div class="shield-main-card__actions">
+      @if (isDesktop()) {
+        <button
+          type="button"
+          class="aq-btn aq-btn--lg"
+          [class.aq-btn--primary]="!isShieldActive()"
+          [class.aq-btn--secondary]="isShieldActive()"
+          [disabled]="isShieldLoading()"
+          (click)="toggleShield()"
+        >
+          <aq-icon name="shield" [size]="20" />
+          <span>
+            @if (isShieldLoading()) {
+              {{ isBn() ? 'প্রয়োগ করা হচ্ছে (অপেক্ষা করুন)...' : 'Applying (Please wait)...' }}
+            } @else if (isShieldActive()) {
+              {{ isBn() ? 'সুরক্ষা নিষ্ক্রিয় করুন (Disable Shield)' : 'Disable Shield' }}
+            } @else {
+              {{ isBn() ? 'সুরক্ষা সক্রিয় করুন (Enable Shield)' : 'Enable Halal Shield' }}
+            }
+          </span>
+        </button>
+
+        <button
+          type="button"
+          class="aq-btn aq-btn--secondary aq-btn--lg"
+          [disabled]="isVerifying() || isShieldLoading()"
+          (click)="verifyProtection()"
+        >
+          <aq-icon name="check" [size]="18" />
+          <span>{{ isVerifying() ? (isBn() ? 'যাচাই হচ্ছে...' : 'Verifying...') : (isBn() ? 'সুরক্ষা যাচাই করুন' : 'Verify Protection') }}</span>
+        </button>
+      } @else {
+        <button
+          type="button"
+          class="aq-btn aq-btn--primary aq-btn--lg"
+          (click)="desktop.openDownloadModal('download')"
+        >
+          <aq-icon name="monitor" [size]="20" />
+          <span>{{ isBn() ? 'ডেস্কটপ অ্যাপ ডাউনলোড করুন' : 'Download Desktop App' }}</span>
+        </button>
+      }
+    </div>
+
+    @if (isDesktop() && !isShieldActive()) {
+      <div class="shield-uac-notice">
+        <aq-icon name="info" [size]="16" />
+        <span>
+          {{
+            isBn()
+              ? 'বোতামে চাপার পর উইন্ডোজ অ্যাডমিনিস্ট্রেটর পারমিশন (UAC) চাইলে "Yes" বা "হাঁ" সিলেক্ট করুন।'
+              : 'When prompted by Windows UAC Administrator dialog, click "Yes" to apply system-wide protection.'
+          }}
+        </span>
+      </div>
+    }
+  </section>
+
+  <!-- Protection Features Grid -->
+  <section class="shield-features-grid">
+    <div class="feature-card">
+      <div class="feature-card__icon">
+        <aq-icon name="shield" [size]="24" />
+      </div>
+      <h3 class="feature-card__title">
+        {{ isBn() ? 'সমস্ত ব্রাউজারে ডোমেন ব্লক' : 'Blocked Across All Browsers' }}
+      </h3>
+      <p class="feature-card__desc">
+        {{
+          isBn()
+            ? 'Chrome, Edge, Firefox, Brave, Opera সহ কম্পিউটারের সব ব্রাউজারে ক্ষতিকর ও অশ্লীল সাইট বন্ধ থাকবে।'
+            : 'Works automatically across Google Chrome, Microsoft Edge, Mozilla Firefox, Brave and Opera without extensions.'
+        }}
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-card__icon">
+        <aq-icon name="search" [size]="24" />
+      </div>
+      <h3 class="feature-card__title">
+        {{ isBn() ? 'বাধ্যতামূলক SafeSearch' : 'Strict SafeSearch Enforced' }}
+      </h3>
+      <p class="feature-card__desc">
+        {{
+          isBn()
+            ? 'Google সার্চ এবং YouTube-এ স্বয়ংক্রিয়ভাবে কঠোর SafeSearch লক হয়ে থাকবে, যা ক্ষতিকর ছবি বা ভিডিও ফিল্টার করে।'
+            : 'Strict SafeSearch is permanently locked on Google Search and YouTube to filter out explicit images and videos.'
+        }}
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-card__icon">
+        <aq-icon name="layers" [size]="24" />
+      </div>
+      <h3 class="feature-card__title">
+        {{ isBn() ? 'ডুয়েল-লেয়ার নেটওয়ার্ক সুরক্ষা' : 'Dual-Layer Network Shield' }}
+      </h3>
+      <p class="feature-card__desc">
+        {{
+          isBn()
+            ? 'উইন্ডোজ হোস্টস ফাইল এবং ক্লাউডফ্লেয়ার ফ্যামিলি সিকিউরিটি (1.1.1.3) এর সমন্বয়ে নির্ভরযোগ্য সুরক্ষা নিশ্চিত করা হয়।'
+            : 'Combines Windows hosts-level blocking with Cloudflare Family 1.1.1.3 DNS for robust multilayer protection.'
+        }}
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-card__icon">
+        <aq-icon name="sparkles" [size]="24" />
+      </div>
+      <h3 class="feature-card__title">
+        {{ isBn() ? '১০০% আজীবন ফ্রি ও নিরাপদ' : '100% Free & Private' }}
+      </h3>
+      <p class="feature-card__desc">
+        {{
+          isBn()
+            ? 'কোনো থার্ড-পার্টি ট্র্যাকিং বা সাবস্ক্রিপশন ছাড়াই সম্পূর্ণ বিনামূল্যে আপনার ডিভাইস সুরক্ষিত থাকবে।'
+            : 'No paid subscriptions, no tracking, and zero impact on PC gaming or work performance.'
+        }}
+      </p>
+    </div>
+  </section>
+</div>
