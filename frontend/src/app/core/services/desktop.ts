@@ -48,8 +48,8 @@ declare global {
 
 export const DESKTOP_DOWNLOAD_LINKS = {
   releasePage: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest',
-  portableExe: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest/download/Al-Quran-Portable-1.0.0.exe',
-  setupExe: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest/download/Al-Quran-Setup-1.0.0.exe',
+  portableExe: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest/download/Al-Quran-Portable-1.1.0.exe',
+  setupExe: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest/download/Al-Quran-Setup-1.1.0.exe',
 };
 
 export interface DesktopShortcut {
