@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  OnDestroy,
   ViewChild,
   computed,
   effect,
@@ -23,7 +24,7 @@ import { ISLAMIC_QUICK_PROMPTS, QuickPrompt } from '../../../core/models/islamic
   styleUrl: './islamic-chat-widget.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IslamicChatWidgetComponent {
+export class IslamicChatWidgetComponent implements OnDestroy {
   protected readonly chatService = inject(IslamicChatService);
   protected readonly lang = inject(LanguageService);
 
@@ -52,15 +53,30 @@ export class IslamicChatWidgetComponent {
       this.scrollToBottom();
     });
 
-    // Focus input on open
+    // Handle open/close side effects (focus and background scroll locking)
     effect(() => {
-      if (this.isOpen()) {
+      const open = this.isOpen();
+      if (typeof document !== 'undefined') {
+        if (open) {
+          document.body.style.overflow = 'hidden';
+        } else {
+          document.body.style.overflow = '';
+        }
+      }
+
+      if (open) {
         setTimeout(() => {
           this.chatInput?.nativeElement.focus();
           this.scrollToBottom();
         }, 150);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = '';
+    }
   }
 
   toggle(): void {
