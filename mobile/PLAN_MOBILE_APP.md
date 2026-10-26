@@ -1,7 +1,7 @@
 # Al-Quran Mobile App — Complete Implementation Plan (Capacitor + Angular + .NET)
 
 > [!IMPORTANT]
-> This document details the end-to-end roadmap for building the official **Al-Quran Mobile Application** for **Android (APK & Google Play Store)** and **iOS (App Store)**. It leverages **Capacitor 7** alongside our existing modern **Angular 21** frontend and **.NET 9 Web API** backend.
+> This document details the end-to-end roadmap for building the official **Al-Quran Mobile Application** for **Android (APK & Google Play Store)** and **iOS (App Store)**. It guarantees **100% feature parity with the web version** while incorporating a dedicated **Mobile Halal Guard & System Blocker**. It runs on **Capacitor 7** alongside our modern **Angular 21** frontend and **.NET 9 Web API** backend.
 
 ---
 
@@ -10,16 +10,22 @@
 ```mermaid
 flowchart TD
     subgraph MobileApp ["Mobile App Client (Android / iOS)"]
-        UI["Angular 21 Mobile UI (Tailored for Touch & Gestures)"]
+        UI["Angular 21 Mobile UI (Full Web Parity + Touch & Gestures)"]
         Cap["Capacitor 7 Native Bridge"]
+        Shield["Mobile Halal Shield (System DNS Blocker)"]
         
         UI --> Cap
+        UI --> Shield
         
         Cap --> P1["Native Push Notifications & Background Adhan"]
         Cap --> P2["Hardware Magnetometer (True 3D Qibla Compass)"]
         Cap --> P3["Background Audio Player & Lock-Screen Controls"]
         Cap --> P4["Haptics Engine (Digital Tasbih Vibration)"]
         Cap --> P5["Offline SQLite & Secure Storage"]
+        
+        Shield --> S1["Android Private DNS / Local VPN Filter"]
+        Shield --> S2["All Mobile Browsers Protected (Chrome, Samsung, Edge)"]
+        Shield --> S3["Strict SafeSearch Enforced (Google & YouTube)"]
     end
     
     subgraph Backend [".NET 9 Web API Backend"]
@@ -39,7 +45,32 @@ flowchart TD
 
 ---
 
-## 📅 Phase-by-Phase Roadmap
+## 🌟 100% Web Feature Parity Guarantee
+
+Every single feature present in the web and desktop versions is fully preserved and optimized for mobile:
+
+| Web Feature | Mobile Implementation Status |
+| :--- | :--- |
+| **Complete 114 Surahs** | Included (Arabic text, Bangla & English translation, word-by-word) |
+| **All 30 Juz / Paras** | Included with instant Juz reader |
+| **Hadith Library** | Included (Bukhari, Muslim, Tirmidhi, Abu Dawood with search & filters) |
+| **Asma-ul-Husna (99 Names)** | Included with Arabic audio recitation and Bangla/English meanings |
+| **Ruqyah Shariah** | Included (Full Ruqyah audio tracks & category-based reading) |
+| **Islamic Hijri Calendar** | Included (Moon phase, Islamic holidays, Fasting dates) |
+| **Prayer Times & Waqt Countdown** | Included (GPS-based accurate calculation for any global location) |
+| **3D Qibla Compass** | Included (Powered by native phone hardware magnetometer) |
+| **Nearby Mosques** | Included (Interactive OpenStreetMap with GPS route directions) |
+| **Digital Tasbih** | Included with physical haptic vibration feedback on every tap |
+| **Noor AI Assistant** | Included (Islamic Q&A chat with rate-limit and safety guardrails) |
+| **Bookmarks & Last Read** | Included (Persisted locally and synced with .NET cloud backend) |
+| **Daily Quran Tasks & Streaks** | Included with daily progress bar and goal tracking |
+| **Continuous Audio Recitations** | Included with background playback and lock-screen media player |
+| **Bilingual & Theme Support** | Included (Bangla/English toggle; Dark, Light, and Emerald themes) |
+| **🛡️ Halal Blocker Shield** | **Included (System-wide mobile adult & ad blocking across all browsers)** |
+
+---
+
+## 📅 Detailed Phase-by-Phase Roadmap
 
 ### 📌 Phase 1: Environment & Project Foundation
 - **Goal:** Set up Capacitor in the `mobile/` directory and establish the build pipeline from Angular.
@@ -83,7 +114,25 @@ flowchart TD
 
 ---
 
-### 📌 Phase 4: .NET 9 Backend Synchronization & Cloud Services
+### 📌 Phase 4: Mobile Halal Guard & System Blocker Engine (NEW)
+- **Goal:** Provide 100% free system-level content & ad blocking on Android and iOS devices.
+- **Tasks:**
+  1. **Android Private DNS (DoT / DoH) Integration:**
+     - One-click configuration guide for Android 9+ Private DNS (`family.cloudflare-dns.com` or `dns.cleanbrowsing.org` or `dns-family.adguard.com`).
+     - **Result:** Blocks 100% of adult websites, malicious links, and ads across **Chrome, Samsung Internet, Edge, Opera, and all mobile apps on the phone**.
+  2. **Local Loopback VPN/DNS Service:**
+     - Zero external server, on-device loopback DNS filter routing DNS requests to Cloudflare Family Filter (`1.1.1.3`).
+     - 100% free, zero bandwidth cost, zero privacy tracking.
+  3. **SafeSearch Enforcement:**
+     - Automatically locks Google Search, Bing, and YouTube into strict SafeSearch on mobile browsers.
+  4. **Mobile Shield Dashboard UI:**
+     - Dedicated **`[ 🛡️ হালাল শিল্ড ]`** card in mobile Settings and Top Bar.
+     - Live diagnostic tool: "সুরক্ষা যাচাই করুন (Verify Protection)" checking if DNS blocking is active.
+     - Clear status badge: `🟢 সুরক্ষিত (Protected)` vs `⚪ নিষ্ক্রিয় (Inactive)`.
+
+---
+
+### 📌 Phase 5: .NET 9 Backend Synchronization & Cloud Services
 - **Goal:** Connect mobile clients to the central .NET 9 backend for seamless multi-device continuity.
 - **Tasks:**
   1. **User Profile & State Sync API:**
@@ -95,7 +144,7 @@ flowchart TD
 
 ---
 
-### 📌 Phase 5: Android Build & APK Generation
+### 📌 Phase 6: Android Build & APK Generation
 - **Goal:** Produce installable Android binaries (APK and Google Play Store AAB).
 - **Tasks:**
   1. Scaffold Android native project (`npx cap add android`).
@@ -105,7 +154,7 @@ flowchart TD
 
 ---
 
-### 📌 Phase 6: iOS Project Configuration (Xcode)
+### 📌 Phase 7: iOS Project Configuration (Xcode)
 - **Goal:** Prepare the iOS codebase for iPhone and iPad deployment.
 - **Tasks:**
   1. Scaffold iOS native project (`npx cap add ios`).
