@@ -32,7 +32,7 @@ export class DesktopModalComponent {
     }
   }
 
-  setTab(tab: 'download' | 'shortcuts'): void {
+  setTab(tab: 'download' | 'extension' | 'shortcuts'): void {
     this.desktop.modalTab.set(tab);
   }
 

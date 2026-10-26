@@ -33,6 +33,10 @@ export class ShieldPage implements OnInit {
   readonly verificationStatus = signal<string | null>(null);
   readonly isVerifying = signal<boolean>(false);
 
+  openExtensionModal(): void {
+    this.desktop.openDownloadModal('extension');
+  }
+
   ngOnInit(): void {
     this.seo.apply({
       title: this.isBn()

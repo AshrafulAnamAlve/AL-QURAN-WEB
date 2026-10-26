@@ -187,4 +187,32 @@
       </p>
     </div>
   </section>
+
+  <!-- Browser Extension Callout Section -->
+  <section class="shield-extension-callout" style="margin-top: 28px; background: var(--aq-surface-raised, #132b21); border: 1px solid var(--aq-border-subtle, #1e4534); border-radius: 16px; padding: 24px; display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 280px;">
+      <span style="font-size: 11px; font-weight: 700; color: var(--aq-primary, #10b981); text-transform: uppercase; letter-spacing: 0.5px;">
+        {{ isBn() ? 'নতুন সংযোজন • ব্রাউজার এক্সটেনশন' : 'New • Browser Extension' }}
+      </span>
+      <h3 style="font-size: 18px; font-weight: 700; margin: 6px 0; color: var(--aq-text, #f1f5f9);">
+        {{ isBn() ? 'Al-Quran & Halal Web Shield (Chrome & Edge)' : 'Al-Quran & Halal Web Shield (Chrome & Edge)' }}
+      </h3>
+      <p style="font-size: 13px; color: var(--aq-text-muted, #94a3b8); line-height: 1.6; margin: 0;">
+        {{ isBn()
+          ? 'ইউটিউব শর্টস ও রিলস সম্পূর্ণ অপসারণ, ক্ষতিকর ওয়েবসাইট প্রতিরোধ, বাধ্যতামূলক SafeSearch এবং সরাসরি ব্রাউজার টুলবারে নামায ও কুরআন রিডার।'
+          : 'Instantly block YouTube Shorts & Reels, explicit websites with Islamic redirect, enforce SafeSearch and access Prayer times & Quran from your browser toolbar.' }}
+      </p>
+    </div>
+    <div>
+      <button
+        type="button"
+        class="aq-btn aq-btn--primary"
+        (click)="openExtensionModal()"
+        style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; font-weight: 600;"
+      >
+        <aq-icon name="shield" [size]="18" />
+        <span>{{ isBn() ? 'এক্সটেনশন ডাউনলোড ও সেটআপ গাইড' : 'Download Extension & Setup' }}</span>
+      </button>
+    </div>
+  </section>
 </div>

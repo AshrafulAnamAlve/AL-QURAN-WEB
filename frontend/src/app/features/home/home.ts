@@ -47,7 +47,11 @@ export class HomePage {
   readonly isDesktopApp = this.desktop.isDesktop;
 
   openDesktopModal(): void {
-    this.desktop.openDownloadModal();
+    this.desktop.openDownloadModal('download');
+  }
+
+  openExtensionModal(): void {
+    this.desktop.openDownloadModal('extension');
   }
 
   readonly isBn = this.lang.isBn;

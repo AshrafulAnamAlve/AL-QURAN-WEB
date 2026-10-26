@@ -740,6 +740,40 @@
           </div>
         </div>
       </aside>
+
+      <!-- Browser Extension Showcase Banner -->
+      <aside class="desktop-banner desktop-banner--extension" role="region" [attr.aria-label]="isBn() ? 'আল-কুরআন ও হালাল শিল্ড ব্রাউজার এক্সটেনশন' : 'Al-Quran Halal Web Shield Browser Extension'" style="margin-top: 16px;">
+        <div class="desktop-banner__badge" style="background: rgba(16, 185, 129, 0.15); color: var(--aq-primary);">
+          <span>{{ isBn() ? 'ব্রাউজার অ্যাড-অন' : 'Browser Add-on' }}</span>
+          <span class="desktop-banner__os">Chrome / Edge / Brave / Opera</span>
+        </div>
+
+        <div class="desktop-banner__main">
+          <div class="desktop-banner__icon" style="color: var(--aq-primary);">
+            <aq-icon name="shield" [size]="32" />
+          </div>
+          <div class="desktop-banner__text">
+            <h3 class="desktop-banner__title">
+              {{ isBn() ? 'আল-কুরআন ও হালাল শিল্ড ব্রাউজার এক্সটেনশন' : 'Al-Quran & Halal Web Shield Browser Extension' }}
+            </h3>
+            <p class="desktop-banner__desc">
+              {{ isBn()
+                ? 'ইউটিউব শর্টস ও রিলস সম্পূর্ণ অপসারণ, ক্ষতিকর ও অশ্লীল সাইট প্রতিরোধ, বাধ্যতামূলক SafeSearch এবং সরাসরি ব্রাউজার টুলবারে নামায ও কুরআন রিডার।'
+                : 'Blocks YouTube Shorts & Reels, adult domains with Quranic reminder, locks SafeSearch, and brings Prayer times & Quran to your browser toolbar.' }}
+            </p>
+          </div>
+          <div class="desktop-banner__actions">
+            <button
+              type="button"
+              class="aq-btn aq-btn--primary desktop-banner__btn"
+              (click)="openExtensionModal()"
+            >
+              <aq-icon name="shield" [size]="18" />
+              <span>{{ isBn() ? 'এক্সটেনশন যুক্ত করুন' : 'Add Extension' }}</span>
+            </button>
+          </div>
+        </div>
+      </aside>
     }
   </section>
 </div>

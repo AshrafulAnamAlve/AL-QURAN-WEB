@@ -50,6 +50,8 @@ export const DESKTOP_DOWNLOAD_LINKS = {
   releasePage: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest',
   portableExe: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest/download/Al-Quran-Portable-1.1.0.exe',
   setupExe: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest/download/Al-Quran-Setup-1.1.0.exe',
+  extensionZip: 'downloads/al-quran-halal-shield-v1.0.0.zip',
+  extensionGitHub: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/tree/main/extension',
 };
 
 export interface DesktopShortcut {
@@ -117,12 +119,12 @@ export class DesktopService {
 
   /** Controls display of the Desktop App download and shortcuts modal on the website */
   readonly showDownloadModal = signal<boolean>(false);
-  readonly modalTab = signal<'download' | 'shortcuts'>('download');
+  readonly modalTab = signal<'download' | 'extension' | 'shortcuts'>('download');
 
   readonly downloadLinks = DESKTOP_DOWNLOAD_LINKS;
   readonly shortcuts = DESKTOP_SHORTCUTS;
 
-  openDownloadModal(tab: 'download' | 'shortcuts' = 'download'): void {
+  openDownloadModal(tab: 'download' | 'extension' | 'shortcuts' = 'download'): void {
     this.modalTab.set(tab);
     this.showDownloadModal.set(true);
   }

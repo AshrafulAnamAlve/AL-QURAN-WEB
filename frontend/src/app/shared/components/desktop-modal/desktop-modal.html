@@ -43,7 +43,19 @@
       (click)="setTab('download')"
     >
       <aq-icon name="download" [size]="16" />
-      <span>{{ isBn() ? 'ডাউনলোড অপশন' : 'Download Options' }}</span>
+      <span>{{ isBn() ? 'ডেস্কটপ অ্যাপ (.exe)' : 'Desktop App (.exe)' }}</span>
+    </button>
+
+    <button
+      type="button"
+      role="tab"
+      class="desktop-modal__tab"
+      [class.is-active]="activeTab() === 'extension'"
+      [attr.aria-selected]="activeTab() === 'extension'"
+      (click)="setTab('extension')"
+    >
+      <aq-icon name="shield" [size]="16" />
+      <span>{{ isBn() ? 'ব্রাউজার এক্সটেনশন' : 'Browser Extension' }}</span>
     </button>
 
     <button
@@ -180,7 +192,113 @@
     </div>
   }
 
-  <!-- Tab 2: Keyboard Shortcuts -->
+  <!-- Tab 2: Browser Extension -->
+  @if (activeTab() === 'extension') {
+    <div class="desktop-modal__body">
+      <div class="download-card">
+        <div class="download-card__badge">
+          <span>Chrome / Edge / Brave / Opera</span>
+          <span class="download-card__version">Manifest V3 • v1.0.0</span>
+        </div>
+
+        <h3 class="download-card__title">
+          {{ isBn() ? 'আল-কুরআন ও হালাল শিল্ড ব্রাউজার এক্সটেনশন' : 'Al-Quran & Halal Web Shield Browser Extension' }}
+        </h3>
+        <p class="download-card__desc">
+          {{ isBn()
+            ? 'ইউটিউব শর্টস ও রিলস সম্পূর্ণ অপসারণ, ক্ষতিকর ও অশ্লীল সাইট প্রতিরোধ, বাধ্যতামূলক SafeSearch এবং ব্রাউজারে ৫ ওয়াক্তের নামায, আযান ও ১১৪ সূরা পড়ার সুবিধা।'
+            : 'Removes YouTube Shorts & Reels, blocks adult domains with Islamic redirect, locks SafeSearch, and brings 114 Surahs, Hadith & Prayer times to your browser toolbar.' }}
+        </p>
+
+        <div class="download-card__actions">
+          <a
+            [href]="desktop.downloadLinks.extensionZip"
+            class="download-btn download-btn--primary"
+            download="al-quran-halal-shield-v1.0.0.zip"
+          >
+            <aq-icon name="download" [size]="18" />
+            <span>{{ isBn() ? 'এক্সটেনশন ডাউনলোড করুন (.zip)' : 'Download Extension (.zip)' }}</span>
+            <span class="download-btn__size">~65 KB</span>
+          </a>
+
+          <a
+            [href]="desktop.downloadLinks.extensionGitHub"
+            class="download-btn download-btn--secondary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <aq-icon name="externalLink" [size]="16" />
+            <span>{{ isBn() ? 'গিটহাব রেপোজিটরি' : 'GitHub Source' }}</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Step-by-step 3-step setup guide -->
+      <h4 class="features-title">
+        {{ isBn() ? 'ব্রাউজারে এক্সটেনশন যুক্ত করার সহজ নিয়ম (১ মিনিটের গাইড)' : 'Easy 1-Minute Browser Setup Guide' }}
+      </h4>
+
+      <div class="features-grid">
+        <div class="feature-item">
+          <div class="feature-item__icon">1️⃣</div>
+          <div>
+            <strong class="feature-item__name">
+              {{ isBn() ? 'ডাউনলোড ও আনজিপ করুন' : 'Download & Extract' }}
+            </strong>
+            <p class="feature-item__desc">
+              {{ isBn()
+                ? 'উপরের বাটন থেকে .zip ফাইলটি ডাউনলোড করুন এবং আপনার কম্পিউটারে রাইট-ক্লিক করে Extract All (আনজিপ) করুন।'
+                : 'Download the .zip archive above and extract it into a folder on your computer.' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-item__icon">2️⃣</div>
+          <div>
+            <strong class="feature-item__name">
+              {{ isBn() ? 'Extensions পেজ ও Developer Mode' : 'Open Extensions Page' }}
+            </strong>
+            <p class="feature-item__desc">
+              {{ isBn()
+                ? 'Chrome বা Edge ব্রাউজারের অ্যাড্রেস বারে chrome://extensions লিখুন এবং উপরের ডানপাশে Developer mode অন করুন।'
+                : 'Navigate to chrome://extensions (or edge://extensions) and enable "Developer mode" in the top right.' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-item__icon">3️⃣</div>
+          <div>
+            <strong class="feature-item__name">
+              {{ isBn() ? 'Load Unpacked-এ ফোল্ডার সিলেক্ট করুন' : 'Click "Load unpacked"' }}
+            </strong>
+            <p class="feature-item__desc">
+              {{ isBn()
+                ? 'Load unpacked বাটনে ক্লিক করে আনজিপ করা ফোল্ডারটি ধরিয়ে দিন — স্বয়ংক্রিয়ভাবে এক্সটেনশন সেকশনে যুক্ত হয়ে যাবে!'
+                : 'Click "Load unpacked" and select the unzipped folder — it installs instantly into your browser extensions!' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-item__icon">📌</div>
+          <div>
+            <strong class="feature-item__name">
+              {{ isBn() ? 'টুলবারে পিন করুন' : 'Pin to Toolbar' }}
+            </strong>
+            <p class="feature-item__desc">
+              {{ isBn()
+                ? 'ব্রাউজারের এক্সটেনশন পাজল আইকনে ক্লিক করে আল-কুরআন শিল্ডটি Pin করে রাখুন।'
+                : 'Click the puzzle icon on your browser toolbar and pin Al-Quran Shield for instant 1-click access.' }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Tab 3: Keyboard Shortcuts -->
   @if (activeTab() === 'shortcuts') {
     <div class="desktop-modal__body">
       <div class="shortcuts-intro">
