@@ -1,0 +1,36 @@
+{
+  "name": "al-quran-mobile",
+  "version": "1.0.0",
+  "description": "Al-Quran Cross-Platform Mobile Application (Android & iOS) powered by Angular, Capacitor, and .NET",
+  "author": "Ashraful Anam Alve",
+  "license": "MIT",
+  "scripts": {
+    "build:frontend": "npm --prefix ../frontend run build",
+    "cap:sync": "npx cap sync",
+    "cap:copy": "npx cap copy",
+    "cap:add:android": "npx cap add android",
+    "cap:add:ios": "npx cap add ios",
+    "cap:open:android": "npx cap open android",
+    "cap:open:ios": "npx cap open ios",
+    "cap:run:android": "npx cap run android",
+    "build:android": "npm run build:frontend && npx cap sync android",
+    "build:apk:debug": "npm run build:android && cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/app": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/haptics": "^7.0.0",
+    "@capacitor/keyboard": "^7.0.0",
+    "@capacitor/local-notifications": "^7.0.0",
+    "@capacitor/motion": "^7.0.0",
+    "@capacitor/preferences": "^7.0.0",
+    "@capacitor/share": "^7.0.0",
+    "@capacitor/splash-screen": "^7.0.0",
+    "@capacitor/status-bar": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/ios": "^7.0.0"
+  }
+}
