@@ -51,6 +51,11 @@
         "id": "ad_rules",
         "enabled": true,
         "path": "rules/ad-rules.json"
+      },
+      {
+        "id": "safesearch_rules",
+        "enabled": true,
+        "path": "rules/safesearch-rules.json"
       }
     ]
   },
@@ -59,7 +64,8 @@
       "matches": [
         "*://*.youtube.com/*",
         "*://*.facebook.com/*",
-        "*://*.instagram.com/*"
+        "*://*.instagram.com/*",
+        "*://*.tiktok.com/*"
       ],
       "js": ["content-scripts/reels-blocker.js"],
       "css": ["content-scripts/reels-blocker.css"],

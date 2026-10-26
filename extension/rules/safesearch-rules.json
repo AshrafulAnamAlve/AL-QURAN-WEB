@@ -1,0 +1,80 @@
+[
+  {
+    "id": 1001,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "transform": {
+          "queryTransform": {
+            "addOrReplaceParams": [
+              { "key": "safe", "value": "active" }
+            ]
+          }
+        }
+      }
+    },
+    "condition": {
+      "urlFilter": "||google.com/search*",
+      "resourceTypes": ["main_frame"]
+    }
+  },
+  {
+    "id": 1002,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "transform": {
+          "queryTransform": {
+            "addOrReplaceParams": [
+              { "key": "adlt", "value": "strict" }
+            ]
+          }
+        }
+      }
+    },
+    "condition": {
+      "urlFilter": "||bing.com/search*",
+      "resourceTypes": ["main_frame"]
+    }
+  },
+  {
+    "id": 1003,
+    "priority": 1,
+    "action": {
+      "type": "redirect",
+      "redirect": {
+        "transform": {
+          "queryTransform": {
+            "addOrReplaceParams": [
+              { "key": "kp", "value": "1" }
+            ]
+          }
+        }
+      }
+    },
+    "condition": {
+      "urlFilter": "||duckduckgo.com/*",
+      "resourceTypes": ["main_frame"]
+    }
+  },
+  {
+    "id": 1004,
+    "priority": 1,
+    "action": {
+      "type": "modifyHeaders",
+      "requestHeaders": [
+        {
+          "header": "YouTube-Restrict",
+          "operation": "set",
+          "value": "Strict"
+        }
+      ]
+    },
+    "condition": {
+      "urlFilter": "||youtube.com/*",
+      "resourceTypes": ["main_frame", "sub_frame", "xmlhttprequest"]
+    }
+  }
+]

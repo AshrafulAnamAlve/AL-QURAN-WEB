@@ -33,7 +33,16 @@
   function init() {
     const host = window.location.hostname;
 
-    // --- 1. YouTube Shorts Redirection ---
+    // --- 1. TikTok Redirect ---
+    if (config.blockReels && host.includes('tiktok.com')) {
+      incrementBlockStat();
+      if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.getURL) {
+        window.location.replace(chrome.runtime.getURL('blocked/blocked.html'));
+      }
+      return;
+    }
+
+    // --- 2. YouTube Shorts Redirection & Cleanup ---
     if (config.blockShorts && host.includes('youtube.com')) {
       handleYouTubeShorts();
 
@@ -45,12 +54,12 @@
       cleanYouTubeDOM();
     }
 
-    // --- 2. Facebook Reels Clean-up ---
+    // --- 3. Facebook Reels Clean-up ---
     if (config.blockReels && host.includes('facebook.com')) {
       cleanFacebookDOM();
     }
 
-    // --- 3. Instagram Reels Clean-up ---
+    // --- 4. Instagram Reels Clean-up ---
     if (config.blockReels && host.includes('instagram.com')) {
       cleanInstagramDOM();
     }
@@ -69,7 +78,9 @@
 
   function cleanYouTubeDOM() {
     const observer = new MutationObserver(() => {
-      const shortsShelf = document.querySelectorAll('ytd-rich-shelf-renderer[is-shorts], ytd-reel-shelf-renderer');
+      const shortsShelf = document.querySelectorAll(
+        'ytd-rich-shelf-renderer[is-shorts], ytd-reel-shelf-renderer, ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts])'
+      );
       shortsShelf.forEach((shelf) => {
         shelf.remove();
         incrementBlockStat();
@@ -86,7 +97,7 @@
     const observer = new MutationObserver(() => {
       // Find reels units by aria-labels or specific test IDs
       const reelsElements = document.querySelectorAll(
-        'div[aria-label*="Reels and short videos" i], div[data-pagelet*="Reels" i]'
+        'div[aria-label*="Reels and short videos" i], div[data-pagelet*="Reels" i], div[aria-label*="Reels" i]:not([role="dialog"])'
       );
       reelsElements.forEach((el) => {
         el.remove();
@@ -102,9 +113,15 @@
 
   function cleanInstagramDOM() {
     const observer = new MutationObserver(() => {
-      const reelsNav = document.querySelector('a[href="/reels/"], a[href^="/reels/"]');
-      if (reelsNav) {
-        reelsNav.style.display = 'none';
+      const reelsNav = document.querySelectorAll('a[href="/reels/"], a[href^="/reels/"], svg[aria-label="Reels"]');
+      reelsNav.forEach((el) => {
+        const container = el.closest('div[role="none"], div[role="listitem"]') || el;
+        container.style.display = 'none';
+      });
+
+      // If user directly visits /reels/ on Instagram
+      if (window.location.pathname.startsWith('/reels')) {
+        window.location.replace('https://www.instagram.com/');
       }
     });
 
