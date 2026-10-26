@@ -91,12 +91,12 @@
       @if (!isDesktopApp()) {
         <a
           routerLink="/download"
-          class="desktop-pill-btn download-header-btn"
+          class="header-download-btn"
           [attr.aria-label]="isBn() ? 'অ্যাপ ও এক্সটেনশন ডাউনলোড' : 'Download Apps & Extension'"
           title="Download Apps / অ্যাপ ডাউনলোড"
         >
           <aq-icon name="download" [size]="15" />
-          <span class="desktop-pill-label">{{ isBn() ? 'ডাউনলোড' : 'Download' }}</span>
+          <span class="header-download-label">{{ isBn() ? 'ডাউনলোড' : 'Download' }}</span>
         </a>
       }
 

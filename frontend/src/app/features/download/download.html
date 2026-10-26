@@ -2,321 +2,338 @@
   <!-- Hero Section -->
   <header class="download-hero">
     <div class="download-hero__badge">
-      <aq-icon name="download" [size]="18" />
-      <span>{{ isBn() ? 'সকল প্ল্যাটফর্ম ও ডিভাইস' : 'All Platforms & Devices' }}</span>
+      <aq-icon name="download" [size]="16" />
+      <span>{{ isBn() ? 'অফিশিয়াল অ্যাপ্লিকেশন ও এক্সটেনশন' : 'Official Apps & Extension' }}</span>
     </div>
+
     <h1 class="download-hero__title">
-      {{ isBn() ? 'আল-কুরআন ও হালাল শিল্ড অ্যাপ্লিকেশন ডাউনলোড' : 'Download Al-Quran Apps & Halal Web Shield' }}
+      {{ isBn() ? 'আল-কুরআন ডাউনলোড হাব' : 'Al-Quran Download Hub' }}
     </h1>
+
     <p class="download-hero__subtitle">
       {{
         isBn()
-          ? 'উইন্ডোজ পিসি, ব্রাউজার এক্সটেনশন এবং মোবাইলের জন্য ১০০% বিনামূল্যে ও বিজ্ঞাপনমুক্ত ইসলামিক প্ল্যাটফর্ম।'
-          : 'Free, open, and ad-free Islamic experience for Windows PC, Browser Extensions, and Mobile devices.'
+          ? 'আপনার কম্পিউটার, ব্রাউজার ও ফোনের জন্য ১০০% বিনামূল্যে ও বিজ্ঞাপনমুক্ত আল-কুরআন এবং হালাল শিল্ড।'
+          : 'Free, open, and ad-free Islamic experience with Halal Shield for your PC, Browser, and Mobile device.'
       }}
     </p>
-
-    <!-- Filter Tabs -->
-    <div class="filter-tabs" role="tablist">
-      <button
-        type="button"
-        class="filter-tab"
-        [class.is-active]="activeTab() === 'all'"
-        (click)="setTab('all')"
-      >
-        <span>{{ isBn() ? 'সব অ্যাপ্লিকেশন' : 'All Apps' }}</span>
-      </button>
-      <button
-        type="button"
-        class="filter-tab"
-        [class.is-active]="activeTab() === 'desktop'"
-        (click)="setTab('desktop')"
-      >
-        <aq-icon name="monitor" [size]="15" />
-        <span>{{ isBn() ? 'উইন্ডোজ ডেস্কটপ' : 'Windows PC' }}</span>
-      </button>
-      <button
-        type="button"
-        class="filter-tab"
-        [class.is-active]="activeTab() === 'extension'"
-        (click)="setTab('extension')"
-      >
-        <aq-icon name="shield" [size]="15" />
-        <span>{{ isBn() ? 'ব্রাউজার এক্সটেনশন' : 'Browser Extension' }}</span>
-      </button>
-      <button
-        type="button"
-        class="filter-tab"
-        [class.is-active]="activeTab() === 'mobile'"
-        (click)="setTab('mobile')"
-      >
-        <aq-icon name="compass" [size]="15" />
-        <span>{{ isBn() ? 'মোবাইল অ্যাপ' : 'Mobile App' }}</span>
-      </button>
-    </div>
   </header>
 
-  <!-- Applications Grid -->
-  <div class="apps-container">
+  <!-- 3 Main Application Cards -->
+  <div class="download-grid">
 
-    <!-- 1. WINDOWS DESKTOP APPLICATION -->
-    @if (activeTab() === 'all' || activeTab() === 'desktop') {
-      <article class="app-card app-card--desktop">
-        <div class="app-card__header">
-          <div class="app-card__icon-wrap app-card__icon-wrap--desktop">
-            <aq-icon name="monitor" [size]="32" />
-          </div>
-          <div class="app-card__meta">
-            <div class="app-card__tags">
-              <span class="app-tag app-tag--windows">Windows 10 / 11 (64-bit)</span>
-              <span class="app-tag app-tag--version">v1.1.0</span>
-            </div>
-            <h2 class="app-card__title">
-              {{ isBn() ? 'আল-কুরআন ডেস্কটপ অ্যাপ্লিকেশন' : 'Al-Quran Desktop Application' }}
-            </h2>
-            <p class="app-card__desc">
-              {{ isBn()
-                ? 'পিসি ও ল্যাপটপের জন্য নেটিভ উইন্ডোজ সংস্করণ। ব্যাকগ্রাউন্ডে আজানের মিষ্টি ধ্বনি, টাস্কবার সিস্টেম ট্রেতে লাইভ ওয়াক্তের কাউন্টডাউন এবং কিবোর্ড মিডিয়া হটকি দিয়ে তিলাওয়াত নিয়ন্ত্রণ।'
-                : 'Native Windows desktop app featuring background Adhan alerts, live taskbar system tray waqt countdown, global media shortcuts, and system-wide Halal Blocker Shield.' }}
-            </p>
-          </div>
+    <!-- ==================== OPTION 1: WINDOWS DESKTOP APP ==================== -->
+    <section class="dl-card dl-card--desktop">
+      <div class="dl-card__top">
+        <div class="dl-card__icon dl-card__icon--desktop">
+          <aq-icon name="monitor" [size]="34" />
         </div>
+        <div class="dl-card__heading">
+          <div class="dl-card__badges">
+            <span class="badge badge--os">Windows 10 / 11 (64-bit)</span>
+            <span class="badge badge--ver">v1.1.0</span>
+            <span class="badge badge--free">{{ isBn() ? '১০০% ফ্রি' : '100% Free' }}</span>
+          </div>
+          <h2 class="dl-card__title">
+            {{ isBn() ? 'উইন্ডোজ ডেস্কটপ অ্যাপ্লিকেশন' : 'Windows Desktop Application' }}
+          </h2>
+          <p class="dl-card__desc">
+            {{ isBn()
+              ? 'পিসি ও ল্যাপটপের জন্য সমৃদ্ধ সংস্করণ। ব্যাকগ্রাউন্ডে আজানের ধ্বনি, টাস্কবার ট্রেতে লাইভ ওয়াক্তের কাউন্টডাউন, কিবোর্ড মিডিয়া হটকি এবং সিস্টেম হালাল শিল্ড।'
+              : 'Full-featured PC edition with background Adhan audio alerts, taskbar system tray live countdown, keyboard media hotkeys, and system-level Halal Blocker Shield.' }}
+          </p>
+        </div>
+      </div>
 
-        <!-- Download Buttons -->
-        <div class="app-card__actions">
-          <a
-            [href]="downloadLinks.portableExe"
-            class="aq-btn aq-btn--primary action-btn"
-            download
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+      <!-- Feature Tags -->
+      <div class="dl-card__features">
+        <span class="pill-feature">🕌 {{ isBn() ? 'ব্যাকগ্রাউন্ড আজান' : 'Background Adhan' }}</span>
+        <span class="pill-feature">📌 {{ isBn() ? 'টাস্কবার সিস্টেম ট্রে' : 'System Tray Countdown' }}</span>
+        <span class="pill-feature">⌨️ {{ isBn() ? 'মিডিয়া হটকি' : 'Media Shortcuts' }}</span>
+        <span class="pill-feature">🛡️ {{ isBn() ? 'সিস্টেম ব্লকার' : 'System Shield' }}</span>
+        <span class="pill-feature">⚡ {{ isBn() ? '১০০% অফলাইন' : '100% Offline' }}</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="dl-card__actions">
+        <a
+          [href]="downloadLinks.portableExe"
+          class="btn-dl btn-dl--primary"
+          download
+        >
+          <div class="btn-dl__icon">
+            <aq-icon name="download" [size]="20" />
+          </div>
+          <div class="btn-dl__text">
+            <strong>{{ isBn() ? 'পোর্টেবল সংস্করণ ডাউনলোড (.exe)' : 'Download Portable (.exe)' }}</strong>
+            <span>{{ isBn() ? '~৭৯ MB • কোনো ইনস্টলেশন লাগবে না' : '~79 MB • No installation needed' }}</span>
+          </div>
+        </a>
+
+        <a
+          [href]="downloadLinks.setupExe"
+          class="btn-dl btn-dl--secondary"
+          download
+        >
+          <div class="btn-dl__icon">
             <aq-icon name="download" [size]="18" />
-            <span>{{ isBn() ? 'পোর্টেবল সংস্করণ (.exe)' : 'Portable Edition (.exe)' }}</span>
-            <span class="btn-subtext">~79 MB • কোনো ইনস্টল লাগবে না</span>
-          </a>
-
-          <a
-            [href]="downloadLinks.setupExe"
-            class="aq-btn aq-btn--secondary action-btn"
-            download
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <aq-icon name="download" [size]="18" />
-            <span>{{ isBn() ? 'ইনস্টলার সেটআপ (.exe)' : 'Setup Installer (.exe)' }}</span>
-            <span class="btn-subtext">~79 MB • স্টার্ট মেনু ও শর্টকাট সহ</span>
-          </a>
-
-          <a
-            [href]="downloadLinks.releasePage"
-            class="aq-btn aq-btn--ghost action-btn"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <aq-icon name="externalLink" [size]="16" />
-            <span>{{ isBn() ? 'গিটহাব রিলিজ' : 'GitHub Releases' }}</span>
-          </a>
-        </div>
-
-        <!-- Desktop Highlights -->
-        <div class="features-box">
-          <div class="feature-bullet">
-            <span class="feature-bullet__icon">🕌</span>
-            <div>
-              <strong>{{ isBn() ? 'ব্যাকগ্রাউন্ড আজান' : 'Background Adhan' }}</strong>
-              <p>{{ isBn() ? 'অ্যাপ মিনিমাইজ বা বন্ধ থাকলেও সময়মতো আজান বাজবে।' : 'Plays full audio Adhan at prayer time even when minimized.' }}</p>
-            </div>
           </div>
-
-          <div class="feature-bullet">
-            <span class="feature-bullet__icon">📌</span>
-            <div>
-              <strong>{{ isBn() ? 'টাস্কবার সিস্টেম ট্রে' : 'Taskbar Tray' }}</strong>
-              <p>{{ isBn() ? 'ঘড়ির পাশে ট্রে আইকনে পরবর্তী ওয়াক্ত ও কাউন্টডাউন দেখা যায়।' : 'Live waqt countdown visible right in the Windows system tray.' }}</p>
-            </div>
+          <div class="btn-dl__text">
+            <strong>{{ isBn() ? 'ইনস্টলার সেটআপ (.exe)' : 'Setup Installer (.exe)' }}</strong>
+            <span>{{ isBn() ? '~৭৯ MB • স্টার্ট মেনু ও শর্টকাট সহ' : '~79 MB • Standard Windows Installer' }}</span>
           </div>
+        </a>
+      </div>
 
-          <div class="feature-bullet">
-            <span class="feature-bullet__icon">🛡️</span>
-            <div>
-              <strong>{{ isBn() ? 'সিস্টেম হালাল শিল্ড' : 'System Halal Shield' }}</strong>
-              <p>{{ isBn() ? 'উইন্ডোজের সমস্ত ব্রাউজারে খারাপ সাইট স্বয়ংক্রিয় ব্লক।' : 'Blocks adult & harmful sites across all PC browsers.' }}</p>
-            </div>
-          </div>
-        </div>
-      </article>
-    }
+      <!-- Collapsible Guide Button -->
+      <div class="guide-collapsible">
+        <button
+          type="button"
+          class="guide-toggle-btn"
+          [class.is-open]="isDesktopGuideOpen()"
+          (click)="toggleDesktopGuide()"
+        >
+          <span class="guide-toggle-btn__left">
+            <aq-icon name="sparkles" [size]="15" />
+            <span>{{ isBn() ? 'ডেস্কটপ ইনস্টলেশন ও ব্যবহার গাইড' : 'Desktop Setup & Usage Guide' }}</span>
+          </span>
+          <span class="guide-toggle-btn__chevron">{{ isDesktopGuideOpen() ? '▲' : '▼' }}</span>
+        </button>
 
-    <!-- 2. BROWSER EXTENSION -->
-    @if (activeTab() === 'all' || activeTab() === 'extension') {
-      <article class="app-card app-card--extension">
-        <div class="app-card__header">
-          <div class="app-card__icon-wrap app-card__icon-wrap--extension">
-            <aq-icon name="shield" [size]="32" />
-          </div>
-          <div class="app-card__meta">
-            <div class="app-card__tags">
-              <span class="app-tag app-tag--extension">Chrome / Edge / Brave / Opera</span>
-              <span class="app-tag app-tag--version">Manifest V3 • v1.0.0</span>
-            </div>
-            <h2 class="app-card__title">
-              {{ isBn() ? 'আল-কুরআন ও হালাল শিল্ড ব্রাউজার এক্সটেনশন' : 'Al-Quran & Halal Web Shield Browser Extension' }}
-            </h2>
-            <p class="app-card__desc">
-              {{ isBn()
-                ? 'আপনার ব্রাউজারকে অশ্লীলতা ও মনোযোগ নষ্টকারী রিলস থেকে মুক্ত রাখুন। ইউটিউব শর্টস, ফেসবুক ও ইনস্টাগ্রাম রিলস সম্পূর্ণ অপসারণ, ক্ষতিকর ওয়েবসাইট প্রতিরোধ, এবং সরাসরি টুলবারে ৫ ওয়াক্তের নামায, আযান ও ১১৪ সূরা পড়ার সুবিধা।'
-                : 'Free browser extension that eliminates YouTube Shorts & Reels, blocks adult domains with serene Quranic redirect, enforces SafeSearch, and integrates full 114 Surahs, Hadith, Tasbih & Prayer times into your browser toolbar.' }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Download Buttons -->
-        <div class="app-card__actions">
-          <a
-            [href]="downloadLinks.extensionZip"
-            class="aq-btn aq-btn--primary action-btn"
-            download="al-quran-halal-shield-v1.0.0.zip"
-          >
-            <aq-icon name="download" [size]="18" />
-            <span>{{ isBn() ? 'এক্সটেনশন ডাউনলোড করুন (.zip)' : 'Download Extension (.zip)' }}</span>
-            <span class="btn-subtext">~65 KB • দ্রুত ও সম্পূর্ণ নিরাপদ</span>
-          </a>
-
-          <a
-            [href]="downloadLinks.extensionGitHub"
-            class="aq-btn aq-btn--secondary action-btn"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <aq-icon name="externalLink" [size]="16" />
-            <span>{{ isBn() ? 'গিটহাব সোর্স কোড' : 'GitHub Repository' }}</span>
-            <span class="btn-subtext">Open Source MIT License</span>
-          </a>
-        </div>
-
-        <!-- 3-Step Setup Guide -->
-        <div class="extension-guide">
-          <h3 class="extension-guide__title">
-            {{ isBn() ? '🚀 ব্রাউজারে এক্সটেনশন যুক্ত করার ৩টি সহজ ধাপ:' : '🚀 3 Easy Steps to Add Extension to Your Browser:' }}
-          </h3>
-
-          <div class="guide-steps">
-            <div class="guide-step">
-              <span class="guide-step__num">১</span>
-              <div>
-                <strong>{{ isBn() ? 'ডাউনলোড ও আনজিপ করুন' : 'Download & Extract' }}</strong>
-                <p>{{ isBn() ? 'উপরের বাটন থেকে .zip ফাইলটি নামিয়ে রাইট-ক্লিক করে Extract All করুন।' : 'Download the zip archive above and extract it into a folder.' }}</p>
+        @if (isDesktopGuideOpen()) {
+          <div class="guide-content">
+            <div class="guide-steps-grid">
+              <div class="guide-item">
+                <span class="step-num">১</span>
+                <div>
+                  <strong>{{ isBn() ? 'পোর্টেবল বা সেটআপ ডাউনলোড' : 'Download Portable or Setup' }}</strong>
+                  <p>{{ isBn() ? 'পোর্টেবল ভার্সনটি নামিয়ে সরাসরি ডাবল-ক্লিক করলেই চলবে, কোনো ইনস্টলের প্রয়োজন নেই।' : 'Portable edition runs immediately on double click with zero installation.' }}</p>
+                </div>
               </div>
-            </div>
-
-            <div class="guide-step">
-              <span class="guide-step__num">২</span>
-              <div>
-                <strong>{{ isBn() ? 'Extensions পেজ ও Developer Mode' : 'Developer Mode' }}</strong>
-                <p>{{ isBn() ? 'ব্রাউজারে chrome://extensions ওপেন করুন এবং উপরে ডানপাশে Developer mode অন করুন।' : 'Open chrome://extensions and switch on Developer mode in the top right.' }}</p>
+              <div class="guide-item">
+                <span class="step-num">২</span>
+                <div>
+                  <strong>{{ isBn() ? 'টাস্কবার সিস্টেম ট্রে' : 'Taskbar Tray' }}</strong>
+                  <p>{{ isBn() ? 'উইন্ডোজ ঘড়ির পাশে ট্রে আইকনে পরবর্তী নামাযের অবশিষ্ট মিনিট সর্বদা প্রদর্শিত হবে।' : 'Check the clock tray area for real-time live waqt countdown.' }}</p>
+                </div>
               </div>
-            </div>
-
-            <div class="guide-step">
-              <span class="guide-step__num">৩</span>
-              <div>
-                <strong>{{ isBn() ? 'Load Unpacked-এ ফোল্ডার সিলেক্ট করুন' : 'Load Unpacked' }}</strong>
-                <p>{{ isBn() ? 'Load unpacked বাটনে ক্লিক করে আনজিপ করা ফোল্ডারটি নির্বাচন করুন — স্বয়ংক্রিয়ভাবে এক্সটেনশন যুক্ত হয়ে যাবে!' : 'Click Load unpacked and select the extracted folder — it installs instantly into your browser!' }}</p>
+              <div class="guide-item">
+                <span class="step-num">৩</span>
+                <div>
+                  <strong>{{ isBn() ? 'কিবোর্ড শর্টকাট' : 'Keyboard Shortcuts' }}</strong>
+                  <p>{{ isBn() ? 'Space অথবা মিডিয়া প্লে/পজ কি দিয়ে যেকোনো কাজের মধ্যে তিলাওয়াত প্লে বা পজ করুন।' : 'Control Quran recitation globally using your keyboard media buttons.' }}</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </article>
-    }
+        }
+      </div>
+    </section>
 
-    <!-- 3. MOBILE APPLICATION -->
-    @if (activeTab() === 'all' || activeTab() === 'mobile') {
-      <article class="app-card app-card--mobile">
-        <div class="app-card__header">
-          <div class="app-card__icon-wrap app-card__icon-wrap--mobile">
-            <aq-icon name="compass" [size]="32" />
+    <!-- ==================== OPTION 2: BROWSER EXTENSION ==================== -->
+    <section class="dl-card dl-card--extension">
+      <div class="dl-card__top">
+        <div class="dl-card__icon dl-card__icon--extension">
+          <aq-icon name="shield" [size]="34" />
+        </div>
+        <div class="dl-card__heading">
+          <div class="dl-card__badges">
+            <span class="badge badge--browser">Chrome / Edge / Brave / Opera</span>
+            <span class="badge badge--ver">Manifest V3 • v1.0.0</span>
+            <span class="badge badge--free">{{ isBn() ? '১০০% ফ্রি' : '100% Free' }}</span>
           </div>
-          <div class="app-card__meta">
-            <div class="app-card__tags">
-              <span class="app-tag app-tag--mobile">Android (APK) & iOS</span>
-              <span class="app-tag app-tag--status">{{ isBn() ? 'আসছে শীঘ্রই' : 'Coming Soon' }}</span>
+          <h2 class="dl-card__title">
+            {{ isBn() ? 'আল-কুরআন ও হালাল শিল্ড ব্রাউজার এক্সটেনশন' : 'Al-Quran & Halal Web Shield Extension' }}
+          </h2>
+          <p class="dl-card__desc">
+            {{ isBn()
+              ? 'আপনার ব্রাউজারকে অশ্লীলতা ও অনর্থক রিলস থেকে মুক্ত রাখুন। ইউটিউব শর্টস, ফেসবুক ও ইনস্টাগ্রাম রিলস সম্পূর্ণ অপসারণ, ক্ষতিকর ওয়েবসাইট প্রতিরোধ, কঠোর SafeSearch এবং টুলবারে ১১৪ সূরা ও নামাযের সময়সূচি।'
+              : 'Blocks YouTube Shorts & Reels, adult domains with peaceful Quranic reminder, locks SafeSearch, and brings 114 Surahs, Hadith, Tasbih & Prayer times into your browser toolbar.' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature Tags -->
+      <div class="dl-card__features">
+        <span class="pill-feature">🎬 {{ isBn() ? 'রিলস ও শর্টস ব্লকার' : 'Reels & Shorts Blocker' }}</span>
+        <span class="pill-feature">🚫 {{ isBn() ? 'খারাপ ডোমেন প্রতিরোধ' : 'Adult Blocker' }}</span>
+        <span class="pill-feature">🔍 {{ isBn() ? 'কঠোর SafeSearch' : 'Strict SafeSearch' }}</span>
+        <span class="pill-feature">🕌 {{ isBn() ? 'টুলবারে নামায ও আজান' : 'Toolbar Prayer & Adhan' }}</span>
+        <span class="pill-feature">📖 {{ isBn() ? '১১৪ সূরা রিডার' : '114 Surahs Reader' }}</span>
+        <span class="pill-feature">💬 {{ isBn() ? 'নূর AI চ্যাট' : 'Noor AI Chat' }}</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="dl-card__actions">
+        <a
+          [href]="downloadLinks.extensionZip"
+          class="btn-dl btn-dl--primary"
+          download="al-quran-halal-shield-v1.0.0.zip"
+        >
+          <div class="btn-dl__icon">
+            <aq-icon name="download" [size]="20" />
+          </div>
+          <div class="btn-dl__text">
+            <strong>{{ isBn() ? 'এক্সটেনশন ডাউনলোড করুন (.zip)' : 'Download Extension (.zip)' }}</strong>
+            <span>{{ isBn() ? '~৬৫ KB • ক্রোম ও এজ ব্রাউজারের জন্য' : '~65 KB • For Chrome, Edge, Brave, Opera' }}</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Collapsible Guide Button -->
+      <div class="guide-collapsible">
+        <button
+          type="button"
+          class="guide-toggle-btn"
+          [class.is-open]="isExtensionGuideOpen()"
+          (click)="toggleExtensionGuide()"
+        >
+          <span class="guide-toggle-btn__left">
+            <aq-icon name="shield" [size]="15" />
+            <span>{{ isBn() ? 'ব্রাউজারে এক্সটেনশন যুক্ত করার ১ মিনিটের সহজ গাইড' : '1-Minute Browser Setup Guide' }}</span>
+          </span>
+          <span class="guide-toggle-btn__chevron">{{ isExtensionGuideOpen() ? '▲' : '▼' }}</span>
+        </button>
+
+        @if (isExtensionGuideOpen()) {
+          <div class="guide-content">
+            <div class="guide-steps-grid">
+              <div class="guide-item">
+                <span class="step-num">১</span>
+                <div>
+                  <strong>{{ isBn() ? 'ডাউনলোড ও আনজিপ করুন' : 'Download & Extract' }}</strong>
+                  <p>{{ isBn() ? 'উপরের বাটন থেকে .zip ফাইলটি নামিয়ে আপনার কম্পিউটারে রাইট-ক্লিক করে Extract All (আনজিপ) করুন।' : 'Download the zip archive above and extract it into a folder.' }}</p>
+                </div>
+              </div>
+
+              <div class="guide-item">
+                <span class="step-num">২</span>
+                <div>
+                  <strong>{{ isBn() ? 'Extensions পেজ ও Developer Mode' : 'Developer Mode' }}</strong>
+                  <p>{{ isBn() ? 'ব্রাউজারের অ্যাড্রেস বারে chrome://extensions (বা এজ-এ edge://extensions) গিয়ে উপরে ডানপাশে Developer mode অন করুন।' : 'Open chrome://extensions and switch on Developer mode in the top right.' }}</p>
+                </div>
+              </div>
+
+              <div class="guide-item">
+                <span class="step-num">৩</span>
+                <div>
+                  <strong>{{ isBn() ? 'Load Unpacked-এ ফোল্ডার সিলেক্ট করুন' : 'Load Unpacked' }}</strong>
+                  <p>{{ isBn() ? 'Load unpacked বাটনে ক্লিক করে আনজিপ করা ফোল্ডারটি নির্বাচন করুন — সাথে সাথেই এক্সটেনশন সেকশনে যুক্ত হয়ে যাবে!' : 'Click Load unpacked and select the unzipped folder — it installs instantly into your browser!' }}</p>
+                </div>
+              </div>
+
+              <div class="guide-item">
+                <span class="step-num">৪</span>
+                <div>
+                  <strong>{{ isBn() ? 'টুলবারে পিন (Pin) করুন' : 'Pin to Toolbar' }}</strong>
+                  <p>{{ isBn() ? 'ব্রাউজার টুলবারের এক্সটেনশন পাজল আইকনে ক্লিক করে আল-কুরআন শিল্ডটি Pin করে রাখুন।' : 'Click the puzzle icon on your toolbar and pin Al-Quran Shield for instant access.' }}</p>
+                </div>
+              </div>
             </div>
-            <h2 class="app-card__title">
-              {{ isBn() ? 'আল-কুরআন মোবাইল অ্যাপ্লিকেশন' : 'Al-Quran Mobile Application' }}
-            </h2>
-            <p class="app-card__desc">
-              {{ isBn()
-                ? 'স্মার্টফোনের জন্য আধুনিক ও দ্রুতগতির মোবাইল অ্যাপ। ১১৪টি সূরা ও ৩০ পারা ১০০% অফলাইনে পড়ার সুবিধা, ফোনের ম্যাগনেটোমিটার দিয়ে নিখুঁত ৩D কিবলা কম্পাস, ডিজিটাল তাসবিহ ভাইব্রেশন এবং মোবাইল প্রাইভেট ডিএনএস হালাল গার্ড।'
-                : 'Complete mobile Quran companion for Android and iOS. Built with Capacitor 7 and Angular 21, featuring 100% offline recitation, 3D hardware compass, haptic feedback, and Mobile Halal Guard.' }}
-            </p>
           </div>
-        </div>
+        }
+      </div>
+    </section>
 
-        <div class="app-card__actions">
-          <a
-            href="https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/tree/main/mobile"
-            class="aq-btn aq-btn--secondary action-btn"
-            target="_blank"
-            rel="noopener noreferrer"
+    <!-- ==================== OPTION 3: PROGRESSIVE WEB APP (PWA) ==================== -->
+    <section class="dl-card dl-card--pwa">
+      <div class="dl-card__top">
+        <div class="dl-card__icon dl-card__icon--pwa">
+          <aq-icon name="sparkles" [size]="34" />
+        </div>
+        <div class="dl-card__heading">
+          <div class="dl-card__badges">
+            <span class="badge badge--pwa">Android / iPhone / PC / Mac</span>
+            <span class="badge badge--ver">PWA • 0 MB</span>
+            <span class="badge badge--free">{{ isBn() ? 'তাত্ক্ষণিক' : 'Instant' }}</span>
+          </div>
+          <h2 class="dl-card__title">
+            {{ isBn() ? 'মোবাইল ও পিসি ওয়েব অ্যাপ (PWA)' : 'Mobile & PC Web App (PWA)' }}
+          </h2>
+          <p class="dl-card__desc">
+            {{ isBn()
+              ? 'কোনো ফাইল ডাউনলোড ছাড়াই সরাসরি যেকোনো ব্রাউজার (Chrome, Safari, Edge, Samsung Internet) থেকে আপনার ফোনের হোম স্ক্রিনে বা পিসিতে অ্যাপের মতো ইনস্টল করুন।'
+              : 'Zero download size. Install directly from your browser to your phone home screen or desktop with full offline access.' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature Tags -->
+      <div class="dl-card__features">
+        <span class="pill-feature">📱 {{ isBn() ? 'হোম স্ক্রিন অ্যাপ' : 'Home Screen App' }}</span>
+        <span class="pill-feature">💾 {{ isBn() ? '০ MB স্টোরেজ' : 'Zero Storage' }}</span>
+        <span class="pill-feature">⚡ {{ isBn() ? 'সরাসরি ব্রাউজার থেকে' : 'Instant 1-Click' }}</span>
+        <span class="pill-feature">🔄 {{ isBn() ? 'স্বয়ংক্রিয় আপডেট' : 'Auto Updated' }}</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="dl-card__actions">
+        @if (canInstallPwa()) {
+          <button
+            type="button"
+            class="btn-dl btn-dl--primary"
+            (click)="installPwa()"
           >
-            <aq-icon name="externalLink" [size]="16" />
-            <span>{{ isBn() ? 'মোবাইল রোডম্যাপ ও প্ল্যান দেখুন' : 'View Mobile App Roadmap' }}</span>
-            <span class="btn-subtext">Capacitor 7 + Angular 21</span>
-          </a>
-        </div>
-      </article>
-    }
-
-    <!-- 4. PROGRESSIVE WEB APP (PWA) -->
-    @if (activeTab() === 'all') {
-      <article class="app-card app-card--pwa">
-        <div class="app-card__header">
-          <div class="app-card__icon-wrap app-card__icon-wrap--pwa">
-            <aq-icon name="sparkles" [size]="32" />
-          </div>
-          <div class="app-card__meta">
-            <div class="app-card__tags">
-              <span class="app-tag app-tag--pwa">Instant PWA • 0 MB</span>
-              <span class="app-tag app-tag--status">{{ isBn() ? 'তাত্ক্ষণিক ইনস্টলেশন' : 'Instant' }}</span>
+            <div class="btn-dl__icon">
+              <aq-icon name="download" [size]="20" />
             </div>
-            <h2 class="app-card__title">
-              {{ isBn() ? 'প্রগ্রেসিভ ওয়েব অ্যাপ (PWA)' : 'Progressive Web App (PWA)' }}
-            </h2>
-            <p class="app-card__desc">
-              {{ isBn()
-                ? 'কোনো ডাউনলোড ফাইল ছাড়াই সরাসরি যেকোনো ব্রাউজার (Chrome, Edge, Safari, Brave) থেকে এক ক্লিকে ফোনে বা কম্পিউটারে অ্যাপ হিসেবে ইনস্টল করুন।'
-                : 'Install directly from your web browser onto your home screen or desktop without visiting an app store.' }}
-            </p>
+            <div class="btn-dl__text">
+              <strong>{{ isBn() ? '১-ক্লিকে ইনস্টল করুন' : 'Install Web App (1-Click)' }}</strong>
+              <span>{{ isBn() ? 'ব্রাউজার থেকে সরাসরি আপনার ডিভাইসে' : 'Direct install to home screen' }}</span>
+            </div>
+          </button>
+        } @else if (isPwaInstalled()) {
+          <div class="status-box status-box--success">
+            ✓ {{ isBn() ? 'আপনার ডিভাইসে আল-কুরআন ওয়েব অ্যাপ ইতিমধ্যেই ইনস্টল করা আছে।' : 'Al-Quran Web App is already installed on this device.' }}
           </div>
-        </div>
+        } @else {
+          <div class="status-box">
+            {{ isBn() ? '💡 ফোনে ব্রাউজার মেনু (⋮) ওপেন করে "Add to Home screen" বা "Install app" চাপুন।' : '💡 Open browser menu (⋮) and tap "Add to Home screen" or "Install App".' }}
+          </div>
+        }
 
-        <div class="app-card__actions">
-          @if (canInstallPwa()) {
-            <button
-              type="button"
-              class="aq-btn aq-btn--primary action-btn"
-              (click)="installPwa()"
-            >
-              <aq-icon name="download" [size]="18" />
-              <span>{{ isBn() ? 'অ্যাপ হিসেবে ইনস্টল করুন' : 'Install as Web App' }}</span>
-            </button>
-          } @else if (isPwaInstalled()) {
-            <span class="installed-badge">
-              ✓ {{ isBn() ? 'আপনার ডিভাইসে ইতিমধ্যেই ইনস্টল করা আছে' : 'Already installed on this device' }}
-            </span>
-          } @else {
-            <span class="installed-badge">
-              {{ isBn() ? 'ব্রাউজার মেনু থেকে "Add to Home screen" বা "Install" সিলেক্ট করুন' : 'Use browser menu > "Install app" or "Add to Home screen"' }}
-            </span>
-          }
+        @if (pwaInstallOutcome()) {
+          <div class="status-box status-box--success">{{ pwaInstallOutcome() }}</div>
+        }
+      </div>
 
-          @if (pwaInstallOutcome()) {
-            <span class="installed-badge installed-badge--success">{{ pwaInstallOutcome() }}</span>
-          }
-        </div>
-      </article>
-    }
+      <!-- Collapsible Guide Button -->
+      <div class="guide-collapsible">
+        <button
+          type="button"
+          class="guide-toggle-btn"
+          [class.is-open]="isPwaGuideOpen()"
+          (click)="togglePwaGuide()"
+        >
+          <span class="guide-toggle-btn__left">
+            <aq-icon name="compass" [size]="15" />
+            <span>{{ isBn() ? 'মোবাইল ও পিসিতে PWA ব্যবহারের নিয়ম' : 'How to Use PWA on Phone & PC' }}</span>
+          </span>
+          <span class="guide-toggle-btn__chevron">{{ isPwaGuideOpen() ? '▲' : '▼' }}</span>
+        </button>
+
+        @if (isPwaGuideOpen()) {
+          <div class="guide-content">
+            <div class="guide-steps-grid">
+              <div class="guide-item">
+                <span class="step-num">Android</span>
+                <div>
+                  <strong>{{ isBn() ? 'অ্যান্ড্রয়েড ফোনে' : 'On Android' }}</strong>
+                  <p>{{ isBn() ? 'Chrome ব্রাউজারে সাইটটি ওপেন করে উপরের তিনটি ডট (⋮) চাপুন এবং "Add to Home screen" বা "Install" নির্বাচন করুন।' : 'Open in Chrome, tap menu (⋮) and select "Add to Home screen" or "Install App".' }}</p>
+                </div>
+              </div>
+              <div class="guide-item">
+                <span class="step-num">iOS</span>
+                <div>
+                  <strong>{{ isBn() ? 'আইফোনে (Safari)' : 'On iPhone / iPad' }}</strong>
+                  <p>{{ isBn() ? 'Safari ব্রাউজারে নিচের Share (📤) বাটনে ট্যাপ করুন এবং "Add to Home Screen"-এ চাপ দিন।' : 'Tap the Share icon (📤) in Safari and tap "Add to Home Screen".' }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
 
   </div>
 </div>
