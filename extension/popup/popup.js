@@ -20,25 +20,67 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================================
-   1. APP MODE & EXPANSION (POPUP / FULL TAB)
+   1. APP MODE & EXPANSION (POPUP / FULL TAB & COMPACT TOGGLE)
    ========================================================================== */
 function initAppMode() {
   const urlParams = new URLSearchParams(window.location.search);
-  const isFull = urlParams.get('mode') === 'full' || window.innerWidth > 720;
-
-  if (isFull) {
-    document.body.classList.add('fullscreen-mode');
-  }
+  const isFullTab = urlParams.get('mode') === 'full';
 
   const btnExpandTab = document.getElementById('btnExpandTab');
-  if (btnExpandTab) {
-    btnExpandTab.addEventListener('click', () => {
-      if (typeof chrome !== 'undefined' && chrome.tabs && chrome.tabs.create) {
-        chrome.tabs.create({ url: chrome.runtime.getURL('popup/popup.html?mode=full') });
-      } else {
-        document.body.classList.toggle('fullscreen-mode');
-      }
-    });
+  const btnCloseTab = document.getElementById('btnCloseTab');
+
+  if (isFullTab) {
+    // Running in a dedicated full browser tab
+    document.documentElement.classList.remove('popup-mode');
+    document.documentElement.classList.add('fullscreen-mode');
+    document.body.classList.remove('popup-mode');
+    document.body.classList.add('fullscreen-mode');
+
+    // Show Close Tab button
+    if (btnCloseTab) {
+      btnCloseTab.classList.remove('hidden');
+      btnCloseTab.addEventListener('click', () => {
+        window.close();
+      });
+    }
+
+    // Expand/Minimize button acts as a toggle between Full-Width and Compact view
+    if (btnExpandTab) {
+      btnExpandTab.textContent = '🗗';
+      btnExpandTab.title = 'ছোট পর্দা / কমপ্যাক্ট আকারে দেখুন (Minimize/Restore)';
+
+      let isCompact = false;
+      btnExpandTab.addEventListener('click', () => {
+        isCompact = !isCompact;
+        if (isCompact) {
+          document.body.classList.add('compact-mode');
+          btnExpandTab.textContent = '⛶';
+          btnExpandTab.title = 'পূর্ণ পর্দায় বড় করুন (Maximize)';
+        } else {
+          document.body.classList.remove('compact-mode');
+          btnExpandTab.textContent = '🗗';
+          btnExpandTab.title = 'ছোট পর্দা / কমপ্যাক্ট আকারে দেখুন (Minimize/Restore)';
+        }
+      });
+    }
+  } else {
+    // Running in the standard toolbar extension popup (short screen)
+    document.documentElement.classList.add('popup-mode');
+    document.body.classList.add('popup-mode');
+
+    if (btnExpandTab) {
+      btnExpandTab.textContent = '⛶';
+      btnExpandTab.title = 'পূর্ণ ট্যাবে বড় করে খুলুন (Open in Full Tab)';
+      btnExpandTab.addEventListener('click', () => {
+        if (typeof chrome !== 'undefined' && chrome.tabs && chrome.tabs.create) {
+          chrome.tabs.create({ url: chrome.runtime.getURL('popup/popup.html?mode=full') });
+          // Close the small popup so user switches to the full tab
+          window.close();
+        } else {
+          window.open(window.location.href + '?mode=full', '_blank');
+        }
+      });
+    }
   }
 }
 
