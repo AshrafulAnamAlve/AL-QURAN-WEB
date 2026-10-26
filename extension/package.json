@@ -1,0 +1,11 @@
+{
+  "name": "al-quran-extension",
+  "version": "1.0.0",
+  "description": "Al-Quran & Halal Web Shield — Chrome & Edge Browser Extension (Manifest V3)",
+  "author": "Ashraful Anam Alve",
+  "license": "MIT",
+  "scripts": {
+    "validate": "node -e \"JSON.parse(require('fs').readFileSync('manifest.json')); console.log('manifest.json is valid!');\"",
+    "package:zip": "node package-zip.cjs"
+  }
+}

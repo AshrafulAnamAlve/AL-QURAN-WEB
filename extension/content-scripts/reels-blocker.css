@@ -1,0 +1,30 @@
+/* ==========================================================================
+   Al-Quran Halal Web Shield — Pure CSS Instant Reels & Shorts Blocker
+   ========================================================================== */
+
+/* --- YouTube Shorts Shelves & Nav Items --- */
+ytd-guide-entry-renderer:has(a[title="Shorts"]),
+ytd-mini-guide-entry-renderer[aria-label="Shorts"],
+ytd-rich-shelf-renderer[is-shorts],
+ytd-reel-shelf-renderer,
+ytm-reel-shelf-renderer,
+#shorts-container,
+a[title="Shorts"],
+a[href^="/shorts"] {
+  display: none !important;
+}
+
+/* --- Facebook Reels Shelves & Navigation --- */
+div[aria-label*="Reels and short videos" i],
+div[aria-label*="Reels" i]:not([role="dialog"]),
+div[data-pagelet*="Reels" i],
+a[href*="/reel/"]:not([role="button"]) {
+  display: none !important;
+}
+
+/* --- Instagram Reels Navigation & Feed --- */
+a[href="/reels/"],
+a[href^="/reels/"],
+svg[aria-label="Reels"] {
+  display: none !important;
+}
