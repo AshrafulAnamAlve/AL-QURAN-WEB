@@ -204,15 +204,14 @@
       </p>
     </div>
     <div>
-      <button
-        type="button"
+      <a
+        routerLink="/download"
         class="aq-btn aq-btn--primary"
-        (click)="openExtensionModal()"
-        style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; font-weight: 600;"
+        style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; font-weight: 600; text-decoration: none;"
       >
         <aq-icon name="shield" [size]="18" />
         <span>{{ isBn() ? 'এক্সটেনশন ডাউনলোড ও সেটআপ গাইড' : 'Download Extension & Setup' }}</span>
-      </button>
+      </a>
     </div>
   </section>
 </div>

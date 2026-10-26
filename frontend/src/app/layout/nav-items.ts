@@ -26,6 +26,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { path: '/qibla', label: 'Qibla', labelBn: 'কিবলা', icon: 'compass' },
   { path: '/mosques', label: 'Mosques', labelBn: 'মসজিদ', icon: 'mosque' },
   { path: '/bookmarks', label: 'Bookmarks', labelBn: 'বুকমার্ক', icon: 'bookmark', primary: true },
+  { path: '/download', label: 'Download Apps', labelBn: 'ডাউনলোড', icon: 'download' },
   { path: '/shield', label: 'Halal Shield', labelBn: 'হালাল শিল্ড', icon: 'shield' },
   { path: '/settings', label: 'Settings', labelBn: 'সেটিংস', icon: 'settings' },
 ];

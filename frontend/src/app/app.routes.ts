@@ -205,6 +205,22 @@ export const routes: Routes = [
     },
   },
   {
+    path: 'download',
+    loadComponent: () => import('./features/download/download').then((m) => m.DownloadPage),
+    data: {
+      meta: {
+        title: 'Download Al-Quran Apps & Halal Shield — সকল অ্যাপ্লিকেশন ও এক্সটেনশন ডাউনলোড',
+        description:
+          'Download Al-Quran for Windows Desktop (Portable & Setup), Chrome/Edge Browser Extension (Halal Web Shield), and Mobile Apps.',
+      },
+    },
+  },
+  {
+    path: 'downloads',
+    redirectTo: 'download',
+    pathMatch: 'full',
+  },
+  {
     path: 'bookmarks',
     loadComponent: () => import('./features/bookmarks/bookmarks').then((m) => m.BookmarksPage),
     data: {

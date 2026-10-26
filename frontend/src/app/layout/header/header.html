@@ -57,15 +57,15 @@
                 </li>
               }
               <li role="none">
-                <button
-                  type="button"
-                  (click)="openDesktopModal()"
+                <a
+                  routerLink="/download"
+                  (click)="closeMoreDropdown()"
                   role="menuitem"
                   class="nav-dropdown__item nav-dropdown__desktop-btn"
                 >
-                  <aq-icon name="monitor" [size]="16" class="nav-dropdown__icon" />
-                  <span>{{ isBn() ? 'ডেস্কটপ অ্যাপ ও শর্টকাট' : 'Desktop App & Shortcuts' }}</span>
-                </button>
+                  <aq-icon name="download" [size]="16" class="nav-dropdown__icon" />
+                  <span>{{ isBn() ? 'অ্যাপ ও এক্সটেনশন ডাউনলোড' : 'Download Apps & Extension' }}</span>
+                </a>
               </li>
             </ul>
           }
@@ -89,16 +89,15 @@
       }
 
       @if (!isDesktopApp()) {
-        <button
-          type="button"
-          class="desktop-pill-btn"
-          (click)="openDesktopModal()"
-          [attr.aria-label]="isBn() ? 'ডেস্কটপ অ্যাপ ডাউনলোড ও শর্টকাট' : 'Download Desktop App & Shortcuts'"
-          title="Download Desktop App / ডেস্কটপ সংস্করণ"
+        <a
+          routerLink="/download"
+          class="desktop-pill-btn download-header-btn"
+          [attr.aria-label]="isBn() ? 'অ্যাপ ও এক্সটেনশন ডাউনলোড' : 'Download Apps & Extension'"
+          title="Download Apps / অ্যাপ ডাউনলোড"
         >
-          <aq-icon name="monitor" [size]="15" />
-          <span class="desktop-pill-label">{{ isBn() ? 'ডেস্কটপ অ্যাপ' : 'Desktop App' }}</span>
-        </button>
+          <aq-icon name="download" [size]="15" />
+          <span class="desktop-pill-label">{{ isBn() ? 'ডাউনলোড' : 'Download' }}</span>
+        </a>
       }
 
       @if (pwa.canInstall()) {

@@ -729,14 +729,13 @@
             </p>
           </div>
           <div class="desktop-banner__actions">
-            <button
-              type="button"
+            <a
+              routerLink="/download"
               class="aq-btn aq-btn--primary desktop-banner__btn"
-              (click)="openDesktopModal()"
             >
               <aq-icon name="download" [size]="18" />
-              <span>{{ isBn() ? 'ডাউনলোড ও শর্টকাট' : 'Download & Shortcuts' }}</span>
-            </button>
+              <span>{{ isBn() ? 'ডেস্কটপ অ্যাপ ডাউনলোড' : 'Download Desktop App' }}</span>
+            </a>
           </div>
         </div>
       </aside>
@@ -763,14 +762,13 @@
             </p>
           </div>
           <div class="desktop-banner__actions">
-            <button
-              type="button"
+            <a
+              routerLink="/download"
               class="aq-btn aq-btn--primary desktop-banner__btn"
-              (click)="openExtensionModal()"
             >
               <aq-icon name="shield" [size]="18" />
-              <span>{{ isBn() ? 'এক্সটেনশন যুক্ত করুন' : 'Add Extension' }}</span>
-            </button>
+              <span>{{ isBn() ? 'এক্সটেনশন ডাউনলোড ও সেটআপ' : 'Download Extension & Setup' }}</span>
+            </a>
           </div>
         </div>
       </aside>

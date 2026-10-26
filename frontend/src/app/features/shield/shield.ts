@@ -6,6 +6,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { DesktopService } from '../../core/services/desktop';
 import { LanguageService } from '../../core/services/language';
 import { SeoService } from '../../core/services/seo';
@@ -14,7 +15,7 @@ import { IconComponent } from '../../shared/components/icon/icon';
 @Component({
   selector: 'aq-shield',
   standalone: true,
-  imports: [IconComponent],
+  imports: [RouterLink, IconComponent],
   templateUrl: './shield.html',
   styleUrls: ['./shield.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
