@@ -158,12 +158,18 @@ body.fullscreen-mode .ruqyah-list {
 }
 
 /* 3. Compact / Minimize Mode inside Full Tab */
+html.compact-mode {
+  overflow: hidden !important;
+}
+
 body.fullscreen-mode.compact-mode {
   background: rgba(0, 0, 0, 0.88);
   display: flex !important;
+  flex-direction: column !important;
   align-items: center;
   justify-content: center;
-  padding: 20px 0;
+  height: 100vh !important;
+  overflow: hidden !important;
 }
 
 body.fullscreen-mode.compact-mode .app-header,
@@ -172,20 +178,40 @@ body.fullscreen-mode.compact-mode .view-container {
   width: 500px !important;
   max-width: 500px !important;
   margin: 0 auto !important;
-  background: var(--bg-card);
 }
 
 body.fullscreen-mode.compact-mode .app-header {
   border-radius: var(--radius-md) var(--radius-md) 0 0;
+  border: 1px solid var(--border);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+}
+
+body.fullscreen-mode.compact-mode .nav-bar {
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
 }
 
 body.fullscreen-mode.compact-mode .view-container {
-  height: 520px;
-  max-height: 520px;
+  height: 520px !important;
+  max-height: 520px !important;
   border-radius: 0 0 var(--radius-md) var(--radius-md);
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
   border: 1px solid var(--border);
   border-top: none;
+}
+
+body.fullscreen-mode.compact-mode .surah-grid,
+body.fullscreen-mode.compact-mode .juz-grid {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+body.fullscreen-mode.compact-mode .names-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+}
+
+body.fullscreen-mode.compact-mode .stats-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
 }
 
 /* --- HEADER --- */

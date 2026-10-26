@@ -3,7 +3,7 @@
  * Surahs (114), 30 Juz, 99 Names of Allah, Ruqyah Shariah, Hadith & Hijri Events
  */
 
-const SURAHS_DATA = [
+var SURAHS_DATA = [
   {
     "number": 1,
     "nameBn": "আল-ফাতিহা",
@@ -917,7 +917,7 @@ const SURAHS_DATA = [
     "revelationType": "মাক্কী"
   }
 ];
-const JUZ_DATA = [
+var JUZ_DATA = [
   {
     "juz": 1,
     "nameAr": "الم",
@@ -1129,7 +1129,7 @@ const JUZ_DATA = [
     "surahEnd": "আন-নাস ১১৪:৬"
   }
 ];
-const ASMA_UL_HUSNA_DATA = [
+var ASMA_UL_HUSNA_DATA = [
   {
     "number": 1,
     "arabic": "الرَّحْمَـٰنُ",
@@ -2319,7 +2319,7 @@ const ASMA_UL_HUSNA_DATA = [
     "audioUrl": "https://raw.githubusercontent.com/MohammedAbidNafi/99-Names-of-Allah/master/app/src/main/res/raw/sabur.mp3"
   }
 ];
-const RUQYAH_CATEGORIES = [
+var RUQYAH_CATEGORIES = [
   {
     "id": "all",
     "nameBn": "সব রুকইয়াহ",
@@ -2351,7 +2351,7 @@ const RUQYAH_CATEGORIES = [
     "icon": "⭐"
   }
 ];
-const RUQYAH_ITEMS = [
+var RUQYAH_ITEMS = [
   {
     "id": "fatihah",
     "category": "shifa",
@@ -2366,7 +2366,7 @@ const RUQYAH_ITEMS = [
     "id": "ayatul-kursi",
     "category": "daily",
     "titleBn": "আয়াতুল কুরসী (সর্বশ্রেষ্ঠ আয়াত)",
-    "arabic": "اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَن ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ",
+    "arabic": "اللَّهُ লَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَن ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ",
     "pronunciationBn": "আল্লাহু লা ইলাহা ইল্লা হুয়াল হাইয়্যুল ক্বাইয়্যুম...",
     "translationBn": "আল্লাহ, তিনি ছাড়া কোনো সত্য উপাস্য নেই, তিনি চিরঞ্জীব, সর্বসত্তার ধারক...",
     "reference": "সূরা আল-বাকারা (২:২৫৫) ও সহীহ বুখারী ২৩১১",
@@ -2403,7 +2403,7 @@ const RUQYAH_ITEMS = [
     "targetCount": 100
   }
 ];
-const HADITH_DATA = [
+var HADITH_DATA = [
   {
     "book": "সহীহ বুখারী",
     "number": 1,
@@ -2450,7 +2450,7 @@ const HADITH_DATA = [
     "grade": "সহীহ"
   }
 ];
-const ISLAMIC_EVENTS = [
+var ISLAMIC_EVENTS = [
   {
     "day": 1,
     "month": 1,
@@ -2512,3 +2512,25 @@ const ISLAMIC_EVENTS = [
     "event": "পবিত্র ঈদুল আজহা (কোরবানি)"
   }
 ];
+
+if (typeof window !== 'undefined') {
+  window.SURAHS_DATA = SURAHS_DATA;
+  window.JUZ_DATA = JUZ_DATA;
+  window.ASMA_UL_HUSNA_DATA = ASMA_UL_HUSNA_DATA;
+  window.RUQYAH_CATEGORIES = RUQYAH_CATEGORIES;
+  window.RUQYAH_ITEMS = RUQYAH_ITEMS;
+  window.HADITH_DATA = HADITH_DATA;
+  window.ISLAMIC_EVENTS = ISLAMIC_EVENTS;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    SURAHS_DATA,
+    JUZ_DATA,
+    ASMA_UL_HUSNA_DATA,
+    RUQYAH_CATEGORIES,
+    RUQYAH_ITEMS,
+    HADITH_DATA,
+    ISLAMIC_EVENTS
+  };
+}

@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ==========================================================================
-   1. APP MODE & EXPANSION (POPUP / FULL TAB & COMPACT TOGGLE)
+   1. APP MODE & EXPANSION (FULL SCREEN & RESTORE TOGGLE)
    ========================================================================== */
 function initAppMode() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -30,7 +30,7 @@ function initAppMode() {
   const btnCloseTab = document.getElementById('btnCloseTab');
 
   if (isFullTab) {
-    // Running in a dedicated full browser tab
+    // Running in a dedicated browser tab
     document.documentElement.classList.remove('popup-mode');
     document.documentElement.classList.add('fullscreen-mode');
     document.body.classList.remove('popup-mode');
@@ -44,33 +44,51 @@ function initAppMode() {
       });
     }
 
-    // Expand/Minimize button acts as a toggle between Full-Width and Compact view
+    // Toggle button: Click once -> Full Screen, Click again -> Restore to Previous State
     if (btnExpandTab) {
       btnExpandTab.textContent = '🗗';
-      btnExpandTab.title = 'ছোট পর্দা / কমপ্যাক্ট আকারে দেখুন (Minimize/Restore)';
+      btnExpandTab.title = 'আগের ছোট পর্দায় ফিরুন (Restore/Minimize)';
 
-      let isCompact = false;
-      btnExpandTab.addEventListener('click', () => {
-        isCompact = !isCompact;
-        if (isCompact) {
+      let isFullScreenState = true;
+
+      btnExpandTab.addEventListener('click', async () => {
+        if (isFullScreenState) {
+          // Switch to Previous Small/Compact State
           document.body.classList.add('compact-mode');
+          document.documentElement.classList.remove('fullscreen-mode');
+          document.documentElement.classList.add('compact-mode');
           btnExpandTab.textContent = '⛶';
-          btnExpandTab.title = 'পূর্ণ পর্দায় বড় করুন (Maximize)';
+          btnExpandTab.title = 'পূর্ণ পর্দায় বড় করুন (Full Screen)';
+          isFullScreenState = false;
+
+          // Exit native browser fullscreen if active
+          if (document.fullscreenElement) {
+            try { await document.exitFullscreen(); } catch (e) {}
+          }
         } else {
+          // Switch back to Full Screen State
           document.body.classList.remove('compact-mode');
+          document.documentElement.classList.remove('compact-mode');
+          document.documentElement.classList.add('fullscreen-mode');
           btnExpandTab.textContent = '🗗';
-          btnExpandTab.title = 'ছোট পর্দা / কমপ্যাক্ট আকারে দেখুন (Minimize/Restore)';
+          btnExpandTab.title = 'আগের ছোট পর্দায় ফিরুন (Restore/Minimize)';
+          isFullScreenState = true;
+
+          // Enter native browser fullscreen for immersive experience
+          if (!document.fullscreenElement && document.documentElement.requestFullscreen) {
+            try { await document.documentElement.requestFullscreen(); } catch (e) {}
+          }
         }
       });
     }
   } else {
-    // Running in the standard toolbar extension popup (short screen)
+    // Running in standard toolbar extension popup (short screen)
     document.documentElement.classList.add('popup-mode');
     document.body.classList.add('popup-mode');
 
     if (btnExpandTab) {
       btnExpandTab.textContent = '⛶';
-      btnExpandTab.title = 'পূর্ণ ট্যাবে বড় করে খুলুন (Open in Full Tab)';
+      btnExpandTab.title = 'পূর্ণ ট্যাবে বড় করে খুলুন (Open Full Screen)';
       btnExpandTab.addEventListener('click', () => {
         if (typeof chrome !== 'undefined' && chrome.tabs && chrome.tabs.create) {
           chrome.tabs.create({ url: chrome.runtime.getURL('popup/popup.html?mode=full') });

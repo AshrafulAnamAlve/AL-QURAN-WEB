@@ -1,6 +1,6 @@
 [
   {
-    "id": 1001,
+    "id": 3001,
     "priority": 1,
     "action": {
       "type": "redirect",
@@ -20,7 +20,7 @@
     }
   },
   {
-    "id": 1002,
+    "id": 3002,
     "priority": 1,
     "action": {
       "type": "redirect",
@@ -40,7 +40,7 @@
     }
   },
   {
-    "id": 1003,
+    "id": 3003,
     "priority": 1,
     "action": {
       "type": "redirect",
@@ -60,7 +60,7 @@
     }
   },
   {
-    "id": 1004,
+    "id": 3004,
     "priority": 1,
     "action": {
       "type": "modifyHeaders",
