@@ -6,124 +6,221 @@
   <title>Al-Quran & Halal Web Shield</title>
   <link rel="stylesheet" href="popup.css">
 </head>
-<body>
-  <!-- Header -->
-  <header class="popup-header">
-    <div class="header-brand">
-      <span class="brand-glyph">۩</span>
-      <div>
+<body class="theme-emerald">
+  <!-- Top Application Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <span class="header-brand-glyph">۩</span>
+      <div class="brand-text">
         <h1 class="brand-title">Al-Quran</h1>
-        <span class="brand-subtitle">Halal Web Shield</span>
+        <span class="brand-tagline">Halal Web Shield</span>
       </div>
     </div>
-    <div class="header-waqt-pill" id="headerWaqtBadge">
-      🕌 লোড হচ্ছে...
+
+    <div class="header-right">
+      <div class="header-waqt-pill" id="headerWaqtBadge" title="বর্তমান ও পরবর্তী নামাযের সময়">
+        🕌 লোড হচ্ছে...
+      </div>
+      <button class="icon-btn" id="btnThemeToggle" title="থিম পরিবর্তন করুন (লাইট / ডার্ক / পান্না)">🌙</button>
+      <button class="icon-btn" id="btnExpandTab" title="পূর্ণ ট্যাবে বড় করে খুলুন">⛶</button>
     </div>
   </header>
 
-  <!-- Segmented Tabs -->
-  <nav class="popup-tabs">
-    <button class="tab-btn active" data-tab="shield">🛡️ শিল্ড</button>
-    <button class="tab-btn" data-tab="prayer">🕌 নামাজ</button>
-    <button class="tab-btn" data-tab="noor">📖 নূর</button>
-    <button class="tab-btn" data-tab="tasbih">📿 তসবিহ</button>
-    <button class="tab-btn" data-tab="ai">💬 নূর AI</button>
+  <!-- Navigation Bar (Pills & Scrollable) -->
+  <nav class="nav-bar">
+    <div class="nav-scroller">
+      <button class="nav-item active" data-tab="shield">🛡️ শিল্ড</button>
+      <button class="nav-item" data-tab="quran">📖 কুরআন</button>
+      <button class="nav-item" data-tab="hadith">📜 হাদিস</button>
+      <button class="nav-item" data-tab="prayer">🕌 নামায</button>
+      <button class="nav-item" data-tab="names">🌟 ৯৯ নাম</button>
+      <button class="nav-item" data-tab="ruqyah">🛡️ রুকইয়াহ</button>
+      <button class="nav-item" data-tab="qibla">🧭 কিবলা</button>
+      <button class="nav-item" data-tab="tasbih">📿 তাসবিহ</button>
+      <button class="nav-item" data-tab="calendar">📅 ক্যালেন্ডার</button>
+      <button class="nav-item" data-tab="mosque">📍 মসজিদ</button>
+      <button class="nav-item" data-tab="ai">💬 নূর AI</button>
+      <button class="nav-item" data-tab="settings">⚙️ সেটিংস</button>
+    </div>
   </nav>
 
-  <!-- Main Views Container -->
-  <main class="popup-content">
-    <!-- Tab 1: Halal Shield Controls & Stats -->
-    <section class="tab-view active" id="view-shield">
-      <div class="shield-status-card" id="shieldStatusCard">
-        <div class="status-header">
-          <div class="status-indicator">
+  <!-- Main View Container -->
+  <main class="view-container">
+
+    <!-- ==================== VIEW 1: SHIELD ==================== -->
+    <section class="view active" id="view-shield">
+      <div class="card status-card">
+        <div class="status-top">
+          <div class="status-left">
             <span class="status-dot active" id="masterStatusDot"></span>
-            <span class="status-title" id="masterStatusText">হালাল শিল্ড সক্রিয়</span>
+            <div>
+              <h2 class="status-title" id="masterStatusText">হালাল শিল্ড সক্রিয়</h2>
+              <span class="status-sub">আপনার ব্রাউজার অশ্লীলতা ও আসক্তি থেকে সুরক্ষিত</span>
+            </div>
           </div>
           <label class="switch">
             <input type="checkbox" id="masterShieldToggle" checked>
             <span class="slider"></span>
           </label>
         </div>
-        <p class="status-desc">আপনার ব্রাউজারে অশ্লীল সাইট ও ক্ষতিকর রিলস স্বয়ংক্রিয়ভাবে ব্লক হচ্ছে।</p>
       </div>
 
-      <!-- Live Blocked Counter -->
+      <!-- Live Counters Grid -->
       <div class="stats-grid">
-        <div class="stat-box">
-          <span class="stat-val" id="reelsCountVal">0</span>
-          <span class="stat-lbl">রিলস ও শর্টস আটকানো</span>
+        <div class="stat-card">
+          <span class="stat-val" id="reelsCountVal">০</span>
+          <span class="stat-lbl">🎬 রিলস ও শর্টস আটকানো</span>
         </div>
-        <div class="stat-box">
-          <span class="stat-val" id="adultCountVal">0</span>
-          <span class="stat-lbl">খারাপ ডোমেন ব্লক</span>
+        <div class="stat-card">
+          <span class="stat-val" id="adultCountVal">০</span>
+          <span class="stat-lbl">🚫 খারাপ ডোমেন ব্লক</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val text-emerald">সক্রিয়</span>
+          <span class="stat-lbl">🔍 SafeSearch লক</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val" id="adsCountVal">০</span>
+          <span class="stat-lbl">🛡️ ক্ষতিকর বিজ্ঞাপন প্রতিরোধ</span>
         </div>
       </div>
 
       <!-- Feature Toggles -->
-      <div class="toggle-list">
-        <div class="toggle-item">
-          <div>
-            <div class="toggle-label">🎬 রিলস ও শর্টস ব্লকার</div>
-            <div class="toggle-sub">YouTube Shorts, Facebook & Insta Reels</div>
+      <div class="card">
+        <h3 class="card-title">প্রতিরক্ষা নিয়ন্ত্রণ</h3>
+        <div class="toggle-list">
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-name">🎬 রিলস ও শর্টস প্রতিরোধ</div>
+              <div class="toggle-desc">YouTube Shorts, FB & Insta Reels অপসারণ</div>
+            </div>
+            <label class="switch switch--sm">
+              <input type="checkbox" id="toggleReels" checked>
+              <span class="slider"></span>
+            </label>
           </div>
-          <label class="switch switch--sm">
-            <input type="checkbox" id="toggleReels" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
 
-        <div class="toggle-item">
-          <div>
-            <div class="toggle-label">🚫 অ্যাডাল্ট ও ক্ষতিকর সাইট</div>
-            <div class="toggle-sub">অশ্লীল ও জুয়ার ওয়েবসাইট সম্পূর্ণ ব্লক</div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-name">🚫 অ্যাডাল্ট ও ক্ষতিকর সাইট</div>
+              <div class="toggle-desc">অশ্লীল ও জুয়ার সাইট সরাসরি ইসলামিক পেজে রিডাইরেক্ট</div>
+            </div>
+            <label class="switch switch--sm">
+              <input type="checkbox" id="toggleAdult" checked>
+              <span class="slider"></span>
+            </label>
           </div>
-          <label class="switch switch--sm">
-            <input type="checkbox" id="toggleAdult" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
 
-        <div class="toggle-item">
-          <div>
-            <div class="toggle-label">🔍 কঠোর SafeSearch</div>
-            <div class="toggle-sub">Google ও Bing সার্চে খারাপ ছবি ফিল্টার</div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-name">🔍 কঠোর SafeSearch</div>
+              <div class="toggle-desc">Google ও Bing সার্চে খারাপ ফলাফল ফিল্টার</div>
+            </div>
+            <label class="switch switch--sm">
+              <input type="checkbox" id="toggleSafeSearch" checked>
+              <span class="slider"></span>
+            </label>
           </div>
-          <label class="switch switch--sm">
-            <input type="checkbox" id="toggleSafeSearch" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
 
-        <div class="toggle-item">
-          <div>
-            <div class="toggle-label">🛡️ পপ-আপ ও বিজ্ঞাপন ব্লকার</div>
-            <div class="toggle-sub">বিরক্তিকর অ্যাড নেটওয়ার্ক ফিল্টার</div>
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-name">🛡️ বিজ্ঞাপন ও পপ-আপ ব্লকার</div>
+              <div class="toggle-desc">বিরক্তিকর অ্যাড ও ট্র্যাকার স্ক্রিপ্ট প্রতিরোধ</div>
+            </div>
+            <label class="switch switch--sm">
+              <input type="checkbox" id="toggleAds" checked>
+              <span class="slider"></span>
+            </label>
           </div>
-          <label class="switch switch--sm">
-            <input type="checkbox" id="toggleAds" checked>
-            <span class="slider"></span>
-          </label>
         </div>
       </div>
     </section>
 
-    <!-- Tab 2: Prayer Times -->
-    <section class="tab-view" id="view-prayer">
-      <div class="prayer-hero-card">
-        <span class="prayer-next-label">পরবর্তী ওয়াক্ত</span>
-        <div class="prayer-next-time" id="nextPrayerName">আসরের নামাজ</div>
-        <div class="prayer-countdown" id="prayerCountdownText">বাকি ৪২ মিনিট</div>
+    <!-- ==================== VIEW 2: QURAN ==================== -->
+    <section class="view" id="view-quran">
+      <!-- Quran Directory Mode -->
+      <div id="quranDirectoryMode">
+        <div class="search-box">
+          <input type="text" id="quranSearchInput" placeholder="সূরা বা পারার নাম লিখুন (যেমন: ফাতিহা, Yasin, 114)...">
+        </div>
+
+        <div class="sub-nav">
+          <button class="sub-btn active" id="btnShowSurahs">সকল ১১৪ সূরা</button>
+          <button class="sub-btn" id="btnShowJuz">৩০ পারা (Juz)</button>
+        </div>
+
+        <!-- 114 Surahs Container -->
+        <div class="surah-grid" id="surahsContainer">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- 30 Juz Container -->
+        <div class="juz-grid hidden" id="juzContainer">
+          <!-- Populated by JS -->
+        </div>
       </div>
 
-      <div class="prayer-timetable">
+      <!-- Surah Reader Mode (Hidden by default) -->
+      <div class="hidden" id="quranReaderMode">
+        <div class="reader-toolbar">
+          <button class="btn-subtle" id="btnBackToSurahs">← সূরা তালিকায় ফিরুন</button>
+          <div class="reader-audio-btn-wrap">
+            <button class="btn-play-surah" id="btnPlaySurahRecitation">▶ সম্পূর্ণ সূরা শুনুন</button>
+          </div>
+        </div>
+
+        <div class="reader-header card" id="readerHeader">
+          <h2 class="reader-surah-title" id="readerSurahTitle">সূরা আল-ফাতিহা</h2>
+          <span class="reader-surah-meta" id="readerSurahMeta">মাক্কী • ৭ আয়াত</span>
+          <p class="bismillah-calligraphy" id="readerBismillah">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+        </div>
+
+        <div class="ayahs-list" id="ayahsContainer">
+          <!-- Populated when user opens a Surah -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 3: HADITH ==================== -->
+    <section class="view" id="view-hadith">
+      <div class="search-box">
+        <input type="text" id="hadithSearchInput" placeholder="হাদিস অনুসন্ধান করুন (নিয়ত, কুরআন, পবিত্রতা)...">
+      </div>
+
+      <div class="book-tabs" id="hadithBookTabs">
+        <button class="book-btn active" data-book="all">সকল গ্রন্থ</button>
+        <button class="book-btn" data-book="সহীহ বুখারী">বুখারী</button>
+        <button class="book-btn" data-book="সহীহ মুসলিম">মুসলিম</button>
+        <button class="book-btn" data-book="সুনান আত-তিরমিজি">তিরমিজি</button>
+        <button class="book-btn" data-book="সুনান আবু দাউদ">আবু দাউদ</button>
+      </div>
+
+      <div class="hadith-list" id="hadithContainer">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 4: PRAYER ==================== -->
+    <section class="view" id="view-prayer">
+      <div class="prayer-hero card">
+        <span class="prayer-hero-tag">🕌 পরবর্তী নামাযের ওয়াক্ত</span>
+        <h2 class="prayer-hero-name" id="prayerNextName">আসরের নামায</h2>
+        <div class="prayer-hero-countdown" id="prayerNextCountdown">বাকি ৪২ মিনিট</div>
+        <div class="prayer-hero-date" id="prayerHijriDate">১৪৪৬ হিজরি</div>
+      </div>
+
+      <div class="timetable card">
         <div class="prayer-row" data-waqt="Fajr">
           <span>ফজর (Fajr)</span>
-          <span class="prayer-time-val" id="timeFajr">০৪:৫০ AM</span>
+          <span class="prayer-time-val" id="timeFajr">০৪:৪৮ AM</span>
+        </div>
+        <div class="prayer-row" data-waqt="Sunrise">
+          <span>সূর্যোদয় (Sunrise)</span>
+          <span class="prayer-time-val" id="timeSunrise">০৬:০৫ AM</span>
         </div>
         <div class="prayer-row" data-waqt="Dhuhr">
           <span>যোহর (Dhuhr)</span>
-          <span class="prayer-time-val" id="timeDhuhr">১১:৫৮ AM</span>
+          <span class="prayer-time-val" id="timeDhuhr">১১:৫৬ AM</span>
         </div>
         <div class="prayer-row" data-waqt="Asr">
           <span>আসর (Asr)</span>
@@ -131,78 +228,242 @@
         </div>
         <div class="prayer-row" data-waqt="Maghrib">
           <span>মাগরিব (Maghrib)</span>
-          <span class="prayer-time-val" id="timeMaghrib">০৫:২৬ PM</span>
+          <span class="prayer-time-val" id="timeMaghrib">০৫:২৮ PM</span>
         </div>
         <div class="prayer-row" data-waqt="Isha">
           <span>ইশা (Isha)</span>
-          <span class="prayer-time-val" id="timeIsha">০৬:৪৫ PM</span>
+          <span class="prayer-time-val" id="timeIsha">০৬:৪৬ PM</span>
+        </div>
+      </div>
+
+      <div class="card adhan-card">
+        <div class="adhan-info">
+          <span class="adhan-title">🔊 পবিত্র আযান শুনুন</span>
+          <span class="adhan-desc">মক্কার মিষ্টি সুরে মুয়াজ্জিনের আযান</span>
+        </div>
+        <button class="btn-primary" id="btnPlayAdhan">▶ আযান বাজান</button>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 5: ASMA-UL-HUSNA (99 NAMES) ==================== -->
+    <section class="view" id="view-names">
+      <div class="search-box">
+        <input type="text" id="namesSearchInput" placeholder="আল্লাহর নাম খুঁজুন (রাহমান, রহিম, সালাম, 1-99)...">
+      </div>
+
+      <div class="supreme-hero card">
+        <span class="supreme-badge">সর্বশ্রেষ্ঠ নাম (ইসমে আযম)</span>
+        <div class="supreme-arabic">اللَّهُ</div>
+        <div class="supreme-name">আল্লাহ (Allah)</div>
+        <p class="supreme-meaning">এক ও অদ্বিতীয় উপাস্য, যিনি সমস্ত সৃষ্টির পালনকর্তা।</p>
+      </div>
+
+      <div class="names-grid" id="namesContainer">
+        <!-- 99 Names populated by JS -->
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 6: RUQYAH SHARIAH ==================== -->
+    <section class="view" id="view-ruqyah">
+      <div class="category-tabs" id="ruqyahCategoryTabs">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="ruqyah-list" id="ruqyahContainer">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 7: QIBLA COMPASS ==================== -->
+    <section class="view" id="view-qibla">
+      <div class="card qibla-hero">
+        <h2 class="qibla-title">কিবলা দিকনির্দেশক (মক্কার দিক)</h2>
+        <span class="qibla-sub">পবিত্র কাবা শরীফের সঠিক কৌণিক দিক</span>
+
+        <div class="compass-wrap">
+          <div class="compass-dial" id="compassDial">
+            <span class="compass-dir north">N</span>
+            <span class="compass-dir east">E</span>
+            <span class="compass-dir south">S</span>
+            <span class="compass-dir west">W</span>
+            <div class="qibla-needle" id="qiblaNeedle">
+              <span class="kaaba-icon">🕋</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="qibla-details">
+          <div class="qibla-angle"><strong id="qiblaAngleVal">২৭৮.৪°</strong> পশ্চিম-উত্তর</div>
+          <div class="qibla-distance">কাবা শরীফ থেকে দূরত্ব: <strong>৫,১০০ কি.মি.</strong></div>
         </div>
       </div>
     </section>
 
-    <!-- Tab 3: Daily Noor -->
-    <section class="tab-view" id="view-noor">
-      <div class="noor-card">
-        <span class="noor-badge">✨ আজকের আয়াত</span>
-        <p class="noor-arabic">إِنَّ مَعَ الْعُسْرِ يُسْرًا</p>
-        <p class="noor-translation">“নিশ্চয় কষ্টের সাথেই রয়েছে স্বস্তি।”</p>
-        <span class="noor-ref">— সূরা আল-ইনশিরাহ (৯৪:৬)</span>
-      </div>
-
-      <div class="noor-card noor-card--hadith">
-        <span class="noor-badge noor-badge--hadith">📜 আজকের হাদিস</span>
-        <p class="noor-translation">“তোমাদের মধ্যে সর্বোত্তম ব্যক্তি সে, যে কুরআন শিখে এবং অন্যকে শিক্ষা দেয়।”</p>
-        <span class="noor-ref">— সহীহ বুখারী ৫০২৭</span>
-      </div>
-    </section>
-
-    <!-- Tab 4: Digital Tasbih -->
-    <section class="tab-view" id="view-tasbih">
-      <div class="tasbih-card">
-        <div class="tasbih-preset-select">
+    <!-- ==================== VIEW 8: DIGITAL TASBIH ==================== -->
+    <section class="view" id="view-tasbih">
+      <div class="card tasbih-container">
+        <div class="tasbih-select-row">
           <select id="tasbihDhikrSelect">
             <option value="সুবহানাল্লাহ">سُبْحَانَ اللَّهِ (সুবহানাল্লাহ)</option>
             <option value="আলহামদুলিল্লাহ">الْحَمْدُ لِلَّهِ (আলহামদুলিল্লাহ)</option>
             <option value="আল্লাহু আকবার">اللَّهُ أَكْبَرُ (আল্লাহু আকবার)</option>
             <option value="আস্তাগফিরুল্লাহ">أَسْتَغْفِرُ اللَّهَ (আস্তাগফিরুল্লাহ)</option>
+            <option value="লা ইলাহা ইল্লাল্লাহ">لَا إِلَٰهَ إِلَّا اللَّهُ (লা ইলাহা ইল্লাল্লাহ)</option>
           </select>
         </div>
 
-        <div class="tasbih-counter" id="tasbihCounterBtn">
-          <div class="tasbih-val" id="tasbihCountDisplay">0</div>
-          <span class="tasbih-tap-hint">ট্যাপ করুন</span>
+        <div class="tasbih-target-row">
+          <span class="target-lbl">লক্ষ্যমাত্রা:</span>
+          <button class="target-btn active" data-target="33">৩৩</button>
+          <button class="target-btn" data-target="100">১০০</button>
+          <button class="target-btn" data-target="1000">১০০০</button>
+          <button class="target-btn" data-target="unlimited">∞</button>
+        </div>
+
+        <!-- Big Tap Button -->
+        <div class="tasbih-big-btn" id="tasbihBigBtn">
+          <div class="tasbih-big-val" id="tasbihCountVal">০</div>
+          <span class="tasbih-big-hint">ট্যাপ করুন</span>
+        </div>
+
+        <div class="tasbih-progress-wrap">
+          <div class="tasbih-progress-bar" id="tasbihProgressBar" style="width: 0%"></div>
         </div>
 
         <div class="tasbih-actions">
-          <button class="btn-subtle" id="tasbihResetBtn">রিসেট করুন</button>
+          <button class="btn-subtle" id="tasbihResetBtn">↺ রিসেট করুন</button>
         </div>
       </div>
     </section>
 
-    <!-- Tab 5: Noor AI Assistant -->
-    <section class="tab-view" id="view-ai">
-      <div class="ai-chat-container">
-        <div class="ai-chat-history" id="aiChatHistory">
-          <div class="ai-msg ai-msg--bot">
-            আসসালামু আলাইকুম! আমি নূর এআই। কুরআন, হাদিস বা ইসলামিক যেকোনো বিষয়ে আমাকে প্রশ্ন করতে পারেন।
+    <!-- ==================== VIEW 9: HIJRI CALENDAR ==================== -->
+    <section class="view" id="view-calendar">
+      <div class="card calendar-hero">
+        <span class="cal-badge">পবিত্র হিজরি বর্ষপঞ্জি</span>
+        <h2 class="cal-hijri-month" id="calHijriMonth">রমজান ১৪৪৬ হিজরি</h2>
+        <p class="cal-desc">ইসলামিক ঐতিহাসিক দিবস ও রোজার তালিকা</p>
+      </div>
+
+      <div class="events-list" id="calendarEventsContainer">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 10: NEARBY MOSQUES ==================== -->
+    <section class="view" id="view-mosque">
+      <div class="card mosque-hero">
+        <h2 class="mosque-title">নিকটস্থ মসজিদ ও জামাত</h2>
+        <span class="mosque-sub">আপনার আশপাশের মসজিদসমূহ ও গুগল ম্যাপস নেভিগেশন</span>
+      </div>
+
+      <div class="mosques-list" id="mosquesContainer">
+        <div class="mosque-card">
+          <div class="mosque-info">
+            <strong class="mosque-name">বায়তুল মোকাররম জাতীয় মসজিদ</strong>
+            <span class="mosque-addr">পল্টন, ঢাকা</span>
+          </div>
+          <a href="https://www.google.com/maps/search/Baitul+Mukarram+Dhaka" target="_blank" rel="noopener" class="btn-navigate">🗺️ ম্যাপসে যান</a>
+        </div>
+
+        <div class="mosque-card">
+          <div class="mosque-info">
+            <strong class="mosque-name">লালবাগ কেল্লা জামে মসজিদ</strong>
+            <span class="mosque-addr">লালবাগ, পুরান ঢাকা</span>
+          </div>
+          <a href="https://www.google.com/maps/search/Lalbagh+Fort+Mosque" target="_blank" rel="noopener" class="btn-navigate">🗺️ ম্যাপসে যান</a>
+        </div>
+
+        <div class="mosque-card">
+          <div class="mosque-info">
+            <strong class="mosque-name">তারা মসজিদ (সিতারা মসজিদ)</strong>
+            <span class="mosque-addr">আরমানিটোলা, ঢাকা</span>
+          </div>
+          <a href="https://www.google.com/maps/search/Tara+Mosque+Dhaka" target="_blank" rel="noopener" class="btn-navigate">🗺️ ম্যাপসে যান</a>
+        </div>
+
+        <div class="mosque-card">
+          <div class="mosque-info">
+            <strong class="mosque-name">আপনার বর্তমান অবস্থানের আশপাশের সকল মসজিদ</strong>
+            <span class="mosque-addr">নিকটতম দূরত্ব অনুযায়ী গুগল ম্যাপসে খুঁজুন</span>
+          </div>
+          <a href="https://www.google.com/maps/search/mosques+near+me" target="_blank" rel="noopener" class="btn-navigate">📍 নিকটস্থ মসজিদ খুঁজুন</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VIEW 11: NOOR AI ==================== -->
+    <section class="view" id="view-ai">
+      <div class="ai-chat-box card">
+        <div class="ai-history" id="aiHistory">
+          <div class="ai-bubble ai-bubble--bot">
+            আসসালামু আলাইকুম! আমি নূর এআই। কুরআন, হাদিস বা ইসলামিক যেকোনো বিষয়ে আমাকে প্রশ্ন করতে পারেন।
           </div>
         </div>
 
-        <form class="ai-input-form" id="aiInputForm">
-          <input type="text" id="aiInputField" placeholder="ইসলামিক প্রশ্ন লিখুন..." autocomplete="off">
-          <button type="submit" class="ai-send-btn">পাঠান</button>
+        <div class="ai-suggestions" id="aiSuggestions">
+          <button class="ai-chip" data-q="নামাজের ফজিলত কি?">নামাজের ফজিলত</button>
+          <button class="ai-chip" data-q="রোজার হুকুম কি?">রোজার হুকুম</button>
+          <button class="ai-chip" data-q="তওবা করার দোয়া কি?">তওবার দোয়া</button>
+          <button class="ai-chip" data-q="সোশ্যাল মিডিয়া রিলস দেখা কি জায়েজ?">রিলসের হুকুম</button>
+        </div>
+
+        <form class="ai-form" id="aiChatForm">
+          <input type="text" id="aiInput" placeholder="আপনার ইসলামিক প্রশ্ন লিখুন..." autocomplete="off">
+          <button type="submit" class="ai-btn-send">পাঠান</button>
         </form>
       </div>
     </section>
+
+    <!-- ==================== VIEW 12: SETTINGS ==================== -->
+    <section class="view" id="view-settings">
+      <div class="card">
+        <h3 class="card-title">প্রদর্শন ও থিম</h3>
+
+        <div class="setting-item">
+          <span>থিম নির্বাচন</span>
+          <div class="theme-picker">
+            <button class="theme-btn active" data-theme="theme-emerald">মরু পান্না</button>
+            <button class="theme-btn" data-theme="theme-dark">ডার্ক</button>
+            <button class="theme-btn" data-theme="theme-light">লাইট</button>
+          </div>
+        </div>
+
+        <div class="setting-item">
+          <span>আরবি ফন্ট সাইজ (<span id="arabicFontSizeVal">26px</span>)</span>
+          <input type="range" id="arabicFontSlider" min="20" max="38" value="26">
+        </div>
+
+        <div class="setting-item">
+          <span>বাংলা অনুবাদ ফন্ট সাইজ (<span id="banglaFontSizeVal">15px</span>)</span>
+          <input type="range" id="banglaFontSlider" min="13" max="22" value="15">
+        </div>
+
+        <div class="setting-item">
+          <span>ক্বারী নির্বাচন (তিলাওয়াত)</span>
+          <select id="reciterSelect">
+            <option value="ar.alafasy">মিশারি রাশিদ আল-আফাসী</option>
+            <option value="ar.abdulbasit">আব্দুল বাসিত আব্দুল সামাদ</option>
+            <option value="ar.ghamadi">সাদ আল-গামদি</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">আমাদের সম্পূর্ণ প্ল্যাটফর্ম</h3>
+        <p class="setting-desc">সম্পূর্ণ ব্রাউজিং এক্সপেরিয়েন্স ও আরও বিস্তৃত ইসলামিক ফিচারের জন্য আমাদের অফিশিয়াল ওয়েব প্ল্যাটফর্মে ভিজিট করুন।</p>
+        <a href="https://ashrafulanamalve.github.io/AL-QURAN-WEB/" target="_blank" rel="noopener" class="btn-primary" style="display:block; text-align:center; text-decoration:none; margin-top:10px;">
+          🌐 সম্পূর্ণ আল-কুরআন ওয়েবসাইটে যান ↗
+        </a>
+      </div>
+    </section>
+
   </main>
 
-  <!-- Footer Link to Full Web -->
-  <footer class="popup-footer">
-    <a href="https://ashrafulanamalve.github.io/AL-QURAN-WEB/" target="_blank" rel="noopener">
-      🌐 সম্পূর্ণ আল-কুরআন ওয়েবসাইটে যান ↗
-    </a>
-  </footer>
+  <!-- Audio Recitation Player (Hidden container) -->
+  <audio id="globalAudioPlayer" preload="none"></audio>
 
+  <!-- Scripts -->
+  <script src="data.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>
