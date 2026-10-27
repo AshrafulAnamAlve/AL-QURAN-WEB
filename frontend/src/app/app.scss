@@ -8,10 +8,10 @@
 
 .main {
   flex: 1 1 auto;
-  // Leaves ample room for the fixed bottom navigation on phones, and for the mini
+  // Leaves ample room for the floating island bottom dock on phones, and for the mini
   // player when recitation is active, plus safe area inset on modern phones.
   padding-bottom: calc(
-    var(--aq-bottom-nav-height) + var(--aq-player-height, 0px) + 2.5rem + env(safe-area-inset-bottom, 0)
+    var(--aq-bottom-nav-height, 66px) + var(--aq-player-height, 0px) + 3rem + env(safe-area-inset-bottom, 16px)
   );
   outline: none;
 
@@ -69,4 +69,3 @@
     }
   }
 }
-

@@ -15,9 +15,9 @@ export interface NavItem {
  */
 export const NAV_ITEMS: readonly NavItem[] = [
   { path: '/', label: 'Home', labelBn: 'হোম', icon: 'home', primary: true },
-  { path: '/quran', label: 'Quran', labelBn: 'কুরআন', icon: 'book', primary: true },
   { path: '/prayer', label: 'Prayer', labelBn: 'নামাজ', icon: 'clock', primary: true },
-  { path: '/hadith', label: 'Hadith', labelBn: 'হাদিস', icon: 'bookOpen', primary: true },
+  { path: '/quran', label: 'Quran', labelBn: 'কুরআন', icon: 'bookOpen', primary: true },
+  { path: '/hadith', label: 'Hadith', labelBn: 'হাদিস', icon: 'sparkles', primary: true },
   { path: '/qibla', label: 'Qibla', labelBn: 'কিবলা', icon: 'compass', primary: true },
   { path: '/juz', label: 'Juz', labelBn: 'পারা', icon: 'layers' },
   { path: '/99-names', label: '99 Names', labelBn: '৯৯ নাম', icon: 'sparkles' },

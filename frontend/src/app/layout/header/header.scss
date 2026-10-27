@@ -10,8 +10,14 @@
 .header {
   height: var(--aq-header-height);
   background: color-mix(in srgb, var(--aq-surface) 88%, transparent);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--aq-border);
+
+  :host-context([data-theme='dark']) & {
+    background: rgba(6, 26, 20, 0.85);
+    border-bottom-color: rgba(16, 185, 129, 0.18);
+  }
 }
 
 .header__inner {

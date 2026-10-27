@@ -6,6 +6,10 @@
   &__inner {
     padding-block: 2.5rem 2.75rem;
     text-align: center;
+
+    @media (max-width: 768px) {
+      padding-block: 1.25rem 1.65rem;
+    }
   }
 
   &__salaam {
@@ -33,6 +37,12 @@
   &__title {
     margin: 0 auto;
     max-width: 20ch;
+
+    @media (max-width: 768px) {
+      font-size: clamp(1.25rem, 5vw, 1.6rem);
+      line-height: 1.35;
+      max-width: 24ch;
+    }
   }
 
   &__meta {
@@ -891,6 +901,16 @@
 @media (max-width: 768px) {
   .explore-section__lead {
     display: none;
+  }
+
+  .panel {
+    border-radius: 20px;
+    padding: 1.15rem 1rem;
+  }
+
+  .sections {
+    gap: 1rem;
+    padding-block: 1rem;
   }
 }
 
