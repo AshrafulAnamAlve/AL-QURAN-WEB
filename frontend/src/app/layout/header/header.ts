@@ -9,6 +9,7 @@ import {
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { DesktopService } from '../../core/services/desktop';
 import { LanguageService } from '../../core/services/language';
+import { MobileHardwareService } from '../../core/services/mobile-hardware.service';
 import { PwaService } from '../../core/services/pwa';
 import { ThemeService } from '../../core/services/theme';
 import { TaskService } from '../../core/services/task';
@@ -33,8 +34,10 @@ export class HeaderComponent {
   protected readonly pwa = inject(PwaService);
   protected readonly taskService = inject(TaskService);
   protected readonly desktop = inject(DesktopService);
+  protected readonly mobileHardware = inject(MobileHardwareService);
 
   readonly isDesktopApp = this.desktop.isDesktop;
+  readonly isNativeMobile = this.mobileHardware.isNativeMobile;
 
   protected readonly navItems = NAV_ITEMS;
   protected readonly primaryNavItems = PRIMARY_NAV_ITEMS;

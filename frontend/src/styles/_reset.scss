@@ -12,22 +12,25 @@
   margin: 0;
 }
 
-html,
-body {
-  height: 100%;
-}
-
 html {
+  min-height: 100%;
+  overscroll-behavior-y: none;
   scroll-behavior: smooth;
   // Anchors and route changes should not hide content under the sticky header.
   scroll-padding-top: calc(var(--aq-header-height) + 1rem);
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
   background-color: var(--aq-bg);
   color: var(--aq-text);
-  // The single most important responsive rule in the app.
   overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   // Safe-area insets for modern mobile displays (notches, dynamic islands, system home indicators)
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -35,6 +38,19 @@ body {
   padding-right: env(safe-area-inset-right, 0px);
   transition: background-color var(--aq-duration) var(--aq-ease),
               color var(--aq-duration) var(--aq-ease);
+}
+
+@media (max-width: 768px) {
+  // Sleek native app feel: eliminate browser scrollbars on mobile devices
+  ::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  * {
+    scrollbar-width: none;
+  }
 }
 
 img,

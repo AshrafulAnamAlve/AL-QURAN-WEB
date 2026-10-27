@@ -88,7 +88,7 @@
         </a>
       }
 
-      @if (!isDesktopApp()) {
+      @if (!isDesktopApp() && !isNativeMobile()) {
         <a
           routerLink="/download"
           class="header-download-btn"

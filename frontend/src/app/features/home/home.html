@@ -63,32 +63,22 @@
       </a>
     </div>
 
-    <div class="hero__actions">
-      <a routerLink="/quran" class="aq-btn aq-btn--primary aq-btn--lg">
-        <aq-icon name="bookOpen" [size]="18" />
-        {{ isBn() ? 'কুরআন তিলাওয়াত' : 'Read Quran' }}
-      </a>
-      <a routerLink="/hadith" class="aq-btn aq-btn--primary aq-btn--lg hero__hadith-btn">
-        <aq-icon name="sparkles" [size]="18" />
-        {{ isBn() ? 'হাদিস শরীফ (৩৬,০০০+)' : 'Hadith Sharif (36k+)' }}
-      </a>
-      <a routerLink="/prayer" class="aq-btn aq-btn--secondary aq-btn--lg">
-        <aq-icon name="clock" [size]="18" />
-        {{ isBn() ? 'নামাজের সময়সূচি' : 'Prayer Times' }}
-      </a>
-      <a routerLink="/qibla" class="aq-btn aq-btn--secondary aq-btn--lg">
-        <aq-icon name="compass" [size]="18" />
-        {{ isBn() ? 'কিবলা কম্পাস' : 'Qibla Direction' }}
-      </a>
-      <a routerLink="/calendar" [queryParams]="{ tab: 'habit' }" class="aq-btn aq-btn--secondary aq-btn--lg hero__habit-btn">
-        <span class="hero__habit-fire" aria-hidden="true">🔥</span>
-        {{ isBn() ? 'দৈনিক লক্ষ্য ও অভ্যাস' : 'Daily Goal & Habits' }}
-      </a>
-      <a routerLink="/mosques" class="aq-btn aq-btn--secondary aq-btn--lg">
-        <aq-icon name="mapPin" [size]="18" />
-        {{ isBn() ? 'নিকটস্থ মসজিদ' : 'Find a Mosque' }}
-      </a>
-    </div>
+    <!-- Quick Actions App Grid (Pillars / Muslim Pro Standard) -->
+    <nav class="quick-app-grid" [attr.aria-label]="isBn() ? 'প্রধান ফিচারসমূহ' : 'Quick Actions'">
+      @for (action of quickActions; track action.path) {
+        <a
+          [routerLink]="action.path"
+          [queryParams]="action.queryParams || null"
+          class="quick-app-item"
+          (click)="onQuickActionTap()"
+        >
+          <div class="quick-app-icon" [style.--action-color]="action.color">
+            <aq-icon [name]="action.icon" [size]="22" />
+          </div>
+          <span class="quick-app-label">{{ isBn() ? action.labelBn : action.label }}</span>
+        </a>
+      }
+    </nav>
   </div>
 </section>
 

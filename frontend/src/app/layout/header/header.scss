@@ -418,11 +418,8 @@
     transform: translateY(-1px);
   }
 
-  @media (max-width: 520px) {
-    padding: 0.35rem 0.5rem;
-    .header-download-label {
-      display: none;
-    }
+  @media (max-width: 768px) {
+    display: none !important;
   }
 }
 

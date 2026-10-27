@@ -11,6 +11,7 @@ import { PrayerNotificationService } from '../../core/services/prayer-notificati
 import { CorePrayerAlertKey } from '../../core/models/prayer-notification';
 import { HadithService } from '../../core/services/hadith';
 import { DesktopService } from '../../core/services/desktop';
+import { MobileHardwareService } from '../../core/services/mobile-hardware.service';
 import { ShareService } from '../../core/services/share';
 import { IconComponent } from '../../shared/components/icon/icon';
 import { TaskGoalModalComponent } from '../../shared/components/task-goal-modal/task-goal-modal';
@@ -40,7 +41,23 @@ export class HomePage {
   protected readonly notificationService = inject(PrayerNotificationService);
   protected readonly hadithService = inject(HadithService);
   protected readonly desktop = inject(DesktopService);
+  protected readonly mobileHardware = inject(MobileHardwareService);
   private readonly shareService = inject(ShareService);
+
+  readonly quickActions = [
+    { path: '/quran', icon: 'bookOpen' as const, label: 'Quran', labelBn: 'কুরআন', color: '#10b981' },
+    { path: '/hadith', icon: 'sparkles' as const, label: 'Hadith', labelBn: 'হাদিস', color: '#f59e0b' },
+    { path: '/prayer', icon: 'clock' as const, label: 'Prayer', labelBn: 'নামাজ', color: '#3b82f6' },
+    { path: '/qibla', icon: 'compass' as const, label: 'Qibla', labelBn: 'কিবলা', color: '#8b5cf6' },
+    { path: '/tasbih', icon: 'repeat' as const, label: 'Tasbih', labelBn: 'তাসবিহ', color: '#ec4899' },
+    { path: '/calendar', queryParams: { tab: 'habit' }, icon: 'calendar' as const, label: 'Habits', labelBn: 'আমল', color: '#f97316' },
+    { path: '/ruqyah', icon: 'shield' as const, label: 'Ruqyah', labelBn: 'রুকইয়াহ', color: '#06b6d4' },
+    { path: '/mosques', icon: 'mapPin' as const, label: 'Mosques', labelBn: 'মসজিদ', color: '#14b8a6' },
+  ];
+
+  onQuickActionTap(): void {
+    this.mobileHardware.hapticTap();
+  }
 
   readonly dailyHadith = this.hadithService.dailyHadith;
   readonly hadithShareOutcome = signal<string | null>(null);

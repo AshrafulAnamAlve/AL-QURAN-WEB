@@ -78,6 +78,16 @@ import { LanguageService } from '../../core/services/language';
   styles: `
     @use 'mixins' as m;
 
+    :host {
+      display: block;
+
+      // On mobile screens & tablets, the 500px desktop footer is hidden
+      // to keep the app clean, uncluttered, and native-feeling.
+      @media (max-width: 991px) {
+        display: none !important;
+      }
+    }
+
     .footer {
       margin-top: 3rem;
       padding-bottom: calc(var(--aq-bottom-nav-height) + 1.5rem);
