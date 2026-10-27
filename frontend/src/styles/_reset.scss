@@ -28,6 +28,11 @@ body {
   color: var(--aq-text);
   // The single most important responsive rule in the app.
   overflow-x: hidden;
+  // Safe-area insets for modern mobile displays (notches, dynamic islands, system home indicators)
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
   transition: background-color var(--aq-duration) var(--aq-ease),
               color var(--aq-duration) var(--aq-ease);
 }
@@ -54,10 +59,12 @@ button {
   background: none;
   border: none;
   padding: 0;
+  touch-action: manipulation;
 }
 
 a {
   color: var(--aq-primary);
+  touch-action: manipulation;
   text-decoration: none;
   transition: color var(--aq-duration-fast) var(--aq-ease);
 

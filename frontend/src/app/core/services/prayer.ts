@@ -2,6 +2,7 @@ import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
 import { AppError } from '../models/api-error';
 import { CalculationMethod, NextPrayer, PrayerCalculationSettings, PrayerDay, PrayerTime } from '../models/prayer';
 import { LocationService } from './location';
+import { MobileHardwareService } from './mobile-hardware.service';
 import { PrayerApiService } from './prayer-api';
 import { STORAGE_KEYS, StorageService } from './storage';
 
@@ -15,6 +16,7 @@ export const CORE_PRAYER_KEYS = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', '
 export class PrayerTimesService implements OnDestroy {
   private readonly prayerApi = inject(PrayerApiService);
   private readonly locationService = inject(LocationService);
+  private readonly mobileHardware = inject(MobileHardwareService);
   private readonly storage = inject(StorageService);
 
   private timerId: ReturnType<typeof setInterval> | null = null;
@@ -106,6 +108,21 @@ export class PrayerTimesService implements OnDestroy {
           this._timetable.set(day);
           this.loadedDateKey = dateStr;
           this._loading.set(false);
+
+          if (this.mobileHardware.isNativeMobile() && day && day.times) {
+            const prayerAlarms = day.times
+              .filter((t) => t.isPrayer && t.at)
+              .map((t, idx) => ({
+                id: 1000 + idx,
+                name: t.key,
+                time: new Date(t.at!),
+                titleBn: `${t.banglaName} নামাজের ওয়াক্ত`,
+                titleEn: `${t.name} Prayer Time`,
+                bodyBn: `এখন ${t.banglaName} নামাজের ওয়াক্ত হয়েছে। আল্লাহু আকবার।`,
+                bodyEn: `It is now time for ${t.name} prayer. Allahu Akbar.`,
+              }));
+            void this.mobileHardware.schedulePrayerAlarms(prayerAlarms);
+          }
         },
         error: (err: AppError) => {
           this._error.set(err);

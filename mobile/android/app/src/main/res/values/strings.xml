@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Al-Quran (আল-কুরআন)</string>
+    <string name="title_activity_main">Al-Quran (আল-কুরআন)</string>
+    <string name="package_name">com.alquran.mobile</string>
+    <string name="custom_url_scheme">com.alquran.mobile</string>
+</resources>

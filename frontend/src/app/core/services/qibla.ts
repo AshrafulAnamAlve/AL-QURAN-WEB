@@ -5,6 +5,7 @@ import {
   QiblaCalculationResult,
 } from '../models/qibla';
 import { SettingsService } from './settings';
+import { MobileHardwareService } from './mobile-hardware.service';
 
 const EARTH_RADIUS_KM = 6371.0;
 
@@ -91,6 +92,7 @@ export interface TurnGuidance {
 @Injectable({ providedIn: 'root' })
 export class QiblaService {
   private readonly settings = inject(SettingsService);
+  private readonly mobileHardware = inject(MobileHardwareService);
 
   /** Reactive Qibla calculation based on active user location in Settings */
   readonly qiblaData = computed<QiblaCalculationResult>(() => {
@@ -304,12 +306,9 @@ export class QiblaService {
     this.userActivated.set(true);
     let didVibrate = false;
 
-    if (this.vibrationSupported && typeof navigator !== 'undefined' && navigator.vibrate) {
-      try {
-        didVibrate = navigator.vibrate([60, 40, 60]);
-      } catch {
-        didVibrate = false;
-      }
+    if (this.vibrationEnabled()) {
+      this.mobileHardware.hapticKaabaLock();
+      didVibrate = true;
     }
 
     if (this.soundEnabled()) {
@@ -373,13 +372,9 @@ export class QiblaService {
       if (shouldTrigger) {
         this.lastFeedbackTime = now;
 
-        // 1. Vibration
-        if (this.vibrationEnabled() && typeof navigator !== 'undefined' && navigator.vibrate) {
-          try {
-            navigator.vibrate([60, 40, 60]);
-          } catch {
-            // Ignore
-          }
+        // 1. Vibration & Haptics
+        if (this.vibrationEnabled()) {
+          this.mobileHardware.hapticKaabaLock();
         }
 
         // 2. Chime (works on iPhone/iOS too)

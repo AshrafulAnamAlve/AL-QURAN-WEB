@@ -9,6 +9,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { DesktopService } from '../../core/services/desktop';
 import { LanguageService } from '../../core/services/language';
+import { MobileHardwareService } from '../../core/services/mobile-hardware.service';
 import { SeoService } from '../../core/services/seo';
 import { IconComponent } from '../../shared/components/icon/icon';
 
@@ -23,16 +24,27 @@ import { IconComponent } from '../../shared/components/icon/icon';
 export class ShieldPage implements OnInit {
   readonly desktop = inject(DesktopService);
   readonly lang = inject(LanguageService);
+  readonly mobileHardware = inject(MobileHardwareService);
   private readonly seo = inject(SeoService);
 
   readonly isBn = this.lang.isBn;
   readonly isDesktop = computed(() => this.desktop.isDesktop());
+  readonly isMobile = computed(() => this.mobileHardware.isNativeMobile() || this.mobileHardware.isAndroid() || this.mobileHardware.isIos());
   readonly isShieldActive = computed(() => this.desktop.isShieldActive());
   readonly isShieldLoading = computed(() => this.desktop.isShieldLoading());
   readonly shieldError = computed(() => this.desktop.shieldError());
 
+  readonly copiedDns = signal<string | null>(null);
   readonly verificationStatus = signal<string | null>(null);
   readonly isVerifying = signal<boolean>(false);
+
+  async copyDns(hostname: string): Promise<void> {
+    const ok = await this.mobileHardware.copyDnsHostname(hostname);
+    if (ok) {
+      this.copiedDns.set(hostname);
+      setTimeout(() => this.copiedDns.set(null), 3000);
+    }
+  }
 
   openExtensionModal(): void {
     this.desktop.openDownloadModal('extension');

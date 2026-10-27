@@ -19,6 +19,7 @@ import { LocationService } from '../../core/services/location';
 import { MosqueService, SEARCH_RADIUS_OPTIONS } from '../../core/services/mosque';
 import { LanguageService } from '../../core/services/language';
 import { PrayerTimesService } from '../../core/services/prayer';
+import { MobileHardwareService } from '../../core/services/mobile-hardware.service';
 import { SeoService } from '../../core/services/seo';
 import { ErrorStateComponent } from '../../shared/components/error-state/error-state';
 import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state';
@@ -62,6 +63,7 @@ export class MosquePage implements OnInit, AfterViewInit, OnDestroy {
   protected readonly locationService = inject(LocationService);
   protected readonly language = inject(LanguageService);
   protected readonly prayerTimes = inject(PrayerTimesService);
+  protected readonly mobileHardware = inject(MobileHardwareService);
 
   readonly mapContainer = viewChild<ElementRef<HTMLDivElement>>('mapContainer');
 
@@ -396,6 +398,13 @@ export class MosquePage implements OnInit, AfterViewInit, OnDestroy {
     return this.isBn()
       ? `${this.prayerTimes.toBnDigits(km)} কিমি`
       : `${km} km`;
+  }
+
+  onOpenDirections(event: Event, m: Mosque): void {
+    if (this.mobileHardware.isNativeMobile() || this.mobileHardware.isAndroid() || this.mobileHardware.isIos()) {
+      event.preventDefault();
+      this.mobileHardware.openNativeMapDirections(m.latitude, m.longitude, m.name);
+    }
   }
 
   retry(): void {

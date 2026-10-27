@@ -95,6 +95,40 @@
           <aq-icon name="check" [size]="18" />
           <span>{{ isVerifying() ? (isBn() ? 'যাচাই হচ্ছে...' : 'Verifying...') : (isBn() ? 'সুরক্ষা যাচাই করুন' : 'Verify Protection') }}</span>
         </button>
+      } @else if (isMobile()) {
+        <div class="mobile-dns-box">
+          <p class="mobile-dns-box__intro">
+            {{ isBn() ? '📱 মোবাইলে Private DNS ব্যবহার করে কোনো অ্যাপ ছাড়াই পুরো ফোনের সকল ব্রাউজারে (Chrome, Samsung Internet, ইত্যাদি) ১০০% প্রাপ্তবয়স্ক সাইট ও বিজ্ঞাপন ব্লক করুন:' : '📱 Block adult websites across all mobile browsers (Chrome, Samsung Internet, etc.) using Private DNS:' }}
+          </p>
+
+          <div class="dns-host-pills">
+            @for (dns of mobileHardware.privateDnsHostnames; track dns.id) {
+              <div class="dns-host-card">
+                <div class="dns-host-card__info">
+                  <span class="dns-host-card__name">{{ dns.name }}</span>
+                  <code class="dns-host-card__host">{{ dns.hostname }}</code>
+                </div>
+                <button
+                  type="button"
+                  class="aq-btn aq-btn--sm aq-btn--primary"
+                  (click)="copyDns(dns.hostname)"
+                >
+                  <aq-icon [name]="copiedDns() === dns.hostname ? 'check' : 'copy'" [size]="14" />
+                  <span>{{ copiedDns() === dns.hostname ? (isBn() ? 'কপি হয়েছে!' : 'Copied!') : (isBn() ? 'কপি করুন' : 'Copy DNS') }}</span>
+                </button>
+              </div>
+            }
+          </div>
+
+          <div class="mobile-setup-steps">
+            <h4>{{ isBn() ? '📌 অ্যান্ড্রয়েডে ২ মিনিটের সেটআপ:' : '📌 Android 2-Minute Setup:' }}</h4>
+            <ol>
+              <li>{{ isBn() ? 'ফোনের Settings খুলুন > Network & Internet (বা Connections) এ যান।' : 'Open Phone Settings > Network & Internet (or Connections).' }}</li>
+              <li>{{ isBn() ? 'Private DNS অপশন সিলেক্ট করুন।' : 'Select Private DNS option.' }}</li>
+              <li>{{ isBn() ? '"Private DNS provider hostname" নির্বাচন করে উপরের কপি করা DNS পেস্ট করে Save দিন।' : 'Choose "Private DNS provider hostname", paste the copied DNS above and Save.' }}</li>
+            </ol>
+          </div>
+        </div>
       } @else {
         <button
           type="button"

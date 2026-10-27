@@ -6,6 +6,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { DhikrService } from '../../core/services/dhikr';
 import { DhikrCategory, DhikrItem } from '../../core/models/dhikr';
+import { MobileHardwareService } from '../../core/services/mobile-hardware.service';
 import { IconComponent } from '../../shared/components/icon/icon';
 import { IconName } from '../../shared/components/icon/icon-registry';
 
@@ -19,6 +20,7 @@ import { IconName } from '../../shared/components/icon/icon-registry';
 })
 export class TasbihPage {
   protected readonly dhikrService = inject(DhikrService);
+  protected readonly mobileHardware = inject(MobileHardwareService);
 
   readonly isBn = this.dhikrService.isBn;
   readonly activeDhikr = this.dhikrService.activeDhikr;
@@ -62,11 +64,20 @@ export class TasbihPage {
   ];
 
   onTap(): void {
+    const currentCount = this.count();
+    const currentTarget = this.target();
     this.dhikrService.incrementCount();
+    
+    if (currentCount + 1 >= currentTarget && currentTarget > 0) {
+      this.mobileHardware.hapticSuccess();
+    } else {
+      this.mobileHardware.hapticTap();
+    }
   }
 
   onReset(): void {
     this.dhikrService.resetCount();
+    this.mobileHardware.hapticTap();
   }
 
   onDecrement(): void {

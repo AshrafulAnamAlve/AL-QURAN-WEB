@@ -179,6 +179,7 @@
 
               <a
                 [href]="m.directionsUrl"
+                (click)="onOpenDirections($event, m)"
                 target="_blank"
                 rel="noopener"
                 class="aq-btn aq-btn--primary aq-btn--sm directions-link"
