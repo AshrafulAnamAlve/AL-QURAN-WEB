@@ -21,11 +21,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platforms;android-35 build-tools;35.0.0'
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -54,9 +59,26 @@ jobs:
           cd mobile/android
           ./gradlew assembleDebug --stacktrace
 
+      - name: Prepare APK File
+        run: |
+          cp mobile/android/app/build/outputs/apk/debug/app-debug.apk mobile/android/app/build/outputs/apk/debug/AlQuran-Android.apk
+
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: AlQuran-Android-Debug-APK
-          path: mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          name: AlQuran-Android-APK
+          path: mobile/android/app/build/outputs/apk/debug/AlQuran-Android.apk
           if-no-files-found: error
+
+      - name: Publish APK to GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: v1.1.0-mobile
+          name: 'Al-Quran Mobile Android APK & Desktop v1.1.0'
+          body: 'Official Al-Quran Android Mobile Application (.apk) with 100% web parity, 3D Qibla Compass, Background Audio, and Adhan alerts.'
+          draft: false
+          prerelease: false
+          files: mobile/android/app/build/outputs/apk/debug/AlQuran-Android.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
