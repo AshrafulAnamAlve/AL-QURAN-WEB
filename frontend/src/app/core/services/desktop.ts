@@ -52,6 +52,7 @@ export const DESKTOP_DOWNLOAD_LINKS = {
   setupExe: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest/download/Al-Quran-Setup-1.1.0.exe',
   extensionZip: 'downloads/al-quran-halal-shield-v1.0.0.zip',
   extensionGitHub: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/tree/main/extension',
+  androidApk: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/download/v1.1.0-mobile/AlQuran-Android.apk',
 };
 
 export interface DesktopShortcut {

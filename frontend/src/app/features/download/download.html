@@ -235,7 +235,7 @@
       </div>
     </section>
 
-    <!-- ==================== OPTION 3: PROGRESSIVE WEB APP (PWA) ==================== -->
+    <!-- ==================== OPTION 3: ANDROID MOBILE APP (APK) & PWA ==================== -->
     <section class="dl-card dl-card--pwa">
       <div class="dl-card__top">
         <div class="dl-card__icon dl-card__icon--pwa">
@@ -243,52 +243,63 @@
         </div>
         <div class="dl-card__heading">
           <div class="dl-card__badges">
-            <span class="badge badge--pwa">Android / iPhone / PC / Mac</span>
-            <span class="badge badge--ver">PWA • 0 MB</span>
-            <span class="badge badge--free">{{ isBn() ? 'তাত্ক্ষণিক' : 'Instant' }}</span>
+            <span class="badge badge--pwa">Android 8.0+ / iOS / PWA</span>
+            <span class="badge badge--ver">v1.1.0 • APK</span>
+            <span class="badge badge--free">{{ isBn() ? '১০০% ফ্রি' : '100% Free' }}</span>
           </div>
           <h2 class="dl-card__title">
-            {{ isBn() ? 'মোবাইল ও পিসি ওয়েব অ্যাপ (PWA)' : 'Mobile & PC Web App (PWA)' }}
+            {{ isBn() ? 'অ্যান্ড্রয়েড মোবাইল অ্যাপ (APK) ও পিডব্লিউএ' : 'Android Mobile App (APK) & PWA' }}
           </h2>
           <p class="dl-card__desc">
             {{ isBn()
-              ? 'কোনো ফাইল ডাউনলোড ছাড়াই সরাসরি যেকোনো ব্রাউজার (Chrome, Safari, Edge, Samsung Internet) থেকে আপনার ফোনের হোম স্ক্রিনে বা পিসিতে অ্যাপের মতো ইনস্টল করুন।'
-              : 'Zero download size. Install directly from your browser to your phone home screen or desktop with full offline access.' }}
+              ? 'মোবাইল ফোনের জন্য সম্পূর্ণ আসল অ্যাপ্লিকেশন। সরাসরি ফোনে ইনস্টলযোগ্য APK সংস্করণ যাতে রয়েছে ৩D কিবলা হার্ডওয়্যার কম্পাস, লক-স্ক্রিনে ব্যাকগ্রাউন্ড আজান অ্যালার্ম এবং তসবিহে ফিজিক্যাল ভাইব্রেশন।'
+              : 'Official mobile application for smartphones. Direct installable Android APK featuring 3D magnetometer compass, lock-screen background Adhan alarms, and tactile haptic Tasbih.' }}
           </p>
         </div>
       </div>
 
       <!-- Feature Tags -->
       <div class="dl-card__features">
-        <span class="pill-feature">📱 {{ isBn() ? 'হোম স্ক্রিন অ্যাপ' : 'Home Screen App' }}</span>
-        <span class="pill-feature">💾 {{ isBn() ? '০ MB স্টোরেজ' : 'Zero Storage' }}</span>
-        <span class="pill-feature">⚡ {{ isBn() ? 'সরাসরি ব্রাউজার থেকে' : 'Instant 1-Click' }}</span>
-        <span class="pill-feature">🔄 {{ isBn() ? 'স্বয়ংক্রিয় আপডেট' : 'Auto Updated' }}</span>
+        <span class="pill-feature">📲 {{ isBn() ? 'সরাসরি APK ইনস্টল' : 'Direct APK Install' }}</span>
+        <span class="pill-feature">🧭 {{ isBn() ? 'হার্ডওয়্যার কিবলা' : 'Magnetometer Compass' }}</span>
+        <span class="pill-feature">🕌 {{ isBn() ? 'লক-স্ক্রিন আজান' : 'Lock-Screen Adhan' }}</span>
+        <span class="pill-feature">📿 {{ isBn() ? 'হ্যাপটিক তসবিহ' : 'Haptic Vibration' }}</span>
+        <span class="pill-feature">⚡ {{ isBn() ? '১০০% অফলাইন' : '100% Offline' }}</span>
       </div>
 
       <!-- Action Buttons -->
       <div class="dl-card__actions">
+        <a
+          [href]="downloadLinks.androidApk"
+          class="btn-dl btn-dl--primary"
+          download
+        >
+          <div class="btn-dl__icon">
+            <aq-icon name="download" [size]="20" />
+          </div>
+          <div class="btn-dl__text">
+            <strong>{{ isBn() ? 'অ্যান্ড্রয়েড অ্যাপ ডাউনলোড (.apk)' : 'Download Android App (.apk)' }}</strong>
+            <span>{{ isBn() ? 'সরাসরি ফোনে ইনস্টলযোগ্য APK • ৩D কম্পাস ও আজান সহ' : 'Direct Installable APK for Android phones' }}</span>
+          </div>
+        </a>
+
         @if (canInstallPwa()) {
           <button
             type="button"
-            class="btn-dl btn-dl--primary"
+            class="btn-dl btn-dl--secondary"
             (click)="installPwa()"
           >
             <div class="btn-dl__icon">
-              <aq-icon name="download" [size]="20" />
+              <aq-icon name="sparkles" [size]="18" />
             </div>
             <div class="btn-dl__text">
-              <strong>{{ isBn() ? '১-ক্লিকে ইনস্টল করুন' : 'Install Web App (1-Click)' }}</strong>
-              <span>{{ isBn() ? 'ব্রাউজার থেকে সরাসরি আপনার ডিভাইসে' : 'Direct install to home screen' }}</span>
+              <strong>{{ isBn() ? 'ওয়েব অ্যাপ ইনস্টল করুন (PWA)' : 'Install Web App (PWA)' }}</strong>
+              <span>{{ isBn() ? 'ব্রাউজার থেকে সরাসরি ১-ক্লিক ইনস্টল' : 'Instant 1-Click Browser Install' }}</span>
             </div>
           </button>
         } @else if (isPwaInstalled()) {
           <div class="status-box status-box--success">
             ✓ {{ isBn() ? 'আপনার ডিভাইসে আল-কুরআন ওয়েব অ্যাপ ইতিমধ্যেই ইনস্টল করা আছে।' : 'Al-Quran Web App is already installed on this device.' }}
-          </div>
-        } @else {
-          <div class="status-box">
-            {{ isBn() ? '💡 ফোনে ব্রাউজার মেনু (⋮) ওপেন করে "Add to Home screen" বা "Install app" চাপুন।' : '💡 Open browser menu (⋮) and tap "Add to Home screen" or "Install App".' }}
           </div>
         }
 
@@ -307,7 +318,7 @@
         >
           <span class="guide-toggle-btn__left">
             <aq-icon name="compass" [size]="15" />
-            <span>{{ isBn() ? 'মোবাইল ও পিসিতে PWA ব্যবহারের নিয়ম' : 'How to Use PWA on Phone & PC' }}</span>
+            <span>{{ isBn() ? 'মোবাইল APK ইনস্টলেশন ও ব্যবহার গাইড' : 'Mobile APK Installation & Usage Guide' }}</span>
           </span>
           <span class="guide-toggle-btn__chevron">{{ isPwaGuideOpen() ? '▲' : '▼' }}</span>
         </button>
@@ -316,17 +327,24 @@
           <div class="guide-content">
             <div class="guide-steps-grid">
               <div class="guide-item">
-                <span class="step-num">Android</span>
+                <span class="step-num">১</span>
                 <div>
-                  <strong>{{ isBn() ? 'অ্যান্ড্রয়েড ফোনে' : 'On Android' }}</strong>
-                  <p>{{ isBn() ? 'Chrome ব্রাউজারে সাইটটি ওপেন করে উপরের তিনটি ডট (⋮) চাপুন এবং "Add to Home screen" বা "Install" নির্বাচন করুন।' : 'Open in Chrome, tap menu (⋮) and select "Add to Home screen" or "Install App".' }}</p>
+                  <strong>{{ isBn() ? 'APK ফাইল ডাউনলোড করুন' : 'Download the APK File' }}</strong>
+                  <p>{{ isBn() ? 'উপরের সবুজ বাটনটিতে ট্যাপ করে AlQuran-Android.apk ফাইলটি আপনার ফোনে ডাউনলোড করুন।' : 'Tap the green download button above to download the APK file to your phone.' }}</p>
                 </div>
               </div>
               <div class="guide-item">
-                <span class="step-num">iOS</span>
+                <span class="step-num">২</span>
                 <div>
-                  <strong>{{ isBn() ? 'আইফোনে (Safari)' : 'On iPhone / iPad' }}</strong>
-                  <p>{{ isBn() ? 'Safari ব্রাউজারে নিচের Share (📤) বাটনে ট্যাপ করুন এবং "Add to Home Screen"-এ চাপ দিন।' : 'Tap the Share icon (📤) in Safari and tap "Add to Home Screen".' }}</p>
+                  <strong>{{ isBn() ? 'ফাইলে ট্যাপ করে ইনস্টল করুন' : 'Tap to Install' }}</strong>
+                  <p>{{ isBn() ? 'ডাউনলোড নোটিফিকেশন বা ফাইল ম্যানেজারে গিয়ে APK ফাইলে চাপুন। ফোন পারমিশন চাইলে "Allow from this source" অন করে দিন।' : 'Open the downloaded file. If prompted by Android security, enable "Install unknown apps" and tap Install.' }}</p>
+                </div>
+              </div>
+              <div class="guide-item">
+                <span class="step-num">৩</span>
+                <div>
+                  <strong>{{ isBn() ? 'আইফোন ব্যবহারকারীদের জন্য (PWA)' : 'For iPhone Users (PWA)' }}</strong>
+                  <p>{{ isBn() ? 'আইফোনে Safari ব্রাউজারে নিচের Share (📤) বাটনে ট্যাপ করুন এবং "Add to Home Screen"-এ চাপ দিলে অ্যাপের মতো হোমস্ক্রিনে যুক্ত হয়ে যাবে।' : 'On iPhone, open Safari, tap the Share icon (📤) and select "Add to Home Screen".' }}</p>
                 </div>
               </div>
             </div>
