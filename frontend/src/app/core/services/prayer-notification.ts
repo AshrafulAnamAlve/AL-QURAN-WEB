@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
+import { Injectable, OnDestroy, computed, effect, inject, signal } from '@angular/core';
 import {
   ADHAN_VOICE_OPTIONS,
   AdhanModalState,
@@ -8,11 +8,12 @@ import {
   DEFAULT_PRAYER_NOTIFICATION_SETTINGS,
   PrayerNotificationSettings,
 } from '../models/prayer-notification';
-import { PrayerTime } from '../models/prayer';
+import { PrayerDay, PrayerTime } from '../models/prayer';
 import { DesktopService } from './desktop';
 import { LanguageService } from './language';
 import { LocationService } from './location';
 import { LoggerService } from './logger';
+import { MobileHardwareService, PrayerAlarmItem } from './mobile-hardware.service';
 import { PrayerTimesService } from './prayer';
 import { STORAGE_KEYS, StorageService } from './storage';
 
@@ -24,6 +25,7 @@ export class PrayerNotificationService implements OnDestroy {
   private readonly language = inject(LanguageService);
   private readonly logger = inject(LoggerService);
   private readonly desktopService = inject(DesktopService);
+  private readonly mobileHardware = inject(MobileHardwareService);
 
   private checkIntervalId: ReturnType<typeof setInterval> | null = null;
   private snoozeTimeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -55,14 +57,25 @@ export class PrayerNotificationService implements OnDestroy {
   readonly currentAdhanPrayer = this._currentAdhanPrayer.asReadonly();
 
   // Permission state
+  private readonly _nativePermissionGranted = signal<boolean>(false);
   private readonly _permission = signal<NotificationPermission>(this.detectPermission());
   readonly permission = this._permission.asReadonly();
   readonly isPermissionGranted = computed(
-    () => this.desktopService.isDesktop() || this._permission() === 'granted',
+    () =>
+      this.desktopService.isDesktop() ||
+      (this.mobileHardware.isNativeMobile() ? this._nativePermissionGranted() : this._permission() === 'granted'),
   );
   readonly isPermissionDenied = computed(
-    () => !this.desktopService.isDesktop() && this._permission() === 'denied',
+    () =>
+      !this.desktopService.isDesktop() &&
+      (this.mobileHardware.isNativeMobile()
+        ? !this._nativePermissionGranted() && this._permission() === 'denied'
+        : this._permission() === 'denied'),
   );
+
+  // In-App Permission Prompt Modal State
+  private readonly _showPermissionModal = signal<boolean>(false);
+  readonly showPermissionModal = this._showPermissionModal.asReadonly();
 
   // In-App Adhan Modal State
   private readonly _activeAdhanModal = signal<AdhanModalState | null>(null);
@@ -81,6 +94,84 @@ export class PrayerNotificationService implements OnDestroy {
   constructor() {
     this.startScheduler();
     this.initDesktopIntegration();
+    this.initMobileIntegration();
+
+    // Check if permission prompt modal should be shown on startup (mobile & web)
+    if (!this.desktopService.isDesktop()) {
+      if (!this.mobileHardware.isNativeMobile() && this._permission() !== 'granted') {
+        this.checkPermissionPromptOnStartup();
+      }
+    }
+
+    // Automatically synchronize native mobile alarms whenever prayer times or settings change
+    effect(() => {
+      const table = this.prayerTimes.timetable();
+      const upcoming = this.prayerTimes.upcomingDays();
+      const settings = this._settings();
+      if (table && this.mobileHardware.isNativeMobile()) {
+        this.rescheduleMobileAlarms();
+      }
+    });
+  }
+
+  private initMobileIntegration(): void {
+    if (!this.mobileHardware.isNativeMobile()) return;
+
+    void this.mobileHardware.initNotificationChannel();
+    void this.mobileHardware.checkNotificationPermission().then((granted) => {
+      this._nativePermissionGranted.set(granted);
+      if (granted) {
+        this._permission.set('granted');
+        this.rescheduleMobileAlarms();
+      } else {
+        this.checkPermissionPromptOnStartup();
+      }
+    });
+
+    this.mobileHardware.initNotificationListener((waqtName) => {
+      const table = this.prayerTimes.timetable();
+      const target = waqtName
+        ? table?.times.find((t) => t.key.toLowerCase() === waqtName.toLowerCase())
+        : null;
+      const prayerToOpen = target || this._currentAdhanPrayer() || this.prayerTimes.nextPrayer()?.prayer;
+      if (prayerToOpen) {
+        this.openAdhanModal(prayerToOpen);
+      }
+    });
+  }
+
+  /**
+   * Prompts user with explanation modal on startup if permission is not yet granted
+   * and user hasn't dismissed the prompt within the last 3 days.
+   */
+  checkPermissionPromptOnStartup(): void {
+    if (this.desktopService.isDesktop()) return;
+    const dismissedAt = this.storage.read<number | null>(
+      STORAGE_KEYS.notificationPromptDismissed,
+      null,
+    );
+    const now = Date.now();
+    // 3 days threshold: 3 * 24 * 60 * 60 * 1000 = 259,200,000 ms
+    if (!dismissedAt || now - dismissedAt > 259200000) {
+      setTimeout(() => {
+        if (!this.isPermissionGranted()) {
+          this.openPermissionModal();
+        }
+      }, 1800);
+    }
+  }
+
+  openPermissionModal(): void {
+    this._showPermissionModal.set(true);
+  }
+
+  closePermissionModal(): void {
+    this._showPermissionModal.set(false);
+  }
+
+  dismissPermissionModal(): void {
+    this._showPermissionModal.set(false);
+    this.storage.write(STORAGE_KEYS.notificationPromptDismissed, Date.now());
   }
 
   private initDesktopIntegration(): void {
@@ -135,9 +226,19 @@ export class PrayerNotificationService implements OnDestroy {
   }
 
   /**
-   * Requests native desktop notification permission from user.
+   * Requests native mobile / desktop notification permission from user.
    */
   async requestPermission(): Promise<boolean> {
+    if (this.mobileHardware.isNativeMobile()) {
+      const granted = await this.mobileHardware.requestNotificationPermission();
+      this._nativePermissionGranted.set(granted);
+      this._permission.set(granted ? 'granted' : 'denied');
+      if (granted) {
+        this.rescheduleMobileAlarms();
+      }
+      return granted;
+    }
+
     if (typeof window === 'undefined' || !('Notification' in window)) {
       return false;
     }
@@ -183,6 +284,10 @@ export class PrayerNotificationService implements OnDestroy {
     if (partial.autoPlayAdhan !== undefined && this.desktopService.isDesktop()) {
       this.desktopService.setAutoAdhanEnabled(partial.autoPlayAdhan);
     }
+
+    if (this.mobileHardware.isNativeMobile()) {
+      this.rescheduleMobileAlarms();
+    }
   }
 
   setAdhanVoice(voice: AdhanVoiceId): void {
@@ -213,14 +318,18 @@ export class PrayerNotificationService implements OnDestroy {
   }
 
   /**
-   * Toggles master prayer alerts. If turning on and permission has not been requested,
-   * prompts user for notification permission.
+   * Toggles master prayer alerts. If turning on and permission has not been granted,
+   * opens the explanation modal for user to grant permission.
    */
   async toggleMasterAlerts(): Promise<boolean> {
     const nextState = !this._settings().enabled;
+    if (nextState && !this.isPermissionGranted()) {
+      this.openPermissionModal();
+      return false;
+    }
     this.toggleMaster(nextState);
-    if (nextState && this._permission() !== 'granted') {
-      await this.requestPermission();
+    if (this.mobileHardware.isNativeMobile()) {
+      this.rescheduleMobileAlarms();
     }
     return nextState;
   }
@@ -294,7 +403,7 @@ export class PrayerNotificationService implements OnDestroy {
   }
 
   /**
-   * Sends desktop notification with prayer details and audio/focus actions.
+   * Sends desktop or mobile native notification with prayer details and audio/focus actions.
    */
   sendDesktopNotification(prayer: PrayerTime): Notification | null {
     if (this.desktopService.isDesktop()) {
@@ -313,6 +422,29 @@ export class PrayerNotificationService implements OnDestroy {
         : `It is now time for ${prayer.name} prayer (${time12h}) in ${city}.`;
 
       this.desktopService.sendNotification(title, body);
+      return null;
+    }
+
+    if (this.mobileHardware.isNativeMobile()) {
+      if (!this._settings().enabled) return null;
+      const loc = this.locationService.location();
+      const city = loc.city || loc.displayName || (this.language.isBn() ? 'আপনার এলাকা' : 'your area');
+      const time12h = this.prayerTimes.format12h(prayer.time, false);
+      const time12hBn = this.prayerTimes.format12h(prayer.time, true);
+
+      const isBn = this.language.isBn();
+      const title = isBn
+        ? `🕌 ${prayer.banglaName} নামাজের সময় হয়েছে`
+        : `🕌 It is now time for ${prayer.name} prayer`;
+
+      const body = isBn
+        ? `${city}-এ এখন ${prayer.banglaName} নামাজের সময় (${time12hBn})। আযান শুনতে ট্যাপ করুন।`
+        : `It is now time for ${prayer.name} prayer (${time12h}) in ${city}. Tap to hear Adhan.`;
+
+      void this.mobileHardware.sendImmediateNotification(title, body, {
+        waqtName: prayer.key,
+        timeStr: prayer.at,
+      });
       return null;
     }
 
@@ -502,7 +634,7 @@ export class PrayerNotificationService implements OnDestroy {
   }
 
   /**
-   * Triggers a test alert immediately with desktop notification, auto Adhan audio, and in-app modal.
+   * Triggers a test alert immediately with native notification, auto Adhan audio, and in-app modal.
    */
   triggerTestAlert(prayerKey = 'asr'): void {
     const table = this.prayerTimes.timetable();
@@ -517,13 +649,99 @@ export class PrayerNotificationService implements OnDestroy {
         isPrayer: true,
       };
 
-    if (this._settings().enabled) {
+    const isBn = this.language.isBn();
+    const title = isBn
+      ? `🕌 পরীক্ষা: ${target.banglaName} নামাজের আযান`
+      : `🕌 Test Alert: ${target.name} Adhan Notification`;
+    const body = isBn
+      ? `আল-কুরআন আযান নোটিফিকেশন সফলভাবে সক্রিয় হয়েছে।`
+      : `Al-Quran Adhan notification is successfully active.`;
+
+    if (this.mobileHardware.isNativeMobile()) {
+      void this.mobileHardware.sendImmediateNotification(title, body, {
+        waqtName: target.key,
+        isTest: true,
+      });
+    } else if (this._settings().enabled) {
       this.sendDesktopNotification(target);
     }
+
     if (this._settings().autoPlayAdhan && !this._settings().defaultMuted) {
       this.playAdhan(target);
     }
     this.openAdhanModal(target, true);
+  }
+
+  /**
+   * Reschedules exact prayer alarms in Android AlarmManager for up to 7 upcoming days.
+   * Runs in the background and wakes up the device with Adhan sound even if the app is killed.
+   */
+  rescheduleMobileAlarms(): void {
+    if (!this.mobileHardware.isNativeMobile()) return;
+
+    const settings = this._settings();
+    // If both alerts and auto-play Adhan are disabled, clear all alarms
+    if (!settings.enabled && !settings.autoPlayAdhan) {
+      void this.mobileHardware.cancelAllPrayerAlarms();
+      return;
+    }
+
+    const loc = this.locationService.location();
+    const city = loc.city || loc.displayName || (this.language.isBn() ? 'আপনার এলাকা' : 'your area');
+
+    const todayTable = this.prayerTimes.timetable();
+    const upcoming = this.prayerTimes.upcomingDays();
+
+    const daysMap = new Map<string, PrayerDay>();
+    if (todayTable) {
+      daysMap.set(todayTable.date, todayTable);
+    }
+    for (const d of upcoming) {
+      if (!daysMap.has(d.date)) {
+        daysMap.set(d.date, d);
+      }
+    }
+
+    const sortedDays = Array.from(daysMap.values()).sort((a, b) => a.date.localeCompare(b.date));
+    const targetDays = sortedDays.slice(0, 7);
+
+    const alarms: PrayerAlarmItem[] = [];
+    const nowMs = Date.now();
+
+    for (let dayIdx = 0; dayIdx < targetDays.length; dayIdx++) {
+      const day = targetDays[dayIdx];
+      if (!day.times) continue;
+
+      const dayNumber = parseInt(day.date.slice(8, 10), 10) || (dayIdx + 1);
+
+      day.times
+        .filter((t) => t.isPrayer && t.at)
+        .forEach((t, prayerIdx) => {
+          const pKey = t.key.toLowerCase() as CorePrayerAlertKey;
+          if (settings[pKey] === false) return;
+
+          const prayerDate = new Date(t.at!);
+          if (prayerDate.getTime() <= nowMs) return; // In the past
+
+          // Deterministic unique 32-bit ID
+          const id = dayNumber * 10 + (prayerIdx % 10);
+
+          const time12h = this.prayerTimes.format12h(t.time, false);
+          const time12hBn = this.prayerTimes.format12h(t.time, true);
+
+          alarms.push({
+            id,
+            name: t.key,
+            time: prayerDate,
+            titleBn: `🕌 ${t.banglaName} নামাজের ওয়াক্ত হয়েছে`,
+            titleEn: `🕌 It is now time for ${t.name} prayer`,
+            bodyBn: `${city}-এ এখন ${t.banglaName} নামাজের সময় (${time12hBn})। আল্লাহু আকবার। আযান শুনতে ট্যাপ করুন।`,
+            bodyEn: `It is now time for ${t.name} prayer (${time12h}) in ${city}. Allahu Akbar. Tap to listen.`,
+          });
+        });
+    }
+
+    void this.mobileHardware.schedulePrayerAlarms(alarms);
   }
 
   /**

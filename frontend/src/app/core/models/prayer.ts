@@ -49,6 +49,16 @@ export interface PrayerDay {
   notice: string;
 }
 
+/** Full month timetable. */
+export interface PrayerMonth {
+  year: number;
+  month: number;
+  location: PrayerLocation;
+  method: CalculationSummary;
+  days: PrayerDay[];
+  notice: string;
+}
+
 /** Calculation method option. */
 export interface CalculationMethod {
   id: number;

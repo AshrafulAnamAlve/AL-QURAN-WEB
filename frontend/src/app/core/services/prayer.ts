@@ -25,6 +25,9 @@ export class PrayerTimesService implements OnDestroy {
   private readonly _timetable = signal<PrayerDay | null>(null);
   readonly timetable = this._timetable.asReadonly();
 
+  /** Upcoming days of the current month (for multi-day scheduling & offline protection) */
+  readonly upcomingDays = signal<PrayerDay[]>([]);
+
   private readonly _methods = signal<CalculationMethod[]>([]);
   readonly methods = this._methods.asReadonly();
 
@@ -109,19 +112,35 @@ export class PrayerTimesService implements OnDestroy {
           this.loadedDateKey = dateStr;
           this._loading.set(false);
 
-          if (this.mobileHardware.isNativeMobile() && day && day.times) {
-            const prayerAlarms = day.times
-              .filter((t) => t.isPrayer && t.at)
-              .map((t, idx) => ({
-                id: 1000 + idx,
-                name: t.key,
-                time: new Date(t.at!),
-                titleBn: `${t.banglaName} নামাজের ওয়াক্ত`,
-                titleEn: `${t.name} Prayer Time`,
-                bodyBn: `এখন ${t.banglaName} নামাজের ওয়াক্ত হয়েছে। আল্লাহু আকবার।`,
-                bodyEn: `It is now time for ${t.name} prayer. Allahu Akbar.`,
-              }));
-            void this.mobileHardware.schedulePrayerAlarms(prayerAlarms);
+          // Fetch upcoming days of current month for background alarm scheduling
+          if (typeof this.prayerApi.getMonth === 'function') {
+            const year = today.getFullYear();
+            const month = today.getMonth() + 1;
+            this.prayerApi
+              .getMonth({
+                latitude: loc.latitude,
+                longitude: loc.longitude,
+                year,
+                month,
+                method: settings.methodId,
+                school: settings.school,
+              })
+              .subscribe({
+                next: (cal) => {
+                  if (cal?.days) {
+                    const futureDays = cal.days.filter((d) => d.date >= dateStr);
+                    this.upcomingDays.set(futureDays);
+                  } else {
+                    this.upcomingDays.set([day]);
+                  }
+                },
+                error: () => {
+                  // If calendar fetch fails, at least today is available
+                  this.upcomingDays.set([day]);
+                },
+              });
+          } else {
+            this.upcomingDays.set([day]);
           }
         },
         error: (err: AppError) => {

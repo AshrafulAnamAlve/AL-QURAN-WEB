@@ -268,12 +268,20 @@ export class PrayerPage implements OnInit {
     if (event) {
       event.stopPropagation();
     }
+    if (!this.notificationService.settings().autoPlayAdhan && !this.notificationService.isPermissionGranted()) {
+      this.notificationService.openPermissionModal();
+      return;
+    }
     this.notificationService.toggleAutoAdhan();
   }
 
   async togglePrayerAlert(key: string, event?: Event): Promise<void> {
     if (event) {
       event.stopPropagation();
+    }
+    if (!this.notificationService.isPermissionGranted()) {
+      this.notificationService.openPermissionModal();
+      return;
     }
     const pKey = key.toLowerCase() as CorePrayerAlertKey;
     const settings = this.notificationService.settings();

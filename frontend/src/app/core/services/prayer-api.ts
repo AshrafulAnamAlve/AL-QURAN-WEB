@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CalculationMethod, PrayerDay } from '../models/prayer';
+import { CalculationMethod, PrayerDay, PrayerMonth } from '../models/prayer';
 import { ApiService } from './api';
 
 export interface PrayerTimingsParams {
@@ -51,5 +51,24 @@ export class PrayerApiService {
   /** Calculation methods supported by the API. */
   getMethods(): Observable<CalculationMethod[]> {
     return this.api.get<CalculationMethod[]>('prayer/methods');
+  }
+
+  /** A full Gregorian month of timetables. */
+  getMonth(params: {
+    latitude: number;
+    longitude: number;
+    year: number;
+    month: number;
+    method?: number;
+    school?: number;
+  }): Observable<PrayerMonth> {
+    return this.api.get<PrayerMonth>('prayer/calendar', {
+      latitude: params.latitude,
+      longitude: params.longitude,
+      year: params.year,
+      month: params.month,
+      method: params.method,
+      school: params.school,
+    });
   }
 }

@@ -1,4 +1,7 @@
 import { Injectable, signal } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
+import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 
 export interface MobileMediaSessionMetadata {
   title: string;
@@ -25,6 +28,8 @@ export interface PrayerAlarmItem {
  */
 @Injectable({ providedIn: 'root' })
 export class MobileHardwareService {
+  public static readonly ADHAN_CHANNEL_ID = 'adhan_prayer_channel';
+
   /** True when running inside Capacitor Android or iOS shell */
   readonly isNativeMobile = signal<boolean>(this.checkNativeMobile());
 
@@ -34,31 +39,41 @@ export class MobileHardwareService {
   /** True on iOS platform */
   readonly isIos = signal<boolean>(this.checkIos());
 
+  private channelInitialized = false;
+
   constructor() {
     this.initPlatformFlags();
+    if (this.isNativeMobile()) {
+      void this.initNotificationChannel();
+    }
   }
 
   private checkNativeMobile(): boolean {
     if (typeof window === 'undefined') return false;
-    const win = window as any;
-    return !!(win.Capacitor && typeof win.Capacitor.isNativePlatform === 'function' && win.Capacitor.isNativePlatform());
+    return Capacitor.isNativePlatform();
   }
 
   private checkAndroid(): boolean {
     if (typeof navigator === 'undefined') return false;
-    return /android/i.test(navigator.userAgent);
+    return Capacitor.getPlatform() === 'android';
   }
 
   private checkIos(): boolean {
     if (typeof navigator === 'undefined') return false;
-    return /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    return Capacitor.getPlatform() === 'ios';
   }
 
   private initPlatformFlags(): void {
     if (typeof window !== 'undefined') {
-      window.addEventListener('load', () => {
+      const update = () => {
         this.isNativeMobile.set(this.checkNativeMobile());
-      });
+        this.isAndroid.set(this.checkAndroid());
+        this.isIos.set(this.checkIos());
+      };
+      update();
+      if (typeof document !== 'undefined' && document.readyState !== 'complete') {
+        window.addEventListener('load', update, { once: true });
+      }
     }
   }
 
@@ -71,9 +86,8 @@ export class MobileHardwareService {
    */
   async hapticTap(): Promise<void> {
     try {
-      const win = window as any;
-      if (win.Capacitor?.Plugins?.Haptics) {
-        await win.Capacitor.Plugins.Haptics.impact({ style: 'LIGHT' });
+      if (this.isNativeMobile()) {
+        await Haptics.impact({ style: ImpactStyle.Light });
         return;
       }
     } catch {
@@ -94,9 +108,8 @@ export class MobileHardwareService {
    */
   async hapticSuccess(): Promise<void> {
     try {
-      const win = window as any;
-      if (win.Capacitor?.Plugins?.Haptics) {
-        await win.Capacitor.Plugins.Haptics.notification({ type: 'SUCCESS' });
+      if (this.isNativeMobile()) {
+        await Haptics.notification({ type: NotificationType.Success });
         return;
       }
     } catch {
@@ -117,9 +130,8 @@ export class MobileHardwareService {
    */
   async hapticKaabaLock(): Promise<void> {
     try {
-      const win = window as any;
-      if (win.Capacitor?.Plugins?.Haptics) {
-        await win.Capacitor.Plugins.Haptics.impact({ style: 'HEAVY' });
+      if (this.isNativeMobile()) {
+        await Haptics.impact({ style: ImpactStyle.Heavy });
         return;
       }
     } catch {
@@ -158,7 +170,7 @@ export class MobileHardwareService {
       // Android Intent: open in Google Maps directly
       const geoUrl = `geo:${latitude},${longitude}?q=${latitude},${longitude}(${encodedName})`;
       const webUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&destination_place_id=${encodedName}`;
-      
+
       const link = document.createElement('a');
       link.href = geoUrl;
       link.target = '_system';
@@ -248,18 +260,65 @@ export class MobileHardwareService {
   }
 
   // =========================================================================
-  // 4. EXACT WAQT NOTIFICATIONS & ADHAN ALARMS
+  // 4. EXACT WAQT NOTIFICATIONS & ADHAN ALARMS (Capacitor LocalNotifications)
   // =========================================================================
 
   /**
-   * Requests Android 13+ / iOS notification permissions
+   * Initializes high-importance notification channel with custom Adhan sound on Android
+   */
+  async initNotificationChannel(): Promise<void> {
+    if (!this.isNativeMobile() || !this.isAndroid() || this.channelInitialized) return;
+    try {
+      await LocalNotifications.createChannel({
+        id: MobileHardwareService.ADHAN_CHANNEL_ID,
+        name: 'Adhan & Prayer Times',
+        description: 'Real-time Waqt notifications and Adhan recitation alerts',
+        sound: 'adhan.wav',
+        importance: 5, // IMPORTANCE_HIGH (pops up on screen with sound)
+        visibility: 1, // VISIBILITY_PUBLIC (shows on lockscreen)
+        vibration: true,
+        lights: true,
+        lightColor: '#10b981',
+      });
+      this.channelInitialized = true;
+      console.info('[MobileHardware] Notification channel initialized: ' + MobileHardwareService.ADHAN_CHANNEL_ID);
+    } catch (err) {
+      console.warn('Failed to create notification channel:', err);
+    }
+  }
+
+  /**
+   * Checks whether notification permission is currently granted
+   */
+  async checkNotificationPermission(): Promise<boolean> {
+    if (this.isNativeMobile()) {
+      try {
+        const status = await LocalNotifications.checkPermissions();
+        return status.display === 'granted';
+      } catch {
+        return false;
+      }
+    }
+
+    if (typeof Notification !== 'undefined') {
+      return Notification.permission === 'granted';
+    }
+
+    return false;
+  }
+
+  /**
+   * Requests Android 13+ / iOS notification permissions natively
    */
   async requestNotificationPermission(): Promise<boolean> {
-    const win = window as any;
-    if (win.Capacitor?.Plugins?.LocalNotifications) {
+    if (this.isNativeMobile()) {
       try {
-        const status = await win.Capacitor.Plugins.LocalNotifications.requestPermissions();
-        return status.display === 'granted';
+        const status = await LocalNotifications.requestPermissions();
+        const granted = status.display === 'granted';
+        if (granted) {
+          await this.initNotificationChannel();
+        }
+        return granted;
       } catch (err) {
         console.warn('Native notification permission error:', err);
       }
@@ -279,18 +338,23 @@ export class MobileHardwareService {
 
   /**
    * Schedules precise Waqt Adhan notifications via Capacitor LocalNotifications
+   * Uses Android AlarmManager (allowWhileIdle: true) to fire in real time even when device is asleep.
    */
   async schedulePrayerAlarms(prayers: PrayerAlarmItem[]): Promise<void> {
-    const win = window as any;
-    if (!win.Capacitor?.Plugins?.LocalNotifications) return;
+    if (!this.isNativeMobile()) return;
 
     try {
-      // Cancel previous scheduled prayer alarms (IDs 1001-1010)
-      await win.Capacitor.Plugins.LocalNotifications.cancel({
-        notifications: prayers.map((p) => ({ id: p.id })),
-      });
+      await this.initNotificationChannel();
 
-      const now = new Date().getTime();
+      // Cancel previous scheduled alarms
+      const pending = await LocalNotifications.getPending();
+      if (pending && pending.notifications.length > 0) {
+        await LocalNotifications.cancel({
+          notifications: pending.notifications.map((n) => ({ id: n.id })),
+        });
+      }
+
+      const now = Date.now();
       const upcoming = prayers.filter((p) => p.time.getTime() > now);
 
       if (upcoming.length === 0) return;
@@ -299,7 +363,9 @@ export class MobileHardwareService {
         id: p.id,
         title: p.titleBn,
         body: p.bodyBn,
+        largeBody: p.bodyBn,
         schedule: { at: p.time, allowWhileIdle: true },
+        channelId: MobileHardwareService.ADHAN_CHANNEL_ID,
         sound: 'adhan.wav',
         smallIcon: 'ic_stat_quran',
         iconColor: '#10b981',
@@ -309,9 +375,77 @@ export class MobileHardwareService {
         },
       }));
 
-      await win.Capacitor.Plugins.LocalNotifications.schedule({ notifications });
+      await LocalNotifications.schedule({ notifications });
+      console.info(`[MobileHardware] Successfully scheduled ${notifications.length} prayer alarms in Android AlarmManager.`);
     } catch (err) {
       console.warn('Error scheduling prayer alarms:', err);
+    }
+  }
+
+  /**
+   * Cancels all scheduled prayer alarms (e.g. when notifications are turned off)
+   */
+  async cancelAllPrayerAlarms(): Promise<void> {
+    if (!this.isNativeMobile()) return;
+    try {
+      const pending = await LocalNotifications.getPending();
+      if (pending && pending.notifications.length > 0) {
+        await LocalNotifications.cancel({
+          notifications: pending.notifications.map((n) => ({ id: n.id })),
+        });
+        console.info('[MobileHardware] All prayer alarms cancelled.');
+      }
+    } catch (err) {
+      console.warn('Failed to cancel prayer alarms:', err);
+    }
+  }
+
+  /**
+   * Triggers an immediate test notification with Adhan audio to verify notifications on phone
+   */
+  async sendImmediateNotification(
+    title: string,
+    body: string,
+    extra?: Record<string, unknown>,
+  ): Promise<void> {
+    if (!this.isNativeMobile()) return;
+    try {
+      await this.initNotificationChannel();
+      const testId = Math.floor(Math.random() * 90000) + 10000;
+      await LocalNotifications.schedule({
+        notifications: [
+          {
+            id: testId,
+            title,
+            body,
+            largeBody: body,
+            schedule: { at: new Date(Date.now() + 500), allowWhileIdle: true },
+            channelId: MobileHardwareService.ADHAN_CHANNEL_ID,
+            sound: 'adhan.wav',
+            smallIcon: 'ic_stat_quran',
+            iconColor: '#10b981',
+            extra: extra ?? {},
+          },
+        ],
+      });
+      console.info('[MobileHardware] Immediate test notification scheduled');
+    } catch (err) {
+      console.warn('Failed to send immediate notification:', err);
+    }
+  }
+
+  /**
+   * Listens for user tapping a prayer notification to open the app and trigger Adhan modal
+   */
+  initNotificationListener(onTap: (waqtName?: string) => void): void {
+    if (!this.isNativeMobile()) return;
+    try {
+      void LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
+        const extra = notification.notification?.extra;
+        onTap(extra?.waqtName);
+      });
+    } catch (err) {
+      console.warn('Failed to register notification action listener:', err);
     }
   }
 
@@ -342,13 +476,10 @@ export class MobileHardwareService {
    */
   openAndroidDnsSettings(): void {
     if (typeof window === 'undefined') return;
-    
-    // Deep link or instruction prompt
-    const win = window as any;
-    if (win.Capacitor?.Plugins?.App) {
+
+    if (this.isNativeMobile() && this.isAndroid()) {
       try {
-        // Trigger Android settings intent if available
-        win.location.href = 'intent:#Intent;action=android.settings.NETWORK_OPERATOR_SETTINGS;end';
+        window.location.href = 'intent:#Intent;action=android.settings.NETWORK_OPERATOR_SETTINGS;end';
         return;
       } catch {
         // Fallback

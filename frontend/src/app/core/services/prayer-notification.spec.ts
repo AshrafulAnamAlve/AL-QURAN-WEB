@@ -3,7 +3,7 @@ import { describe, expect, it, beforeEach, vi, afterEach } from 'vitest';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { PrayerNotificationService } from './prayer-notification';
-import { StorageService } from './storage';
+import { STORAGE_KEYS, StorageService } from './storage';
 import { PrayerTimesService } from './prayer';
 import { LocationService } from './location';
 import { LanguageService } from './language';
@@ -119,5 +119,58 @@ describe('PrayerNotificationService', () => {
 
     service.snooze(10);
     expect(service.activeAdhanModal()).toBeNull();
+  });
+
+  it('should manage permission modal state and persist dismissal', () => {
+    expect(service.showPermissionModal()).toBe(false);
+
+    service.openPermissionModal();
+    expect(service.showPermissionModal()).toBe(true);
+
+    service.closePermissionModal();
+    expect(service.showPermissionModal()).toBe(false);
+
+    service.openPermissionModal();
+    service.dismissPermissionModal();
+    expect(service.showPermissionModal()).toBe(false);
+
+    const dismissed = storage.read<number | null>(STORAGE_KEYS.notificationPromptDismissed, null);
+    expect(dismissed).toBeGreaterThan(0);
+  });
+
+  it('should open permission modal when toggleMasterAlerts is called without permission', async () => {
+    vi.spyOn(service, 'isPermissionGranted').mockReturnValue(false);
+    service.toggleMaster(false);
+
+    const openSpy = vi.spyOn(service, 'openPermissionModal');
+    const result = await service.toggleMasterAlerts();
+
+    expect(result).toBe(false);
+    expect(openSpy).toHaveBeenCalled();
+  });
+
+  it('should toggle master alert when toggleMasterAlerts is called with permission granted', async () => {
+    vi.spyOn(service, 'isPermissionGranted').mockReturnValue(true);
+    service.toggleMaster(false);
+
+    const openSpy = vi.spyOn(service, 'openPermissionModal');
+    const result = await service.toggleMasterAlerts();
+
+    expect(result).toBe(true);
+    expect(service.settings().enabled).toBe(true);
+    expect(openSpy).not.toHaveBeenCalled();
+  });
+
+  it('checkPermissionPromptOnStartup should trigger modal after delay if never dismissed', () => {
+    vi.useFakeTimers();
+    vi.spyOn(service, 'isPermissionGranted').mockReturnValue(false);
+
+    service.checkPermissionPromptOnStartup();
+    expect(service.showPermissionModal()).toBe(false);
+
+    vi.advanceTimersByTime(2000);
+    expect(service.showPermissionModal()).toBe(true);
+
+    vi.useRealTimers();
   });
 });

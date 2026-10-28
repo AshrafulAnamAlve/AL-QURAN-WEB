@@ -259,6 +259,7 @@ export const STORAGE_KEYS = {
   bookmarkedNames: 'bookmarkedNames',
   dhikrHistory: 'dhikrHistory',
   dhikrSettings: 'dhikrSettings',
+  notificationPromptDismissed: 'notificationPromptDismissed',
 } as const;
 
 export interface StorageUsage {

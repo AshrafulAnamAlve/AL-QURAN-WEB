@@ -10,6 +10,7 @@ import { LanguageService } from './core/services/language';
 
 import { AdhanModalComponent } from './shared/components/adhan-modal/adhan-modal';
 import { DesktopModalComponent } from './shared/components/desktop-modal/desktop-modal';
+import { NotificationPermissionModalComponent } from './shared/components/notification-permission-modal/notification-permission-modal';
 import { IslamicChatWidgetComponent } from './shared/components/islamic-chat-widget/islamic-chat-widget';
 import { DesktopService } from './core/services/desktop';
 import { PrayerNotificationService } from './core/services/prayer-notification';
@@ -33,6 +34,7 @@ import { PrayerNotificationService } from './core/services/prayer-notification';
     IconComponent,
     AdhanModalComponent,
     DesktopModalComponent,
+    NotificationPermissionModalComponent,
     IslamicChatWidgetComponent,
   ],
   templateUrl: './app.html',
@@ -48,6 +50,7 @@ export class App {
   readonly hasUpdate = this.pwa.hasUpdate;
   readonly activeAdhanModal = this.notificationService.activeAdhanModal;
   readonly showDesktopModal = this.desktop.showDownloadModal;
+  readonly showNotificationPermissionModal = this.notificationService.showPermissionModal;
 
   async updateApp(): Promise<void> {
     await this.pwa.activateUpdate();

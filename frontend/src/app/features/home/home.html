@@ -70,6 +70,7 @@
           [routerLink]="action.path"
           [queryParams]="action.queryParams || null"
           class="quick-app-item"
+          [class.hero__hadith-btn]="action.path === '/hadith'"
           (click)="onQuickActionTap()"
         >
           <div class="quick-app-icon" [style.--action-color]="action.color">

@@ -1,0 +1,114 @@
+@if (isVisible()) {
+  <div class="perm-modal__backdrop" (click)="dismiss()" role="presentation"></div>
+
+  <div
+    class="perm-modal__dialog"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="isBn() ? 'নামাজের ওয়াক্ত ও আযান নোটিফিকেশন অনুমতি' : 'Prayer Times & Adhan Notification Permission'"
+  >
+    <!-- Top decorative accent line -->
+    <div class="perm-modal__accent-bar"></div>
+
+    <!-- Close button -->
+    <button
+      type="button"
+      class="perm-modal__close-btn"
+      (click)="dismiss()"
+      [attr.aria-label]="isBn() ? 'বন্ধ করুন' : 'Close'"
+    >
+      <aq-icon name="close" [size]="18" />
+    </button>
+
+    <!-- Main Content -->
+    <div class="perm-modal__content">
+      <!-- Animated Icon Emblem -->
+      <div class="perm-modal__icon-wrap" [class.is-success]="isSuccess()">
+        @if (isSuccess()) {
+          <div class="perm-modal__icon-glow perm-modal__icon-glow--success"></div>
+          <aq-icon name="check" [size]="34" />
+        } @else {
+          <div class="perm-modal__icon-glow"></div>
+          <aq-icon name="bell" [size]="32" />
+        }
+      </div>
+
+      <!-- Title & Subtitle -->
+      @if (isSuccess()) {
+        <h2 class="perm-modal__title perm-modal__title--success">
+          {{ isBn() ? 'আলহামদুলিল্লাহ! নোটিফিকেশন সক্রিয় হয়েছে' : 'Alhamdulillah! Notifications Enabled' }}
+        </h2>
+        <p class="perm-modal__desc">
+          {{ isBn() ? 'প্রতিটি ওয়াক্তে সঠিক সময়ে আযান ও অ্যালার্ট আপনার ডিভাইসে বাজবে।' : 'Real-time Adhan audio and alerts are now scheduled on your device.' }}
+        </p>
+      } @else {
+        <h2 class="perm-modal__title">
+          {{ isBn() ? 'নামাজের ওয়াক্ত ও আযান নোটিফিকেশন' : 'Prayer Times & Adhan Alerts' }}
+        </h2>
+        <p class="perm-modal__desc">
+          {{ isBn() ? 'ওয়াক্ত হওয়ার সাথে সাথে সঠিক সময়ে আযান শুনতে ও রিয়েল-টাইম নোটিফিকেশন পেতে অনুমতি প্রয়োজন।' : 'Enable notifications to hear the Adhan recitation and receive precise prayer alerts at every Waqt.' }}
+        </p>
+
+        <!-- Feature List -->
+        <ul class="perm-modal__features">
+          <li class="perm-modal__feature-item">
+            <div class="perm-modal__feature-icon">
+              <aq-icon name="volume2" [size]="18" />
+            </div>
+            <div class="perm-modal__feature-text">
+              <strong>{{ isBn() ? 'রিয়েল-টাইম আযান অডিও' : 'Exact-Time Adhan Audio' }}</strong>
+              <span>{{ isBn() ? 'ফজর, যোহর, আসর, মাগরিব ও এশার সুমধুর আযান' : 'Sweet Adhan recitation at the exact minute of all 5 prayers' }}</span>
+            </div>
+          </li>
+
+          <li class="perm-modal__feature-item">
+            <div class="perm-modal__feature-icon">
+              <aq-icon name="clock" [size]="18" />
+            </div>
+            <div class="perm-modal__feature-text">
+              <strong>{{ isBn() ? 'লক স্ক্রিন ও ব্যাকগ্রাউন্ড অ্যালার্ট' : 'Lock Screen & Sleep Mode' }}</strong>
+              <span>{{ isBn() ? 'ফোন স্লিপ বা লক থাকলেও সঠিক সময়ে আযান বাজবে' : 'Reliably rings even when your phone is locked or asleep' }}</span>
+            </div>
+          </li>
+
+          <li class="perm-modal__feature-item">
+            <div class="perm-modal__feature-icon">
+              <aq-icon name="sparkles" [size]="18" />
+            </div>
+            <div class="perm-modal__feature-text">
+              <strong>{{ isBn() ? '৭ দিনের অফলাইন অ্যালার্ম' : '7-Day Offline Multi-Alarm' }}</strong>
+              <span>{{ isBn() ? 'ইন্টারনেট বন্ধ থাকলেও আগামী ৭ দিনের ওয়াক্ত সচল থাকবে' : 'Alarms remain scheduled in Android for upcoming days' }}</span>
+            </div>
+          </li>
+        </ul>
+
+        <!-- Action Buttons -->
+        <div class="perm-modal__actions">
+          <button
+            type="button"
+            class="perm-modal__btn perm-modal__btn--primary"
+            (click)="allowPermission()"
+            [disabled]="isLoading()"
+          >
+            @if (isLoading()) {
+              <span class="perm-modal__spinner" aria-hidden="true"></span>
+              <span>{{ isBn() ? 'অনুমতি নেওয়া হচ্ছে...' : 'Requesting...' }}</span>
+            } @else {
+              <aq-icon name="bell" [size]="18" />
+              <span>{{ isBn() ? 'অনুমতি দিন (নোটিফিকেশন চালু করুন)' : 'Allow Notifications' }}</span>
+            }
+          </button>
+
+          <button
+            type="button"
+            class="perm-modal__btn perm-modal__btn--secondary"
+            (click)="dismiss()"
+            [disabled]="isLoading()"
+          >
+            {{ isBn() ? 'পরে করব' : 'Maybe Later' }}
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+}
