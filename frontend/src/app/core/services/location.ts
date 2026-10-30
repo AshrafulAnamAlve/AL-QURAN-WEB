@@ -3,6 +3,7 @@ import { Observable, firstValueFrom, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Place, UserLocation, roundCoordinate } from '../models/location';
 import { LocationApiService } from './location-api';
+import { MobileHardwareService } from './mobile-hardware.service';
 import { STORAGE_KEYS, StorageService } from './storage';
 
 /** Default fallback location for Bangladesh (Dhaka). */
@@ -105,6 +106,7 @@ export const DEFAULT_LOCATION: UserLocation = detectDefaultLocation();
 export class LocationService {
   private readonly storage = inject(StorageService);
   private readonly locationApi = inject(LocationApiService);
+  private readonly mobileHardware = inject(MobileHardwareService);
 
   private readonly _location = signal<UserLocation>(this.loadInitialLocation());
   readonly location = this._location.asReadonly();
@@ -123,6 +125,15 @@ export class LocationService {
   }
 
   private checkAutoGeolocation(): void {
+    if (this.mobileHardware.isNativeMobile()) {
+      void this.mobileHardware.checkLocationPermission().then((granted) => {
+        if (granted) {
+          void this.requestGeolocation();
+        }
+      });
+      return;
+    }
+
     if (typeof navigator !== 'undefined' && navigator.permissions?.query) {
       navigator.permissions
         .query({ name: 'geolocation' as PermissionName })
@@ -145,21 +156,48 @@ export class LocationService {
   }
 
   /**
-   * Requests geolocation from the browser.
+   * Requests geolocation from hardware GPS (on mobile) or browser.
    * Tries high-accuracy GPS/Wi-Fi triangulation first for precise street location.
-   * If high accuracy times out (e.g. desktop PC without Wi-Fi), falls back to standard accuracy.
    */
   async requestGeolocation(): Promise<boolean> {
-    if (typeof navigator === 'undefined' || !navigator.geolocation) {
-      this._error.set('Geolocation is not supported by your browser.');
-      this._permissionDenied.set(true);
-      return false;
-    }
-
     this._isDetecting.set(true);
     this._error.set(null);
 
-    // 1. Try high accuracy (hardware GPS / Wi-Fi trilateration) with an 8-second timeout
+    // 1. Native Mobile (Capacitor Geolocation with Android system permission dialog)
+    if (this.mobileHardware.isNativeMobile()) {
+      try {
+        const pos = await this.mobileHardware.getCurrentPosition(12000);
+        if (pos) {
+          await this.applyDetectedCoordinates(pos.latitude, pos.longitude);
+          this._isDetecting.set(false);
+          return true;
+        }
+
+        const isGranted = await this.mobileHardware.checkLocationPermission();
+        if (!isGranted) {
+          this._permissionDenied.set(true);
+          this._error.set('Location permission was denied. Please enable GPS and allow location in settings.');
+        } else {
+          this._error.set('Unable to retrieve your location. Please ensure device GPS is turned on.');
+        }
+        this._isDetecting.set(false);
+        return false;
+      } catch {
+        this._error.set('Failed to detect GPS location.');
+        this._isDetecting.set(false);
+        return false;
+      }
+    }
+
+    // 2. Standard Web / Desktop Browser
+    if (typeof navigator === 'undefined' || !navigator.geolocation) {
+      this._error.set('Geolocation is not supported by your browser.');
+      this._permissionDenied.set(true);
+      this._isDetecting.set(false);
+      return false;
+    }
+
+    // Try high accuracy (hardware GPS / Wi-Fi trilateration) with an 8-second timeout
     const highAccuracySuccess = await this.queryBrowserPosition({
       enableHighAccuracy: true,
       timeout: 8000,
@@ -171,13 +209,12 @@ export class LocationService {
       return true;
     }
 
-    // 2. If user denied permission explicitly, stop
     if (this._permissionDenied()) {
       this._isDetecting.set(false);
       return false;
     }
 
-    // 3. Fallback to standard network geolocation for devices without GPS hardware or Wi-Fi
+    // Fallback to standard network geolocation
     const fallbackSuccess = await this.queryBrowserPosition({
       enableHighAccuracy: false,
       timeout: 10000,
@@ -188,46 +225,51 @@ export class LocationService {
     return fallbackSuccess;
   }
 
+  private async applyDetectedCoordinates(rawLat: number, rawLng: number): Promise<void> {
+    const latitude = roundCoordinate(rawLat, 4);
+    const longitude = roundCoordinate(rawLng, 4);
+
+    let displayName = `Coordinates: ${latitude}, ${longitude}`;
+    let city: string | null = null;
+    let country: string | null = null;
+
+    try {
+      const place = await firstValueFrom(
+        this.locationApi.reverse(latitude, longitude).pipe(catchError(() => of(null))),
+      );
+      if (place) {
+        displayName = place.displayName || `${place.city || place.name}, ${place.country || ''}`;
+        city = place.city || place.name || null;
+        country = place.country || null;
+      }
+    } catch {
+      // Non-critical; fallback displayName is already set
+    }
+
+    const detectedLocation: UserLocation = {
+      latitude,
+      longitude,
+      city,
+      country,
+      displayName,
+      source: 'geolocation',
+    };
+
+    this._location.set(detectedLocation);
+    this.storage.write(STORAGE_KEYS.location, detectedLocation);
+    this._permissionDenied.set(false);
+    this._error.set(null);
+  }
+
   private queryBrowserPosition(options: PositionOptions): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           try {
-            const rawLat = position.coords.latitude;
-            const rawLng = position.coords.longitude;
-            const latitude = roundCoordinate(rawLat, 4);
-            const longitude = roundCoordinate(rawLng, 4);
-
-            let displayName = `Coordinates: ${latitude}, ${longitude}`;
-            let city: string | null = null;
-            let country: string | null = null;
-
-            try {
-              const place = await firstValueFrom(
-                this.locationApi.reverse(latitude, longitude).pipe(catchError(() => of(null))),
-              );
-              if (place) {
-                displayName = place.displayName || `${place.city || place.name}, ${place.country || ''}`;
-                city = place.city || place.name || null;
-                country = place.country || null;
-              }
-            } catch {
-              // Non-critical; fallback displayName is already set
-            }
-
-            const detectedLocation: UserLocation = {
-              latitude,
-              longitude,
-              city,
-              country,
-              displayName,
-              source: 'geolocation',
-            };
-
-            this._location.set(detectedLocation);
-            this.storage.write(STORAGE_KEYS.location, detectedLocation);
-            this._permissionDenied.set(false);
-            this._error.set(null);
+            await this.applyDetectedCoordinates(
+              position.coords.latitude,
+              position.coords.longitude,
+            );
             resolve(true);
           } catch {
             this._error.set('Failed to resolve location coordinates.');

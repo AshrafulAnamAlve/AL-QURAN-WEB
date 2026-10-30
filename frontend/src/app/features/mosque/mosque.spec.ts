@@ -9,6 +9,7 @@ import { MosqueApiService } from '../../core/services/mosque-api';
 import { MosqueService } from '../../core/services/mosque';
 import { PrayerApiService } from '../../core/services/prayer-api';
 import { LanguageService } from '../../core/services/language';
+import { MobileHardwareService } from '../../core/services/mobile-hardware.service';
 import { MosquePage } from './mosque';
 
 describe('MosquePage', () => {
@@ -125,5 +126,42 @@ describe('MosquePage', () => {
     component.closeCityModal();
     fixture.detectChanges();
     expect(component.isCityModalOpen()).toBe(false);
+  });
+
+  it('dismisses advisory banner when dismissAdvisory is called', () => {
+    expect(component.isAdvisoryDismissed()).toBe(false);
+    component.dismissAdvisory();
+    fixture.detectChanges();
+    expect(component.isAdvisoryDismissed()).toBe(true);
+    const advisory = fixture.nativeElement.querySelector('.advisory-banner');
+    expect(advisory).toBeNull();
+  });
+
+  it('switches view mode between map and list', () => {
+    component.setViewMode('list');
+    expect(component.viewMode()).toBe('list');
+
+    component.setViewMode('map');
+    expect(component.viewMode()).toBe('map');
+  });
+
+  it('selects mosque and switches to map view when showMosqueOnMapTab is called', () => {
+    component.setViewMode('list');
+    component.showMosqueOnMapTab(mockMosque);
+
+    expect(component.viewMode()).toBe('map');
+    expect(mosqueService.selectedMosque()?.id).toBe(mockMosque.id);
+  });
+
+  it('triggers mobileHardware.openNativeMapDirections when directions button is clicked', () => {
+    const mobileHardware = TestBed.inject(MobileHardwareService);
+    const directionsSpy = vi.spyOn(mobileHardware, 'openNativeMapDirections');
+
+    const fakeEvent = { preventDefault: vi.fn(), stopPropagation: vi.fn() } as unknown as Event;
+    component.onOpenDirections(fakeEvent, mockMosque);
+
+    expect(fakeEvent.preventDefault).toHaveBeenCalled();
+    expect(fakeEvent.stopPropagation).toHaveBeenCalled();
+    expect(directionsSpy).toHaveBeenCalledWith(mockMosque.latitude, mockMosque.longitude, mockMosque.name);
   });
 });

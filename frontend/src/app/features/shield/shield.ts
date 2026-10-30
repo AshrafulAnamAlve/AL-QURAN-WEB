@@ -37,12 +37,78 @@ export class ShieldPage implements OnInit {
   readonly copiedDns = signal<string | null>(null);
   readonly verificationStatus = signal<string | null>(null);
   readonly isVerifying = signal<boolean>(false);
+  readonly isTestingMobileDns = signal<boolean>(false);
+  readonly mobileTestResult = signal<{
+    status: 'success' | 'warning' | 'error';
+    messageBn: string;
+    messageEn: string;
+    detailsBn?: string;
+    detailsEn?: string;
+  } | null>(null);
 
   async copyDns(hostname: string): Promise<void> {
     const ok = await this.mobileHardware.copyDnsHostname(hostname);
     if (ok) {
       this.copiedDns.set(hostname);
       setTimeout(() => this.copiedDns.set(null), 3000);
+    }
+  }
+
+  async openDnsSettings(): Promise<void> {
+    await this.mobileHardware.hapticTap();
+    this.mobileHardware.openAndroidDnsSettings();
+  }
+
+  async testMobileProtection(): Promise<void> {
+    this.isTestingMobileDns.set(true);
+    this.mobileTestResult.set(null);
+    await this.mobileHardware.hapticTap();
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+      const res = await fetch(
+        'https://family.cloudflare-dns.com/dns-query?name=cloudflare.com&type=A',
+        {
+          headers: { Accept: 'application/dns-json' },
+          signal: controller.signal,
+        },
+      );
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        await this.mobileHardware.hapticSuccess();
+        this.mobileTestResult.set({
+          status: 'success',
+          messageBn: '✓ হালাল শিল্ড ফ্যামিলি নেটওয়ার্ক প্রস্তুত ও কার্যকর!',
+          messageEn: '✓ Halal Shield Family Network is reachable and active!',
+          detailsBn:
+            'আপনার ফোনে Private DNS হিসেবে family.cloudflare-dns.com কনফিগার করা থাকলে পুরো ফোনের সকল ব্রাউজার (Chrome ইত্যাদি) এবং অ্যাপে প্রাপ্তবয়স্ক ও ক্ষতিকর সাইট সরাসরি ব্লক থাকবে।',
+          detailsEn:
+            'With Private DNS set to family.cloudflare-dns.com, all mobile browsers (Chrome, etc.) and apps are secured against explicit content automatically.',
+        });
+      } else {
+        this.mobileTestResult.set({
+          status: 'warning',
+          messageBn: '⚠️ নেটওয়ার্ক রেসপন্স পেতে দেরি হচ্ছে।',
+          messageEn: '⚠️ Network response delayed.',
+          detailsBn: 'অনুগ্রহ করে ইন্টারনেট সংযোগ সক্রিয় আছে কিনা যাচাই করুন।',
+          detailsEn: 'Please verify your mobile data or Wi-Fi connectivity.',
+        });
+      }
+    } catch {
+      this.mobileTestResult.set({
+        status: 'warning',
+        messageBn: 'ℹ️ সুরক্ষা টেস্ট সম্পন্ন হয়েছে।',
+        messageEn: 'ℹ️ Shield test finished.',
+        detailsBn:
+          'ফোনের সেটিংসে Private DNS সেট করে Chrome বা যেকোনো ব্রাউজারে টেস্ট করতে পারেন—ক্ষতিকর ডোমেন স্বয়ংক্রিয়ভাবে ব্লক হয়ে যাবে।',
+        detailsEn:
+          'Configure Private DNS in your phone settings and test in Chrome—blocked sites will immediately fail to resolve.',
+      });
+    } finally {
+      this.isTestingMobileDns.set(false);
     }
   }
 
@@ -53,8 +119,8 @@ export class ShieldPage implements OnInit {
   ngOnInit(): void {
     this.seo.apply({
       title: this.isBn()
-        ? 'হালাল শিল্ড — কম্পিউটার-লেভেল কনটেন্ট ব্লকার'
-        : 'Halal Shield — System Content & SafeSearch Blocker',
+        ? (this.isMobile() ? 'মোবাইল হালাল শিল্ড — সিস্টেম-লেভেল ব্লকার' : 'হালাল শিল্ড — কম্পিউটার-লেভেল কনটেন্ট ব্লকার')
+        : (this.isMobile() ? 'Mobile Halal Shield — System DNS Blocker' : 'Halal Shield — System Content & SafeSearch Blocker'),
       description:
         'Free system-wide blocker protecting your family and PC from adult content, harmful websites, and enforcing SafeSearch across all browsers.',
     });

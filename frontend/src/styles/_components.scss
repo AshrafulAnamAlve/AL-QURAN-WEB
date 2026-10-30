@@ -59,10 +59,13 @@
   &--primary {
     background: var(--aq-primary);
     color: var(--aq-on-primary);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--aq-primary) 28%, transparent);
 
     &:hover:not(:disabled) {
       background: var(--aq-primary-hover);
       color: var(--aq-on-primary);
+      box-shadow: 0 4px 14px color-mix(in srgb, var(--aq-primary) 38%, transparent);
+      transform: translateY(-1px);
     }
   }
 
@@ -70,10 +73,14 @@
     background: var(--aq-surface);
     border-color: var(--aq-border-strong);
     color: var(--aq-text);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 
     &:hover:not(:disabled) {
       background: var(--aq-surface-2);
-      color: var(--aq-text);
+      border-color: var(--aq-primary);
+      color: var(--aq-primary);
+      box-shadow: 0 3px 10px rgba(16, 185, 129, 0.14);
+      transform: translateY(-1px);
     }
   }
 
@@ -85,6 +92,7 @@
     &:hover:not(:disabled) {
       background: var(--aq-primary-border);
       color: var(--aq-primary);
+      transform: translateY(-1px);
     }
   }
 
@@ -95,6 +103,7 @@
     &:hover:not(:disabled) {
       background: var(--aq-surface-2);
       color: var(--aq-text);
+      transform: translateY(-1px);
     }
   }
 
@@ -129,22 +138,34 @@
   @include m.touch-target(40px);
   border-radius: var(--aq-radius-md);
   color: var(--aq-text-muted);
-  background: transparent;
-  border: 1px solid transparent;
+  background: var(--aq-surface);
+  border: 1px solid var(--aq-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
   transition:
     background-color var(--aq-duration-fast) var(--aq-ease),
-    color var(--aq-duration-fast) var(--aq-ease);
+    border-color var(--aq-duration-fast) var(--aq-ease),
+    color var(--aq-duration-fast) var(--aq-ease),
+    box-shadow var(--aq-duration-fast) var(--aq-ease),
+    transform var(--aq-duration-fast) var(--aq-ease);
 
   @include m.focus-visible;
 
   &:hover:not(:disabled) {
-    background: var(--aq-surface-2);
-    color: var(--aq-text);
+    background: color-mix(in srgb, var(--aq-primary) 10%, var(--aq-surface));
+    border-color: var(--aq-primary);
+    color: var(--aq-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px color-mix(in srgb, var(--aq-primary) 18%, transparent);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
   }
 
   &--active {
     color: var(--aq-primary);
     background: var(--aq-primary-soft);
+    border-color: var(--aq-primary-border);
   }
 }
 

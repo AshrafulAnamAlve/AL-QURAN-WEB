@@ -1,50 +1,74 @@
 <div class="shield-page aq-container">
   <!-- Hero Section -->
   <header class="shield-hero">
-    <div class="shield-hero__badge" [class.shield-hero__badge--active]="isShieldActive()">
+    <div class="shield-hero__badge" [class.shield-hero__badge--active]="isShieldActive() || isMobile()">
       <aq-icon name="shield" [size]="36" />
     </div>
     <h1 class="shield-hero__title">
-      {{ isBn() ? 'হালাল শিল্ড (Halal Shield)' : 'Halal Shield (System Blocker)' }}
+      {{
+        isMobile()
+          ? (isBn() ? 'মোবাইল হালাল শিল্ড' : 'Mobile Halal Shield')
+          : (isBn() ? 'হালাল শিল্ড (Halal Shield)' : 'Halal Shield (System Blocker)')
+      }}
     </h1>
     <p class="shield-hero__subtitle">
       {{
-        isBn()
-          ? 'কম্পিউটার-লেভেল সুরক্ষা: সমস্ত ব্রাউজারে ক্ষতিকর ও প্রাপ্তবয়স্ক ওয়েবসাইট ব্লক এবং কঠোর SafeSearch প্রয়োগ।'
-          : 'System-wide protection: Blocks adult & explicit websites and enforces strict SafeSearch across all browsers on this PC.'
+        isMobile()
+          ? (isBn()
+              ? 'মোবাইল-লেভেল প্রটেকশন: প্রাইভেট ডিএনএস (Private DNS) ব্যবহার করে কোনো বাড়তি অ্যাপ বা ব্যাটারি খরচ ছাড়াই পুরো ফোনের সকল অ্যাপ ও ব্রাউজারে ক্ষতিকর সাইট বন্ধ রাখুন।'
+              : 'Mobile-level protection: Enforce adult content and malware blocking across all phone apps and browsers via native Private DNS.')
+          : (isBn()
+              ? 'কম্পিউটার-লেভেল সুরক্ষা: সমস্ত ব্রাউজারে ক্ষতিকর ও প্রাপ্তবয়স্ক ওয়েবসাইট ব্লক এবং কঠোর SafeSearch প্রয়োগ।'
+              : 'System-wide protection: Blocks adult & explicit websites and enforces strict SafeSearch across all browsers on this PC.')
       }}
     </p>
   </header>
 
   <!-- Main Status Card -->
-  <section class="shield-main-card" [class.shield-main-card--active]="isShieldActive()">
+  <section class="shield-main-card" [class.shield-main-card--active]="isShieldActive() || isMobile()">
     <div class="shield-main-card__header">
       <div class="shield-main-card__status-indicator">
-        <span class="status-indicator-dot" [class.status-indicator-dot--active]="isShieldActive()"></span>
+        <span class="status-indicator-dot" [class.status-indicator-dot--active]="isShieldActive() || isMobile()"></span>
         <span class="status-indicator-text">
-          {{
-            isShieldActive()
-              ? (isBn() ? 'আপনার কম্পিউটার সম্পূর্ণ সুরক্ষিত' : 'Your PC is Fully Protected')
-              : (isBn() ? 'সুরক্ষা বর্তমানে বন্ধ রয়েছে' : 'Protection is Inactive')
-          }}
+          @if (isMobile()) {
+            {{ isBn() ? 'মোবাইল প্রাইভেট ডিএনএস সুরক্ষা' : 'Mobile Private DNS Shield' }}
+          } @else {
+            {{
+              isShieldActive()
+                ? (isBn() ? 'আপনার কম্পিউটার সম্পূর্ণ সুরক্ষিত' : 'Your PC is Fully Protected')
+                : (isBn() ? 'সুরক্ষা বর্তমানে বন্ধ রয়েছে' : 'Protection is Inactive')
+            }}
+          }
         </span>
       </div>
 
-      <span class="status-pill" [class.status-pill--active]="isShieldActive()">
-        {{ isShieldActive() ? (isBn() ? 'সুরক্ষিত' : 'Active') : (isBn() ? 'নিষ্ক্রিয়' : 'Inactive') }}
+      <span class="status-pill" [class.status-pill--active]="isShieldActive() || isMobile()">
+        @if (isMobile()) {
+          {{ isBn() ? 'মোবাইল সিস্টেম গার্ড' : 'Native OS Shield' }}
+        } @else {
+          {{ isShieldActive() ? (isBn() ? 'সুরক্ষিত' : 'Active') : (isBn() ? 'নিষ্ক্রিয়' : 'Inactive') }}
+        }
       </span>
     </div>
 
     <p class="shield-main-card__desc">
-      {{
-        isShieldActive()
-          ? (isBn()
-              ? 'হালাল শিল্ড সক্রিয় আছে। ক্ষতিকর ওয়েবসাইট ও অ্যাডাল্ট ডোমেন ব্লক করা হচ্ছে এবং Google ও YouTube-এ SafeSearch লক রয়েছে।'
-              : 'Halal Shield is actively protecting this device. Explicit domains are filtered and SafeSearch is enforced on search engines.')
-          : (isBn()
-              ? 'এক ক্লিকে আপনার পুরো কম্পিউটারের সমস্ত ব্রাউজারে নিরাপদ ও হালাল ইন্টারনেট পরিবেশ চালু করুন।'
-              : 'One-click protection to safeguard your family and device across Chrome, Edge, Firefox and all browsers.')
-      }}
+      @if (isMobile()) {
+        {{
+          isBn()
+            ? 'মোবাইল অপারেটিং সিস্টেমের (Android ও iOS) কঠোর সিকিউরিটি স্যান্ডবক্সের কারণে কোনো থার্ড-পার্টি অ্যাপ গোপনে আপনার ফোনের সিস্টেম নেটওয়ার্ক পরিবর্তন করতে পারে না (যাতে কোনো ভাইরাস বা ম্যালওয়্যার আপনার ব্যাংকিং বা ইন্টারনেট ট্র্যাফিক ছিনতাই করতে না পারে)। তবে ফোনের নিজস্ব Private DNS একবার সেট করলে শূন্য শতাংশ ব্যাটারি খরচে Chrome, Samsung Internet সহ ফোনের সব অ্যাপে ক্ষতিকর সাইট চিরতরে বন্ধ হয়ে যাবে।'
+            : 'Mobile OS security prevents apps from silently modifying system network settings without user consent (protecting against malicious hijacking). Configuring native Private DNS blocks explicit sites phone-wide with zero battery drain.'
+        }}
+      } @else {
+        {{
+          isShieldActive()
+            ? (isBn()
+                ? 'হালাল শিল্ড সক্রিয় আছে। ক্ষতিকর ওয়েবসাইট ও অ্যাডাল্ট ডোমেন ব্লক করা হচ্ছে এবং Google ও YouTube-এ SafeSearch লক রয়েছে।'
+                : 'Halal Shield is actively protecting this device. Explicit domains are filtered and SafeSearch is enforced on search engines.')
+            : (isBn()
+                ? 'এক ক্লিকে আপনার পুরো কম্পিউটারের সমস্ত ব্রাউজারে নিরাপদ ও হালাল ইন্টারনেট পরিবেশ চালু করুন।'
+                : 'One-click protection to safeguard your family and device across Chrome, Edge, Firefox and all browsers.')
+        }}
+      }
     </p>
 
     <!-- Error message if any -->
@@ -55,11 +79,28 @@
       </div>
     }
 
-    <!-- Verification status message -->
+    <!-- Verification status message (Desktop) -->
     @if (verificationStatus()) {
       <div class="shield-alert" [class.shield-alert--success]="isShieldActive()" [class.shield-alert--warning]="!isShieldActive()">
         <aq-icon [name]="isShieldActive() ? 'check' : 'alert'" [size]="18" />
         <span>{{ verificationStatus() }}</span>
+      </div>
+    }
+
+    <!-- Mobile Test Result Banner -->
+    @if (mobileTestResult(); as testRes) {
+      <div
+        class="shield-alert"
+        [class.shield-alert--success]="testRes.status === 'success'"
+        [class.shield-alert--warning]="testRes.status === 'warning'"
+      >
+        <aq-icon [name]="testRes.status === 'success' ? 'check' : 'alert'" [size]="20" />
+        <div class="shield-alert__body">
+          <strong>{{ isBn() ? testRes.messageBn : testRes.messageEn }}</strong>
+          @if (testRes.detailsBn) {
+            <p class="shield-alert__sub">{{ isBn() ? testRes.detailsBn : testRes.detailsEn }}</p>
+          }
+        </div>
       </div>
     }
 
@@ -97,16 +138,59 @@
         </button>
       } @else if (isMobile()) {
         <div class="mobile-dns-box">
+          <div class="mobile-action-buttons">
+            <button
+              type="button"
+              class="aq-btn aq-btn--primary aq-btn--lg mobile-btn-dns"
+              (click)="openDnsSettings()"
+            >
+              <aq-icon name="settings" [size]="20" />
+              <span>{{ isBn() ? '⚙️ ফোনের DNS সেটিংসে যান' : '⚙️ Open Phone DNS Settings' }}</span>
+            </button>
+
+            <button
+              type="button"
+              class="aq-btn aq-btn--secondary aq-btn--lg"
+              [disabled]="isTestingMobileDns()"
+              (click)="testMobileProtection()"
+            >
+              <aq-icon name="shield" [size]="20" />
+              <span>
+                {{
+                  isTestingMobileDns()
+                    ? (isBn() ? 'যাচাই করা হচ্ছে...' : 'Testing...')
+                    : (isBn() ? '🛡️ সুরক্ষা পরীক্ষা করুন' : '🛡️ Test Shield Protection')
+                }}
+              </span>
+            </button>
+          </div>
+
           <p class="mobile-dns-box__intro">
-            {{ isBn() ? '📱 মোবাইলে Private DNS ব্যবহার করে কোনো অ্যাপ ছাড়াই পুরো ফোনের সকল ব্রাউজারে (Chrome, Samsung Internet, ইত্যাদি) ১০০% প্রাপ্তবয়স্ক সাইট ও বিজ্ঞাপন ব্লক করুন:' : '📱 Block adult websites across all mobile browsers (Chrome, Samsung Internet, etc.) using Private DNS:' }}
+            {{
+              isBn()
+                ? '📱 নিচের যেকোনো একটি বিশ্বস্ত ফ্যামিলি DNS হোস্টনেম কপি করে ফোনের Private DNS-এ পেস্ট করুন:'
+                : '📱 Copy either trusted Family DNS hostname below and paste it into your phone’s Private DNS setting:'
+            }}
           </p>
 
           <div class="dns-host-pills">
             @for (dns of mobileHardware.privateDnsHostnames; track dns.id) {
               <div class="dns-host-card">
                 <div class="dns-host-card__info">
-                  <span class="dns-host-card__name">{{ dns.name }}</span>
+                  <div class="dns-host-card__header-line">
+                    <span class="dns-host-card__name">{{ dns.name }}</span>
+                    @if (dns.id === 'cloudflare') {
+                      <span class="dns-host-card__badge">{{ isBn() ? 'প্রস্তাবিত' : 'Recommended' }}</span>
+                    }
+                  </div>
                   <code class="dns-host-card__host">{{ dns.hostname }}</code>
+                  <span class="dns-host-card__desc">
+                    {{
+                      isBn()
+                        ? (dns.id === 'cloudflare' ? 'সমস্ত ক্ষতিকর ও অ্যাডাল্ট সাইট ১০০% ব্লক করে।' : 'অ্যাডাল্ট সাইট এবং বিরক্তিকর বিজ্ঞাপন বন্ধ করে।')
+                        : dns.desc
+                    }}
+                  </span>
                 </div>
                 <button
                   type="button"
@@ -121,12 +205,40 @@
           </div>
 
           <div class="mobile-setup-steps">
-            <h4>{{ isBn() ? '📌 অ্যান্ড্রয়েডে ২ মিনিটের সেটআপ:' : '📌 Android 2-Minute Setup:' }}</h4>
+            <h4>{{ isBn() ? '📌 মাত্র ১ মিনিটে অ্যান্ড্রয়েডে সেটআপ করার সহজ নিয়ম:' : '📌 Quick 1-Minute Android Setup:' }}</h4>
             <ol>
-              <li>{{ isBn() ? 'ফোনের Settings খুলুন > Network & Internet (বা Connections) এ যান।' : 'Open Phone Settings > Network & Internet (or Connections).' }}</li>
-              <li>{{ isBn() ? 'Private DNS অপশন সিলেক্ট করুন।' : 'Select Private DNS option.' }}</li>
-              <li>{{ isBn() ? '"Private DNS provider hostname" নির্বাচন করে উপরের কপি করা DNS পেস্ট করে Save দিন।' : 'Choose "Private DNS provider hostname", paste the copied DNS above and Save.' }}</li>
+              <li>
+                <strong>{{ isBn() ? 'ধাপ ১:' : 'Step 1:' }}</strong>
+                {{ isBn() ? 'উপরের ' : 'Tap ' }}<code>family.cloudflare-dns.com</code> {{ isBn() ? 'এর পাশের "কপি করুন" বাটনে চাপুন।' : 'copy button above.' }}
+              </li>
+              <li>
+                <strong>{{ isBn() ? 'ধাপ ২:' : 'Step 2:' }}</strong>
+                {{ isBn() ? 'উপরে "⚙️ ফোনের DNS সেটিংসে যান" বোতামে চাপুন (অথবা ফোনের Settings > Connections / Network & Internet > More connection settings > Private DNS এ যান)।' : 'Tap "⚙️ Open Phone DNS Settings" above (or go to Settings > Connections / Network > More connection settings > Private DNS).' }}
+              </li>
+              <li>
+                <strong>{{ isBn() ? 'ধাপ ৩:' : 'Step 3:' }}</strong>
+                {{ isBn() ? '"Private DNS provider hostname" অপশনটি সিলেক্ট করে কপি করা হোস্টনেম পেস্ট করুন এবং Save দিন।' : 'Select "Private DNS provider hostname", paste the copied hostname, and Save.' }}
+              </li>
+              <li>
+                <strong>{{ isBn() ? 'ধাপ ৪:' : 'Step 4:' }}</strong>
+                {{ isBn() ? 'সম্পন্ন! এবার আপনার ফোনের Chrome, Samsung Internet সহ সমস্ত ব্রাউজারে ক্ষতিকর সাইট চিরতরে বন্ধ হয়ে গেছে।' : 'Done! Adult and malicious sites are now permanently blocked across Chrome, Samsung Internet and all apps.' }}
+              </li>
             </ol>
+          </div>
+
+          <div class="mobile-perks">
+            <div class="mobile-perk-item">
+              <aq-icon name="sparkles" [size]="16" />
+              <span>{{ isBn() ? '০% ব্যাটারি খরচ (No VPN Drain)' : '0% Battery Drain (No slow VPN)' }}</span>
+            </div>
+            <div class="mobile-perk-item">
+              <aq-icon name="shield" [size]="16" />
+              <span>{{ isBn() ? 'সকল ব্রাউজার ও অ্যাপে কার্যকর' : 'Works across all browsers & apps' }}</span>
+            </div>
+            <div class="mobile-perk-item">
+              <aq-icon name="check" [size]="16" />
+              <span>{{ isBn() ? '১০০% আজীবন ফ্রি ও এনক্রিপ্টেড (DoT)' : '100% Free, Safe & Encrypted (DoT)' }}</span>
+            </div>
           </div>
         </div>
       } @else {

@@ -75,6 +75,9 @@
         >
           <div class="quick-app-icon" [style.--action-color]="action.color">
             <aq-icon [name]="action.icon" [size]="22" />
+            @if (action.badge) {
+              <span class="quick-app-badge">{{ action.badge }}</span>
+            }
           </div>
           <span class="quick-app-label">{{ isBn() ? action.labelBn : action.label }}</span>
         </a>
@@ -204,11 +207,13 @@
 
       <div class="prayer-home-card__strip" role="list">
         @for (item of prayerTimes.coreTimings(); track item.key) {
-          <div
+          <a
+            routerLink="/prayer"
             class="prayer-home-strip-item"
             [class.is-active]="item.key === prayerTimes.currentPrayer()?.key"
             [class.is-next]="item.key === next.prayer.key"
             role="listitem"
+            [attr.aria-label]="isBn() ? item.banglaName + ' সময় ' + formatTime12h(item.time) + ' (পূর্ণ সময়সূচি দেখুন)' : item.name + ' time ' + formatTime12h(item.time) + ' (View timetable)'"
           >
             <div class="prayer-home-strip-item__top">
               <span class="prayer-home-strip-item__name">{{ isBn() ? item.banglaName : item.name }}</span>
@@ -224,7 +229,7 @@
               }
             </div>
             <span class="prayer-home-strip-item__time aq-numeral">{{ formatTime12h(item.time) }}</span>
-          </div>
+          </a>
         }
       </div>
     </section>
@@ -732,19 +737,19 @@
       </aside>
 
       <!-- Browser Extension Showcase Banner -->
-      <aside class="desktop-banner desktop-banner--extension" role="region" [attr.aria-label]="isBn() ? 'আল-কুরআন ও হালাল শিল্ড ব্রাউজার এক্সটেনশন' : 'Al-Quran Halal Web Shield Browser Extension'" style="margin-top: 16px;">
-        <div class="desktop-banner__badge" style="background: rgba(16, 185, 129, 0.15); color: var(--aq-primary);">
+      <aside class="desktop-banner desktop-banner--extension" role="region" [attr.aria-label]="isBn() ? 'আল-কুরআন ও হালাল শিল্ড ব্রাউজার এক্সটেনশন' : 'Al-Quran Halal Web Shield Browser Extension'">
+        <div class="desktop-banner__badge desktop-banner__badge--extension">
           <span>{{ isBn() ? 'ব্রাউজার অ্যাড-অন' : 'Browser Add-on' }}</span>
-          <span class="desktop-banner__os">Chrome / Edge / Brave / Opera</span>
+          <span class="desktop-banner__os">Chrome / Edge / Brave</span>
         </div>
 
         <div class="desktop-banner__main">
-          <div class="desktop-banner__icon" style="color: var(--aq-primary);">
-            <aq-icon name="shield" [size]="32" />
+          <div class="desktop-banner__icon desktop-banner__icon--extension">
+            <aq-icon name="shield" [size]="28" />
           </div>
           <div class="desktop-banner__text">
             <h3 class="desktop-banner__title">
-              {{ isBn() ? 'আল-কুরআন ও হালাল শিল্ড ব্রাউজার এক্সটেনশন' : 'Al-Quran & Halal Web Shield Browser Extension' }}
+              {{ isBn() ? 'আল-কুরআন ও হালাল শিল্ড ব্রাউজার এক্সটেনশন' : 'Al-Quran & Halal Web Shield Extension' }}
             </h3>
             <p class="desktop-banner__desc">
               {{ isBn()
@@ -758,7 +763,7 @@
               class="aq-btn aq-btn--primary desktop-banner__btn"
             >
               <aq-icon name="shield" [size]="18" />
-              <span>{{ isBn() ? 'এক্সটেনশন ডাউনলোড ও সেটআপ' : 'Download Extension & Setup' }}</span>
+              <span>{{ isBn() ? 'এক্সটেনশন ডাউনলোড' : 'Get Extension' }}</span>
             </a>
           </div>
         </div>

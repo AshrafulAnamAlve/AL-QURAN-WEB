@@ -1,18 +1,70 @@
 <div class="aq-container mosque-page">
-  <!-- OSM Advisory Banner -->
-  <div class="advisory-banner aq-card" role="note">
-    <div class="advisory-banner__icon">
-      <aq-icon name="mapPin" [size]="20" />
+  <!-- OSM Advisory Banner (Dismissible) -->
+  @if (!isAdvisoryDismissed()) {
+    <div class="advisory-banner aq-card" role="note">
+      <div class="advisory-banner__icon">
+        <aq-icon name="mapPin" [size]="20" />
+      </div>
+      <div class="advisory-banner__body">
+        <p class="advisory-banner__title">
+          {{ isBn() ? 'ওপেনস্ট্রিটম্যাপ তথ্য নির্দেশিকা' : 'OpenStreetMap Community Data' }}
+        </p>
+        <p class="advisory-banner__text">
+          {{ isBn() ? 'মসজিদের অবস্থানসমূহ ওপেনস্ট্রিটম্যাপ (OSM) এর উন্মুক্ত তথ্য থেকে সংগৃহীত। পিন টেনে বা যেকোনো স্থানে ক্লিক করে অবস্থান পরিবর্তন করতে পারেন।' : 'Mosque locations are powered by OpenStreetMap community data. You can drag the pin or tap the map to change location.' }}
+        </p>
+      </div>
+      <button
+        type="button"
+        class="advisory-banner__close"
+        (click)="dismissAdvisory()"
+        aria-label="Dismiss banner"
+      >
+        <aq-icon name="close" [size]="16" />
+      </button>
     </div>
-    <div class="advisory-banner__body">
-      <p class="advisory-banner__title">
-        {{ isBn() ? 'ওপেনস্ট্রিটম্যাপ তথ্য নির্দেশিকা' : 'OpenStreetMap Community Data' }}
-      </p>
-      <p class="advisory-banner__text">
-        {{ isBn() ? 'মসজিদের অবস্থানসমূহ ওপেনস্ট্রিটম্যাপ (OSM) এর উন্মুক্ত তথ্য থেকে সংগৃহীত। কোনো কোনো মসজিদের পূর্ণ নাম বা সঠিক ঠিকানা না থাকতে পারে।' : 'Mosque locations are powered by OpenStreetMap community data. Some volunteer-mapped entries may carry generic labels or partial addresses.' }}
-      </p>
+  }
+
+  <!-- Location Status / GPS Prompt Alert -->
+  @if (permissionDenied() || locationError() || userLocation().source === 'default') {
+    <div class="location-alert aq-card" role="alert">
+      <div class="location-alert__icon">
+        <aq-icon name="alert" [size]="20" />
+      </div>
+      <div class="location-alert__body">
+        <h4 class="location-alert__title">
+          {{ isBn() ? 'সঠিক অবস্থান নিশ্চিত করুন' : 'Verify Your Location' }}
+        </h4>
+        <p class="location-alert__text">
+          @if (permissionDenied()) {
+            {{ isBn() ? 'ডিভাইসের লোকেশন পারমিশন বন্ধ আছে। আশেপাশের মসজিদ দেখতে লোকেশন চালু করুন বা শহর পরিবর্তন করুন।' : 'Location permission is denied. Enable GPS to find mosques near you or select your city manually.' }}
+          } @else if (userLocation().source === 'default') {
+            {{ isBn() ? 'বর্তমানে ডিফল্ট এলাকা দেখানো হচ্ছে। আপনার নিকটবর্তী মসজিদ দেখতে সঠিক অবস্থান শনাক্ত করুন।' : 'Currently showing default location. Detect your GPS to see masjids closest to you.' }}
+          } @else {
+            {{ locationError() }}
+          }
+        </p>
+      </div>
+      <div class="location-alert__actions">
+        <button
+          type="button"
+          class="aq-btn aq-btn--primary aq-btn--sm"
+          [disabled]="isDetecting()"
+          (click)="useCurrentLocation()"
+        >
+          <aq-icon name="crosshair" [size]="14" />
+          <span>{{ isDetecting() ? (isBn() ? 'শনাক্ত হচ্ছে...' : 'Locating...') : (isBn() ? 'জিপিএস অন করুন' : 'Enable GPS') }}</span>
+        </button>
+        <button
+          type="button"
+          class="aq-btn aq-btn--secondary aq-btn--sm"
+          (click)="openCityModal()"
+        >
+          <aq-icon name="search" [size]="14" />
+          <span>{{ isBn() ? 'এলাকা বেছে নিন' : 'Select City' }}</span>
+        </button>
+      </div>
     </div>
-  </div>
+  }
 
   <!-- Page Header -->
   <header class="mosque-header">
@@ -55,6 +107,7 @@
             type="button"
             class="radius-pill"
             [class.is-active]="radius() === opt.meters"
+            [disabled]="loading()"
             (click)="setRadius(opt.meters)"
           >
             {{ isBn() ? opt.labelBn : opt.labelEn }}
@@ -63,6 +116,35 @@
       </div>
     </div>
   </header>
+
+  <!-- Mobile View Switcher (Segmented Tab Control) -->
+  <div class="mobile-view-tabs" role="tablist" [attr.aria-label]="isBn() ? 'ভিউ মোড' : 'View mode'">
+    <button
+      type="button"
+      class="mobile-view-tab"
+      [class.is-active]="viewMode() === 'map' || viewMode() === 'split'"
+      (click)="setViewMode('map')"
+      role="tab"
+    >
+      <aq-icon name="mapPin" [size]="16" />
+      <span>{{ isBn() ? 'মানচিত্র' : 'Map' }}</span>
+    </button>
+    <button
+      type="button"
+      class="mobile-view-tab"
+      [class.is-active]="viewMode() === 'list'"
+      (click)="setViewMode('list')"
+      role="tab"
+    >
+      <aq-icon name="mosque" [size]="16" />
+      <span>{{ isBn() ? 'তালিকা' : 'List' }}</span>
+      @if (mosques().length > 0) {
+        <span class="tab-badge">
+          {{ isBn() ? prayerTimes.toBnDigits(mosques().length) : mosques().length }}
+        </span>
+      }
+    </button>
+  </div>
 
   <!-- Error State -->
   @if (error(); as err) {
@@ -75,7 +157,7 @@
   }
 
   <!-- Main Grid: Map & List -->
-  <div class="mosque-layout">
+  <div class="mosque-layout" [class.show-map-only]="viewMode() === 'map'" [class.show-list-only]="viewMode() === 'list'">
     <!-- Map Column -->
     <section class="map-section" aria-label="Interactive Mosque Map">
       <div class="map-card aq-card">
@@ -84,22 +166,101 @@
             <aq-icon name="mapPin" [size]="16" />
             <span>{{ isBn() ? 'মানচিত্রে মসজিদের অবস্থান' : 'Interactive Map View' }}</span>
           </div>
-          @if (!loading() && mosques().length > 0) {
-            <span class="aq-chip aq-chip--primary aq-numeral">
-              {{ isBn() ? prayerTimes.toBnDigits(mosques().length) : mosques().length }} {{ isBn() ? 'টি মসজিদ' : 'mosques' }}
-            </span>
+          <div class="map-card__header-actions">
+            @if (!loading() && mosques().length > 0) {
+              <span class="aq-chip aq-chip--primary aq-numeral">
+                {{ isBn() ? prayerTimes.toBnDigits(mosques().length) : mosques().length }} {{ isBn() ? 'টি মসজিদ' : 'mosques' }}
+              </span>
+            }
+          </div>
+        </div>
+
+        <!-- Map Canvas with Floating Interactive Controls -->
+        <div class="map-canvas-wrapper">
+          <div #mapContainer class="map-canvas" id="mosque-map"></div>
+
+          <!-- Loading Indicator on Map -->
+          @if (loading()) {
+            <div class="map-loader-badge" role="status">
+              <span class="loader-spinner"></span>
+              <span>{{ isBn() ? 'মসজিদ খোঁজা হচ্ছে...' : 'Finding mosques...' }}</span>
+            </div>
+          }
+
+          <!-- Floating "Search this area" Button (appears when user pans map) -->
+          @if (canSearchThisArea()) {
+            <button
+              type="button"
+              class="map-search-here-btn"
+              (click)="searchThisArea()"
+            >
+              <aq-icon name="search" [size]="14" />
+              <span>{{ isBn() ? 'এই এলাকায় মসজিদ খুঁজুন' : 'Search This Area' }}</span>
+            </button>
+          }
+
+          <!-- Floating Recenter "My Location" Button -->
+          <button
+            type="button"
+            class="map-my-location-fab"
+            (click)="recenterMapOnUser()"
+            [attr.aria-label]="isBn() ? 'আমার অবস্থানে ফিরে যান' : 'Recenter to my location'"
+            title="Recenter"
+          >
+            <aq-icon name="crosshair" [size]="18" />
+          </button>
+
+          <!-- Selected Mosque Bottom Card Preview -->
+          @if (selectedMosque(); as sel) {
+            <div class="map-selected-preview aq-card" role="region" aria-label="Selected Mosque Details">
+              <div class="preview-head">
+                <div class="preview-title-box">
+                  <h4 class="preview-name">{{ sel.name }}</h4>
+                  <span class="preview-dist aq-numeral">📍 {{ formatDistance(sel.distanceMeters) }}</span>
+                </div>
+                <button
+                  type="button"
+                  class="preview-close-btn"
+                  (click)="closeSelectedPreview()"
+                  aria-label="Close preview"
+                >
+                  <aq-icon name="close" [size]="16" />
+                </button>
+              </div>
+
+              @if (sel.address) {
+                <p class="preview-address">{{ sel.address }}</p>
+              }
+
+              <div class="preview-actions">
+                <button
+                  type="button"
+                  class="aq-btn aq-btn--primary aq-btn--sm"
+                  (click)="onOpenDirections($event, sel)"
+                >
+                  <aq-icon name="share" [size]="14" />
+                  <span>{{ isBn() ? 'গুগল ম্যাপে নেভিগেশন' : 'Open in Google Maps' }}</span>
+                </button>
+                <button
+                  type="button"
+                  class="aq-btn aq-btn--secondary aq-btn--sm"
+                  (click)="setViewMode('list')"
+                >
+                  <aq-icon name="mosque" [size]="14" />
+                  <span>{{ isBn() ? 'তালিকায় দেখুন' : 'View in List' }}</span>
+                </button>
+              </div>
+            </div>
           }
         </div>
 
-        <div #mapContainer class="map-canvas" id="mosque-map" style="display: block; width: 100%; height: 480px; min-height: 480px;"></div>
-
         <div class="map-card__footer">
           <span class="osm-credit">
-            &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors
+            &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>
           </span>
           <span class="map-hint">
             <aq-icon name="mapPin" [size]="14" />
-            <span>{{ isBn() ? 'মানচিত্রে ক্লিক করে বা নীল পিনটি টেনে আপনার সঠিক অবস্থান নির্ধারণ করুন' : 'Click map or drag the blue pin to adjust your location' }}</span>
+            <span>{{ isBn() ? 'মানচিত্রে ক্লিক করে বা নীল পিন টেনে অবস্থান পরিবর্তন করতে পারেন' : 'Click map or drag the blue pin to adjust location' }}</span>
           </span>
         </div>
       </div>
@@ -131,6 +292,22 @@
             [title]="isBn() ? 'কোনো মসজিদ পাওয়া যায়নি' : 'No Mosques Found'"
             [message]="isBn() ? 'বর্তমান ব্যাসার্ধের মধ্যে কোনো মসজিদ পাওয়া যায়নি। ব্যাসার্ধ বৃদ্ধি করুন অথবা অন্য কোনো শহর বেছে নিন।' : 'No mosques were found within this search radius. Try increasing the radius or selecting a different area.'"
           />
+          <div class="empty-state-actions">
+            <button
+              type="button"
+              class="aq-btn aq-btn--primary aq-btn--sm"
+              (click)="setRadius(5000)"
+            >
+              {{ isBn() ? '৫ কিমি ব্যাসার্ধে খুঁজুন' : 'Search 5 km Radius' }}
+            </button>
+            <button
+              type="button"
+              class="aq-btn aq-btn--secondary aq-btn--sm"
+              (click)="openCityModal()"
+            >
+              {{ isBn() ? 'শহর পরিবর্তন' : 'Change City' }}
+            </button>
+          </div>
         </div>
       }
 
@@ -171,14 +348,14 @@
               <button
                 type="button"
                 class="aq-btn aq-btn--secondary aq-btn--sm"
-                (click)="focusMosqueOnMap(m)"
+                (click)="showMosqueOnMapTab(m)"
               >
                 <aq-icon name="mapPin" [size]="14" />
                 <span>{{ isBn() ? 'মানচিত্রে দেখুন' : 'Show on Map' }}</span>
               </button>
 
               <a
-                [href]="m.directionsUrl"
+                [href]="'https://www.google.com/maps/dir/?api=1&destination=' + m.latitude + ',' + m.longitude"
                 (click)="onOpenDirections($event, m)"
                 target="_blank"
                 rel="noopener"
@@ -223,10 +400,11 @@
         <button
           type="button"
           class="aq-btn aq-btn--primary aq-btn--full gps-btn"
+          [disabled]="isDetecting()"
           (click)="useCurrentLocation()"
         >
           <aq-icon name="crosshair" [size]="16" />
-          <span>{{ isBn() ? 'সঠিক জিপিএস অবস্থান সনাক্ত করুন' : 'Detect High-Accuracy GPS Location' }}</span>
+          <span>{{ isDetecting() ? (isBn() ? 'শনাক্ত হচ্ছে...' : 'Detecting...') : (isBn() ? 'সঠিক জিপিএস অবস্থান সনাক্ত করুন' : 'Detect High-Accuracy GPS Location') }}</span>
         </button>
 
         <div class="popular-cities-section">

@@ -46,7 +46,7 @@ export class HomePage {
 
   readonly quickActions = [
     { path: '/quran', icon: 'bookOpen' as const, label: 'Quran', labelBn: 'কুরআন', color: '#10b981' },
-    { path: '/hadith', icon: 'sparkles' as const, label: 'Hadith', labelBn: 'হাদিস', color: '#f59e0b' },
+    { path: '/hadith', icon: 'sparkles' as const, label: 'Hadith', labelBn: 'হাদিস', color: '#f59e0b', badge: '৩৬k+' },
     { path: '/prayer', icon: 'clock' as const, label: 'Prayer', labelBn: 'নামাজ', color: '#3b82f6' },
     { path: '/qibla', icon: 'compass' as const, label: 'Qibla', labelBn: 'কিবলা', color: '#8b5cf6' },
     { path: '/tasbih', icon: 'repeat' as const, label: 'Tasbih', labelBn: 'তাসবিহ', color: '#ec4899' },

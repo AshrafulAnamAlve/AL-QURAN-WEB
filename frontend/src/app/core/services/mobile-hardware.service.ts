@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
+import { Geolocation } from '@capacitor/geolocation';
 
 export interface MobileMediaSessionMetadata {
   title: string;
@@ -19,6 +20,12 @@ export interface PrayerAlarmItem {
   titleEn: string;
   bodyBn: string;
   bodyEn: string;
+}
+
+export interface GeoPositionResult {
+  latitude: number;
+  longitude: number;
+  accuracy?: number;
 }
 
 /**
@@ -55,12 +62,18 @@ export class MobileHardwareService {
 
   private checkAndroid(): boolean {
     if (typeof navigator === 'undefined') return false;
-    return Capacitor.getPlatform() === 'android';
+    return (
+      Capacitor.getPlatform() === 'android' ||
+      /android/i.test(navigator.userAgent)
+    );
   }
 
   private checkIos(): boolean {
     if (typeof navigator === 'undefined') return false;
-    return Capacitor.getPlatform() === 'ios';
+    return (
+      Capacitor.getPlatform() === 'ios' ||
+      /iphone|ipad|ipod/i.test(navigator.userAgent)
+    );
   }
 
   private initPlatformFlags(): void {
@@ -154,38 +167,131 @@ export class MobileHardwareService {
   /**
    * Launches native turn-by-turn navigation app to the selected Mosque
    */
-  openNativeMapDirections(latitude: number, longitude: number, name: string): void {
+  openNativeMapDirections(latitude: number, longitude: number, name?: string): void {
     if (typeof window === 'undefined') return;
 
-    const encodedName = encodeURIComponent(name);
-
+    let url: string;
     if (this.isIos()) {
-      // Apple Maps navigation deep link
-      const appleUrl = `maps://maps.apple.com/?daddr=${latitude},${longitude}&q=${encodedName}`;
-      window.location.href = appleUrl;
-      return;
+      const q = name ? `&q=${encodeURIComponent(name)}` : '';
+      url = `https://maps.apple.com/?daddr=${latitude},${longitude}${q}`;
+    } else {
+      url = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
     }
 
-    if (this.isAndroid()) {
-      // Android Intent: open in Google Maps directly
-      const geoUrl = `geo:${latitude},${longitude}?q=${latitude},${longitude}(${encodedName})`;
-      const webUrl = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}&destination_place_id=${encodedName}`;
+    try {
+      if (this.isNativeMobile()) {
+        window.open(url, '_system');
+      } else {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      }
+    } catch {
+      window.location.href = url;
+    }
+  }
 
-      const link = document.createElement('a');
-      link.href = geoUrl;
-      link.target = '_system';
-      link.click();
+  // =========================================================================
+  // 2.1 NATIVE GEOLOCATION (High-Accuracy GPS for Nearest Mosques & Qibla)
+  // =========================================================================
 
-      // Fallback timeout to web if geo protocol is not registered
-      setTimeout(() => {
-        window.open(webUrl, '_blank', 'noopener');
-      }, 500);
-      return;
+  /**
+   * Checks or requests device location permissions natively on Android/iOS
+   */
+  async requestLocationPermission(): Promise<boolean> {
+    if (this.isNativeMobile()) {
+      try {
+        const check = await Geolocation.checkPermissions();
+        if (check.location === 'granted' || check.coarseLocation === 'granted') {
+          return true;
+        }
+        const req = await Geolocation.requestPermissions();
+        return req.location === 'granted' || req.coarseLocation === 'granted';
+      } catch (err) {
+        console.warn('[MobileHardware] Native location permission error:', err);
+      }
     }
 
-    // Default Web Browser / Desktop
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`;
-    window.open(url, '_blank', 'noopener,noreferrer');
+    if (typeof navigator !== 'undefined' && 'geolocation' in navigator) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Checks whether device location permissions are already granted
+   */
+  async checkLocationPermission(): Promise<boolean> {
+    if (this.isNativeMobile()) {
+      try {
+        const check = await Geolocation.checkPermissions();
+        return check.location === 'granted' || check.coarseLocation === 'granted';
+      } catch {
+        return false;
+      }
+    }
+
+    if (typeof navigator !== 'undefined' && navigator.permissions?.query) {
+      try {
+        const res = await navigator.permissions.query({ name: 'geolocation' as PermissionName });
+        return res.state === 'granted';
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Retrieves accurate GPS position using Capacitor native Geolocation on mobile
+   * or HTML5 Geolocation API on web.
+   */
+  async getCurrentPosition(timeoutMs = 12000): Promise<GeoPositionResult | null> {
+    if (this.isNativeMobile()) {
+      try {
+        const granted = await this.requestLocationPermission();
+        if (granted) {
+          const pos = await Geolocation.getCurrentPosition({
+            enableHighAccuracy: true,
+            timeout: timeoutMs,
+            maximumAge: 10000,
+          });
+          if (pos && pos.coords) {
+            return {
+              latitude: pos.coords.latitude,
+              longitude: pos.coords.longitude,
+              accuracy: pos.coords.accuracy,
+            };
+          }
+        }
+      } catch (err) {
+        console.warn('[MobileHardware] Native Geolocation error, falling back:', err);
+      }
+    }
+
+    // Standard Browser / PWA fallback
+    if (typeof navigator !== 'undefined' && navigator.geolocation) {
+      return new Promise<GeoPositionResult | null>((resolve) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              accuracy: position.coords.accuracy,
+            });
+          },
+          (err) => {
+            console.warn('[MobileHardware] HTML5 Geolocation error:', err);
+            resolve(null);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: timeoutMs,
+            maximumAge: 10000,
+          },
+        );
+      });
+    }
+
+    return null;
   }
 
   // =========================================================================
@@ -477,12 +583,21 @@ export class MobileHardwareService {
   openAndroidDnsSettings(): void {
     if (typeof window === 'undefined') return;
 
-    if (this.isNativeMobile() && this.isAndroid()) {
+    if (this.isAndroid()) {
       try {
-        window.location.href = 'intent:#Intent;action=android.settings.NETWORK_OPERATOR_SETTINGS;end';
+        window.location.href = 'intent:#Intent;action=android.settings.WIRELESS_SETTINGS;end';
         return;
       } catch {
-        // Fallback
+        try {
+          window.location.href = 'intent:#Intent;action=android.settings.NETWORK_OPERATOR_SETTINGS;end';
+          return;
+        } catch {
+          try {
+            window.location.href = 'intent:#Intent;action=android.settings.SETTINGS;end';
+          } catch {
+            // Fallback
+          }
+        }
       }
     }
   }
