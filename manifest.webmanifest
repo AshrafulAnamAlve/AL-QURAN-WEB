@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "Al-Quran — Read & Listen",
+  "short_name": "Al-Quran",
+  "description": "Read the complete Quran in Arabic with Bangla translation, listen to recitation, follow prayer times and find nearby mosques.",
+  "id": "/AL-QURAN-WEB/",
+  "start_url": "/AL-QURAN-WEB/",
+  "scope": "/AL-QURAN-WEB/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#faf7f0",
+  "theme_color": "#0f5132",
+  "categories": [
+    "books",
+    "education",
+    "lifestyle"
+  ],
+  "icons": [
+    {
+      "src": "/AL-QURAN-WEB/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/AL-QURAN-WEB/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/AL-QURAN-WEB/icons/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/AL-QURAN-WEB/icons/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/AL-QURAN-WEB/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

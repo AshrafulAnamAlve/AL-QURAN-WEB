@@ -1,0 +1,1 @@
+var t={production:!0,apiBaseUrl:"https://sirajworld.runasp.net/api",appName:"Al-Quran",appUrl:"https://ashrafulanamalve.github.io/AL-QURAN-WEB",audioCdnBaseUrl:"https://cdn.islamic.network/quran/audio",mapTileUrl:"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",mapAttribution:"&copy; OpenStreetMap contributors",searchDebounceMs:350,httpCacheTtlMs:3e5};export{t as a};
