@@ -3,10 +3,10 @@
 .qibla-container {
   max-width: 960px;
   margin: 0 auto;
-  padding: 1.5rem 1rem 3rem;
+  padding: 0.75rem 0.75rem 2.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.75rem;
 
   @media (min-width: 768px) {
     padding: 2rem 1.5rem 4rem;
@@ -77,6 +77,19 @@
     color: var(--aq-text-muted);
     line-height: 1.5;
   }
+
+  @media (max-width: 640px) {
+    gap: 0.35rem;
+
+    &__badge,
+    &__ayah {
+      display: none;
+    }
+
+    &__title {
+      font-size: 1.15rem;
+    }
+  }
 }
 
 // Controls
@@ -91,6 +104,33 @@
   border: 1px solid var(--aq-border);
   border-radius: var(--aq-radius-lg, 12px);
   box-shadow: var(--aq-shadow-sm);
+
+  @media (max-width: 640px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    padding: 0.65rem 0.75rem;
+
+    .location-pill {
+      justify-content: space-between;
+      width: 100%;
+
+      &__name {
+        max-width: 170px;
+      }
+    }
+
+    .mode-switcher {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+
+      .mode-btn {
+        justify-content: center;
+        width: 100%;
+      }
+    }
+  }
 }
 
 .location-pill {
@@ -404,6 +444,9 @@
   transition: all 0.3s ease;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  contain: layout paint;
+  will-change: transform;
+  transform: translateZ(0);
 
   @media (max-width: 359px) {
     width: 260px;
@@ -485,8 +528,10 @@
   position: absolute;
   inset: 8px;
   border-radius: 50%;
-  transition: transform 0.12s cubic-bezier(0.1, 0.7, 0.1, 1);
   transform-origin: center center;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 // Cardinal Points

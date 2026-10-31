@@ -163,7 +163,7 @@
         <div class="compass-ring"></div>
 
         <!-- Rotating Dial (rotates counter-clockwise as phone turns) -->
-        <div class="compass-dial" [style.transform]="'rotate(' + dialRotation() + 'deg)'">
+        <div #compassDial class="compass-dial" [style.transform]="'rotate(' + dialRotation() + 'deg)'">
           <!-- Cardinal Points -->
           <span class="cardinal-point cardinal-n" [attr.aria-label]="isBn() ? 'উত্তর' : 'North'">
             <span class="cardinal-mark">N</span>

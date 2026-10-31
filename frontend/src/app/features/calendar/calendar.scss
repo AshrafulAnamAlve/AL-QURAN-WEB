@@ -1,3 +1,10 @@
+.tab-label-short {
+  display: none;
+}
+.tab-label-full {
+  display: inline;
+}
+
 .calendar-page {
   padding-block: var(--aq-space-6) var(--aq-space-12);
 }
@@ -56,6 +63,66 @@
     margin: 0;
     font-size: var(--aq-text-sm);
     color: var(--aq-text-subtle);
+  }
+
+  @media (max-width: 640px) {
+    margin-bottom: var(--aq-space-3);
+    padding-bottom: var(--aq-space-3);
+    gap: var(--aq-space-2);
+
+    &__title {
+      font-size: 1.25rem;
+      margin: 0;
+    }
+
+    &__subtitle {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .calendar-page {
+    padding-block: var(--aq-space-3) var(--aq-space-6);
+  }
+
+  .advisory-banner {
+    display: none;
+  }
+
+  .today-hero {
+    padding: 0.5rem 0.85rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .tab-label-short {
+    display: inline;
+  }
+
+  .tab-label-full {
+    display: none;
+  }
+
+  .calendar-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem;
+    width: 100%;
+    margin-bottom: var(--aq-space-4);
+    overflow: visible;
+  }
+
+  .calendar-tab-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.45rem 0.5rem;
+    font-size: 0.8125rem;
+    min-height: 38px;
+    border-bottom-width: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
@@ -403,6 +470,66 @@
     margin: 0;
     font-size: var(--aq-text-sm);
     color: var(--aq-text-subtle);
+  }
+
+  @media (max-width: 640px) {
+    margin-bottom: var(--aq-space-3);
+    padding-bottom: var(--aq-space-3);
+    gap: var(--aq-space-2);
+
+    &__title {
+      font-size: 1.25rem;
+      margin: 0;
+    }
+
+    &__subtitle {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .calendar-page {
+    padding-block: var(--aq-space-3) var(--aq-space-6);
+  }
+
+  .advisory-banner {
+    display: none;
+  }
+
+  .today-hero {
+    padding: 0.5rem 0.85rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .tab-label-short {
+    display: inline;
+  }
+
+  .tab-label-full {
+    display: none;
+  }
+
+  .calendar-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem;
+    width: 100%;
+    margin-bottom: var(--aq-space-4);
+    overflow: visible;
+  }
+
+  .calendar-tab-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.45rem 0.5rem;
+    font-size: 0.8125rem;
+    min-height: 38px;
+    border-bottom-width: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 

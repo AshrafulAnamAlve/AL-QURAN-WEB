@@ -1,6 +1,6 @@
 {
   "name": "al-quran-mobile",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Al-Quran Cross-Platform Mobile Application (Android & iOS) powered by Angular, Capacitor, and .NET",
   "author": "Ashraful Anam Alve",
   "license": "MIT",

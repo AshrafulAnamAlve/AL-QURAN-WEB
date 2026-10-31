@@ -74,9 +74,17 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
-          tag_name: v1.1.0-mobile
-          name: 'Al-Quran Mobile Android APK & Desktop v1.1.0'
-          body: 'Official Al-Quran Android Mobile Application (.apk) with 100% web parity, 3D Qibla Compass, Background Audio, and Adhan alerts.'
+          tag_name: v1.2.0-mobile
+          name: 'Al-Quran Mobile Android APK v1.2.0'
+          body: |
+            ### Al-Quran Android Mobile Application v1.2.0 (.apk)
+            
+            #### 🌟 What's New in v1.2.0:
+            - **Butter-Smooth 60/120Hz Qibla Compass**: Hardware magnetometer orientation with `requestAnimationFrame` angular interpolation outside NgZone.
+            - **Background Battery Saver & Exact Alarms**: Direct shortcuts to Android battery optimization whitelist and exact alarm permissions for uninterrupted Waqt Adhan.
+            - **Automatic Alarm Cleaner**: Purges expired past alarms upon app resume to avoid batch-triggering on wakeup.
+            - **Refined Mobile UI & Safe-Area Padding**: Polished layouts, spacing, and notch/navigation bar clearances across all 15+ pages.
+            - **Optimized Adaptive Launcher Icons**: Clean vector drawable background and high-dpi gold emblem foregrounds.
           draft: false
           prerelease: false
           files: mobile/android/app/build/outputs/apk/debug/AlQuran-Android.apk

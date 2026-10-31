@@ -244,7 +244,7 @@
         <div class="dl-card__heading">
           <div class="dl-card__badges">
             <span class="badge badge--pwa">Android 8.0+ / iOS / PWA</span>
-            <span class="badge badge--ver">v1.1.0 • APK</span>
+            <span class="badge badge--ver">v1.2.0 • APK</span>
             <span class="badge badge--free">{{ isBn() ? '১০০% ফ্রি' : '100% Free' }}</span>
           </div>
           <h2 class="dl-card__title">
@@ -347,6 +347,52 @@
                   <p>{{ isBn() ? 'আইফোনে Safari ব্রাউজারে নিচের Share (📤) বাটনে ট্যাপ করুন এবং "Add to Home Screen"-এ চাপ দিলে অ্যাপের মতো হোমস্ক্রিনে যুক্ত হয়ে যাবে।' : 'On iPhone, open Safari, tap the Share icon (📤) and select "Add to Home Screen".' }}</p>
                 </div>
               </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Mobile App Version Tracking & Changelog Collapsible -->
+      <div class="guide-collapsible version-tracker-collapsible">
+        <button
+          type="button"
+          class="guide-toggle-btn guide-toggle-btn--version"
+          [class.is-open]="isVersionHistoryOpen()"
+          (click)="toggleVersionHistory()"
+        >
+          <span class="guide-toggle-btn__left">
+            <aq-icon name="sparkles" [size]="15" />
+            <span>{{ isBn() ? 'মোবাইল অ্যাপ ভার্সন ট্র্যাকিং ও ইতিহাস (Release Notes)' : 'Mobile App Version Tracking & Changelog' }}</span>
+          </span>
+          <span class="guide-toggle-btn__chevron">{{ isVersionHistoryOpen() ? '▲' : '▼' }}</span>
+        </button>
+
+        @if (isVersionHistoryOpen()) {
+          <div class="guide-content version-tracker-content">
+            <div class="version-timeline">
+              @for (release of mobileVersionHistory; track release.version) {
+                <div class="version-entry" [class.version-entry--latest]="release.isLatest">
+                  <div class="version-entry__header">
+                    <div class="version-entry__tag-row">
+                      <span class="version-entry__number">{{ release.version }}</span>
+                      @if (release.isLatest) {
+                        <span class="badge badge--latest">{{ isBn() ? 'সর্বশেষ রিলিজ' : 'Latest' }}</span>
+                      }
+                      <span class="version-entry__date">{{ release.date }}</span>
+                      <span class="version-entry__size">{{ release.apkSize }}</span>
+                    </div>
+                    <h3 class="version-entry__title">
+                      {{ isBn() ? release.titleBn : release.titleEn }}
+                    </h3>
+                  </div>
+
+                  <ul class="version-entry__list">
+                    @for (item of (isBn() ? release.highlightsBn : release.highlightsEn); track item) {
+                      <li>{{ item }}</li>
+                    }
+                  </ul>
+                </div>
+              }
             </div>
           </div>
         }

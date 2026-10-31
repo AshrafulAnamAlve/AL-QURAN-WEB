@@ -72,13 +72,14 @@ import { PRIMARY_NAV_ITEMS } from '../nav-items';
     .floating-island {
       position: fixed;
       bottom: max(14px, env(safe-area-inset-bottom, 14px));
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 24px);
+      left: max(12px, env(safe-area-inset-left, 12px));
+      right: max(12px, env(safe-area-inset-right, 12px));
+      margin-inline: auto;
+      width: auto;
       max-width: 440px;
       height: 66px;
       border-radius: 33px;
-      z-index: 500;
+      z-index: 850;
       background: rgba(6, 26, 20, 0.88);
       backdrop-filter: blur(28px) saturate(210%);
       -webkit-backdrop-filter: blur(28px) saturate(210%);

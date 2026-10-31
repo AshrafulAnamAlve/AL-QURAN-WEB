@@ -59,10 +59,15 @@
           [attr.aria-label]="isBn() ? 'আল্লাহ নামের উচ্চারণ শুনুন' : 'Listen to pronunciation of Allah'"
         >
           <aq-icon [name]="activePlayingNumber() === 0 && isPlaying() ? 'pause' : 'play'" [size]="18" />
-          <span>
+          <span class="tab-label-full">
             {{ activePlayingNumber() === 0 && isPlaying()
               ? (isBn() ? 'বিরতি দিন' : 'Pause Pronunciation')
               : (isBn() ? 'উচ্চারণ শুনুন' : 'Listen Pronunciation') }}
+          </span>
+          <span class="tab-label-short">
+            {{ activePlayingNumber() === 0 && isPlaying()
+              ? (isBn() ? 'বিরতি' : 'Pause')
+              : (isBn() ? 'উচ্চারণ' : 'Pronounce') }}
           </span>
         </button>
 
@@ -72,7 +77,8 @@
           (click)="openDetail(supremeName)"
         >
           <aq-icon name="info" [size]="18" />
-          <span>{{ isBn() ? 'গভীর তাৎপর্য ও ফজিলত' : 'Spiritual Significance' }}</span>
+          <span class="tab-label-full">{{ isBn() ? 'গভীর তাৎপর্য ও ফজিলত' : 'Spiritual Significance' }}</span>
+          <span class="tab-label-short">{{ isBn() ? 'তাৎপর্য' : 'Significance' }}</span>
         </button>
 
         <button

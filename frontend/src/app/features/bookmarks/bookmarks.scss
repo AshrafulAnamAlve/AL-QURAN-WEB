@@ -28,6 +28,24 @@
   margin: 0;
   color: var(--aq-text-subtle);
   font-size: var(--aq-text-sm);
+
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .bookmarks-page {
+    padding-block: var(--aq-space-3) var(--aq-space-6);
+  }
+
+  .bookmarks-page__header {
+    margin-bottom: var(--aq-space-3);
+  }
+
+  .bookmarks-page__title {
+    font-size: 1.25rem;
+  }
 }
 
 .bookmarks-page__actions {

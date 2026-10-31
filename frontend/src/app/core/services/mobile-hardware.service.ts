@@ -443,6 +443,85 @@ export class MobileHardwareService {
   }
 
   /**
+   * Cleans up any expired or already-passed pending notifications from Capacitor storage.
+   * This is critical to prevent Android from batch-rescheduling past missed alarms when the app opens.
+   */
+  async cleanupExpiredPendingAlarms(): Promise<void> {
+    if (!this.isNativeMobile()) return;
+    try {
+      const now = Date.now();
+      const pending = await LocalNotifications.getPending();
+      if (pending && pending.notifications.length > 0) {
+        const expired = pending.notifications.filter((n) => {
+          if (!n.schedule?.at) return false;
+          const atTime = new Date(n.schedule.at).getTime();
+          return atTime <= now;
+        });
+
+        if (expired.length > 0) {
+          await LocalNotifications.cancel({
+            notifications: expired.map((n) => ({ id: n.id })),
+          });
+          console.info(`[MobileHardware] Cancelled ${expired.length} expired past alarms.`);
+        }
+      }
+    } catch (err) {
+      console.warn('[MobileHardware] Error cleaning expired alarms:', err);
+    }
+  }
+
+  /**
+   * Clears old delivered notifications from the Android notification tray.
+   */
+  async clearDeliveredNotifications(): Promise<void> {
+    if (!this.isNativeMobile()) return;
+    try {
+      await LocalNotifications.removeAllDeliveredNotifications();
+    } catch {
+      // Ignore
+    }
+  }
+
+  /**
+   * Opens Android Battery Optimization settings to allow user to set app to 'Unrestricted'
+   * so Android Doze Mode never suspends real-time prayer alarms.
+   */
+  openBatteryOptimizationSettings(): void {
+    if (typeof window === 'undefined') return;
+    if (this.isAndroid()) {
+      try {
+        window.location.href = 'intent:#Intent;action=android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS;end';
+        return;
+      } catch {
+        try {
+          window.location.href = 'intent:#Intent;action=android.settings.APPLICATION_DETAILS_SETTINGS;package=com.alquran.mobile;end';
+        } catch {
+          // Ignore
+        }
+      }
+    }
+  }
+
+  /**
+   * Opens Android 12+ Alarms & Reminders permission settings to allow exact alarms.
+   */
+  openExactAlarmSettings(): void {
+    if (typeof window === 'undefined') return;
+    if (this.isAndroid()) {
+      try {
+        window.location.href = 'intent:#Intent;action=android.settings.REQUEST_SCHEDULE_EXACT_ALARM;package=com.alquran.mobile;end';
+        return;
+      } catch {
+        try {
+          window.location.href = 'intent:#Intent;action=android.settings.APPLICATION_DETAILS_SETTINGS;package=com.alquran.mobile;end';
+        } catch {
+          // Ignore
+        }
+      }
+    }
+  }
+
+  /**
    * Schedules precise Waqt Adhan notifications via Capacitor LocalNotifications
    * Uses Android AlarmManager (allowWhileIdle: true) to fire in real time even when device is asleep.
    */
@@ -451,6 +530,9 @@ export class MobileHardwareService {
 
     try {
       await this.initNotificationChannel();
+
+      // Clean up past expired alarms and delivered notifications so old ones never pile up
+      await this.cleanupExpiredPendingAlarms();
 
       // Cancel previous scheduled alarms
       const pending = await LocalNotifications.getPending();
@@ -461,7 +543,8 @@ export class MobileHardwareService {
       }
 
       const now = Date.now();
-      const upcoming = prayers.filter((p) => p.time.getTime() > now);
+      // Ensure we only schedule alarms at least 20 seconds into the future
+      const upcoming = prayers.filter((p) => p.time.getTime() > now + 20000);
 
       if (upcoming.length === 0) return;
 

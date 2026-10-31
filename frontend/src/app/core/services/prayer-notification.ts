@@ -118,6 +118,8 @@ export class PrayerNotificationService implements OnDestroy {
     if (!this.mobileHardware.isNativeMobile()) return;
 
     void this.mobileHardware.initNotificationChannel();
+    void this.mobileHardware.cleanupExpiredPendingAlarms();
+    void this.mobileHardware.clearDeliveredNotifications();
     void this.mobileHardware.checkNotificationPermission().then((granted) => {
       this._nativePermissionGranted.set(granted);
       if (granted) {
@@ -413,13 +415,18 @@ export class PrayerNotificationService implements OnDestroy {
       const time12hBn = this.prayerTimes.format12h(prayer.time, true);
 
       const isBn = this.language.isBn();
+      const isFajr = prayer.key.toLowerCase() === 'fajr';
       const title = isBn
-        ? `🕌 ${prayer.banglaName} নামাজের সময় হয়েছে`
-        : `🕌 It is now time for ${prayer.name} prayer`;
+        ? (isFajr ? `🕌 ফজরের ওয়াক্ত হয়েছে (${time12hBn})` : `🕌 ${prayer.banglaName} নামাজের সময় হয়েছে (${time12hBn})`)
+        : (isFajr ? `🕌 Fajr Prayer Time (${time12h})` : `🕌 It is now time for ${prayer.name} prayer (${time12h})`);
 
       const body = isBn
-        ? `${city}-এ এখন ${prayer.banglaName} নামাজের সময় (${time12hBn})।`
-        : `It is now time for ${prayer.name} prayer (${time12h}) in ${city}.`;
+        ? (isFajr
+            ? `${city}-এ ফজরের নামাজের ওয়াক্ত হয়েছে (${time12hBn})। আস-সালাতু খাইরুম মিনান নাওম।`
+            : `${city}-এ এখন ${prayer.banglaName} নামাজের সময় (${time12hBn})।`)
+        : (isFajr
+            ? `It is now time for Fajr prayer in ${city} (${time12h}). Prayer is better than sleep.`
+            : `It is now time for ${prayer.name} prayer in ${city} (${time12h}).`);
 
       this.desktopService.sendNotification(title, body);
       return null;
@@ -433,13 +440,18 @@ export class PrayerNotificationService implements OnDestroy {
       const time12hBn = this.prayerTimes.format12h(prayer.time, true);
 
       const isBn = this.language.isBn();
+      const isFajr = prayer.key.toLowerCase() === 'fajr';
       const title = isBn
-        ? `🕌 ${prayer.banglaName} নামাজের সময় হয়েছে`
-        : `🕌 It is now time for ${prayer.name} prayer`;
+        ? (isFajr ? `🕌 ফজরের ওয়াক্ত হয়েছে (${time12hBn})` : `🕌 ${prayer.banglaName} নামাজের সময় হয়েছে (${time12hBn})`)
+        : (isFajr ? `🕌 Fajr Prayer Time (${time12h})` : `🕌 It is now time for ${prayer.name} prayer (${time12h})`);
 
       const body = isBn
-        ? `${city}-এ এখন ${prayer.banglaName} নামাজের সময় (${time12hBn})। আযান শুনতে ট্যাপ করুন।`
-        : `It is now time for ${prayer.name} prayer (${time12h}) in ${city}. Tap to hear Adhan.`;
+        ? (isFajr
+            ? `${city}-এ ফজরের নামাজের ওয়াক্ত হয়েছে (${time12hBn})। আস-সালাতু খাইরুম মিনান নাওম। আযান শুনুন।`
+            : `${city}-এ এখন ${prayer.banglaName} নামাজের সময় (${time12hBn})। আযান শুনতে ট্যাপ করুন।`)
+        : (isFajr
+            ? `It is now time for Fajr in ${city} (${time12h}). Prayer is better than sleep. Tap to hear Adhan.`
+            : `It is now time for ${prayer.name} in ${city} (${time12h}). Tap to hear Adhan.`);
 
       void this.mobileHardware.sendImmediateNotification(title, body, {
         waqtName: prayer.key,
@@ -651,11 +663,11 @@ export class PrayerNotificationService implements OnDestroy {
 
     const isBn = this.language.isBn();
     const title = isBn
-      ? `🕌 পরীক্ষা: ${target.banglaName} নামাজের আযান`
-      : `🕌 Test Alert: ${target.name} Adhan Notification`;
+      ? `🕌 পরীক্ষা: আযান ও নোটিফিকেশন অ্যালার্ট`
+      : `🕌 Test Alert: Adhan & Prayer Times Notification`;
     const body = isBn
-      ? `আল-কুরআন আযান নোটিফিকেশন সফলভাবে সক্রিয় হয়েছে।`
-      : `Al-Quran Adhan notification is successfully active.`;
+      ? `আল-কুরআন আযান নোটিফিকেশন সফলভাবে সক্রিয় হয়েছে। আল্লাহু আকবার।`
+      : `Al-Quran Adhan notification is working successfully. Allahu Akbar.`;
 
     if (this.mobileHardware.isNativeMobile()) {
       void this.mobileHardware.sendImmediateNotification(title, body, {
@@ -712,6 +724,7 @@ export class PrayerNotificationService implements OnDestroy {
       const day = targetDays[dayIdx];
       if (!day.times) continue;
 
+      const monthNumber = parseInt(day.date.slice(5, 7), 10) || 1;
       const dayNumber = parseInt(day.date.slice(8, 10), 10) || (dayIdx + 1);
 
       day.times
@@ -721,22 +734,38 @@ export class PrayerNotificationService implements OnDestroy {
           if (settings[pKey] === false) return;
 
           const prayerDate = new Date(t.at!);
-          if (prayerDate.getTime() <= nowMs) return; // In the past
+          // Ensure we NEVER schedule any alarm in the past or immediately due (< 20s)
+          if (prayerDate.getTime() <= nowMs + 20000) return;
 
-          // Deterministic unique 32-bit ID
-          const id = dayNumber * 10 + (prayerIdx % 10);
+          // Deterministic unique 32-bit ID (Month*1000 + Day*10 + PrayerIdx)
+          const id = (monthNumber * 1000 + dayNumber * 10 + (prayerIdx % 10)) % 2147483647;
 
           const time12h = this.prayerTimes.format12h(t.time, false);
           const time12hBn = this.prayerTimes.format12h(t.time, true);
+
+          const isFajr = pKey === 'fajr';
+          const titleBn = isFajr
+            ? `🕌 ফজরের ওয়াক্ত হয়েছে (${time12hBn})`
+            : `🕌 ${t.banglaName} নামাজের ওয়াক্ত হয়েছে (${time12hBn})`;
+          const titleEn = isFajr
+            ? `🕌 Fajr Prayer Time (${time12h})`
+            : `🕌 It is now time for ${t.name} prayer (${time12h})`;
+
+          const bodyBn = isFajr
+            ? `${city}-এ ফজরের নামাজের ওয়াক্ত হয়েছে (${time12hBn})। আস-সালাতু খাইরুম মিনান নাওম। আযান শুনুন।`
+            : `${city}-এ এখন ${t.banglaName} নামাজের সময় (${time12hBn})। আল্লাহু আকবার। আযান শুনতে ট্যাপ করুন।`;
+          const bodyEn = isFajr
+            ? `It is now time for Fajr in ${city} (${time12h}). Prayer is better than sleep. Tap to hear Adhan.`
+            : `It is now time for ${t.name} prayer in ${city} (${time12h}). Allahu Akbar. Tap to listen.`;
 
           alarms.push({
             id,
             name: t.key,
             time: prayerDate,
-            titleBn: `🕌 ${t.banglaName} নামাজের ওয়াক্ত হয়েছে`,
-            titleEn: `🕌 It is now time for ${t.name} prayer`,
-            bodyBn: `${city}-এ এখন ${t.banglaName} নামাজের সময় (${time12hBn})। আল্লাহু আকবার। আযান শুনতে ট্যাপ করুন।`,
-            bodyEn: `It is now time for ${t.name} prayer (${time12h}) in ${city}. Allahu Akbar. Tap to listen.`,
+            titleBn,
+            titleEn,
+            bodyBn,
+            bodyEn,
           });
         });
     }

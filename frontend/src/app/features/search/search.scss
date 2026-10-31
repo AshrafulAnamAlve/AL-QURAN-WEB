@@ -2,10 +2,18 @@
 
 .search-page {
   padding-block: var(--aq-space-6) var(--aq-space-12);
+
+  @media (max-width: 640px) {
+    padding-block: var(--aq-space-3) var(--aq-space-6);
+  }
 }
 
 .search-page__header {
   margin-bottom: var(--aq-space-6);
+
+  @media (max-width: 640px) {
+    margin-bottom: var(--aq-space-3);
+  }
 }
 
 .search-page__title {
@@ -13,12 +21,20 @@
   font-size: var(--aq-text-2xl);
   font-weight: 700;
   color: var(--aq-text);
+
+  @media (max-width: 640px) {
+    font-size: 1.25rem;
+  }
 }
 
 .search-page__subtitle {
   margin: 0 0 var(--aq-space-4);
   color: var(--aq-text-subtle);
   font-size: var(--aq-text-sm);
+
+  @media (max-width: 640px) {
+    display: none;
+  }
 }
 
 .search-page__input-box {

@@ -28,6 +28,7 @@ export class DownloadPage implements OnInit {
 
   readonly isBn = this.lang.isBn;
   readonly downloadLinks = this.desktop.downloadLinks;
+  readonly mobileVersionHistory = this.desktop.mobileVersionHistory;
   readonly canInstallPwa = this.pwa.canInstall;
   readonly isPwaInstalled = this.pwa.isInstalled;
 
@@ -35,6 +36,7 @@ export class DownloadPage implements OnInit {
   readonly isDesktopGuideOpen = signal<boolean>(false);
   readonly isExtensionGuideOpen = signal<boolean>(false);
   readonly isPwaGuideOpen = signal<boolean>(false);
+  readonly isVersionHistoryOpen = signal<boolean>(true);
 
   readonly pwaInstallOutcome = signal<string | null>(null);
 
@@ -58,6 +60,10 @@ export class DownloadPage implements OnInit {
 
   togglePwaGuide(): void {
     this.isPwaGuideOpen.update((v) => !v);
+  }
+
+  toggleVersionHistory(): void {
+    this.isVersionHistoryOpen.update((v) => !v);
   }
 
   async installPwa(): Promise<void> {

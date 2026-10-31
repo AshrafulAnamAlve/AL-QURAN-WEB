@@ -614,6 +614,38 @@
           </div>
         </div>
 
+        <!-- Android Battery Optimization & Exact Alarms Guide (Android Only) -->
+        @if (mobileHardware.isAndroid()) {
+          <div class="setting-row">
+            <div class="setting-row__info">
+              <span class="setting-row__title">
+                {{ isBn() ? 'রিয়েল-টাইম আযান ও ব্যাটারি অপ্টিমাইজেশন' : 'Real-Time Alarms & Battery Optimization' }}
+              </span>
+              <span class="setting-row__desc">
+                {{ isBn() ? 'ফোন লক বা স্লিপ থাকা অবস্থায় আযান ঠিক সময়ে বাজতে ফোনের ব্যাটারি সেভার "Unrestricted" বা বন্ধ রাখুন এবং Alarms & Reminders চালু করুন।' : 'To ensure alarms ring at the exact minute even when your phone is asleep, set battery to Unrestricted.' }}
+              </span>
+            </div>
+            <div class="setting-row__control" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button
+                type="button"
+                class="aq-btn aq-btn--secondary aq-btn--sm"
+                (click)="mobileHardware.openBatteryOptimizationSettings()"
+              >
+                <aq-icon name="settings" [size]="14" />
+                <span>{{ isBn() ? 'ব্যাটারি সেটিংস' : 'Battery Saver' }}</span>
+              </button>
+              <button
+                type="button"
+                class="aq-btn aq-btn--secondary aq-btn--sm"
+                (click)="mobileHardware.openExactAlarmSettings()"
+              >
+                <aq-icon name="clock" [size]="14" />
+                <span>{{ isBn() ? 'অ্যালার্ম অনুমতি' : 'Exact Alarms' }}</span>
+              </button>
+            </div>
+          </div>
+        }
+
         <!-- Individual Prayer Alerts -->
         <div class="control-group">
           <div class="control-header">

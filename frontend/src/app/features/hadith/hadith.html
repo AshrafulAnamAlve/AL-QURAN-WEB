@@ -67,7 +67,8 @@
         (click)="switchTab('curated')"
       >
         <aq-icon name="sparkles" [size]="16" />
-        <span>{{ isBn() ? 'নির্বাচিত ও প্রাত্যহিক হাদিস' : 'Featured & Themes' }}</span>
+        <span class="tab-label-full">{{ isBn() ? 'নির্বাচিত ও প্রাত্যহিক হাদিস' : 'Featured & Themes' }}</span>
+        <span class="tab-label-short">{{ isBn() ? 'নির্বাচিত হাদিস' : 'Featured' }}</span>
       </button>
 
       <button
@@ -79,7 +80,8 @@
         (click)="switchTab('library')"
       >
         <aq-icon name="bookOpen" [size]="16" />
-        <span>{{ isBn() ? 'হাদিস গ্রন্থাবলী (৩৬,০০০+ হাদিস)' : 'Canonical Library (36,000+)' }}</span>
+        <span class="tab-label-full">{{ isBn() ? 'হাদিস গ্রন্থাবলী (৩৬,০০০+ হাদিস)' : 'Canonical Library (36,000+)' }}</span>
+        <span class="tab-label-short">{{ isBn() ? 'হাদিস গ্রন্থাবলী' : 'Library' }}</span>
         <span class="hadith-tab__pill">{{ isBn() ? '৮টি কিতাব' : '8 Books' }}</span>
       </button>
     </nav>

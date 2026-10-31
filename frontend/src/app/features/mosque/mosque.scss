@@ -13,6 +13,10 @@
   border: 1px solid color-mix(in srgb, var(--aq-accent) 35%, var(--aq-border));
   border-radius: var(--aq-radius-lg);
 
+  @media (max-width: 640px) {
+    display: none;
+  }
+
   &__icon {
     display: flex;
     color: var(--aq-gold-600, #b45309);
@@ -99,6 +103,22 @@
     display: flex;
     align-items: center;
     gap: var(--aq-space-2);
+
+    @media (max-width: 640px) {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+
+      .aq-btn {
+        width: 100%;
+        justify-content: center;
+        white-space: nowrap;
+        font-size: 0.8125rem;
+        padding: 0.45rem 0.5rem;
+        min-height: 38px;
+      }
+    }
   }
 }
 
@@ -125,6 +145,21 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--aq-space-2);
+
+  @media (max-width: 640px) {
+    width: 100%;
+    gap: 0.35rem;
+
+    .location-tag {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+
+    .gps-quick-btn {
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+  }
 }
 
 .location-tag {

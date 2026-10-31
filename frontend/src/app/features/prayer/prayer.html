@@ -183,11 +183,11 @@
               [attr.aria-label]="isAutoAdhanActive() ? (isBn() ? 'স্বয়ংক্রিয় আজান অডিও বন্ধ করুন' : 'Turn off Auto-Adhan audio') : (isBn() ? 'স্বয়ংক্রিয় আজান অডিও চালু করুন' : 'Turn on Auto-Adhan audio')"
             >
               <aq-icon [name]="isAutoAdhanActive() ? 'volume2' : 'volumeOff'" [size]="14" />
-              <span>{{ isAutoAdhanActive() ? (isBn() ? 'আজান সাউন্ড বন্ধ' : 'Adhan Sound OFF') : (isBn() ? 'আজান সাউন্ড চালু' : 'Adhan Sound ON') }}</span>
+              <span>{{ isAutoAdhanActive() ? (isBn() ? 'আজান বন্ধ' : 'Adhan OFF') : (isBn() ? 'আজান চালু' : 'Adhan ON') }}</span>
             </button>
             <button
               type="button"
-              class="aq-btn aq-btn--primary aq-btn--sm"
+              class="aq-btn aq-btn--primary aq-btn--sm countdown-hero__play-btn"
               (click)="openAdhan(next.prayer, $event)"
               [attr.aria-label]="isBn() ? 'এখনই আজান শুনুন' : 'Play Adhan Now'"
             >

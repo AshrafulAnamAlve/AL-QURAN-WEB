@@ -19,6 +19,7 @@ import { ReciterService } from '../../core/services/reciter';
 import { SettingsService } from '../../core/services/settings';
 import { TaskService } from '../../core/services/task';
 import { DesktopService } from '../../core/services/desktop';
+import { MobileHardwareService } from '../../core/services/mobile-hardware.service';
 import { POPULAR_CITIES } from '../prayer/prayer';
 import { FilterFieldComponent } from '../../shared/components/filter-field/filter-field';
 import { IconComponent } from '../../shared/components/icon/icon';
@@ -48,6 +49,7 @@ export class SettingsPage implements OnInit {
   protected readonly pwa = inject(PwaService);
   protected readonly desktop = inject(DesktopService);
   protected readonly taskService = inject(TaskService);
+  protected readonly mobileHardware = inject(MobileHardwareService);
   protected readonly prayerNotifications = inject(PrayerNotificationService);
   private readonly seo = inject(SeoService);
 

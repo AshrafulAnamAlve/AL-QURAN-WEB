@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, NgZone, computed, inject, signal } from '@angular/core';
 import {
   CompassSensorState,
   KAABA_COORDINATES,
@@ -91,8 +91,15 @@ export interface TurnGuidance {
 
 @Injectable({ providedIn: 'root' })
 export class QiblaService {
+  private readonly ngZone = inject(NgZone);
   private readonly settings = inject(SettingsService);
   private readonly mobileHardware = inject(MobileHardwareService);
+
+  /** Raw unthrottled heading updated at sensor frequency (60-120Hz) for buttery-smooth rAF rendering */
+  private _rawHeading: number = 0;
+  getRawHeading(): number {
+    return this._rawHeading;
+  }
 
   /** Reactive Qibla calculation based on active user location in Settings */
   readonly qiblaData = computed<QiblaCalculationResult>(() => {
@@ -258,6 +265,9 @@ export class QiblaService {
   startListening(): void {
     if (typeof window === 'undefined' || this.orientationListener) return;
 
+    let lastSignalUpdateTime = 0;
+    let lastEmittedHeading = this.deviceHeading();
+
     this.orientationListener = (event: DeviceOrientationEvent) => {
       let heading: number | null = null;
 
@@ -267,28 +277,52 @@ export class QiblaService {
 
       if (typeof webkitHeading === 'number' && !isNaN(webkitHeading)) {
         heading = webkitHeading;
-        if (typeof webkitAccuracy === 'number') {
-          this.accuracy.set(webkitAccuracy);
-        }
       } else if (event.alpha !== null && typeof event.alpha === 'number') {
         // Android DeviceOrientationEvent
-        if (event.absolute) {
-          heading = (360 - event.alpha) % 360;
-        } else {
-          heading = (360 - event.alpha) % 360;
-        }
+        heading = (360 - event.alpha) % 360;
       }
 
       if (heading !== null && !isNaN(heading)) {
-        this.sensorState.set('active');
-        this.deviceHeading.set(Math.round(heading * 10) / 10);
-        this.triggerHapticIfAligned();
+        const rounded = Math.round(heading * 10) / 10;
+        this._rawHeading = rounded;
+
+        // Check alignment transition
+        const qiblaBearing = this.qiblaData().bearing;
+        const relDiff = Math.abs((qiblaBearing - rounded + 360) % 360);
+        const isNowAligned = relDiff <= 3.5 || relDiff >= 356.5;
+        const alignmentChanged = isNowAligned !== this.wasAligned;
+
+        const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+        const timeElapsed = now - lastSignalUpdateTime >= 100; // ~10Hz max for Angular signals
+        const headingMoved = Math.abs(rounded - lastEmittedHeading) >= 0.8;
+
+        if (alignmentChanged || (timeElapsed && headingMoved)) {
+          lastSignalUpdateTime = now;
+          lastEmittedHeading = rounded;
+
+          this.ngZone.run(() => {
+            if (this.sensorState() !== 'active') {
+              this.sensorState.set('active');
+            }
+            if (typeof webkitAccuracy === 'number' && this.accuracy() !== webkitAccuracy) {
+              this.accuracy.set(webkitAccuracy);
+            }
+            this.deviceHeading.set(rounded);
+            this.triggerHapticIfAligned();
+          });
+        } else if (this.sensorState() !== 'active') {
+          this.ngZone.run(() => {
+            this.sensorState.set('active');
+          });
+        }
       }
     };
 
-    window.addEventListener('deviceorientation', this.orientationListener, true);
-    // Extra listener for absolute orientation on supported Chrome mobile
-    window.addEventListener('deviceorientationabsolute' as any, this.orientationListener as any, true);
+    this.ngZone.runOutsideAngular(() => {
+      window.addEventListener('deviceorientation', this.orientationListener!, true);
+      // Extra listener for absolute orientation on supported Chrome mobile
+      window.addEventListener('deviceorientationabsolute' as any, this.orientationListener as any, true);
+    });
   }
 
   stopListening(): void {

@@ -25,21 +25,29 @@
   }
 
   .reader__head {
-    padding-block: 1.25rem 2rem;
+    padding-block: 0.85rem 1.25rem;
     text-align: center;
     background: linear-gradient(180deg, var(--aq-primary-soft) 0%, var(--aq-bg) 100%);
     border-bottom: 1px solid var(--aq-border);
+
+    @include m.up(md) {
+      padding-block: 1.5rem 2.25rem;
+    }
   }
 
   .reader__back-link {
     display: inline-flex;
     align-items: center;
     gap: 0.3rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0.65rem;
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--aq-text-muted);
     text-decoration: none;
+
+    @include m.up(md) {
+      margin-bottom: 1.25rem;
+    }
 
     @include m.focus-visible;
 

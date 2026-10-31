@@ -209,14 +209,14 @@ export class CalendarPage implements OnInit {
 
   // Habit Calendar navigation
   prevHabitMonth(): void {
-    const d = new Date(this.habitViewDate());
-    d.setMonth(d.getMonth() - 1);
+    const current = this.habitViewDate();
+    const d = new Date(current.getFullYear(), current.getMonth() - 1, 1);
     this.habitViewDate.set(d);
   }
 
   nextHabitMonth(): void {
-    const d = new Date(this.habitViewDate());
-    d.setMonth(d.getMonth() + 1);
+    const current = this.habitViewDate();
+    const d = new Date(current.getFullYear(), current.getMonth() + 1, 1);
     this.habitViewDate.set(d);
   }
 

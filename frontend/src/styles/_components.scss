@@ -32,6 +32,15 @@
   line-height: 1.2;
   text-decoration: none;
   white-space: nowrap;
+  max-width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 480px) {
+    font-size: 0.875rem;
+    padding: 0.5rem 0.85rem;
+    min-height: 40px;
+    gap: 0.35rem;
+  }
   transition:
     background-color var(--aq-duration-fast) var(--aq-ease),
     border-color var(--aq-duration-fast) var(--aq-ease),
@@ -114,15 +123,21 @@
   }
 
   &--sm {
-    padding: 0.375rem 0.75rem;
-    min-height: 36px;
-    font-size: 0.875rem;
+    padding: 0.35rem 0.65rem;
+    min-height: 34px;
+    font-size: 0.8125rem;
   }
 
   &--lg {
     padding: 0.875rem 1.5rem;
     min-height: 52px;
     font-size: 1rem;
+
+    @media (max-width: 480px) {
+      padding: 0.55rem 1rem;
+      min-height: 42px;
+      font-size: 0.875rem;
+    }
   }
 
   &--block {
@@ -272,6 +287,19 @@
   border: 1px solid var(--aq-border);
   border-radius: var(--aq-radius-md);
 
+  @media (max-width: 640px) {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    box-sizing: border-box;
+
+    a {
+      flex: 1 1 0;
+      min-height: 34px !important;
+      padding: 0.35rem 0.5rem !important;
+      font-size: 0.8125rem !important;
+    }
+  }
+
   a {
     display: inline-flex;
     align-items: center;
@@ -283,6 +311,7 @@
     font-size: 0.9375rem;
     font-weight: 600;
     text-decoration: none;
+    white-space: nowrap;
     transition:
       background-color var(--aq-duration-fast) var(--aq-ease),
       color var(--aq-duration-fast) var(--aq-ease);

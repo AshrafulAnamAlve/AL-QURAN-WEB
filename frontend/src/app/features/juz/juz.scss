@@ -1,19 +1,36 @@
 @use 'mixins' as m;
 
 .page {
-  padding-block: 1.75rem 2.5rem;
+  padding-block: 0.75rem 2rem;
 
   @include m.up(md) {
-    padding-block: 2.5rem 3rem;
+    padding-block: 2rem 3rem;
   }
 }
 
 .page__head {
   max-width: 60ch;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
+
+  @include m.up(md) {
+    margin-bottom: 1.5rem;
+  }
 
   h1 {
-    margin-top: 0.35rem;
+    margin-top: 0.25rem;
+    font-size: 1.35rem;
+
+    @include m.up(md) {
+      font-size: 2rem;
+      margin-top: 0.35rem;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .aq-eyebrow,
+    .page__lead {
+      display: none;
+    }
   }
 }
 

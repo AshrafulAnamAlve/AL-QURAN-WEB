@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  NgZone,
   OnDestroy,
   OnInit,
   computed,
@@ -54,6 +55,10 @@ export class QiblaPage implements OnInit, AfterViewInit, OnDestroy {
   readonly searchResults = signal<Place[]>([]);
 
   readonly mapContainer = viewChild<ElementRef<HTMLDivElement>>('mapContainer');
+  readonly compassDial = viewChild<ElementRef<HTMLDivElement>>('compassDial');
+  private readonly ngZone = inject(NgZone);
+  private compassRafId: number | null = null;
+  private currentDialAngle = 0;
   private map: any = null;
   private leaflet: any = null;
   private qiblaLine: any = null;
@@ -136,14 +141,44 @@ export class QiblaPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async ngAfterViewInit(): Promise<void> {
+    this.startCompassAnimation();
     if (this.viewMode() === 'map') {
       await this.initMapIfNeeded();
     }
   }
 
   ngOnDestroy(): void {
+    if (this.compassRafId !== null) {
+      cancelAnimationFrame(this.compassRafId);
+      this.compassRafId = null;
+    }
     this.qibla.stopListening();
     this.cleanupMap();
+  }
+
+  private startCompassAnimation(): void {
+    if (typeof window === 'undefined') return;
+
+    this.ngZone.runOutsideAngular(() => {
+      const render = () => {
+        const dialEl = this.compassDial()?.nativeElement;
+        if (dialEl && this.viewMode() === 'compass') {
+          const rawHeading = this.qibla.getRawHeading();
+          const targetAngle = -rawHeading;
+
+          // Shortest angular distance interpolation (prevents 360°/0° flip)
+          let diff = ((targetAngle - this.currentDialAngle + 540) % 360) - 180;
+
+          if (Math.abs(diff) > 0.04) {
+            this.currentDialAngle += diff * 0.22;
+            dialEl.style.transform = `rotate3d(0, 0, 1, ${this.currentDialAngle}deg)`;
+          }
+        }
+        this.compassRafId = requestAnimationFrame(render);
+      };
+
+      this.compassRafId = requestAnimationFrame(render);
+    });
   }
 
   setViewMode(mode: 'compass' | 'map'): void {

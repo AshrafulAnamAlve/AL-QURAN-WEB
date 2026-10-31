@@ -38,7 +38,8 @@
       (click)="switchTab('hijri')"
     >
       <aq-icon name="moon" [size]="18" />
-      <span>{{ isBn() ? 'হিজরি ক্যালেন্ডার ও রমজান' : 'Hijri Calendar & Ramadan' }}</span>
+      <span class="tab-label-full">{{ isBn() ? 'হিজরি ক্যালেন্ডার ও রমজান' : 'Hijri Calendar & Ramadan' }}</span>
+      <span class="tab-label-short">{{ isBn() ? 'হিজরি ক্যালেন্ডার' : 'Hijri' }}</span>
     </button>
 
     <button
@@ -50,7 +51,8 @@
       (click)="switchTab('habit')"
     >
       <span class="calendar-tab-btn__fire">🔥</span>
-      <span>{{ isBn() ? 'দৈনিক অভ্যাস ট্র্যাকার ও স্ট্রিক' : 'Habit Tracker & Streak' }}</span>
+      <span class="tab-label-full">{{ isBn() ? 'দৈনিক অভ্যাস ট্র্যাকার ও স্ট্রিক' : 'Habit Tracker & Streak' }}</span>
+      <span class="tab-label-short">{{ isBn() ? 'অভ্যাস ও স্ট্রিক' : 'Habits' }}</span>
       <span class="habit-streak-pill aq-numeral">{{ isBn() ? toBnDigits(taskService.metrics().currentStreak) : taskService.metrics().currentStreak }}</span>
     </button>
   </nav>

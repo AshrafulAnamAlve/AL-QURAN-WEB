@@ -52,8 +52,81 @@ export const DESKTOP_DOWNLOAD_LINKS = {
   setupExe: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest/download/Al-Quran-Setup-1.1.0.exe',
   extensionZip: 'downloads/al-quran-halal-shield-v1.0.0.zip',
   extensionGitHub: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/tree/main/extension',
-  androidApk: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/download/v1.1.0-mobile/AlQuran-Android.apk',
+  androidApk: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/download/v1.2.0-mobile/AlQuran-Android.apk',
+  mobileVersion: '1.2.0',
 };
+
+export interface MobileVersionRelease {
+  version: string;
+  date: string;
+  isLatest?: boolean;
+  apkSize: string;
+  titleBn: string;
+  titleEn: string;
+  highlightsBn: string[];
+  highlightsEn: string[];
+}
+
+export const MOBILE_VERSION_HISTORY: MobileVersionRelease[] = [
+  {
+    version: 'v1.2.0',
+    date: '31 Oct 2026',
+    isLatest: true,
+    apkSize: '~5.9 MB',
+    titleBn: 'কম্পাস স্মুথনেস ও ব্যাকগ্রাউন্ড ব্যাটারি অপ্টিমাইজেশন',
+    titleEn: 'Smooth Compass & Battery Optimization',
+    highlightsBn: [
+      '৬০/১২০Hz বাটার-স্মুথ কিবলা কম্পাস (rAF ইন্টারপোলেশন)',
+      'ব্যাকগ্রাউন্ড ব্যাটারি সেভার ও এক্সাক্ট অ্যালার্ম সেটিংস ইন্টিগ্রেশন',
+      'অতীতের মেয়াদোত্তীর্ণ আজানের অটো-ক্লিনআপ সিস্টেম',
+      'মোবাইল স্ক্রিন রেসপনসিভনেস ও নচ/সেফ এরিয়া ফাইন-টিউনিং',
+      'কাস্টম এডাপ্টিভ লঞ্চার আইকন ভেক্টর অপ্টিমাইজেশন',
+    ],
+    highlightsEn: [
+      'Butter-smooth 60/120Hz rAF Qibla Compass interpolation',
+      'Direct Android Battery Optimization & Exact Alarms shortcuts',
+      'Automatic purge of expired past alarms on app resume',
+      'Refined touch padding and safe-area insets across 15+ pages',
+      'Optimized adaptive vector launcher icons',
+    ],
+  },
+  {
+    version: 'v1.1.0',
+    date: '28 Oct 2026',
+    apkSize: '~5.2 MB',
+    titleBn: 'ফ্লোটিং আইল্যান্ড ডক ও হার্ডওয়্যার কিবলা',
+    titleEn: 'Floating Island Dock & Hardware Qibla',
+    highlightsBn: [
+      '৩২px ফ্রস্টেড গ্লাস ফ্লোটিং আইল্যান্ড বটম ডক ও স্যাঙ্কচুয়ারি হাব',
+      'হার্ডওয়্যার ম্যাগনেটোমিটার কিবলা কম্পাস ও হ্যাপটিক স্পর্শ',
+      'মাল্টি-ডে ব্যাকগ্রাউন্ড আজান শিডিউলিং ও মাসিক ক্যালেন্ডার',
+      'নেটিভ স্ট্যাটাস বার নোটিফিকেশন আইকন',
+    ],
+    highlightsEn: [
+      'Floating Acrylic Island Dock with center Sanctuary Hub',
+      'Hardware 3D magnetometer compass with tactile haptics',
+      'Multi-day background Waqt Adhan scheduling',
+      'Custom Android status bar notification icon',
+    ],
+  },
+  {
+    version: 'v1.0.0',
+    date: '27 Oct 2026',
+    apkSize: '~4.8 MB',
+    titleBn: 'অফিশিয়াল ক্রস-প্ল্যাটফর্ম অ্যান্ড্রয়েড রিলিজ',
+    titleEn: 'Official Android Launch',
+    highlightsBn: [
+      '১১৪ সূরা ও ৩০ পারা অফলাইন মুসহাফ',
+      '৩৬,০০০+ প্রামাণ্য হাদিস ভাণ্ডার',
+      'ডিজিটাল তসবিহ ও ৯৯ নাম',
+    ],
+    highlightsEn: [
+      'Complete 114 Surahs and 30 Juz reading',
+      '36,000+ authentic Hadith library',
+      'Digital Tasbih and 99 Beautiful Names of Allah',
+    ],
+  },
+];
 
 export interface DesktopShortcut {
   key: string;
@@ -124,6 +197,7 @@ export class DesktopService {
 
   readonly downloadLinks = DESKTOP_DOWNLOAD_LINKS;
   readonly shortcuts = DESKTOP_SHORTCUTS;
+  readonly mobileVersionHistory = MOBILE_VERSION_HISTORY;
 
   openDownloadModal(tab: 'download' | 'extension' | 'shortcuts' = 'download'): void {
     this.modalTab.set(tab);
