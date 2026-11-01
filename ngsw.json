@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1793554290745,
+  "timestamp": 1793554356836,
   "index": "/AL-QURAN-WEB/index.html",
   "assetGroups": [
     {
@@ -214,7 +214,7 @@
     "/AL-QURAN-WEB/favicon-32x32.png": "7134fee1be1d06e279969ed214a4b7dbc6f85e97",
     "/AL-QURAN-WEB/favicon-48x48.png": "8c628c06a367fd9a86c1b2bc0ac4233303b72fa2",
     "/AL-QURAN-WEB/favicon.ico": "f75a74567766fa2da34e404701b850608bd892d3",
-    "/AL-QURAN-WEB/favicon.svg": "7c8c04f1799cb290e2d598a95bce7067cc8091a3",
+    "/AL-QURAN-WEB/favicon.svg": "9165cf64a6437fa879561de9e4cfb1af27be0e04",
     "/AL-QURAN-WEB/icons/favicon-16x16.png": "96be690fa4f2aa620544e9b0436ff6e8b93330d6",
     "/AL-QURAN-WEB/icons/favicon-32x32.png": "7134fee1be1d06e279969ed214a4b7dbc6f85e97",
     "/AL-QURAN-WEB/icons/favicon-48x48.png": "8c628c06a367fd9a86c1b2bc0ac4233303b72fa2",
@@ -222,7 +222,7 @@
     "/AL-QURAN-WEB/icons/icon-512x512.png": "aae65c41266ee47a14f69028bbb9df178dc93f83",
     "/AL-QURAN-WEB/icons/icon-maskable-192x192.png": "6b88adcf8c1956bbb1a7dc15becff49ea898b488",
     "/AL-QURAN-WEB/icons/icon-maskable-512x512.png": "aae65c41266ee47a14f69028bbb9df178dc93f83",
-    "/AL-QURAN-WEB/icons/icon.svg": "7c8c04f1799cb290e2d598a95bce7067cc8091a3",
+    "/AL-QURAN-WEB/icons/icon.svg": "9165cf64a6437fa879561de9e4cfb1af27be0e04",
     "/AL-QURAN-WEB/index.html": "43a33d7bd8d1d340596ce75c3abbb3e576b5149d",
     "/AL-QURAN-WEB/main-E2G33JA3.js": "20bc4c4bad4f6a392eecb710cb95d6e2189cfb85",
     "/AL-QURAN-WEB/manifest.webmanifest": "55fd9e7d6cf224b4255b0b26db4f1b47b413465c",
