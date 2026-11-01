@@ -53,7 +53,8 @@ export const DESKTOP_DOWNLOAD_LINKS = {
   extensionZip: 'downloads/al-quran-halal-shield-latest.zip',
   extensionZipVersioned: 'downloads/al-quran-halal-shield-v1.1.0.zip',
   extensionGitHub: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/tree/main/extension',
-  androidApk: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/download/v1.3.0-mobile/AlQuran-Android.apk',
+  androidApk: 'downloads/AlQuran-Android.apk',
+  androidApkGitHub: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/download/v1.3.0-mobile/AlQuran-Android.apk',
   mobileVersion: '1.3.0',
 };
 
