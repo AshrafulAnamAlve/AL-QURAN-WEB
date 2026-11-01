@@ -3,138 +3,197 @@ Add-Type -AssemblyName System.Drawing
 $repoRoot = "F:\API\AL-Quran"
 $edgePath = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 
-# 1. Master Full Icon SVG (with squircle background)
+# 1. Master Full Icon SVG
 $svgMaster = @'
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#14603c"/>
-      <stop offset="100%" stop-color="#08301d"/>
+    <!-- Background Gradient matching the user's uploaded icon -->
+    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#145b3a"/>
+      <stop offset="30%" stop-color="#0f4a2f"/>
+      <stop offset="70%" stop-color="#093521"/>
+      <stop offset="100%" stop-color="#042014"/>
     </linearGradient>
+
+    <!-- Warm Golden Gradient -->
     <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fae29c"/>
-      <stop offset="50%" stop-color="#d4af37"/>
-      <stop offset="100%" stop-color="#997517"/>
+      <stop offset="0%" stop-color="#fae49d"/>
+      <stop offset="35%" stop-color="#e2bf5c"/>
+      <stop offset="70%" stop-color="#ca9f33"/>
+      <stop offset="100%" stop-color="#a47c1b"/>
     </linearGradient>
-    <linearGradient id="pages" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#e8e2d0"/>
+
+    <!-- Linear Gold for Borders -->
+    <linearGradient id="goldBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5dc8e"/>
+      <stop offset="50%" stop-color="#c99e31"/>
+      <stop offset="100%" stop-color="#8f6a14"/>
     </linearGradient>
-    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.4"/>
+
+    <!-- Radial Soft Gold Glow -->
+    <radialGradient id="emblemGlow" cx="50%" cy="52%" r="45%">
+      <stop offset="0%" stop-color="#dfbd58" stop-opacity="0.22"/>
+      <stop offset="60%" stop-color="#dfbd58" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#dfbd58" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Drop Shadow for Gold Emblem -->
+    <filter id="goldShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#000000" flood-opacity="0.45"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#f5dc8e" flood-opacity="0.25"/>
     </filter>
   </defs>
 
-  <!-- Background Squircle -->
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- 1. Squircle Container -->
+  <rect x="16" y="16" width="480" height="480" rx="116" fill="url(#bg)"/>
 
-  <!-- Islamic 8-Pointed Star (Rub el Hizb) Background Motif -->
-  <g transform="translate(256, 256) scale(185)" opacity="0.18" stroke="url(#gold)" stroke-width="0.04" fill="none">
-    <rect x="-1" y="-1" width="2" height="2"/>
-    <rect x="-1" y="-1" width="2" height="2" transform="rotate(45)"/>
-  </g>
+  <!-- 2. Inset Thin Gold Rounded Border -->
+  <rect x="42" y="42" width="428" height="428" rx="88" fill="none" stroke="url(#goldBorder)" stroke-width="3.5" opacity="0.6"/>
 
-  <!-- Outer Gold Geometric Rings -->
-  <circle cx="256" cy="256" r="218" stroke="url(#gold)" stroke-width="3" opacity="0.4" stroke-dasharray="8 6"/>
-  <circle cx="256" cy="256" r="206" stroke="url(#gold)" stroke-width="2" opacity="0.6"/>
+  <!-- 3. Ambient Gold Backlight -->
+  <circle cx="256" cy="265" r="170" fill="url(#emblemGlow)"/>
 
-  <!-- Subtle Noor (Rays of Light) from center -->
-  <g opacity="0.3" stroke="url(#gold)" stroke-width="2">
-    <line x1="256" y1="90" x2="256" y2="120"/>
-    <line x1="256" y1="392" x2="256" y2="422"/>
-    <line x1="90" y1="256" x2="120" y2="256"/>
-    <line x1="392" y1="256" x2="422" y2="256"/>
-    <line x1="138" y1="138" x2="160" y2="160"/>
-    <line x1="374" y1="138" x2="352" y2="160"/>
-    <line x1="138" y1="374" x2="160" y2="352"/>
-    <line x1="374" y1="374" x2="352" y2="352"/>
-  </g>
+  <!-- 4. Master Emblem -->
+  <g filter="url(#goldShadow)">
 
-  <!-- Top Crown: Crescent & 8-point Star -->
-  <g transform="translate(256, 126) scale(0.85)">
-    <path d="M-18 -12 C-7 -12 2 -3 2 9 C2 19 -5 27 -15 29 C-2 30 11 20 11 6 C11 -8 -1 -20 -18 -20 C-22 -20 -26 -19 -29 -17 C-26 -14 -22 -12 -18 -12 Z" fill="url(#gold)"/>
-    <polygon points="12,2 14,7 19,7 15,10 17,15 12,12 7,15 9,10 5,7 10,7" fill="url(#gold)"/>
-  </g>
+    <!-- A. The Teardrop Dome / Mihrab Arch -->
+    <path d="M256 122
+             C278 170 326 218 326 264
+             C326 298 304 322 278 328
+             M256 122
+             C234 170 186 218 186 264
+             C186 298 208 322 234 328"
+          fill="none" stroke="url(#gold)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
 
-  <!-- Wooden Rehal (X-Stand for Quran) at the bottom -->
-  <g stroke="url(#gold)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M165 315 L225 365 L180 405"/>
-    <path d="M347 315 L287 365 L332 405"/>
-    <circle cx="256" cy="365" r="7" fill="url(#gold)"/>
-  </g>
+    <!-- B. The Open Holy Quran Outer Shell -->
+    <path d="M116 274
+             C136 256 172 244 206 250
+             C228 254 246 266 256 284
+             C266 266 284 254 306 250
+             C340 244 376 256 396 274
+             L396 348
+             C376 332 338 326 304 336
+             C282 342 266 358 256 396
+             C246 358 230 342 208 336
+             C174 326 136 332 116 348
+             Z"
+          fill="none" stroke="url(#gold)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
 
-  <!-- The Open Mushaf (Holy Quran) -->
-  <g filter="url(#shadow)">
-    <path d="M125 305 C185 285 240 300 256 312 C272 300 327 285 387 305 L392 230 C332 210 277 225 256 238 C235 225 180 210 120 230 Z" fill="#093621" stroke="url(#gold)" stroke-width="6"/>
-    <path d="M130 292 C185 272 238 288 256 300 C274 288 327 272 382 292 L382 215 C327 195 274 212 256 224 C238 212 185 195 130 215 Z" fill="url(#pages)"/>
-    <g stroke="#c7bfab" stroke-width="3" stroke-linecap="round" opacity="0.8">
-      <line x1="160" y1="230" x2="230" y2="238"/>
-      <line x1="155" y1="246" x2="235" y2="254"/>
-      <line x1="158" y1="262" x2="232" y2="270"/>
-      <line x1="162" y1="278" x2="228" y2="284"/>
+    <!-- Center Spine Valley Line -->
+    <line x1="256" y1="284" x2="256" y2="396" stroke="url(#gold)" stroke-width="9" stroke-linecap="round"/>
+
+    <!-- C. Left Page Inner Border (Layered Page Depth) -->
+    <path d="M132 284
+             C150 270 180 260 206 266
+             C224 270 238 280 246 294
+             L246 364
+             C238 350 224 342 206 346
+             C180 352 150 342 132 334
+             Z"
+          fill="none" stroke="url(#gold)" stroke-width="3" opacity="0.8"/>
+
+    <!-- D. Right Page Inner Border (Layered Page Depth) -->
+    <path d="M380 284
+             C362 270 332 260 306 266
+             C288 270 274 280 266 294
+             L266 364
+             C274 350 288 342 306 346
+             C332 352 362 342 380 334
+             Z"
+          fill="none" stroke="url(#gold)" stroke-width="3" opacity="0.8"/>
+
+    <!-- E. Dashed Scripture Verse Lines (3 curved lines on each page) -->
+    <g stroke="url(#gold)" stroke-width="2.5" stroke-dasharray="4 4" opacity="0.65">
+      <path d="M144 298 C168 286 196 288 226 302"/>
+      <path d="M144 312 C168 300 196 302 226 316"/>
+      <path d="M146 326 C168 316 196 318 226 330"/>
+
+      <path d="M368 298 C344 286 316 288 286 302"/>
+      <path d="M368 312 C344 300 316 302 286 316"/>
+      <path d="M366 326 C344 316 316 318 286 330"/>
     </g>
-    <g stroke="#c7bfab" stroke-width="3" stroke-linecap="round" opacity="0.8">
-      <line x1="282" y1="238" x2="352" y2="230"/>
-      <line x1="277" y1="254" x2="357" y2="246"/>
-      <line x1="280" y1="270" x2="354" y2="262"/>
-      <line x1="284" y1="284" x2="350" y2="278"/>
+
+    <!-- F. Center Arabesque Rosette / Medallion at Spine -->
+    <g transform="translate(256, 335)">
+      <circle cx="0" cy="0" r="14" fill="none" stroke="url(#gold)" stroke-width="3"/>
+      <circle cx="0" cy="0" r="4.5" fill="url(#gold)"/>
+      <path d="M0 -14 C-3.5 -8 -3.5 -3 0 0 C3.5 -3 3.5 -8 0 -14 Z" fill="url(#gold)"/>
+      <path d="M0 14 C-3.5 8 -3.5 3 0 0 C3.5 3 3.5 8 0 14 Z" fill="url(#gold)"/>
+      <path d="M-14 0 C-8 -3.5 -3 -3.5 0 0 C-3 3.5 -8 3.5 -14 0 Z" fill="url(#gold)"/>
+      <path d="M14 0 C8 -3.5 3 -3.5 0 0 C2 3.5 8 3.5 14 0 Z" fill="url(#gold)"/>
+      <circle cx="-7.5" cy="-7.5" r="2.5" fill="url(#gold)"/>
+      <circle cx="7.5" cy="-7.5" r="2.5" fill="url(#gold)"/>
+      <circle cx="-7.5" cy="7.5" r="2.5" fill="url(#gold)"/>
+      <circle cx="7.5" cy="7.5" r="2.5" fill="url(#gold)"/>
     </g>
-    <path d="M256 224 L256 302" stroke="url(#gold)" stroke-width="5" stroke-linecap="round"/>
-    <path d="M256 300 C256 330 248 350 252 380 L256 370 L260 380 C264 350 256 330 256 300" fill="url(#gold)"/>
+
   </g>
 </svg>
 '@
 
-# 2. Transparent Foreground SVG for Android Adaptive Icons (centered in safe-zone)
+# 2. Transparent Foreground SVG for Android Adaptive Icons
 $svgForeground = @'
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
     <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fae29c"/>
-      <stop offset="50%" stop-color="#d4af37"/>
-      <stop offset="100%" stop-color="#997517"/>
+      <stop offset="0%" stop-color="#fae49d"/>
+      <stop offset="35%" stop-color="#e2bf5c"/>
+      <stop offset="70%" stop-color="#ca9f33"/>
+      <stop offset="100%" stop-color="#a47c1b"/>
     </linearGradient>
-    <linearGradient id="pages" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#e8e2d0"/>
-    </linearGradient>
-    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.4"/>
+    <filter id="goldShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#000000" flood-opacity="0.45"/>
     </filter>
   </defs>
 
-  <g transform="translate(0, 0)">
-    <!-- Top Crown: Crescent & 8-point Star -->
-    <g transform="translate(256, 126) scale(0.85)">
-      <path d="M-18 -12 C-7 -12 2 -3 2 9 C2 19 -5 27 -15 29 C-2 30 11 20 11 6 C11 -8 -1 -20 -18 -20 C-22 -20 -26 -19 -29 -17 C-26 -14 -22 -12 -18 -12 Z" fill="url(#gold)"/>
-      <polygon points="12,2 14,7 19,7 15,10 17,15 12,12 7,15 9,10 5,7 10,7" fill="url(#gold)"/>
+  <g filter="url(#goldShadow)">
+    <path d="M256 122
+             C278 170 326 218 326 264
+             C326 298 304 322 278 328
+             M256 122
+             C234 170 186 218 186 264
+             C186 298 208 322 234 328"
+          fill="none" stroke="url(#gold)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <path d="M116 274
+             C136 256 172 244 206 250
+             C228 254 246 266 256 284
+             C266 266 284 254 306 250
+             C340 244 376 256 396 274
+             L396 348
+             C376 332 338 326 304 336
+             C282 342 266 358 256 396
+             C246 358 230 342 208 336
+             C174 326 136 332 116 348
+             Z"
+          fill="none" stroke="url(#gold)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <line x1="256" y1="284" x2="256" y2="396" stroke="url(#gold)" stroke-width="9" stroke-linecap="round"/>
+
+    <path d="M132 284 C150 270 180 260 206 266 C224 270 238 280 246 294 L246 364 C238 350 224 342 206 346 C180 352 150 342 132 334 Z" fill="none" stroke="url(#gold)" stroke-width="3" opacity="0.8"/>
+    <path d="M380 284 C362 270 332 260 306 266 C288 270 274 280 266 294 L266 364 C274 350 288 342 306 346 C332 352 362 342 380 334 Z" fill="none" stroke="url(#gold)" stroke-width="3" opacity="0.8"/>
+
+    <g stroke="url(#gold)" stroke-width="2.5" stroke-dasharray="4 4" opacity="0.65">
+      <path d="M144 298 C168 286 196 288 226 302"/>
+      <path d="M144 312 C168 300 196 302 226 316"/>
+      <path d="M146 326 C168 316 196 318 226 330"/>
+
+      <path d="M368 298 C344 286 316 288 286 302"/>
+      <path d="M368 312 C344 300 316 302 286 316"/>
+      <path d="M366 326 C344 316 316 318 286 330"/>
     </g>
 
-    <!-- Wooden Rehal (X-Stand for Quran) -->
-    <g stroke="url(#gold)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M165 315 L225 365 L180 405"/>
-      <path d="M347 315 L287 365 L332 405"/>
-      <circle cx="256" cy="365" r="7" fill="url(#gold)"/>
-    </g>
-
-    <!-- The Open Mushaf -->
-    <g filter="url(#shadow)">
-      <path d="M125 305 C185 285 240 300 256 312 C272 300 327 285 387 305 L392 230 C332 210 277 225 256 238 C235 225 180 210 120 230 Z" fill="#093621" stroke="url(#gold)" stroke-width="6"/>
-      <path d="M130 292 C185 272 238 288 256 300 C274 288 327 272 382 292 L382 215 C327 195 274 212 256 224 C238 212 185 195 130 215 Z" fill="url(#pages)"/>
-      <g stroke="#c7bfab" stroke-width="3" stroke-linecap="round" opacity="0.8">
-        <line x1="160" y1="230" x2="230" y2="238"/>
-        <line x1="155" y1="246" x2="235" y2="254"/>
-        <line x1="158" y1="262" x2="232" y2="270"/>
-        <line x1="162" y1="278" x2="228" y2="284"/>
-      </g>
-      <g stroke="#c7bfab" stroke-width="3" stroke-linecap="round" opacity="0.8">
-        <line x1="282" y1="238" x2="352" y2="230"/>
-        <line x1="277" y1="254" x2="357" y2="246"/>
-        <line x1="280" y1="270" x2="354" y2="262"/>
-        <line x1="284" y1="284" x2="350" y2="278"/>
-      </g>
-      <path d="M256 224 L256 302" stroke="url(#gold)" stroke-width="5" stroke-linecap="round"/>
-      <path d="M256 300 C256 330 248 350 252 380 L256 370 L260 380 C264 350 256 330 256 300" fill="url(#gold)"/>
+    <g transform="translate(256, 335)">
+      <circle cx="0" cy="0" r="14" fill="none" stroke="url(#gold)" stroke-width="3"/>
+      <circle cx="0" cy="0" r="4.5" fill="url(#gold)"/>
+      <path d="M0 -14 C-3.5 -8 -3.5 -3 0 0 C3.5 -3 3.5 -8 0 -14 Z" fill="url(#gold)"/>
+      <path d="M0 14 C-3.5 8 -3.5 3 0 0 C3.5 3 3.5 8 0 14 Z" fill="url(#gold)"/>
+      <path d="M-14 0 C-8 -3.5 -3 -3.5 0 0 C-3 3.5 -8 3.5 -14 0 Z" fill="url(#gold)"/>
+      <path d="M14 0 C8 -3.5 3 -3.5 0 0 C2 3.5 8 3.5 14 0 Z" fill="url(#gold)"/>
+      <circle cx="-7.5" cy="-7.5" r="2.5" fill="url(#gold)"/>
+      <circle cx="7.5" cy="-7.5" r="2.5" fill="url(#gold)"/>
+      <circle cx="-7.5" cy="7.5" r="2.5" fill="url(#gold)"/>
+      <circle cx="7.5" cy="7.5" r="2.5" fill="url(#gold)"/>
     </g>
   </g>
 </svg>
@@ -143,6 +202,7 @@ $svgForeground = @'
 # Save SVGs
 Set-Content -Path "$repoRoot\frontend\public\icons\icon.svg" -Value $svgMaster -Encoding utf8
 Set-Content -Path "$repoRoot\frontend\public\favicon.svg" -Value $svgMaster -Encoding utf8
+Write-Host "Updated frontend/public/icons/icon.svg and favicon.svg"
 
 # Helper to render SVG to PNG via Edge
 function Render-SvgToPng($svg, $outPng) {
@@ -194,7 +254,7 @@ $g.DrawImage($rawFg, [System.Drawing.Rectangle]::new(0, 0, 512, 512), [System.Dr
 $g.Dispose()
 $rawFg.Dispose()
 
-# Resize & save helper
+# Helper function to resize bitmap
 function Save-ResizedPng($src, $w, $h, $outPath) {
     $parent = Split-Path $outPath -Parent
     if (!(Test-Path $parent)) { New-Item -ItemType Directory -Path $parent -Force | Out-Null }
@@ -210,7 +270,7 @@ function Save-ResizedPng($src, $w, $h, $outPath) {
     $dest.Dispose()
 }
 
-# Round icon helper
+# Helper function to create round icon
 function Save-RoundPng($src, $w, $h, $outPath) {
     $parent = Split-Path $outPath -Parent
     if (!(Test-Path $parent)) { New-Item -ItemType Directory -Path $parent -Force | Out-Null }
@@ -232,7 +292,7 @@ function Save-RoundPng($src, $w, $h, $outPath) {
     $dest.Dispose()
 }
 
-# ICO helper
+# Helper function to create ICO file
 function Save-Ico($pngPaths, $outIcoPath) {
     $parent = Split-Path $outIcoPath -Parent
     if (!(Test-Path $parent)) { New-Item -ItemType Directory -Path $parent -Force | Out-Null }
@@ -340,10 +400,19 @@ Save-ResizedPng $masterImg 48 48 "$repoRoot\extension\assets\icons\icon-48.png"
 Save-ResizedPng $masterImg 32 32 "$repoRoot\extension\assets\icons\icon-32.png"
 Save-ResizedPng $masterImg 16 16 "$repoRoot\extension\assets\icons\icon-16.png"
 
+# Re-package extension zip
+$destDir = "$repoRoot\frontend\public\downloads"
+$zipPath = "$destDir\al-quran-halal-shield-v1.1.0.zip"
+$latestZip = "$destDir\al-quran-halal-shield-latest.zip"
+Remove-Item $zipPath -Force -ErrorAction SilentlyContinue
+Remove-Item $latestZip -Force -ErrorAction SilentlyContinue
+Compress-Archive -Path "$repoRoot\extension\*" -DestinationPath $zipPath -Force
+Copy-Item $zipPath -Destination $latestZip -Force
+
 # Cleanup
 $masterImg.Dispose()
 $fgImg.Dispose()
 Remove-Item $rawMasterPng -Force -ErrorAction SilentlyContinue
 Remove-Item $rawFgPng -Force -ErrorAction SilentlyContinue
 
-Write-Host "ALL ASSETS GENERATED AND VERIFIED SUCCESSFULLY!"
+Write-Host "ALL ASSETS GENERATED AND VERIFIED SUCCESSFULLY WITH NEW USER LOGO!"
