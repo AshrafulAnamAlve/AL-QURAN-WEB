@@ -3,11 +3,11 @@ Add-Type -AssemblyName System.Drawing
 $repoRoot = "F:\API\AL-Quran"
 $edgePath = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
 
-# 1. Master Full Icon SVG (100% Black Shadow Free)
+# Master SVG - Exactly as user provided (NO dashed lines, clean pages)
 $svgMaster = @'
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <!-- Background Gradient matching the user's uploaded icon -->
+    <!-- Background Gradient matching user's original artwork -->
     <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#145b3a"/>
       <stop offset="30%" stop-color="#0f4a2f"/>
@@ -15,7 +15,7 @@ $svgMaster = @'
       <stop offset="100%" stop-color="#042014"/>
     </linearGradient>
 
-    <!-- Warm Golden Gradient -->
+    <!-- Warm Golden Gradient for emblem -->
     <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#fae49d"/>
       <stop offset="35%" stop-color="#e2bf5c"/>
@@ -30,16 +30,16 @@ $svgMaster = @'
       <stop offset="100%" stop-color="#8f6a14"/>
     </linearGradient>
 
-    <!-- Radial Soft Gold Glow (Zero black) -->
+    <!-- Radial Soft Gold Glow -->
     <radialGradient id="emblemGlow" cx="50%" cy="52%" r="45%">
-      <stop offset="0%" stop-color="#dfbd58" stop-opacity="0.18"/>
-      <stop offset="60%" stop-color="#dfbd58" stop-opacity="0.04"/>
+      <stop offset="0%" stop-color="#dfbd58" stop-opacity="0.22"/>
+      <stop offset="60%" stop-color="#dfbd58" stop-opacity="0.05"/>
       <stop offset="100%" stop-color="#dfbd58" stop-opacity="0"/>
     </radialGradient>
 
-    <!-- Pure Warm Golden Glow (Zero Black Shadow) -->
+    <!-- Pure Warm Gold Glow Filter -->
     <filter id="pureGoldGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#fae49d" flood-opacity="0.35"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#fae49d" flood-opacity="0.4"/>
     </filter>
   </defs>
 
@@ -52,7 +52,7 @@ $svgMaster = @'
   <!-- 3. Ambient Gold Backlight -->
   <circle cx="256" cy="265" r="170" fill="url(#emblemGlow)"/>
 
-  <!-- 4. Master Emblem (Pure Gold, Clean Vector) -->
+  <!-- 4. Master Emblem (Exactly as user image: NO dashed lines, pure clean artwork) -->
   <g filter="url(#pureGoldGlow)">
 
     <!-- A. The Teardrop Dome / Mihrab Arch -->
@@ -81,7 +81,7 @@ $svgMaster = @'
     <!-- Center Spine Valley Line -->
     <line x1="256" y1="284" x2="256" y2="396" stroke="url(#gold)" stroke-width="9" stroke-linecap="round"/>
 
-    <!-- C. Left Page Inner Border -->
+    <!-- C. Left Page Inner Border (Layered depth) -->
     <path d="M132 284
              C150 270 180 260 206 266
              C224 270 238 280 246 294
@@ -89,9 +89,9 @@ $svgMaster = @'
              C238 350 224 342 206 346
              C180 352 150 342 132 334
              Z"
-          fill="none" stroke="url(#gold)" stroke-width="3" opacity="0.8"/>
+          fill="none" stroke="url(#gold)" stroke-width="3.5" opacity="0.85"/>
 
-    <!-- D. Right Page Inner Border -->
+    <!-- D. Right Page Inner Border (Layered depth) -->
     <path d="M380 284
              C362 270 332 260 306 266
              C288 270 274 280 266 294
@@ -99,27 +99,16 @@ $svgMaster = @'
              C274 350 288 342 306 346
              C332 352 362 342 380 334
              Z"
-          fill="none" stroke="url(#gold)" stroke-width="3" opacity="0.8"/>
+          fill="none" stroke="url(#gold)" stroke-width="3.5" opacity="0.85"/>
 
-    <!-- E. Dashed Scripture Verse Lines (Zero black shadow) -->
-    <g stroke="url(#gold)" stroke-width="2.5" stroke-dasharray="4 4" opacity="0.85">
-      <path d="M144 298 C168 286 196 288 226 302"/>
-      <path d="M144 312 C168 300 196 302 226 316"/>
-      <path d="M146 326 C168 316 196 318 226 330"/>
-
-      <path d="M368 298 C344 286 316 288 286 302"/>
-      <path d="M368 312 C344 300 316 302 286 316"/>
-      <path d="M366 326 C344 316 316 318 286 330"/>
-    </g>
-
-    <!-- F. Center Arabesque Rosette / Medallion at Spine -->
+    <!-- E. Center Arabesque Rosette / Medallion at Spine -->
     <g transform="translate(256, 335)">
       <circle cx="0" cy="0" r="14" fill="none" stroke="url(#gold)" stroke-width="3"/>
       <circle cx="0" cy="0" r="4.5" fill="url(#gold)"/>
       <path d="M0 -14 C-3.5 -8 -3.5 -3 0 0 C3.5 -3 3.5 -8 0 -14 Z" fill="url(#gold)"/>
       <path d="M0 14 C-3.5 8 -3.5 3 0 0 C3.5 3 3.5 8 0 14 Z" fill="url(#gold)"/>
       <path d="M-14 0 C-8 -3.5 -3 -3.5 0 0 C-3 3.5 -8 3.5 -14 0 Z" fill="url(#gold)"/>
-      <path d="M14 0 C8 -3.5 3 -3.5 0 0 C2 3.5 8 3.5 14 0 Z" fill="url(#gold)"/>
+      <path d="M14 0 C8 -3.5 3 -3.5 0 0 C3 3.5 8 3.5 14 0 Z" fill="url(#gold)"/>
       <circle cx="-7.5" cy="-7.5" r="2.5" fill="url(#gold)"/>
       <circle cx="7.5" cy="-7.5" r="2.5" fill="url(#gold)"/>
       <circle cx="-7.5" cy="7.5" r="2.5" fill="url(#gold)"/>
@@ -130,7 +119,7 @@ $svgMaster = @'
 </svg>
 '@
 
-# 2. Transparent Foreground SVG for Android Adaptive Icons (Zero Black Shadow)
+# Transparent Foreground SVG for Android Adaptive Icons (Zero dashed lines)
 $svgForeground = @'
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
@@ -141,7 +130,7 @@ $svgForeground = @'
       <stop offset="100%" stop-color="#a47c1b"/>
     </linearGradient>
     <filter id="pureGoldGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#fae49d" flood-opacity="0.35"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#fae49d" flood-opacity="0.4"/>
     </filter>
   </defs>
 
@@ -169,18 +158,8 @@ $svgForeground = @'
 
     <line x1="256" y1="284" x2="256" y2="396" stroke="url(#gold)" stroke-width="9" stroke-linecap="round"/>
 
-    <path d="M132 284 C150 270 180 260 206 266 C224 270 238 280 246 294 L246 364 C238 350 224 342 206 346 C180 352 150 342 132 334 Z" fill="none" stroke="url(#gold)" stroke-width="3" opacity="0.8"/>
-    <path d="M380 284 C362 270 332 260 306 266 C288 270 274 280 266 294 L266 364 C274 350 288 342 306 346 C332 352 362 342 380 334 Z" fill="none" stroke="url(#gold)" stroke-width="3" opacity="0.8"/>
-
-    <g stroke="url(#gold)" stroke-width="2.5" stroke-dasharray="4 4" opacity="0.85">
-      <path d="M144 298 C168 286 196 288 226 302"/>
-      <path d="M144 312 C168 300 196 302 226 316"/>
-      <path d="M146 326 C168 316 196 318 226 330"/>
-
-      <path d="M368 298 C344 286 316 288 286 302"/>
-      <path d="M368 312 C344 300 316 302 286 316"/>
-      <path d="M366 326 C344 316 316 318 286 330"/>
-    </g>
+    <path d="M132 284 C150 270 180 260 206 266 C224 270 238 280 246 294 L246 364 C238 350 224 342 206 346 C180 352 150 342 132 334 Z" fill="none" stroke="url(#gold)" stroke-width="3.5" opacity="0.85"/>
+    <path d="M380 284 C362 270 332 260 306 266 C288 270 274 280 266 294 L266 364 C274 350 288 342 306 346 C332 352 362 342 380 334 Z" fill="none" stroke="url(#gold)" stroke-width="3.5" opacity="0.85"/>
 
     <g transform="translate(256, 335)">
       <circle cx="0" cy="0" r="14" fill="none" stroke="url(#gold)" stroke-width="3"/>
@@ -201,7 +180,7 @@ $svgForeground = @'
 # Save SVGs
 Set-Content -Path "$repoRoot\frontend\public\icons\icon.svg" -Value $svgMaster -Encoding utf8
 Set-Content -Path "$repoRoot\frontend\public\favicon.svg" -Value $svgMaster -Encoding utf8
-Write-Host "Updated frontend/public/icons/icon.svg and favicon.svg (zero black shadow)"
+Write-Host "Updated SVGs (exact match to user image, 3 lines removed)"
 
 # Helper to render SVG to PNG via Edge
 function Render-SvgToPng($svg, $outPng) {
@@ -414,4 +393,4 @@ $fgImg.Dispose()
 Remove-Item $rawMasterPng -Force -ErrorAction SilentlyContinue
 Remove-Item $rawFgPng -Force -ErrorAction SilentlyContinue
 
-Write-Host "CLEAN ICONS GENERATED SUCCESSFULLY (ZERO BLACK SHADOWS)!"
+Write-Host "ALL ASSETS GENERATED EXACTLY AS USER PROVIDED!"
