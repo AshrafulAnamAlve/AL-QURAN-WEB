@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Al-Quran & Halal Web Shield (আল-কুরআন ও হালাল শিল্ড)",
   "short_name": "Al-Quran Shield",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Complete Islamic companion with prayer times, daily Quran & Hadith, Noor AI, plus Reels blocker, adult blocker, and ad guard.",
   "icons": {
     "16": "assets/icons/icon-16.png",

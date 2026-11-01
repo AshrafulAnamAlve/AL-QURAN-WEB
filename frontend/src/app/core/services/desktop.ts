@@ -50,10 +50,11 @@ export const DESKTOP_DOWNLOAD_LINKS = {
   releasePage: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest',
   portableExe: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest/download/Al-Quran-Portable-1.1.0.exe',
   setupExe: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest/download/Al-Quran-Setup-1.1.0.exe',
-  extensionZip: 'downloads/al-quran-halal-shield-v1.0.0.zip',
+  extensionZip: 'downloads/al-quran-halal-shield-latest.zip',
+  extensionZipVersioned: 'downloads/al-quran-halal-shield-v1.1.0.zip',
   extensionGitHub: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/tree/main/extension',
-  androidApk: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/download/v1.2.0-mobile/AlQuran-Android.apk',
-  mobileVersion: '1.2.0',
+  androidApk: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/download/v1.3.0-mobile/AlQuran-Android.apk',
+  mobileVersion: '1.3.0',
 };
 
 export interface MobileVersionRelease {
@@ -69,9 +70,28 @@ export interface MobileVersionRelease {
 
 export const MOBILE_VERSION_HISTORY: MobileVersionRelease[] = [
   {
+    version: 'v1.3.0',
+    date: '1 Nov 2026',
+    isLatest: true,
+    apkSize: '~5.9 MB',
+    titleBn: 'নতুন অর্থবহ লোগো ও ব্র্যান্ডিং রিফ্রেশ',
+    titleEn: 'Official Logo & Complete Brand Redesign',
+    highlightsBn: [
+      'অফিসিয়াল পবিত্র কুরআন ও রেহাল কাঠের স্ট্যান্ড সংবলিত নতুন অর্থবহ লোগো',
+      'উচ্চ-রেজ্যুলেশন এডাপ্টিভ লঞ্চার আইকন (ফুল-রেজ্যুলেশন ও সার্কেল মাস্ক)',
+      'ওয়েব, মোবাইল, ডেস্কটপ ও এক্সটেনশনে ইউনিফাইড ইসলামিক ব্র্যান্ডিং',
+      'সর্বাধুনিক অ্যান্ড্রয়েড ১৫ কমপ্যাটিবিলিটি ও সরাসরি লেটেস্ট এপিকে ডাউনলোড',
+    ],
+    highlightsEn: [
+      'Official Sacred Mushaf on wooden Rehal with Crescent & Star emblem',
+      'High-DPI Adaptive launcher icons across all screen densities',
+      'Unified Islamic brand identity across Web, Mobile, Desktop, and Extension',
+      'Android 15 compatibility & direct latest APK release',
+    ],
+  },
+  {
     version: 'v1.2.0',
     date: '31 Oct 2026',
-    isLatest: true,
     apkSize: '~5.9 MB',
     titleBn: 'কম্পাস স্মুথনেস ও ব্যাকগ্রাউন্ড ব্যাটারি অপ্টিমাইজেশন',
     titleEn: 'Smooth Compass & Battery Optimization',
