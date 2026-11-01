@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1793552260358,
+  "timestamp": 1793552307930,
   "index": "/AL-QURAN-WEB/index.html",
   "assetGroups": [
     {
@@ -11,7 +11,6 @@
         "ignoreVary": true
       },
       "urls": [
-        "/AL-QURAN-WEB/chunk-22WVIN6P.js",
         "/AL-QURAN-WEB/chunk-26ZIWSME.js",
         "/AL-QURAN-WEB/chunk-464BOR6R.js",
         "/AL-QURAN-WEB/chunk-6BVCME4B.js",
@@ -24,8 +23,8 @@
         "/AL-QURAN-WEB/chunk-CG4ISPNO.js",
         "/AL-QURAN-WEB/chunk-CLX35WA2.js",
         "/AL-QURAN-WEB/chunk-CMV6HODI.js",
-        "/AL-QURAN-WEB/chunk-CYR7ICRW.js",
         "/AL-QURAN-WEB/chunk-DDVN2TQD.js",
+        "/AL-QURAN-WEB/chunk-DJZJMWZM.js",
         "/AL-QURAN-WEB/chunk-DPWJ2PU7.js",
         "/AL-QURAN-WEB/chunk-DSPZW6SB.js",
         "/AL-QURAN-WEB/chunk-DX6FROB4.js",
@@ -48,6 +47,7 @@
         "/AL-QURAN-WEB/chunk-KQL2JSTW.js",
         "/AL-QURAN-WEB/chunk-L7S6JWPE.js",
         "/AL-QURAN-WEB/chunk-LICD4P6N.js",
+        "/AL-QURAN-WEB/chunk-M3QNNHH5.js",
         "/AL-QURAN-WEB/chunk-MCQ6JDH7.js",
         "/AL-QURAN-WEB/chunk-MRITHIHK.js",
         "/AL-QURAN-WEB/chunk-MZFMRRZX.js",
@@ -66,7 +66,6 @@
         "/AL-QURAN-WEB/chunk-TUZCMEBW.js",
         "/AL-QURAN-WEB/chunk-TZEMNGWK.js",
         "/AL-QURAN-WEB/chunk-UIGZEDL5.js",
-        "/AL-QURAN-WEB/chunk-UX5B53MC.js",
         "/AL-QURAN-WEB/chunk-V2FRUI6T.js",
         "/AL-QURAN-WEB/chunk-VEHSNQNK.js",
         "/AL-QURAN-WEB/chunk-VHEIYHU5.js",
@@ -74,15 +73,16 @@
         "/AL-QURAN-WEB/chunk-W5DMMN3F.js",
         "/AL-QURAN-WEB/chunk-W5ZY36O7.js",
         "/AL-QURAN-WEB/chunk-WUVO72SC.js",
+        "/AL-QURAN-WEB/chunk-X7SWP7VL.js",
         "/AL-QURAN-WEB/chunk-ZPAHAUXK.js",
         "/AL-QURAN-WEB/chunk-ZXUKZEMG.js",
         "/AL-QURAN-WEB/favicon.ico",
         "/AL-QURAN-WEB/index.html",
-        "/AL-QURAN-WEB/main-P53KVLSL.js",
+        "/AL-QURAN-WEB/main-WMXYJP5Z.js",
         "/AL-QURAN-WEB/manifest.webmanifest",
         "/AL-QURAN-WEB/robots.txt",
         "/AL-QURAN-WEB/sitemap.xml",
-        "/AL-QURAN-WEB/styles-JIUMQV7N.css"
+        "/AL-QURAN-WEB/styles-DUO3WTZD.css"
       ],
       "patterns": []
     },
@@ -145,7 +145,6 @@
     }
   ],
   "hashTable": {
-    "/AL-QURAN-WEB/chunk-22WVIN6P.js": "33967661181d19596a2e5498edfb96bfbcd78367",
     "/AL-QURAN-WEB/chunk-26ZIWSME.js": "35f1dcb9097cf4f90191e8559e2f0124ddea46f8",
     "/AL-QURAN-WEB/chunk-464BOR6R.js": "0e983bc4fd214929fc90a7f56020b0fa8873ec5f",
     "/AL-QURAN-WEB/chunk-6BVCME4B.js": "126e38361653587955b61d189fa45cb619ff4ea2",
@@ -158,8 +157,8 @@
     "/AL-QURAN-WEB/chunk-CG4ISPNO.js": "65bb3f9736931f0a94619205ecb69d83b6da544d",
     "/AL-QURAN-WEB/chunk-CLX35WA2.js": "4a4134445831d2b9525c754bc3fe2016e2314d3a",
     "/AL-QURAN-WEB/chunk-CMV6HODI.js": "85072f50e9b1070a77a137140f04da2183b4dded",
-    "/AL-QURAN-WEB/chunk-CYR7ICRW.js": "7af45fc946e62fe57e8cce61fedf9e4c7ae8a9cd",
     "/AL-QURAN-WEB/chunk-DDVN2TQD.js": "8cdb7bf2a0d58866c45b6f9d602ce27789ebddd4",
+    "/AL-QURAN-WEB/chunk-DJZJMWZM.js": "49153da4eedb03179d9683708c8aba30d49101b8",
     "/AL-QURAN-WEB/chunk-DPWJ2PU7.js": "eda3c9323e0aa555fea7ac8c71f094ddc30e064e",
     "/AL-QURAN-WEB/chunk-DSPZW6SB.js": "5c5d11e558bee0614bc8732093cb8d4412bb49b7",
     "/AL-QURAN-WEB/chunk-DX6FROB4.js": "75f8b7e59f9c463477dffa1a317af03666462c86",
@@ -182,6 +181,7 @@
     "/AL-QURAN-WEB/chunk-KQL2JSTW.js": "9c9f2e90ccb404c485dc31645b75eca48b732027",
     "/AL-QURAN-WEB/chunk-L7S6JWPE.js": "6f09a15e1d0097e665a56ddaba5687ca8b8cc468",
     "/AL-QURAN-WEB/chunk-LICD4P6N.js": "e91295819accc7ae2e7852d03101cbdff650f946",
+    "/AL-QURAN-WEB/chunk-M3QNNHH5.js": "f3da1f93e294cb2f48922d933a3c206848307cf8",
     "/AL-QURAN-WEB/chunk-MCQ6JDH7.js": "d3a7b4e08c9cf67cbcd0b12e2250a2dda766fc42",
     "/AL-QURAN-WEB/chunk-MRITHIHK.js": "858fd620fa732234d942e1d82c6da8d8f0ef28a2",
     "/AL-QURAN-WEB/chunk-MZFMRRZX.js": "d2e201552b1dcbe61e6fb64c9f4b355f783ec604",
@@ -200,7 +200,6 @@
     "/AL-QURAN-WEB/chunk-TUZCMEBW.js": "b62caf3dd882650574e44dea21a0061bf8d64e99",
     "/AL-QURAN-WEB/chunk-TZEMNGWK.js": "f548da27b2a0cfe7a1648fe5e002823482ddd332",
     "/AL-QURAN-WEB/chunk-UIGZEDL5.js": "420e33ac195ae5668d5db97aa181ade5234cfd0d",
-    "/AL-QURAN-WEB/chunk-UX5B53MC.js": "fe2ec824e9ab1503f63c1e13c31906d69bf3108e",
     "/AL-QURAN-WEB/chunk-V2FRUI6T.js": "6739eaa4ab4574f06fbb644a0f9517c45b8ba255",
     "/AL-QURAN-WEB/chunk-VEHSNQNK.js": "73721c78748ab83868f855f83fa47fc810db7063",
     "/AL-QURAN-WEB/chunk-VHEIYHU5.js": "0b12ce85af935894454377f8c52c79937a0ba5fe",
@@ -208,6 +207,7 @@
     "/AL-QURAN-WEB/chunk-W5DMMN3F.js": "6f594aaf7e472ff790a5cac99d66a15da4db479f",
     "/AL-QURAN-WEB/chunk-W5ZY36O7.js": "404570bc05825b2b1197180a67810ac4d5533c96",
     "/AL-QURAN-WEB/chunk-WUVO72SC.js": "efdf346762d4d1ff8a789fcf144120d6fdeb5781",
+    "/AL-QURAN-WEB/chunk-X7SWP7VL.js": "ae23738178a44a593963b40920faa40833d5bb02",
     "/AL-QURAN-WEB/chunk-ZPAHAUXK.js": "06197a7f457d4bc09f44643abab6dda24adb8f58",
     "/AL-QURAN-WEB/chunk-ZXUKZEMG.js": "6e3f260c1030b6c39da3b2d360e1fdf30b6b29e5",
     "/AL-QURAN-WEB/favicon-16x16.png": "f44a209dfe9ce0741b600ded5fc0d41299debb64",
@@ -223,12 +223,12 @@
     "/AL-QURAN-WEB/icons/icon-maskable-192x192.png": "39dccd5b59a4a89f5bff254096473dce4473122c",
     "/AL-QURAN-WEB/icons/icon-maskable-512x512.png": "0ee303a1a3577882c2cf47a9ed1dbf0b46fd6114",
     "/AL-QURAN-WEB/icons/icon.svg": "fa8084949759c8adb275f89144c45a67d925580e",
-    "/AL-QURAN-WEB/index.html": "242aa4a7495b8c819f342e2cf7d77b34f7b0dc64",
-    "/AL-QURAN-WEB/main-P53KVLSL.js": "0b4da3d15278092840fee0e13f73de9a20ee4b0f",
+    "/AL-QURAN-WEB/index.html": "8771a165238d90d8123abfd03c4c281ecbac068f",
+    "/AL-QURAN-WEB/main-WMXYJP5Z.js": "96d49710f153f39fa386d0308208e1600ceef64f",
     "/AL-QURAN-WEB/manifest.webmanifest": "55fd9e7d6cf224b4255b0b26db4f1b47b413465c",
     "/AL-QURAN-WEB/robots.txt": "3ab6e76034e85c077b211d8bb7f9feb8da704c3c",
     "/AL-QURAN-WEB/sitemap.xml": "910dbfe036d388a6766453ee0c31d325264c365e",
-    "/AL-QURAN-WEB/styles-JIUMQV7N.css": "2159e96a0f569d14cbd6524cbe080d880d2bb7dd"
+    "/AL-QURAN-WEB/styles-DUO3WTZD.css": "a315708075930f2ba0842c81a9ad89423240c6ce"
   },
   "navigationUrls": [
     {
