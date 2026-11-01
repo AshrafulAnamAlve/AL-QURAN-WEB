@@ -702,73 +702,7 @@
       </a>
     </div>
 
-    <!-- Desktop Application Showcase Banner -->
-    @if (!isDesktopApp()) {
-      <aside class="desktop-banner" role="region" [attr.aria-label]="isBn() ? 'আল-কুরআন ডেস্কটপ সংস্করণ' : 'Al-Quran Desktop App'">
-        <div class="desktop-banner__badge">
-          <span>{{ isBn() ? 'পিসি ও ল্যাপটপের জন্য' : 'For PC & Laptop' }}</span>
-          <span class="desktop-banner__os">Windows 10 / 11</span>
-        </div>
-
-        <div class="desktop-banner__main">
-          <div class="desktop-banner__icon">
-            <aq-icon name="monitor" [size]="32" />
-          </div>
-          <div class="desktop-banner__text">
-            <h3 class="desktop-banner__title">
-              {{ isBn() ? 'আল-কুরআন ডেস্কটপ অ্যাপ্লিকেশন' : 'Al-Quran Desktop Application' }}
-            </h3>
-            <p class="desktop-banner__desc">
-              {{ isBn()
-                ? 'ব্যাকগ্রাউন্ডে আজানের ধ্বনি, টাস্কবার সিস্টেম ট্রেতে লাইভ ওয়াক্তের কাউন্টডাউন এবং কিবোর্ডের মিডিয়া হটকি দিয়ে তিলাওয়াত উপভোগ করুন।'
-                : 'Experience background Adhan alerts, live waqt countdown on the taskbar tray, and global media keyboard shortcuts.' }}
-            </p>
-          </div>
-          <div class="desktop-banner__actions">
-            <a
-              routerLink="/download"
-              class="aq-btn aq-btn--primary desktop-banner__btn"
-            >
-              <aq-icon name="download" [size]="18" />
-              <span>{{ isBn() ? 'ডেস্কটপ অ্যাপ ডাউনলোড' : 'Download Desktop App' }}</span>
-            </a>
-          </div>
-        </div>
-      </aside>
-
-      <!-- Browser Extension Showcase Banner -->
-      <aside class="desktop-banner desktop-banner--extension" role="region" [attr.aria-label]="isBn() ? 'আল-কুরআন ও হালাল শিল্ড ব্রাউজার এক্সটেনশন' : 'Al-Quran Halal Web Shield Browser Extension'">
-        <div class="desktop-banner__badge desktop-banner__badge--extension">
-          <span>{{ isBn() ? 'ব্রাউজার অ্যাড-অন' : 'Browser Add-on' }}</span>
-          <span class="desktop-banner__os">Chrome / Edge / Brave</span>
-        </div>
-
-        <div class="desktop-banner__main">
-          <div class="desktop-banner__icon desktop-banner__icon--extension">
-            <aq-icon name="shield" [size]="28" />
-          </div>
-          <div class="desktop-banner__text">
-            <h3 class="desktop-banner__title">
-              {{ isBn() ? 'আল-কুরআন ও হালাল শিল্ড ব্রাউজার এক্সটেনশন' : 'Al-Quran & Halal Web Shield Extension' }}
-            </h3>
-            <p class="desktop-banner__desc">
-              {{ isBn()
-                ? 'ইউটিউব শর্টস ও রিলস সম্পূর্ণ অপসারণ, ক্ষতিকর ও অশ্লীল সাইট প্রতিরোধ, বাধ্যতামূলক SafeSearch এবং সরাসরি ব্রাউজার টুলবারে নামায ও কুরআন রিডার।'
-                : 'Blocks YouTube Shorts & Reels, adult domains with Quranic reminder, locks SafeSearch, and brings Prayer times & Quran to your browser toolbar.' }}
-            </p>
-          </div>
-          <div class="desktop-banner__actions">
-            <a
-              routerLink="/download"
-              class="aq-btn aq-btn--primary desktop-banner__btn"
-            >
-              <aq-icon name="shield" [size]="18" />
-              <span>{{ isBn() ? 'এক্সটেনশন ডাউনলোড' : 'Get Extension' }}</span>
-            </a>
-          </div>
-        </div>
-      </aside>
-    }
+    
   </section>
 </div>
 

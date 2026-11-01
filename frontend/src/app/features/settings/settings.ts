@@ -109,6 +109,9 @@ export class SettingsPage implements OnInit {
     if (this.desktop.isDesktop()) {
       this.desktop.getAutostart().then((val) => this.isAutostart.set(val));
     }
+    if (this.mobileHardware.isNativeMobile() && this.mobileHardware.isAndroid()) {
+      void this.prayerNotifications.refreshAndroidAlarmDiagnostics();
+    }
     this.seo.apply({
       title: this.isBn() ? 'সেটিংস' : 'Settings',
       description:
@@ -491,6 +494,24 @@ export class SettingsPage implements OnInit {
         : 'Test prayer alert and Adhan player triggered!',
       'success',
     );
+  }
+
+  async requestIgnoreBatteryOptimization(): Promise<void> {
+    await this.mobileHardware.requestIgnoreBatteryOptimization();
+    setTimeout(() => {
+      void this.prayerNotifications.refreshAndroidAlarmDiagnostics();
+    }, 1200);
+  }
+
+  async openExactAlarmSettings(): Promise<void> {
+    await this.mobileHardware.openExactAlarmSettings();
+    setTimeout(() => {
+      void this.prayerNotifications.refreshAndroidAlarmDiagnostics();
+    }, 1200);
+  }
+
+  async openAutoStartSettings(): Promise<void> {
+    await this.mobileHardware.openAutoStartSettings();
   }
 
   private showToast(message: string, type: 'success' | 'error'): void {

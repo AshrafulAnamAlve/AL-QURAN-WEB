@@ -2,7 +2,7 @@
   <div class="header__inner aq-container">
     <a class="brand" routerLink="/" (click)="closeDrawer()" aria-label="Al-Quran, go to home">
       <span class="brand__mark" aria-hidden="true">
-        <span class="brand__glyph">۩</span>
+        <img src="icons/icon.svg" alt="" class="brand__logo-img" width="38" height="38" />
       </span>
       <span class="brand__text">
         <span class="brand__name">Al-Quran</span>
@@ -196,7 +196,10 @@
       </a>
     </li>
 
-    @for (item of navItems; track item.path) {
+    <li class="drawer__section-label" aria-hidden="true">
+      {{ isBn() ? 'পবিত্র কুরআন ও নামাজ' : 'Quran & Core Worship' }}
+    </li>
+    @for (item of primaryNavItems; track item.path) {
       <li>
         <a
           [routerLink]="item.path"
@@ -209,12 +212,31 @@
           @if (item.path === '/hadith') {
             <span class="drawer__badge drawer__badge--gold">{{ isBn() ? '৩৬,০০০+ হাদিস' : '36k+ Hadiths' }}</span>
           }
-          @if (item.path === '/ruqyah') {
-            <span class="drawer__badge">{{ isBn() ? 'অডিও ও শিফা' : 'Audio & Shifa' }}</span>
-          }
           <aq-icon name="chevronRight" [size]="16" />
         </a>
       </li>
+    }
+
+    <li class="drawer__section-label" aria-hidden="true">
+      {{ isBn() ? 'ইসলামিক সেবা ও টুলস' : 'Spiritual Tools & Utilities' }}
+    </li>
+    @for (item of secondaryNavItems; track item.path) {
+      @if (item.path !== '/download') {
+        <li>
+          <a
+            [routerLink]="item.path"
+            routerLinkActive="is-active"
+            (click)="closeDrawer()"
+          >
+            <aq-icon [name]="item.icon" [size]="20" />
+            <span>{{ isBn() ? item.labelBn : item.label }}</span>
+            @if (item.path === '/ruqyah') {
+              <span class="drawer__badge">{{ isBn() ? 'অডিও ও শিফা' : 'Audio & Shifa' }}</span>
+            }
+            <aq-icon name="chevronRight" [size]="16" />
+          </a>
+        </li>
+      }
     }
 
     @if (!isDesktopApp()) {

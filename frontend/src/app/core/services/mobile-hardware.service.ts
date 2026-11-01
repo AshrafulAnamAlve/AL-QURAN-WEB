@@ -1,8 +1,19 @@
 import { Injectable, signal } from '@angular/core';
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { Haptics, ImpactStyle, NotificationType } from '@capacitor/haptics';
 import { Geolocation } from '@capacitor/geolocation';
+
+export interface AndroidAlarmHelperPlugin {
+  isBatteryOptimizationIgnored(): Promise<{ isIgnored: boolean }>;
+  requestIgnoreBatteryOptimization(): Promise<{ requested: boolean }>;
+  openBatteryOptimizationSettings(): Promise<void>;
+  openExactAlarmSettings(): Promise<void>;
+  openAppSettings(): Promise<void>;
+  openAutoStartSettings(): Promise<{ opened: boolean }>;
+}
+
+const AndroidAlarmHelper = registerPlugin<AndroidAlarmHelperPlugin>('AndroidAlarmHelper');
 
 export interface MobileMediaSessionMetadata {
   title: string;
@@ -483,43 +494,99 @@ export class MobileHardwareService {
   }
 
   /**
-   * Opens Android Battery Optimization settings to allow user to set app to 'Unrestricted'
-   * so Android Doze Mode never suspends real-time prayer alarms.
+   * Checks if Android Exact Alarm (Alarms & Reminders) is allowed.
    */
-  openBatteryOptimizationSettings(): void {
-    if (typeof window === 'undefined') return;
-    if (this.isAndroid()) {
-      try {
-        window.location.href = 'intent:#Intent;action=android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS;end';
-        return;
-      } catch {
-        try {
-          window.location.href = 'intent:#Intent;action=android.settings.APPLICATION_DETAILS_SETTINGS;package=com.alquran.mobile;end';
-        } catch {
-          // Ignore
-        }
-      }
+  async checkExactAlarmPermission(): Promise<boolean> {
+    if (!this.isNativeMobile() || !this.isAndroid()) return true;
+    try {
+      const res = await LocalNotifications.checkExactNotificationSetting();
+      return res.exact_alarm === 'granted';
+    } catch {
+      return true;
     }
   }
 
   /**
    * Opens Android 12+ Alarms & Reminders permission settings to allow exact alarms.
    */
-  openExactAlarmSettings(): void {
-    if (typeof window === 'undefined') return;
-    if (this.isAndroid()) {
+  async openExactAlarmSettings(): Promise<void> {
+    if (!this.isNativeMobile() || !this.isAndroid()) return;
+    try {
+      await LocalNotifications.changeExactNotificationSetting();
+    } catch {
       try {
-        window.location.href = 'intent:#Intent;action=android.settings.REQUEST_SCHEDULE_EXACT_ALARM;package=com.alquran.mobile;end';
-        return;
-      } catch {
-        try {
-          window.location.href = 'intent:#Intent;action=android.settings.APPLICATION_DETAILS_SETTINGS;package=com.alquran.mobile;end';
-        } catch {
-          // Ignore
-        }
+        await AndroidAlarmHelper.openExactAlarmSettings();
+      } catch (err) {
+        console.warn('[MobileHardware] Failed to open exact alarm settings:', err);
       }
     }
   }
+
+  /**
+   * Checks whether the app is whitelisted from Android battery optimizations (Unrestricted).
+   */
+  async isBatteryOptimizationIgnored(): Promise<boolean> {
+    if (!this.isNativeMobile() || !this.isAndroid()) return true;
+    try {
+      const res = await AndroidAlarmHelper.isBatteryOptimizationIgnored();
+      return Boolean(res?.isIgnored);
+    } catch {
+      return true;
+    }
+  }
+
+  /**
+   * Triggers system prompt to exclude app from battery optimization (Allow background running).
+   */
+  async requestIgnoreBatteryOptimization(): Promise<void> {
+    if (!this.isNativeMobile() || !this.isAndroid()) return;
+    try {
+      await AndroidAlarmHelper.requestIgnoreBatteryOptimization();
+    } catch (err) {
+      console.warn('[MobileHardware] Failed to request battery optimization ignore:', err);
+      void this.openBatteryOptimizationSettings();
+    }
+  }
+
+  /**
+   * Opens Android Battery Optimization settings to allow user to set app to 'Unrestricted'
+   * so Android Doze Mode never suspends real-time prayer alarms.
+   */
+  async openBatteryOptimizationSettings(): Promise<void> {
+    if (!this.isNativeMobile() || !this.isAndroid()) return;
+    try {
+      await AndroidAlarmHelper.openBatteryOptimizationSettings();
+    } catch (err) {
+      console.warn('[MobileHardware] Failed to open battery optimization settings:', err);
+    }
+  }
+
+  /**
+   * Opens device manufacturer specific Autostart / Background activity settings (Xiaomi, Samsung, Oppo, Vivo, etc.).
+   */
+  async openAutoStartSettings(): Promise<void> {
+    if (!this.isNativeMobile() || !this.isAndroid()) return;
+    try {
+      await AndroidAlarmHelper.openAutoStartSettings();
+    } catch (err) {
+      console.warn('[MobileHardware] Failed to open autostart settings:', err);
+      void this.openAppSettings();
+    }
+  }
+
+  /**
+   * Opens Android Application Details Settings.
+   */
+  async openAppSettings(): Promise<void> {
+    if (!this.isNativeMobile() || !this.isAndroid()) return;
+    try {
+      await AndroidAlarmHelper.openAppSettings();
+    } catch (err) {
+      console.warn('[MobileHardware] Failed to open app settings:', err);
+    }
+  }
+
+  private isSchedulingAlarms = false;
 
   /**
    * Schedules precise Waqt Adhan notifications via Capacitor LocalNotifications
@@ -527,6 +594,8 @@ export class MobileHardwareService {
    */
   async schedulePrayerAlarms(prayers: PrayerAlarmItem[]): Promise<void> {
     if (!this.isNativeMobile()) return;
+    if (this.isSchedulingAlarms) return;
+    this.isSchedulingAlarms = true;
 
     try {
       await this.initNotificationChannel();
@@ -546,7 +615,10 @@ export class MobileHardwareService {
       // Ensure we only schedule alarms at least 20 seconds into the future
       const upcoming = prayers.filter((p) => p.time.getTime() > now + 20000);
 
-      if (upcoming.length === 0) return;
+      if (upcoming.length === 0) {
+        this.isSchedulingAlarms = false;
+        return;
+      }
 
       const notifications = upcoming.map((p) => ({
         id: p.id,
@@ -567,7 +639,9 @@ export class MobileHardwareService {
       await LocalNotifications.schedule({ notifications });
       console.info(`[MobileHardware] Successfully scheduled ${notifications.length} prayer alarms in Android AlarmManager.`);
     } catch (err) {
-      console.warn('Error scheduling prayer alarms:', err);
+      console.warn('[MobileHardware] Error scheduling prayer alarms:', err);
+    } finally {
+      this.isSchedulingAlarms = false;
     }
   }
 

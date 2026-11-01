@@ -379,3 +379,37 @@
     gap: var(--aq-space-4);
   }
 }
+
+
+// Mobile Native Bottom-Sheet Pattern for Dialogs
+@media (max-width: 640px) {
+  .aq-modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .aq-modal {
+    max-width: 100%;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-left-radius: var(--aq-radius-xl, 24px);
+    border-top-right-radius: var(--aq-radius-xl, 24px);
+    max-height: 88dvh;
+    padding-bottom: max(1.25rem, env(safe-area-inset-bottom, 1.25rem));
+    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.28);
+    animation: aq-sheet-slide-up 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+
+@keyframes aq-sheet-slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0.8;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

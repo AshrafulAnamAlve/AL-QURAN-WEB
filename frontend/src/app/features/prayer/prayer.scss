@@ -574,3 +574,38 @@
 
   &__check { color: var(--aq-primary); }
 }
+
+// Mobile timing card improvements
+
+@media (max-width: 640px) {
+  .timing-card {
+    min-height: 125px !important;
+    padding: 0.85rem 0.75rem !important;
+
+    &__title {
+      font-size: 0.95rem !important;
+    }
+
+    &__arabic {
+      font-size: 1.05rem !important;
+    }
+
+    &__time {
+      font-size: 1.25rem !important;
+    }
+
+    &__alert-toggle {
+      padding: 0.15rem 0.4rem !important;
+      font-size: 0.65rem !important;
+      min-height: 26px !important;
+    }
+  }
+
+  .calculation-bar {
+    padding: 0.85rem !important;
+
+    &__title {
+      font-size: 1rem !important;
+    }
+  }
+}

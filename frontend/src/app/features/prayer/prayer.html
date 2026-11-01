@@ -155,7 +155,7 @@
               </strong>
               <span class="countdown-hero__adhan-desc">
                 {{ isNextAdhanActive()
-                  ? (isBn() ? (next.prayer.banglaName + ' ওয়াক্তে (' + formatTime12h(next.prayer.time) + ') নোটিফিকেশন আসবে এবং ব্যাকগ্রাউন্ডে স্বয়ংক্রিয়ভাবে আজান বাজবে।') : ('Adhan audio will play and notification will arrive at ' + formatTime12h(next.prayer.time) + ' even if the app is closed to tray.'))
+                  ? (isBn() ? (next.prayer.banglaName + ' ওয়াক্তে (' + formatTime12h(next.prayer.time) + ') ব্যাকগ্রাউন্ডে স্বয়ংক্রিয় আজান ও নোটিফিকেশন আসবে।') : ('Adhan audio & notification will trigger at ' + formatTime12h(next.prayer.time) + ', even in background.'))
                   : (isNextAlertActive()
                     ? (isBn() ? (next.prayer.banglaName + ' ওয়াক্তে (' + formatTime12h(next.prayer.time) + ') নোটিফিকেশন আসবে।') : ('Notification alert will arrive at ' + formatTime12h(next.prayer.time) + '.'))
                     : (isBn() ? 'ওয়াক্তের সময় কোনো অ্যালার্ট বা আজান বাজবে না।' : 'No notification or audio will trigger for this prayer.')) }}

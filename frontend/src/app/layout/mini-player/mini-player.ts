@@ -53,17 +53,28 @@ import { IconComponent } from '../../shared/components/icon/icon';
 
     .mini {
       position: fixed;
-      left: 0;
-      right: 0;
-      bottom: calc(var(--aq-bottom-nav-height) + env(safe-area-inset-bottom, 0));
+      left: max(12px, env(safe-area-inset-left, 12px));
+      right: max(12px, env(safe-area-inset-right, 12px));
+      bottom: calc(var(--aq-bottom-nav-height, 66px) + max(14px, env(safe-area-inset-bottom, 14px)) + 12px);
+      max-width: 440px;
+      margin-inline: auto;
+      border-radius: var(--aq-radius-lg);
       z-index: 520;
-      background: color-mix(in srgb, var(--aq-surface) 97%, transparent);
-      backdrop-filter: blur(14px);
-      border-top: 1px solid var(--aq-border);
-      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
+      background: color-mix(in srgb, var(--aq-surface) 96%, transparent);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1.5px solid color-mix(in srgb, var(--aq-primary) 32%, var(--aq-border));
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28), 0 2px 8px rgba(0, 0, 0, 0.12);
 
       @include m.up(lg) {
+        left: 0;
+        right: 0;
+        max-width: none;
+        border-radius: 0;
         bottom: 0;
+        border-width: 1px 0 0 0;
+        border-color: var(--aq-border);
+        box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
         padding-bottom: env(safe-area-inset-bottom, 0);
       }
     }

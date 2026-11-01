@@ -346,3 +346,25 @@
   }
 }
 
+
+
+@media (max-width: 640px) {
+  .reader__head-inner {
+    padding-block: 0.85rem 1.15rem;
+  }
+
+  .reader__arabic-name {
+    font-size: 1.85rem;
+    line-height: 1.8;
+  }
+
+  .reader__english-name {
+    font-size: 1.15rem;
+  }
+
+  .reader__listen-btn {
+    padding: 0.45rem 1.15rem;
+    min-height: 2.35rem;
+    font-size: 0.875rem;
+  }
+}

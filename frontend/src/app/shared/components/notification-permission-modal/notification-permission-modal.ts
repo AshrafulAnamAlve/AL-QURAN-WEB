@@ -54,6 +54,18 @@ export class NotificationPermissionModalComponent {
         this.notificationService.toggleMaster(true);
         void this.mobileHardware.hapticSuccess();
 
+        if (this.mobileHardware.isNativeMobile() && this.mobileHardware.isAndroid()) {
+          const isExact = await this.mobileHardware.checkExactAlarmPermission();
+          if (!isExact) {
+            void this.mobileHardware.openExactAlarmSettings();
+          }
+          const isBattIgnored = await this.mobileHardware.isBatteryOptimizationIgnored();
+          if (!isBattIgnored) {
+            void this.mobileHardware.requestIgnoreBatteryOptimization();
+          }
+          void this.notificationService.refreshAndroidAlarmDiagnostics();
+        }
+
         // Brief delay to display joyful confirmation feedback
         setTimeout(() => {
           this.notificationService.closePermissionModal();

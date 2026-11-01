@@ -1,0 +1,163 @@
+================================================================================
+AL-QURAN (আল-কুরআন) - COMPREHENSIVE PROJECT KNOWLEDGE BASE
+================================================================================
+Target Audience: AI Agents, Developers, Maintainers
+Purpose: High-density, machine-readable summary of architecture, features, pages, and platform capabilities.
+Last Updated: November 2026
+
+--------------------------------------------------------------------------------
+1. PROJECT OVERVIEW & TECH STACK
+--------------------------------------------------------------------------------
+Al-Quran is a cross-platform, multi-lingual (Bangla, English, Arabic) Islamic application ecosystem designed for Web (PWA), Desktop (Windows/macOS/Linux), and Mobile (Android/iOS).
+
+- Frontend: Angular 21 (Standalone Components, Signals, OnPush Detection, SCSS, PWA, Vitest)
+- Backend: .NET 9 Web API (C#, Entity Framework Core, SQLite, In-Memory Caching, Aladhan Proxy)
+- Mobile App: Capacitor 7 (Cross-platform Android & iOS wrapper with custom Java native plugins)
+- Desktop App: Electron 30+ (Cross-platform desktop runner with tray icon, system DNS manager, global shortcuts)
+- Browser Extension: Chrome/Edge MV3 Extension (Halal Web Shield & Quran Verse of the Day)
+
+--------------------------------------------------------------------------------
+2. COMPLETE SITEMAP & ALL APPLICATION PAGES
+--------------------------------------------------------------------------------
+
+1. HOME PAGE (/)
+   - Component: HomePage (features/home)
+   - Features: Hero greeting with Hijri/Gregorian dates, Next prayer countdown badge & current Waqt card, Quick action shortcuts (Quran, Hadith, Prayer, Qibla, Mosques, 99 Names, Tasbih, Ruqyah), Daily Ayah & Daily Hadith cards with audio recitation, Last read resume button.
+
+2. QURAN SURAH INDEX (/quran)
+   - Component: QuranPage (features/quran)
+   - Features: All 114 Surahs list with authentic Arabic calligraphy names, Bangla pronunciation, English titles, revelation type (Makki/Madani), ayah count, search filter by name/number, quick jump.
+
+3. SURAH READER (/quran/:surahNumber)
+   - Component: SurahReaderPage (features/quran/surah-reader)
+   - Features: Full ayah-by-ayah reading with Arabic script, Bengali translation, English translation, Bengali pronunciation; Verse-by-verse and continuous audio recitation (multiple reciters: Mishary, Abdul Basit, Al-Ghamdi, Sudais, etc.); Audio playback speed controls, verse bookmarking, copy ayah, share ayah; Bismillah banner, Surah info modal (revelation history & context).
+
+4. JUZ / PARA INDEX (/juz)
+   - Component: JuzPage (features/juz)
+   - Features: All 30 Juz (Para) catalog with starting ayah reference, Arabic name, Bengali label, ayah count, and progress indicator.
+
+5. JUZ READER (/juz/:juzNumber)
+   - Component: JuzReaderPage (features/juz/juz-reader)
+   - Features: Continuous reading across Surah boundaries within a single Para/Juz with translation, pronunciation, and audio synchronization.
+
+6. HADITH SHARIF (/hadith)
+   - Component: HadithPage (features/hadith)
+   - Features: Authentic Hadith library containing Sahih al-Bukhari, Sahih Muslim, Riyad as-Salihin, and 40 Hadith Nawawi; Categorized by chapter/book; Arabic text, Bangla translation, English meaning, narrator (Isnad), authenticity grades; Daily Hadith card, bookmarking, and keyword search.
+
+7. PRAYER TIMES & WAQT ADHAN (/prayer)
+   - Component: PrayerPage (features/prayer)
+   - Features: Real-time 5 daily prayer times (Fajr, Dhuhr, Asr, Maghrib, Isha) + Sunrise, Sunset, Imsak, Midnight; Live countdown timer to next prayer; City & GPS coordinate detection; Calculation method picker (Karachi, MWL, ISNA, Umm al-Qura, Egypt, Tehran) and Juristic school selector (Hanafi, Shafi); 1-tap Waqt notification toggles, Adhan audio preview, and in-app popup modal.
+
+8. QIBLA COMPASS (/qibla)
+   - Component: QiblaPage (features/qibla)
+   - Features: Live 360-degree compass pointing to Kaaba (Makkah); Mobile motion & magnetometer sensor integration with Low-Pass EMA smoothing filter and 15Hz throttling (eliminates jitter and navbar flicker); True North vs Magnetic North compensation; Distance to Kaaba in kilometers; Interactive map fallback.
+
+9. NEARBY MOSQUES (/mosques)
+   - Component: MosquePage (features/mosque)
+   - Features: Interactive OpenStreetMap (Leaflet engine) showing mosques within 1km to 10km radius; User GPS geolocation tracking; Mosque cards with distance in meters/km, full address, and 1-tap "Get Directions" via Google Maps.
+
+10. ASMA-UL-HUSNA (99 NAMES OF ALLAH) (/99-names, redirect: /asma-ul-husna)
+    - Component: AsmaUlHusnaPage (features/asma-ul-husna)
+    - Features: Complete 99 Names of Allah; Authentic Arabic calligraphy cards, English & Bangla transliteration; Detailed spiritual meanings and Quranic significance; Audio pronunciation for each name; Responsive 2-column tabs for mobile screens.
+
+11. ISLAMIC HIJRI CALENDAR (/calendar)
+    - Component: CalendarPage (features/calendar)
+    - Features: Interactive Gregorian-to-Hijri calendar grid; All 12 Islamic lunar months (Muharram to Dhul Hijjah); Major Islamic historical events and holidays (Ramadan start, Laylatul Qadr, Eid-ul-Fitr, Day of Arafah, Eid-ul-Adha, Ashura, Shab-e-Barat, etc.); Event countdowns and month switching.
+
+12. DIGITAL TASBIH & DHIKR (/tasbih, redirect: /dhikr)
+    - Component: TasbihPage (features/tasbih)
+    - Features: Interactive circular digital counter with tactile haptic feedback (vibration on mobile); Click sound effects (toggleable); Presets for SubhanAllah (33), Alhamdulillah (33), Allahu Akbar (34), Ayat-ul-Kursi, Astaghfirullah, Durood Sharif, Kalima; Custom target count setting, lap/cycle counter, and reset protection.
+
+13. RUQYAH SHARIAH (/ruqyah, redirect: /roqya)
+    - Component: RuqyahPage (features/ruqyah)
+    - Features: Authentic Quranic verses and prophetic supplications for spiritual healing, sickness, anxiety, depression, evil eye (Ayn/Nazar), and protection; Grouped into categories; Individual repetition counters; Audio recitation streaming for each section.
+
+14. GLOBAL SEARCH (/search)
+    - Component: SearchPage (features/search)
+    - Features: Unified search across Arabic text, Bengali translation, English translation, Surah names, and Ayah references (e.g. 2:255); Live filter by translation and surah; Search history; Highlighting matched keywords.
+
+15. BOOKMARKS & SAVED AYAHS (/bookmarks)
+    - Component: BookmarksPage (features/bookmarks)
+    - Features: User-saved Ayahs and Hadiths stored locally (offline, privacy-first, no account required); Categorized list, 1-click jump to reader position, delete/clear actions.
+
+16. HALAL SHIELD (/shield)
+    - Component: ShieldPage (features/shield)
+    - Features: Content-filtering & SafeSearch engine protecting users from adult content, harmful domains, and pornography;
+      * Desktop: 1-click system DNS toggle modifying network DNS / hosts file to family-safe servers (CleanBrowsing / AdGuard Family / Cloudflare Family).
+      * Mobile: Android Private DNS hostname copy & 1-tap shortcut to Android Network Settings.
+      * Web/Browser: Integration guidelines and download links for Browser Extension.
+
+17. APPS & EXTENSION DOWNLOADS (/download, redirect: /downloads)
+    - Component: DownloadPage (features/download)
+    - Features: Direct download links and setup instructions for:
+      * Windows Desktop App (.exe setup & portable zip)
+      * Chrome / Edge Browser Extension (CRX / unpacked)
+      * Android Mobile App (APK / Google Play)
+      * PWA install prompt button.
+
+18. SETTINGS (/settings)
+    - Component: SettingsPage (features/settings)
+    - Features: Reading preferences (Arabic font size, translation font size, line height, reading width); Translation mode (Bangla, English, Both, Arabic only); Bengali pronunciation toggle; Theme selector (Auto, Light, Dark, Sepia, Emerald); Reciter selector; Location & prayer calculation settings; Daily reading & listening goals; Notification & Adhan sound settings with Android background reliability diagnostics (Exact Alarms toggle, Battery Saver whitelist, Autostart); Local storage data manager & cache clearing.
+
+--------------------------------------------------------------------------------
+3. NATIVE MOBILE HARDWARE & NOTIFICATION ARCHITECTURE
+--------------------------------------------------------------------------------
+- Framework: Capacitor 7
+- Plugin: @capacitor/local-notifications, @capacitor/geolocation, @capacitor/haptics, @capacitor/motion, @capacitor/app.
+- Custom Android Plugin: `AndroidAlarmHelperPlugin` (in `mobile/android/app/src/main/java/com/alquran/mobile/AndroidAlarmHelperPlugin.java`)
+- Background Adhan & Alarms Engine:
+  * Schedules 7 days of future prayer alarms into native Android `AlarmManager`.
+  * Uses `allowWhileIdle: true` and `AlarmManager.RTC_WAKEUP` to wake phone from sleep.
+  * Auto-cleans expired pending alarms on app startup to prevent notification pileups.
+  * Collision-free deterministic 32-bit alarm IDs: `(month * 1000 + day * 10 + prayerIndex)`.
+  * Declares `SCHEDULE_EXACT_ALARM`, `USE_EXACT_ALARM`, and `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS`.
+  * Settings Diagnostics Card provides 1-tap native intents for "Alarms & Reminders" permission and "Unrestricted Battery" mode.
+
+--------------------------------------------------------------------------------
+4. DESKTOP APPLICATION ARCHITECTURE
+--------------------------------------------------------------------------------
+- Framework: Electron 30+
+- Main Process: `desktop/src/main.cjs`
+- Tray Integration: System tray icon with live current Waqt title, Next Prayer countdown, Adhan mute/unmute toggle, Auto-play toggle, and Halal Shield status.
+- Windows Autostart: Configured via Electron `app.setLoginItemSettings`.
+- Desktop Halal Shield: Executes elevated PowerShell / netsh scripts to set system-wide Safe DNS (CleanBrowsing Family 185.228.168.168 / AdGuard 94.140.14.15).
+
+--------------------------------------------------------------------------------
+5. BACKEND REST API ENDPOINTS (.NET 9)
+--------------------------------------------------------------------------------
+Base URL: /api/ (configured via proxy in dev, direct in prod)
+
+- Prayer & Calendar:
+  * GET /api/prayer/timings?latitude={lat}&longitude={lng}&date={YYYY-MM-DD}&method={id}&school={0|1}
+  * GET /api/prayer/timings/by-city?city={city}&country={country}
+  * GET /api/prayer/calendar?latitude={lat}&longitude={lng}&year={yyyy}&month={mm}
+  * GET /api/prayer/methods
+
+- Quran:
+  * GET /api/quran/surahs
+  * GET /api/quran/surah/{number}
+  * GET /api/quran/ayah/{surah}/{ayah}
+  * GET /api/quran/search?q={query}&language={bn|en|ar}
+  * GET /api/quran/juz/{number}
+
+- Hadith:
+  * GET /api/hadith/books
+  * GET /api/hadith/{book}/chapters
+  * GET /api/hadith/{book}/{chapter}
+  * GET /api/hadith/daily
+
+- Content & Audio:
+  * GET /api/content/99-names
+  * GET /api/content/ruqyah
+  * GET /api/audio/reciters
+
+--------------------------------------------------------------------------------
+6. KEY STORAGE & DATA CONVENTIONS
+--------------------------------------------------------------------------------
+- Storage Mechanism: LocalStorage / IndexedDB managed by `StorageService` (`core/services/storage.ts`).
+- Offline-First: All essential bookmarks, reading settings, daily goals, and cached timetables persist locally.
+- Bilingual Localization: Dynamic language switching between Bengali (`bn`) and English (`en`) via `LanguageService` (`core/services/language.ts`).
+
+================================================================================
+END OF DOCUMENT
+================================================================================

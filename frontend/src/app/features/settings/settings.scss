@@ -743,3 +743,73 @@
 }
 
 
+
+
+// Mobile Grouped Settings Polish
+@media (max-width: 640px) {
+  .settings-grid {
+    gap: 1.25rem !important;
+  }
+
+  .settings-section {
+    gap: 0.5rem !important;
+  }
+
+  .section-header {
+    gap: 0.5rem !important;
+
+    &__icon {
+      width: 2rem !important;
+      height: 2rem !important;
+    }
+
+    &__title {
+      font-size: 1.05rem !important;
+    }
+
+    &__desc {
+      display: none !important;
+    }
+  }
+
+  .settings-card {
+    padding: 0.85rem !important;
+    border-radius: var(--aq-radius-lg) !important;
+  }
+
+  .control-group {
+    padding-block: 0.65rem !important;
+  }
+
+  .control-header {
+    margin-bottom: 0.35rem !important;
+  }
+
+  .control-label {
+    font-size: 0.875rem !important;
+  }
+
+  .control-value {
+    font-size: 0.8125rem !important;
+  }
+
+  .range-slider {
+    height: 6px !important;
+  }
+
+  .theme-options,
+  .lang-options {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+
+  .theme-card,
+  .lang-card {
+    padding: 0.65rem 0.5rem !important;
+    min-height: 48px !important;
+  }
+
+  .prayer-alert-row {
+    padding: 0.5rem 0 !important;
+  }
+}

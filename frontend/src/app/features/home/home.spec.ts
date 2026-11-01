@@ -55,7 +55,18 @@ describe('HomePage', () => {
   };
 
   beforeEach(async () => {
-    localStorage.clear();
+    const nav = typeof window !== 'undefined' ? window.navigator : (globalThis as any).navigator;
+    if (nav && !nav.userAgent) {
+      try {
+        Object.defineProperty(nav, 'userAgent', {
+          value: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+          configurable: true,
+        });
+      } catch {}
+    }
+    if (typeof localStorage !== 'undefined') {
+      localStorage.clear();
+    }
     const metaApi = {
       getUpstreamHealth: vi.fn().mockReturnValue(
         of({

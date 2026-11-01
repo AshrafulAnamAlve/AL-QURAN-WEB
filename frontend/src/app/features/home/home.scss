@@ -627,6 +627,7 @@
 }
 
 .prayer-home-status-desc {
+    @media (max-width: 640px) { display: none; }
   font-size: 0.8125rem;
   color: var(--aq-text-muted);
   line-height: 1.35;
@@ -1259,6 +1260,7 @@
 
 // --- Desktop & Browser Extension Showcase Banners -------------------------
 .desktop-banner {
+  @media (max-width: 991px) { display: none !important; }
   margin-top: 1.5rem;
   padding: 1.25rem 1.5rem;
   background: linear-gradient(135deg, color-mix(in srgb, var(--aq-primary-soft) 40%, var(--aq-surface)), var(--aq-surface));
@@ -1343,5 +1345,127 @@
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+  }
+}
+
+// Compact mobile explore grid
+
+@media (max-width: 768px) {
+  .explore-section {
+    margin-top: 1rem;
+    &__header {
+      margin-bottom: 0.75rem;
+    }
+    &__title {
+      font-size: 1.15rem;
+    }
+  }
+
+  .explore-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+
+  .explore-card {
+    padding: 0.65rem 0.75rem !important;
+    border-radius: var(--aq-radius-md) !important;
+    gap: 0.5rem !important;
+    align-items: center !important;
+
+    &__icon-wrap {
+      width: 36px !important;
+      height: 36px !important;
+      border-radius: var(--aq-radius-sm) !important;
+    }
+
+    &__content {
+      min-width: 0;
+    }
+
+    &__title {
+      font-size: 0.8125rem !important;
+      line-height: 1.25 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    &__desc {
+      display: none !important;
+    }
+
+    &__badge-row {
+      margin-bottom: 0 !important;
+    }
+
+    &__badge {
+      display: none !important;
+    }
+
+    &__arrow {
+      display: none !important;
+    }
+  }
+}
+
+
+// Mobile padding & card refinements
+@media (max-width: 640px) {
+  .sections {
+    gap: 0.875rem !important;
+    padding-block: 1rem 1.5rem !important;
+  }
+
+  .panel {
+    padding: 1rem 0.875rem !important;
+    border-radius: var(--aq-radius-lg) !important;
+  }
+
+  .hero__inner {
+    padding-block: 0.75rem 1rem !important;
+  }
+
+  .prayer-home-card {
+    &__title {
+      font-size: 1.05rem !important;
+    }
+
+    &__timer {
+      font-size: 1.65rem !important;
+    }
+  }
+
+  .daily-task-home-card {
+    &__header {
+      margin-bottom: 0.75rem !important;
+    }
+
+    &__title {
+      font-size: 1.05rem !important;
+    }
+  }
+
+  .daily-ayah-card {
+    &__title {
+      font-size: 1.05rem !important;
+    }
+
+    &__arabic {
+      font-size: 1.35rem !important;
+      line-height: 1.9 !important;
+      padding: 0.35rem 0 0.5rem !important;
+    }
+  }
+
+  .daily-hadith-home-card {
+    &__title {
+      font-size: 1.05rem !important;
+    }
+
+    &__arabic {
+      font-size: 1.2rem !important;
+      line-height: 1.85 !important;
+      padding: 0.35rem 0 0.5rem !important;
+    }
   }
 }

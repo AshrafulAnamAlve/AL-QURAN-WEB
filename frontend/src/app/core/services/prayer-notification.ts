@@ -73,6 +73,10 @@ export class PrayerNotificationService implements OnDestroy {
         : this._permission() === 'denied'),
   );
 
+  // Diagnostic state for Android background reliability
+  readonly isExactAlarmGranted = signal<boolean>(true);
+  readonly isBatteryOptimizationIgnored = signal<boolean>(true);
+
   // In-App Permission Prompt Modal State
   private readonly _showPermissionModal = signal<boolean>(false);
   readonly showPermissionModal = this._showPermissionModal.asReadonly();
@@ -120,6 +124,7 @@ export class PrayerNotificationService implements OnDestroy {
     void this.mobileHardware.initNotificationChannel();
     void this.mobileHardware.cleanupExpiredPendingAlarms();
     void this.mobileHardware.clearDeliveredNotifications();
+    void this.refreshAndroidAlarmDiagnostics();
     void this.mobileHardware.checkNotificationPermission().then((granted) => {
       this._nativePermissionGranted.set(granted);
       if (granted) {
@@ -140,6 +145,23 @@ export class PrayerNotificationService implements OnDestroy {
         this.openAdhanModal(prayerToOpen);
       }
     });
+  }
+
+  /**
+   * Refreshes Android Exact Alarm and Battery Optimization status
+   */
+  async refreshAndroidAlarmDiagnostics(): Promise<void> {
+    if (!this.mobileHardware.isNativeMobile() || !this.mobileHardware.isAndroid()) return;
+    try {
+      const [exactGranted, battIgnored] = await Promise.all([
+        this.mobileHardware.checkExactAlarmPermission(),
+        this.mobileHardware.isBatteryOptimizationIgnored(),
+      ]);
+      this.isExactAlarmGranted.set(exactGranted);
+      this.isBatteryOptimizationIgnored.set(battIgnored);
+    } catch {
+      // Non-critical diagnostics
+    }
   }
 
   /**
@@ -684,13 +706,25 @@ export class PrayerNotificationService implements OnDestroy {
     this.openAdhanModal(target, true);
   }
 
+  private rescheduleTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
   /**
    * Reschedules exact prayer alarms in Android AlarmManager for up to 7 upcoming days.
-   * Runs in the background and wakes up the device with Adhan sound even if the app is killed.
+   * Debounced to coalesce rapid signal changes and runs in background.
    */
   rescheduleMobileAlarms(): void {
     if (!this.mobileHardware.isNativeMobile()) return;
 
+    if (this.rescheduleTimeoutId !== null) {
+      clearTimeout(this.rescheduleTimeoutId);
+    }
+    this.rescheduleTimeoutId = setTimeout(() => {
+      this.rescheduleTimeoutId = null;
+      this.executeRescheduleMobileAlarms();
+    }, 350);
+  }
+
+  private executeRescheduleMobileAlarms(): void {
     const settings = this._settings();
     // If both alerts and auto-play Adhan are disabled, clear all alarms
     if (!settings.enabled && !settings.autoPlayAdhan) {
@@ -720,6 +754,14 @@ export class PrayerNotificationService implements OnDestroy {
     const alarms: PrayerAlarmItem[] = [];
     const nowMs = Date.now();
 
+    const prayerOrderMap: Record<string, number> = {
+      fajr: 1,
+      dhuhr: 2,
+      asr: 3,
+      maghrib: 4,
+      isha: 5,
+    };
+
     for (let dayIdx = 0; dayIdx < targetDays.length; dayIdx++) {
       const day = targetDays[dayIdx];
       if (!day.times) continue;
@@ -729,7 +771,7 @@ export class PrayerNotificationService implements OnDestroy {
 
       day.times
         .filter((t) => t.isPrayer && t.at)
-        .forEach((t, prayerIdx) => {
+        .forEach((t) => {
           const pKey = t.key.toLowerCase() as CorePrayerAlertKey;
           if (settings[pKey] === false) return;
 
@@ -737,8 +779,9 @@ export class PrayerNotificationService implements OnDestroy {
           // Ensure we NEVER schedule any alarm in the past or immediately due (< 20s)
           if (prayerDate.getTime() <= nowMs + 20000) return;
 
-          // Deterministic unique 32-bit ID (Month*1000 + Day*10 + PrayerIdx)
-          const id = (monthNumber * 1000 + dayNumber * 10 + (prayerIdx % 10)) % 2147483647;
+          const pNum = prayerOrderMap[pKey] || 9;
+          // Deterministic unique 32-bit ID (Month*1000 + Day*10 + pNum)
+          const id = (monthNumber * 1000 + dayNumber * 10 + pNum) % 2147483647;
 
           const time12h = this.prayerTimes.format12h(t.time, false);
           const time12hBn = this.prayerTimes.format12h(t.time, true);

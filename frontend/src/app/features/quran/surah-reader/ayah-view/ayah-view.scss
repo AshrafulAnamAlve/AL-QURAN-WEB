@@ -48,7 +48,36 @@
 .ayah__actions {
   display: flex;
   align-items: center;
-  gap: 0.125rem;
+  gap: 0.25rem;
+
+  .aq-icon-btn {
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    border-radius: var(--aq-radius-pill);
+    color: var(--aq-text-muted);
+    transition: all var(--aq-duration-fast) var(--aq-ease);
+
+    &:hover,
+    &:focus-visible {
+      background: var(--aq-surface-2);
+      color: var(--aq-primary);
+    }
+
+    &:active {
+      transform: scale(0.9);
+      background: var(--aq-primary-soft);
+    }
+
+    &--active {
+      color: var(--aq-primary);
+      background: var(--aq-primary-soft);
+    }
+  }
 }
 
 .ayah__sajda {

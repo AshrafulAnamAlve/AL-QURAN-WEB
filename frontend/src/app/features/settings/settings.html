@@ -614,33 +614,56 @@
           </div>
         </div>
 
-        <!-- Android Battery Optimization & Exact Alarms Guide (Android Only) -->
+        <!-- Android Battery Optimization & Exact Alarms Diagnostics (Android Only) -->
         @if (mobileHardware.isAndroid()) {
-          <div class="setting-row">
+          <div class="setting-row setting-row--diagnostics">
             <div class="setting-row__info">
               <span class="setting-row__title">
-                {{ isBn() ? 'রিয়েল-টাইম আযান ও ব্যাটারি অপ্টিমাইজেশন' : 'Real-Time Alarms & Battery Optimization' }}
+                {{ isBn() ? 'রিয়েল-টাইম আযান ও ব্যাকগ্রাউন্ড পারমিশন স্ট্যাটাস' : 'Real-Time Alarms & Background Diagnostics' }}
               </span>
               <span class="setting-row__desc">
-                {{ isBn() ? 'ফোন লক বা স্লিপ থাকা অবস্থায় আযান ঠিক সময়ে বাজতে ফোনের ব্যাটারি সেভার "Unrestricted" বা বন্ধ রাখুন এবং Alarms & Reminders চালু করুন।' : 'To ensure alarms ring at the exact minute even when your phone is asleep, set battery to Unrestricted.' }}
+                {{ isBn() ? 'ফোন লক বা স্লিপ থাকা অবস্থায় সঠিক সময়ে আযান ও ওয়াক্তের নোটিফিকেশন পেতে নিচের দুটি পারমিশন সবুজ (সচল) রাখুন:' : 'To ensure alarms ring at the exact minute even when your phone is asleep, ensure these two settings are active:' }}
               </span>
+              <div class="diagnostics-pills-row" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                <span class="badge" [style.background]="prayerNotifications.isExactAlarmGranted() ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)'" [style.color]="prayerNotifications.isExactAlarmGranted() ? '#10b981' : '#ef4444'" style="padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                  <aq-icon [name]="prayerNotifications.isExactAlarmGranted() ? 'check' : 'alert'" [size]="12" />
+                  {{ isBn() ? (prayerNotifications.isExactAlarmGranted() ? 'অ্যালার্ম অনুমতি: সচল' : 'অ্যালার্ম অনুমতি: প্রয়োজন') : (prayerNotifications.isExactAlarmGranted() ? 'Exact Alarms: Allowed' : 'Exact Alarms: Required') }}
+                </span>
+                <span class="badge" [style.background]="prayerNotifications.isBatteryOptimizationIgnored() ? 'rgba(16, 185, 129, 0.15)' : 'rgba(245, 158, 11, 0.15)'" [style.color]="prayerNotifications.isBatteryOptimizationIgnored() ? '#10b981' : '#f59e0b'" style="padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; display: inline-flex; align-items: center; gap: 0.25rem;">
+                  <aq-icon [name]="prayerNotifications.isBatteryOptimizationIgnored() ? 'check' : 'alert'" [size]="12" />
+                  {{ isBn() ? (prayerNotifications.isBatteryOptimizationIgnored() ? 'ব্যাটারি সেভার: আনরেস্ট্রিকটেড' : 'ব্যাটারি সেভার: অপ্টিমাইজড (বন্ধ করুন)') : (prayerNotifications.isBatteryOptimizationIgnored() ? 'Battery: Unrestricted' : 'Battery: Optimized (Tap to Disable)') }}
+                </span>
+              </div>
             </div>
             <div class="setting-row__control" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              @if (!prayerNotifications.isExactAlarmGranted()) {
+                <button
+                  type="button"
+                  class="aq-btn aq-btn--primary aq-btn--sm"
+                  (click)="openExactAlarmSettings()"
+                >
+                  <aq-icon name="clock" [size]="14" />
+                  <span>{{ isBn() ? 'অ্যালার্ম অনুমতি দিন' : 'Allow Exact Alarms' }}</span>
+                </button>
+              }
+              @if (!prayerNotifications.isBatteryOptimizationIgnored()) {
+                <button
+                  type="button"
+                  class="aq-btn aq-btn--primary aq-btn--sm"
+                  (click)="requestIgnoreBatteryOptimization()"
+                >
+                  <aq-icon name="settings" [size]="14" />
+                  <span>{{ isBn() ? 'ব্যাটারি অপ্টিমাইজেশন বন্ধ' : 'Disable Battery Saver' }}</span>
+                </button>
+              }
               <button
                 type="button"
                 class="aq-btn aq-btn--secondary aq-btn--sm"
-                (click)="mobileHardware.openBatteryOptimizationSettings()"
+                (click)="openAutoStartSettings()"
+                [title]="isBn() ? 'শাওমি, স্যামসাং, ওপ্পো, ভিভো ফোনের জন্য অটো-স্টার্ট সেটিংস' : 'Auto-start settings for Xiaomi, Samsung, Oppo, Vivo'"
               >
                 <aq-icon name="settings" [size]="14" />
-                <span>{{ isBn() ? 'ব্যাটারি সেটিংস' : 'Battery Saver' }}</span>
-              </button>
-              <button
-                type="button"
-                class="aq-btn aq-btn--secondary aq-btn--sm"
-                (click)="mobileHardware.openExactAlarmSettings()"
-              >
-                <aq-icon name="clock" [size]="14" />
-                <span>{{ isBn() ? 'অ্যালার্ম অনুমতি' : 'Exact Alarms' }}</span>
+                <span>{{ isBn() ? 'অটো-স্টার্ট সেটিংস' : 'Auto-Start' }}</span>
               </button>
             </div>
           </div>
