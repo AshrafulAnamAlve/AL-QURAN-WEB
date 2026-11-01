@@ -262,6 +262,68 @@ try {
 }
 
 // ----------------------------------------------------------------------------
+// SUITE 7: Mobile Responsiveness, Modal Bottom-Sheets & Viewport Integrity
+// ----------------------------------------------------------------------------
+console.log('\n\x1b[36m[7/7] Mobile Responsiveness, Modals & Viewport Overflow Safeguards\x1b[0m');
+
+try {
+  // 1. Global Shell Safeguard
+  const appScss = read('src/app/app.scss');
+  assert(
+    appScss.includes('width: 100%') &&
+    appScss.includes('min-width: 0') &&
+    appScss.includes('overflow-x: hidden'),
+    'App shell .main has min-width: 0, width: 100%, and overflow-x: hidden to prevent horizontal blowout'
+  );
+
+  // 2. Notification Permission Modal
+  const notifScss = read('src/app/shared/components/notification-permission-modal/notification-permission-modal.scss');
+  assert(
+    !notifScss.includes('width: 100vw') &&
+    notifScss.includes('@media (max-width: 640px)') &&
+    notifScss.includes('left: 0') &&
+    notifScss.includes('right: 0') &&
+    notifScss.includes('word-break: break-word'),
+    'Notification Permission Modal eliminated 100vw, uses left: 0 / right: 0, and wraps text cleanly on mobile'
+  );
+
+  // 3. Daily Hadith Modal & Chat Widget (Eliminated 100vw)
+  const dailyHadithScss = read('src/app/shared/components/daily-hadith-modal/daily-hadith-modal.scss');
+  const chatScss = read('src/app/shared/components/islamic-chat-widget/islamic-chat-widget.scss');
+  assert(
+    !dailyHadithScss.includes('width: 100vw') &&
+    !chatScss.includes('width: 100vw'),
+    'Daily Hadith modal and Islamic Chat widget eliminated 100vw in favor of width: 100% and box-sizing: border-box'
+  );
+
+  // 4. Hadith Page Responsiveness & Right-Side Cutoff Fixes
+  const hadithScss = read('src/app/features/hadith/hadith.scss');
+  assert(
+    hadithScss.includes('.hadith-page') &&
+    hadithScss.includes('overflow-x: hidden') &&
+    hadithScss.includes('.canonical-books-scroll') &&
+    hadithScss.includes('.chapter-summary-bar') &&
+    hadithScss.includes('flex-direction: column'),
+    'Hadith page has horizontal overflow containment, scroll flex bounds, and stacked mobile chapter summary'
+  );
+
+  // 5. Tasbih, Mosque & Calendar Responsiveness
+  const tasbihScss = read('src/app/features/tasbih/tasbih.scss');
+  const mosqueScss = read('src/app/features/mosque/mosque.scss');
+  const calendarScss = read('src/app/features/calendar/calendar.scss');
+  assert(
+    tasbihScss.includes('.category-tabs') &&
+    tasbihScss.includes('min-width: 0') &&
+    mosqueScss.includes('.location-alert') &&
+    calendarScss.includes('.calendar-toolbar') &&
+    calendarScss.includes('flex-direction: column'),
+    'Tasbih category tabs, Mosque location alert, and Calendar toolbar adapt responsively to mobile widths'
+  );
+} catch (e) {
+  assert(false, 'Mobile Responsiveness validation encountered an exception', e.message);
+}
+
+// ----------------------------------------------------------------------------
 // Summary
 // ----------------------------------------------------------------------------
 console.log('\n======================================================');

@@ -16,6 +16,8 @@
   .reader__body {
     width: 100%;
     max-width: var(--aq-reading-width);
+    min-width: 0;
+    box-sizing: border-box;
     margin-inline: auto;
     padding-inline: 1rem;
 

@@ -1,12 +1,15 @@
 @use 'mixins' as m;
 
 .qibla-container {
+  width: 100%;
   max-width: 960px;
   margin: 0 auto;
   padding: 0.75rem 0.75rem 2.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  box-sizing: border-box;
+  overflow-x: hidden;
 
   @media (min-width: 768px) {
     padding: 2rem 1.5rem 4rem;

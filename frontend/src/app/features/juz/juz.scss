@@ -2,6 +2,11 @@
 
 .page {
   padding-block: 0.75rem 2rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
 
   @include m.up(md) {
     padding-block: 2rem 3rem;

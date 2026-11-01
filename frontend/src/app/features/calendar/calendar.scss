@@ -7,6 +7,11 @@
 
 .calendar-page {
   padding-block: var(--aq-space-6) var(--aq-space-12);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 // --- Advisory Banner -------------------------------------------------------

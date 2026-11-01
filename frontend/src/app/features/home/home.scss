@@ -3,6 +3,15 @@
 // Modern, market-standard design system for Islamic web & mobile app
 // ==========================================================================
 
+:host {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
 // --- Hero Section ---------------------------------------------------------
 .hero {
   position: relative;
