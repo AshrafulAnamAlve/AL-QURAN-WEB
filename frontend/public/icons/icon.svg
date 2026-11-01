@@ -23,17 +23,16 @@
       <stop offset="100%" stop-color="#8f6a14"/>
     </linearGradient>
 
-    <!-- Radial Soft Gold Glow -->
+    <!-- Radial Soft Gold Glow (Zero black) -->
     <radialGradient id="emblemGlow" cx="50%" cy="52%" r="45%">
-      <stop offset="0%" stop-color="#dfbd58" stop-opacity="0.22"/>
-      <stop offset="60%" stop-color="#dfbd58" stop-opacity="0.05"/>
+      <stop offset="0%" stop-color="#dfbd58" stop-opacity="0.18"/>
+      <stop offset="60%" stop-color="#dfbd58" stop-opacity="0.04"/>
       <stop offset="100%" stop-color="#dfbd58" stop-opacity="0"/>
     </radialGradient>
 
-    <!-- Drop Shadow for Gold Emblem -->
-    <filter id="goldShadow" x="-15%" y="-15%" width="130%" height="130%">
-      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#000000" flood-opacity="0.45"/>
-      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#f5dc8e" flood-opacity="0.25"/>
+    <!-- Pure Warm Golden Glow (Zero Black Shadow) -->
+    <filter id="pureGoldGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#fae49d" flood-opacity="0.35"/>
     </filter>
   </defs>
 
@@ -46,8 +45,8 @@
   <!-- 3. Ambient Gold Backlight -->
   <circle cx="256" cy="265" r="170" fill="url(#emblemGlow)"/>
 
-  <!-- 4. Master Emblem -->
-  <g filter="url(#goldShadow)">
+  <!-- 4. Master Emblem (Pure Gold, Clean Vector) -->
+  <g filter="url(#pureGoldGlow)">
 
     <!-- A. The Teardrop Dome / Mihrab Arch -->
     <path d="M256 122
@@ -75,7 +74,7 @@
     <!-- Center Spine Valley Line -->
     <line x1="256" y1="284" x2="256" y2="396" stroke="url(#gold)" stroke-width="9" stroke-linecap="round"/>
 
-    <!-- C. Left Page Inner Border (Layered Page Depth) -->
+    <!-- C. Left Page Inner Border -->
     <path d="M132 284
              C150 270 180 260 206 266
              C224 270 238 280 246 294
@@ -85,7 +84,7 @@
              Z"
           fill="none" stroke="url(#gold)" stroke-width="3" opacity="0.8"/>
 
-    <!-- D. Right Page Inner Border (Layered Page Depth) -->
+    <!-- D. Right Page Inner Border -->
     <path d="M380 284
              C362 270 332 260 306 266
              C288 270 274 280 266 294
@@ -95,8 +94,8 @@
              Z"
           fill="none" stroke="url(#gold)" stroke-width="3" opacity="0.8"/>
 
-    <!-- E. Dashed Scripture Verse Lines (3 curved lines on each page) -->
-    <g stroke="url(#gold)" stroke-width="2.5" stroke-dasharray="4 4" opacity="0.65">
+    <!-- E. Dashed Scripture Verse Lines (Zero black shadow) -->
+    <g stroke="url(#gold)" stroke-width="2.5" stroke-dasharray="4 4" opacity="0.85">
       <path d="M144 298 C168 286 196 288 226 302"/>
       <path d="M144 312 C168 300 196 302 226 316"/>
       <path d="M146 326 C168 316 196 318 226 330"/>

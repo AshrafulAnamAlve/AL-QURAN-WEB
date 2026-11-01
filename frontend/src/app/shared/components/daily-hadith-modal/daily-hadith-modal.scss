@@ -29,15 +29,18 @@
   gap: 1.25rem;
 
   @include m.down(sm) {
-    width: 100vw;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
     max-height: 90vh;
     top: auto;
     bottom: 0;
-    left: 0;
     transform: none;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    padding: 1.25rem 1rem 1.75rem;
+    padding: 1.25rem 1rem max(1.75rem, env(safe-area-inset-bottom, 1.75rem));
     animation: hadith-slide-up 300ms cubic-bezier(0.16, 1, 0.3, 1);
   }
 
