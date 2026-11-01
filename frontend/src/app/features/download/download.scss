@@ -33,6 +33,24 @@
     }
   }
 
+  &__logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+
+    &-img {
+      width: 76px;
+      height: 76px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(20, 91, 58, 0.35);
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+
   &__badge {
     display: inline-flex;
     align-items: center;

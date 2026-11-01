@@ -47,9 +47,9 @@ declare global {
 }
 
 export const DESKTOP_DOWNLOAD_LINKS = {
-  releasePage: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest',
-  portableExe: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest/download/Al-Quran-Portable-1.1.0.exe',
-  setupExe: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/latest/download/Al-Quran-Setup-1.1.0.exe',
+  releasePage: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases',
+  portableExe: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/download/v1.1.0/Al-Quran-Portable-1.1.0.exe',
+  setupExe: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/download/v1.1.0/Al-Quran-Setup-1.1.0.exe',
   extensionZip: 'downloads/al-quran-halal-shield-latest.zip',
   extensionZipVersioned: 'downloads/al-quran-halal-shield-v1.1.0.zip',
   extensionGitHub: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/tree/main/extension',

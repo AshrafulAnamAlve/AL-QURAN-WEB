@@ -136,6 +136,7 @@
         max-width: 360px;
         perspective: 1200px;
       }
+      /* Splash SVG Emblem Components */
       .app-splash__stage {
         position: relative;
         width: 220px;
@@ -143,14 +144,14 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        transform-style: preserve-3d;
       }
       .app-splash__svg {
         overflow: visible;
+        filter: drop-shadow(0 14px 28px rgba(4, 32, 20, 0.45));
       }
       .splash-badge-bg {
         opacity: 0;
-        transform: scale(0.75);
+        transform: scale(0.85);
         transform-origin: 256px 256px;
         transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
       }
@@ -160,74 +161,66 @@
         stroke-dashoffset: 1800;
         transition: stroke-dashoffset 1.3s ease, opacity 0.6s ease;
       }
-      .state-assemble .splash-badge-bg {
+      .splash-ambient-glow {
+        opacity: 0;
+        transition: opacity 1.2s ease;
+      }
+      .splash-arch {
+        stroke-dasharray: 800;
+        stroke-dashoffset: 800;
+        opacity: 0;
+        transition: stroke-dashoffset 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease;
+      }
+      .splash-book {
+        stroke-dasharray: 1200;
+        stroke-dashoffset: 1200;
+        opacity: 0;
+        transition: stroke-dashoffset 1.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease;
+      }
+      .splash-spine {
+        opacity: 0;
+        transition: opacity 0.6s ease;
+      }
+      .splash-page-inner {
+        opacity: 0;
+        transition: opacity 0.8s ease;
+      }
+      .splash-rosette {
+        opacity: 0;
+        transform: scale(0);
+        transform-origin: 256px 335px;
+        transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
+      }
+
+      /* Animated states triggered by controller */
+      .state-badge .splash-badge-bg {
         opacity: 1;
         transform: scale(1);
       }
-      .state-assemble .splash-badge-border {
-        opacity: 0.55;
+      .state-badge .splash-badge-border {
+        opacity: 0.65;
         stroke-dashoffset: 0;
       }
-      .splash-arch {
-        stroke-dasharray: 600;
-        stroke-dashoffset: 600;
-        opacity: 0;
-        transition: stroke-dashoffset 1.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.55s ease;
+      .state-badge .splash-ambient-glow {
+        opacity: 0.3;
       }
       .state-arch .splash-arch {
         opacity: 1;
         stroke-dashoffset: 0;
       }
-      .splash-sajdah {
-        opacity: 0;
-        transform: scale(0.2);
-        transform-origin: 256px 250px;
-        transition: all 0.75s cubic-bezier(0.34, 1.56, 0.64, 1);
+      .state-book .splash-book {
+        opacity: 1;
+        stroke-dashoffset: 0;
       }
-      .state-mark .splash-sajdah {
+      .state-book .splash-spine {
+        opacity: 1;
+      }
+      .state-book .splash-page-inner {
+        opacity: 0.85;
+      }
+      .state-rosette .splash-rosette {
         opacity: 1;
         transform: scale(1);
-        filter: drop-shadow(0 0 16px rgba(245, 215, 127, 0.9));
-      }
-      .splash-static-pages {
-        opacity: 0;
-        transition: opacity 0.7s ease;
-      }
-      .show-page-lines .splash-static-pages {
-        opacity: 0.75;
-      }
-      .splash-leaf {
-        transform-origin: 0px 45px;
-        transform-style: preserve-3d;
-        opacity: 0;
-        pointer-events: none;
-      }
-      .is-flipping .splash-leaf-1 {
-        animation: splashFlip 1.6s cubic-bezier(0.3, 0.05, 0.2, 1) forwards;
-      }
-      .is-flipping .splash-leaf-2 {
-        animation: splashFlip 1.6s cubic-bezier(0.3, 0.05, 0.2, 1) 0.28s forwards;
-      }
-      .is-flipping .splash-leaf-3 {
-        animation: splashFlip 1.6s cubic-bezier(0.3, 0.05, 0.2, 1) 0.56s forwards;
-      }
-      @keyframes splashFlip {
-        0% { opacity: 0; transform: rotateY(0deg) skewY(0deg); }
-        10% { opacity: 0.95; }
-        35% { transform: rotateY(-50deg) translateZ(24px) skewY(-4deg); filter: drop-shadow(0 8px 12px rgba(0,0,0,0.6)); }
-        55% { transform: rotateY(-95deg) translateZ(32px) skewY(0deg); filter: drop-shadow(0 0 16px rgba(245,215,127,0.8)); opacity: 1; }
-        78% { transform: rotateY(-145deg) translateZ(20px) skewY(4deg); opacity: 0.95; }
-        95% { transform: rotateY(-180deg) translateZ(1px); opacity: 0.85; }
-        100% { transform: rotateY(-180deg) translateZ(0px); opacity: 0; }
-      }
-      .splash-wing-left, .splash-wing-right {
-        transform-origin: 0px 45px;
-        transform: scaleX(0.05);
-        transition: transform 0.95s cubic-bezier(0.16, 1, 0.3, 1);
-      }
-      .splash-spine {
-        opacity: 0;
-        transition: opacity 0.6s ease;
       }
       .app-splash__brand {
         opacity: 0;
@@ -319,82 +312,80 @@
         <div class="app-splash__stage" id="splashStage">
           <svg viewBox="0 0 512 512" width="220" height="220" class="app-splash__svg">
             <defs>
-              <linearGradient id="splashBg" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#14603c"/>
-                <stop offset="100%" stop-color="#093621"/>
+              <linearGradient id="splashBg" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#145b3a"/>
+                <stop offset="30%" stop-color="#0f4a2f"/>
+                <stop offset="70%" stop-color="#093521"/>
+                <stop offset="100%" stop-color="#042014"/>
               </linearGradient>
+
               <linearGradient id="splashGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#f5d77f"/>
-                <stop offset="50%" stop-color="#c9a227"/>
-                <stop offset="100%" stop-color="#9a7a1c"/>
+                <stop offset="0%" stop-color="#fae49d"/>
+                <stop offset="35%" stop-color="#e2bf5c"/>
+                <stop offset="70%" stop-color="#ca9f33"/>
+                <stop offset="100%" stop-color="#a47c1b"/>
               </linearGradient>
+
+              <linearGradient id="splashGoldBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f5dc8e"/>
+                <stop offset="50%" stop-color="#c99e31"/>
+                <stop offset="100%" stop-color="#8f6a14"/>
+              </linearGradient>
+
+              <radialGradient id="splashEmblemGlow" cx="50%" cy="52%" r="45%">
+                <stop offset="0%" stop-color="#dfbd58" stop-opacity="0.28"/>
+                <stop offset="60%" stop-color="#dfbd58" stop-opacity="0.08"/>
+                <stop offset="100%" stop-color="#dfbd58" stop-opacity="0"/>
+              </radialGradient>
             </defs>
 
-            <!-- 1. Background Badge -->
-            <rect class="splash-badge-bg" width="512" height="512" rx="108" fill="url(#splashBg)"></rect>
-            <!-- 2. Inner Golden Border -->
-            <rect class="splash-badge-border" x="28" y="28" width="456" height="456" rx="88" fill="none" stroke="url(#splashGold)" stroke-width="4.5"></rect>
+            <!-- 1. Squircle Container -->
+            <rect class="splash-badge-bg" x="16" y="16" width="480" height="480" rx="116" fill="url(#splashBg)"/>
 
-            <g transform="translate(256, 256)">
-              <!-- 3. Mihrab Arch -->
+            <!-- 2. Inset Thin Gold Rounded Border -->
+            <rect class="splash-badge-border" x="42" y="42" width="428" height="428" rx="88" fill="none" stroke="url(#splashGoldBorder)" stroke-width="4" opacity="0.65"/>
+
+            <!-- 3. Ambient Gold Backlight -->
+            <circle class="splash-ambient-glow" cx="256" cy="265" r="170" fill="url(#splashEmblemGlow)"/>
+
+            <!-- 4. Master Emblem (Zero black lines, zero dashed marks) -->
+            <g class="splash-emblem-group">
+              <!-- A. The Teardrop Dome / Mihrab Arch -->
               <path class="splash-arch"
-                    d="M0 -150 C55 -105 80 -70 80 0 C80 30 70 50 0 50 C-70 50 -80 30 -80 0 C-80 -70 -55 -105 0 -150 Z"
-                    fill="none" stroke="url(#splashGold)" stroke-width="8.5" stroke-linecap="round"></path>
+                    d="M256 122 C278 170 326 218 326 264 C326 298 304 322 278 328 M256 122 C234 170 186 218 186 264 C186 298 208 322 234 328"
+                    fill="none" stroke="url(#splashGold)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
 
-              <!-- 4. Sajdah Symbol ۩ -->
-              <text class="splash-sajdah" x="0" y="8" font-family="'Amiri Quran', serif" font-size="78"
-                    fill="url(#splashGold)" text-anchor="middle" dominant-baseline="central">۩</text>
+              <!-- B. The Open Holy Quran Outer Shell -->
+              <path class="splash-book"
+                    d="M116 274 C136 256 172 244 206 250 C228 254 246 266 256 284 C266 266 284 254 306 250 C340 244 376 256 396 274 L396 348 C376 332 338 326 304 336 C282 342 266 358 256 396 C246 358 230 342 208 336 C174 326 136 332 116 348 Z"
+                    fill="none" stroke="url(#splashGold)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
 
-              <!-- 5. Static Pages Inside Wings -->
-              <g class="splash-static-pages">
-                <path d="M-6 12 C-24 -4 -64 -22 -106 -4 L-106 58 C-64 40 -24 58 -6 74"
-                      fill="none" stroke="url(#splashGold)" stroke-width="2.5" opacity="0.45"></path>
-                <path d="M-5 16 C-22 0 -60 -18 -102 0 L-102 54 C-60 36 -22 54 -5 70"
-                      fill="none" stroke="url(#splashGold)" stroke-width="2" opacity="0.35"></path>
-                <line x1="-16" y1="20" x2="-95" y2="12" stroke="url(#splashGold)" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.5"></line>
-                <line x1="-15" y1="34" x2="-95" y2="26" stroke="url(#splashGold)" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.5"></line>
-                <line x1="-14" y1="48" x2="-92" y2="40" stroke="url(#splashGold)" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.5"></line>
+              <!-- Center Spine Valley Line -->
+              <line class="splash-spine" x1="256" y1="284" x2="256" y2="396" stroke="url(#splashGold)" stroke-width="9" stroke-linecap="round"/>
 
-                <path d="M6 12 C24 -4 64 -22 106 -4 L106 58 C64 40 24 58 6 74"
-                      fill="none" stroke="url(#splashGold)" stroke-width="2.5" opacity="0.45"></path>
-                <path d="M5 16 C22 0 60 -18 102 0 L102 54 C60 36 22 54 5 70"
-                      fill="none" stroke="url(#splashGold)" stroke-width="2" opacity="0.35"></path>
-                <line x1="16" y1="20" x2="95" y2="12" stroke="url(#splashGold)" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.5"></line>
-                <line x1="15" y1="34" x2="95" y2="26" stroke="url(#splashGold)" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.5"></line>
-                <line x1="14" y1="48" x2="92" y2="40" stroke="url(#splashGold)" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.5"></line>
+              <!-- C. Left Page Inner Border -->
+              <path class="splash-page-inner"
+                    d="M132 284 C150 270 180 260 206 266 C224 270 238 280 246 294 L246 364 C238 350 224 342 206 346 C180 352 150 342 132 334 Z"
+                    fill="none" stroke="url(#splashGold)" stroke-width="3.5" opacity="0.85"/>
+
+              <!-- D. Right Page Inner Border -->
+              <path class="splash-page-inner"
+                    d="M380 284 C362 270 332 260 306 266 C288 270 274 280 266 294 L266 364 C274 350 288 342 306 346 C332 352 362 342 380 334 Z"
+                    fill="none" stroke="url(#splashGold)" stroke-width="3.5" opacity="0.85"/>
+
+              <!-- E. Center Arabesque Rosette Medallion -->
+              <g class="splash-rosette" transform="translate(256, 335)">
+                <circle cx="0" cy="0" r="14" fill="none" stroke="url(#splashGold)" stroke-width="3"/>
+                <circle cx="0" cy="0" r="4.5" fill="url(#splashGold)"/>
+                <path d="M0 -14 C-3.5 -8 -3.5 -3 0 0 C3.5 -3 3.5 -8 0 -14 Z" fill="url(#splashGold)"/>
+                <path d="M0 14 C-3.5 8 -3.5 3 0 0 C3.5 3 3.5 8 0 14 Z" fill="url(#splashGold)"/>
+                <path d="M-14 0 C-8 -3.5 -3 -3.5 0 0 C-3 3.5 -8 3.5 -14 0 Z" fill="url(#splashGold)"/>
+                <path d="M14 0 C8 -3.5 3 -3.5 0 0 C3 3.5 8 3.5 14 0 Z" fill="url(#splashGold)"/>
+                <circle cx="-7.5" cy="-7.5" r="2.5" fill="url(#splashGold)"/>
+                <circle cx="7.5" cy="-7.5" r="2.5" fill="url(#splashGold)"/>
+                <circle cx="-7.5" cy="7.5" r="2.5" fill="url(#splashGold)"/>
+                <circle cx="7.5" cy="7.5" r="2.5" fill="url(#splashGold)"/>
               </g>
-
-              <!-- 6. Turning Pages (Contained inside book) -->
-              <g class="splash-turning-pages" id="splashTurningPages">
-                <g class="splash-leaf splash-leaf-1">
-                  <path d="M4 10 C22 -8 68 -26 110 -8 L110 60 C68 42 22 60 4 78 Z"
-                        fill="rgba(212, 175, 55, 0.12)" stroke="url(#splashGold)" stroke-width="3" stroke-linejoin="round"></path>
-                  <line x1="18" y1="18" x2="98" y2="10" stroke="url(#splashGold)" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.75"></line>
-                  <line x1="16" y1="32" x2="98" y2="24" stroke="url(#splashGold)" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.75"></line>
-                  <line x1="15" y1="46" x2="95" y2="38" stroke="url(#splashGold)" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.75"></line>
-                </g>
-                <g class="splash-leaf splash-leaf-2">
-                  <path d="M4 10 C22 -8 68 -26 110 -8 L110 60 C68 42 22 60 4 78 Z"
-                        fill="rgba(245, 215, 127, 0.14)" stroke="url(#splashGold)" stroke-width="3" stroke-linejoin="round"></path>
-                  <line x1="20" y1="20" x2="96" y2="12" stroke="url(#splashGold)" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.8"></line>
-                  <line x1="18" y1="34" x2="96" y2="26" stroke="url(#splashGold)" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.8"></line>
-                </g>
-                <g class="splash-leaf splash-leaf-3">
-                  <path d="M4 10 C22 -8 68 -26 110 -8 L110 60 C68 42 22 60 4 78 Z"
-                        fill="rgba(212, 175, 55, 0.16)" stroke="url(#splashGold)" stroke-width="3.5" stroke-linejoin="round"></path>
-                  <line x1="18" y1="18" x2="98" y2="10" stroke="url(#splashGold)" stroke-width="1.8" stroke-dasharray="3,3" opacity="0.85"></line>
-                  <line x1="16" y1="32" x2="98" y2="24" stroke="url(#splashGold)" stroke-width="1.8" stroke-dasharray="3,3" opacity="0.85"></line>
-                </g>
-              </g>
-
-              <!-- 7. Outer Book Rim -->
-              <path class="splash-wing-left" id="splashWingLeft"
-                    d="M0 0 C-20 -20 -70 -40 -120 -20 L-120 70 C-70 50 -20 70 0 90 Z"
-                    fill="none" stroke="url(#splashGold)" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"></path>
-              <path class="splash-wing-right" id="splashWingRight"
-                    d="M0 0 C20 -20 70 -40 120 -20 L120 70 C70 50 20 70 0 90 Z"
-                    fill="none" stroke="url(#splashGold)" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"></path>
-              <line class="splash-spine" id="splashSpine" x1="0" y1="0" x2="0" y2="90" stroke="url(#splashGold)" stroke-width="12" stroke-linecap="round"></line>
             </g>
           </svg>
         </div>
@@ -425,45 +416,33 @@
         var splash = document.getElementById('app-splash-overlay');
         var stage = document.getElementById('splashStage');
         var brand = document.getElementById('splashBrand');
-        var leftWing = document.getElementById('splashWingLeft');
-        var rightWing = document.getElementById('splashWingRight');
-        var spine = document.getElementById('splashSpine');
-        var pages = document.getElementById('splashTurningPages');
         var progress = document.getElementById('splashProgress');
         if (!splash) return;
 
-        // Step 1: Book wings open smoothly
+        // Step 1: Squircle Badge with emerald glow appears
         setTimeout(function () {
-          if (leftWing) leftWing.style.transform = 'scaleX(1)';
-          if (rightWing) rightWing.style.transform = 'scaleX(1)';
-          if (spine) spine.style.opacity = '1';
-          if (stage) stage.classList.add('show-page-lines');
-          if (progress) progress.style.width = '35%';
+          if (stage) stage.classList.add('state-badge');
+          if (progress) progress.style.width = '30%';
         }, 80);
 
-        // Step 2: Golden pages flip inside book
+        // Step 2: Teardrop Arch draws in
         setTimeout(function () {
-          if (pages) pages.classList.add('is-flipping');
-          if (progress) progress.style.width = '65%';
-        }, 680);
+          if (stage) stage.classList.add('state-arch');
+          if (progress) progress.style.width = '55%';
+        }, 550);
 
-        // Step 3: Arch and Sajdah mark appear
+        // Step 3: Sacred Quran pages and spine outline glide in
         setTimeout(function () {
-          if (stage) {
-            stage.classList.add('state-arch');
-            stage.classList.add('state-mark');
-          }
-          if (progress) progress.style.width = '85%';
-        }, 1600);
+          if (stage) stage.classList.add('state-book');
+          if (progress) progress.style.width = '75%';
+        }, 950);
 
-        // Step 4: Emblem assembles and Brand Title glides up
+        // Step 4: Arabesque Rosette Medallion blossoms at spine
         setTimeout(function () {
-          if (stage) {
-            stage.classList.add('state-assemble');
-          }
+          if (stage) stage.classList.add('state-rosette');
           if (brand) brand.classList.add('show-brand');
           if (progress) progress.style.width = '100%';
-        }, 2150);
+        }, 1450);
 
         // Step 5: Smooth fade out overlay and unmount
         function dismissSplash() {
@@ -473,14 +452,14 @@
             if (splash && splash.parentNode) {
               splash.parentNode.removeChild(splash);
             }
-          }, 700);
+          }, 600);
         }
 
         // Tap/click to skip immediately
         splash.addEventListener('click', dismissSplash);
 
         // Auto dismiss after sequence finishes
-        setTimeout(dismissSplash, 3300);
+        setTimeout(dismissSplash, 2700);
       })();
     </script>
 

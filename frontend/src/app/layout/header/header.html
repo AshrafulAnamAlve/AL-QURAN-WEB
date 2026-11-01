@@ -241,17 +241,17 @@
 
     @if (!isDesktopApp()) {
       <li class="drawer__desktop-item">
-        <button
-          type="button"
+        <a
+          routerLink="/download"
+          (click)="closeDrawer()"
           class="drawer__desktop-btn"
-          (click)="openDesktopModal()"
         >
-          <aq-icon name="monitor" [size]="20" />
+          <aq-icon name="download" [size]="20" />
           <div class="drawer__desktop-text">
-            <strong>{{ isBn() ? 'ডেস্কটপ অ্যাপ ও শর্টকাট' : 'Desktop App & Shortcuts' }}</strong>
-            <span>{{ isBn() ? 'Windows 10 / 11 (.exe)' : 'Windows 10 / 11 (.exe)' }}</span>
+            <strong>{{ isBn() ? 'অ্যাপ ও এক্সটেনশন ডাউনলোড' : 'Download Official Apps' }}</strong>
+            <span>{{ isBn() ? 'Android APK • Windows PC • Extension' : 'Android APK • Windows PC • Extension' }}</span>
           </div>
-        </button>
+        </a>
       </li>
     }
 
