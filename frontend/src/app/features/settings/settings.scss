@@ -1,6 +1,9 @@
 .settings-page {
   padding-block: 1.5rem 3rem;
+  width: 100%;
   max-width: 860px;
+  box-sizing: border-box;
+  overflow-x: hidden;
 
   @media (max-width: 640px) {
     padding-block: 0.75rem 2rem;
