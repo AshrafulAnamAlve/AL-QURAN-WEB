@@ -1,7 +1,9 @@
 .download-page {
   padding: 36px 16px 80px;
+  width: 100%;
   max-width: 980px;
   margin: 0 auto;
+  box-sizing: border-box;
 
   @media (max-width: 640px) {
     padding: 12px 12px 48px;

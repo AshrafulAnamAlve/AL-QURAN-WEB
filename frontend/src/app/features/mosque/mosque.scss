@@ -83,6 +83,11 @@
   &__body {
     flex: 1;
     min-width: 240px;
+
+    @media (max-width: 640px) {
+      min-width: 0;
+      width: 100%;
+    }
   }
 
   &__title {
@@ -784,6 +789,11 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
+
+  @media (max-width: 640px) {
+    align-items: flex-end;
+    padding: 0;
+  }
 }
 
 .modal-dialog {
@@ -793,6 +803,13 @@
   overflow-y: auto;
   border-radius: var(--aq-radius-xl);
   padding: 1.5rem;
+  box-sizing: border-box;
+
+  @media (max-width: 640px) {
+    max-width: 100%;
+    border-radius: 20px 20px 0 0;
+    padding: 1.25rem 1rem max(1.25rem, env(safe-area-inset-bottom, 16px));
+  }
 }
 
 .modal-header {
