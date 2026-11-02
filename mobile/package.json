@@ -17,7 +17,8 @@
     "build:apk:debug": "npm run build:android && cd android && ./gradlew assembleDebug",
     "test:transformation": "node test-transformation.mjs",
     "test:responsiveness": "node test-responsiveness.mjs",
-    "test": "node test-transformation.mjs && node test-responsiveness.mjs"
+    "test": "node test-transformation.mjs && node test-responsiveness.mjs",
+    "serve": "node serve-app.mjs"
   },
   "dependencies": {
     "@capacitor/app": "^7.0.0",
