@@ -109,6 +109,8 @@ export class HeaderComponent implements OnDestroy {
     this.language.toggleLanguage();
   }
 
+  private scrollY = 0;
+
   toggleDrawer(): void {
     this.drawerOpen.update((open) => {
       const next = !open;
@@ -125,12 +127,28 @@ export class HeaderComponent implements OnDestroy {
   }
 
   private updateBodyScroll(locked: boolean): void {
-    if (typeof document !== 'undefined') {
-      if (locked) {
-        document.body.classList.add('aq-drawer-open');
-      } else {
-        document.body.classList.remove('aq-drawer-open');
-      }
+    if (typeof window === 'undefined' || typeof document === 'undefined') return;
+
+    if (locked) {
+      this.scrollY = window.scrollY || window.pageYOffset || 0;
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${this.scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+      document.body.classList.add('aq-drawer-open');
+    } else {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      document.body.classList.remove('aq-drawer-open');
+      window.scrollTo(0, this.scrollY);
     }
   }
 
