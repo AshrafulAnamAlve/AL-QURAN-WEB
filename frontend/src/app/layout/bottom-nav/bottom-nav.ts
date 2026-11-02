@@ -101,6 +101,12 @@ import { PRIMARY_NAV_ITEMS } from '../nav-items';
                   0 4px 16px rgba(16, 185, 129, 0.14);
     }
 
+    :host-context(body.aq-drawer-open) .floating-island {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(24px);
+    }
+
     .dock-list {
       display: grid;
       grid-template-columns: 1fr 1fr 1.15fr 1fr 1fr;

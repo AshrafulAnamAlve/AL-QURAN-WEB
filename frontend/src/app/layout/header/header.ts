@@ -2,11 +2,13 @@ import {
   ChangeDetectionStrategy,
   Component,
   HostListener,
+  OnDestroy,
   computed,
   inject,
   signal,
 } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { filter } from 'rxjs';
 import { DesktopService } from '../../core/services/desktop';
 import { LanguageService } from '../../core/services/language';
 import { MobileHardwareService } from '../../core/services/mobile-hardware.service';
@@ -26,8 +28,11 @@ import { NAV_ITEMS, PRIMARY_NAV_ITEMS, SECONDARY_NAV_ITEMS } from '../nav-items'
   imports: [RouterLink, RouterLinkActive, IconComponent],
   templateUrl: './header.html',
   styleUrl: './header.scss',
+  host: {
+    '[class.is-drawer-open]': 'drawerOpen()',
+  },
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnDestroy {
   private readonly theme = inject(ThemeService);
   private readonly router = inject(Router);
   protected readonly language = inject(LanguageService);
@@ -35,6 +40,13 @@ export class HeaderComponent {
   protected readonly taskService = inject(TaskService);
   protected readonly desktop = inject(DesktopService);
   protected readonly mobileHardware = inject(MobileHardwareService);
+
+  private readonly routerSub = this.router.events
+    .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.closeDrawer();
+      this.closeMoreDropdown();
+    });
 
   readonly isDesktopApp = this.desktop.isDesktop;
   readonly isNativeMobile = this.mobileHardware.isNativeMobile;
@@ -98,11 +110,33 @@ export class HeaderComponent {
   }
 
   toggleDrawer(): void {
-    this.drawerOpen.update((open) => !open);
+    this.drawerOpen.update((open) => {
+      const next = !open;
+      this.updateBodyScroll(next);
+      return next;
+    });
   }
 
   closeDrawer(): void {
-    this.drawerOpen.set(false);
+    if (this.drawerOpen()) {
+      this.drawerOpen.set(false);
+      this.updateBodyScroll(false);
+    }
+  }
+
+  private updateBodyScroll(locked: boolean): void {
+    if (typeof document !== 'undefined') {
+      if (locked) {
+        document.body.classList.add('aq-drawer-open');
+      } else {
+        document.body.classList.remove('aq-drawer-open');
+      }
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.routerSub.unsubscribe();
+    this.updateBodyScroll(false);
   }
 
   openSearch(): void {

@@ -172,100 +172,151 @@
   [attr.inert]="drawerOpen() ? null : ''"
   aria-label="Mobile navigation"
 >
-  <ul>
-    <!-- Habit Tracker & Goals Quick Action in Drawer -->
-    <li class="drawer__habit-item">
-      <a
-        routerLink="/calendar"
-        [queryParams]="{ tab: 'habit' }"
-        (click)="closeDrawer()"
-        class="drawer__habit-link"
-      >
-        <span class="drawer__habit-icon" aria-hidden="true">🔥</span>
-        <div class="drawer__habit-text">
-          <strong class="drawer__habit-title">
-            {{ isBn() ? 'দৈনিক লক্ষ্য ও অভ্যাস' : 'Daily Goals & Habit Tracker' }}
-          </strong>
-          <span class="drawer__habit-sub">
-            {{ isBn() ? 'আজকের লক্ষ্য: ' + toBnDigits(taskService.readingProgressPercent()) + '% সম্পন্ন' : 'Today: ' + taskService.readingProgressPercent() + '% completed' }}
-          </span>
-        </div>
-        <span class="drawer__habit-badge aq-numeral">
-          {{ isBn() ? toBnDigits(taskService.metrics().currentStreak) : taskService.metrics().currentStreak }}d 🔥
+  <!-- Drawer Header with Brand, Quick Actions and Close Button -->
+  <div class="drawer__header">
+    <div class="drawer__brand">
+      <span class="drawer__brand-mark" aria-hidden="true">
+        <img src="icons/icon.svg" alt="" class="drawer__brand-img" width="30" height="30" />
+      </span>
+      <div class="drawer__brand-info">
+        <span class="drawer__brand-name">Al-Quran</span>
+        <span class="drawer__brand-tag">
+          {{ isBn() ? 'পড়ার ও আমলের সঙ্গী' : 'Read · Listen · Reflect' }}
         </span>
-      </a>
-    </li>
+      </div>
+    </div>
+    <div class="drawer__header-actions">
+      <!-- Quick Theme Toggle -->
+      <button
+        type="button"
+        class="aq-icon-btn drawer__action-btn"
+        (click)="toggleTheme()"
+        [attr.aria-label]="themeLabel()"
+        [title]="themeLabel()"
+      >
+        <aq-icon [name]="isDark() ? 'sun' : 'moon'" [size]="18" />
+      </button>
 
-    <li class="drawer__section-label" aria-hidden="true">
-      {{ isBn() ? 'পবিত্র কুরআন ও নামাজ' : 'Quran & Core Worship' }}
-    </li>
-    @for (item of primaryNavItems; track item.path) {
-      <li>
+      <!-- Quick Language Toggle (EN / বাং) -->
+      <button
+        type="button"
+        class="lang-pill-btn drawer__lang-btn"
+        (click)="toggleLanguage()"
+        [attr.aria-label]="isBn() ? 'Switch to English' : 'বাংলা ভাষায় পরিবর্তন করুন'"
+      >
+        <span class="lang-pill" [class.lang-pill--active]="!isBn()">EN</span>
+        <span class="lang-pill" [class.lang-pill--active]="isBn()">বাং</span>
+      </button>
+
+      <!-- Close Drawer Button -->
+      <button
+        type="button"
+        class="aq-icon-btn drawer__close-btn"
+        (click)="closeDrawer()"
+        [attr.aria-label]="isBn() ? 'মেনু বন্ধ করুন' : 'Close menu'"
+        title="Close / বন্ধ করুন"
+      >
+        <aq-icon name="close" [size]="20" />
+      </button>
+    </div>
+  </div>
+
+  <div class="drawer__content">
+    <ul>
+      <!-- Habit Tracker & Goals Quick Action in Drawer -->
+      <li class="drawer__habit-item">
         <a
-          [routerLink]="item.path"
-          routerLinkActive="is-active"
-          [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+          routerLink="/calendar"
+          [queryParams]="{ tab: 'habit' }"
           (click)="closeDrawer()"
+          class="drawer__habit-link"
         >
-          <aq-icon [name]="item.icon" [size]="20" />
-          <span>{{ isBn() ? item.labelBn : item.label }}</span>
-          @if (item.path === '/hadith') {
-            <span class="drawer__badge drawer__badge--gold">{{ isBn() ? '৩৬,০০০+ হাদিস' : '36k+ Hadiths' }}</span>
-          }
-          <aq-icon name="chevronRight" [size]="16" />
+          <span class="drawer__habit-icon" aria-hidden="true">🔥</span>
+          <div class="drawer__habit-text">
+            <strong class="drawer__habit-title">
+              {{ isBn() ? 'দৈনিক লক্ষ্য ও অভ্যাস' : 'Daily Goals & Habit Tracker' }}
+            </strong>
+            <span class="drawer__habit-sub">
+              {{ isBn() ? 'আজকের লক্ষ্য: ' + toBnDigits(taskService.readingProgressPercent()) + '% সম্পন্ন' : 'Today: ' + taskService.readingProgressPercent() + '% completed' }}
+            </span>
+          </div>
+          <span class="drawer__habit-badge aq-numeral">
+            {{ isBn() ? toBnDigits(taskService.metrics().currentStreak) : taskService.metrics().currentStreak }}d 🔥
+          </span>
         </a>
       </li>
-    }
 
-    <li class="drawer__section-label" aria-hidden="true">
-      {{ isBn() ? 'ইসলামিক সেবা ও টুলস' : 'Spiritual Tools & Utilities' }}
-    </li>
-    @for (item of secondaryNavItems; track item.path) {
-      @if (item.path !== '/download') {
+      <li class="drawer__section-label" aria-hidden="true">
+        {{ isBn() ? 'পবিত্র কুরআন ও নামাজ' : 'Quran & Core Worship' }}
+      </li>
+      @for (item of primaryNavItems; track item.path) {
         <li>
           <a
             [routerLink]="item.path"
             routerLinkActive="is-active"
+            [routerLinkActiveOptions]="{ exact: item.path === '/' }"
             (click)="closeDrawer()"
           >
             <aq-icon [name]="item.icon" [size]="20" />
             <span>{{ isBn() ? item.labelBn : item.label }}</span>
-            @if (item.path === '/ruqyah') {
-              <span class="drawer__badge">{{ isBn() ? 'অডিও ও শিফা' : 'Audio & Shifa' }}</span>
+            @if (item.path === '/hadith') {
+              <span class="drawer__badge drawer__badge--gold">{{ isBn() ? '৩৬,০০০+ হাদিস' : '36k+ Hadiths' }}</span>
             }
             <aq-icon name="chevronRight" [size]="16" />
           </a>
         </li>
       }
-    }
 
-    @if (!isDesktopApp()) {
-      <li class="drawer__desktop-item">
-        <a
-          routerLink="/download"
-          (click)="closeDrawer()"
-          class="drawer__desktop-btn"
-        >
-          <aq-icon name="download" [size]="20" />
-          <div class="drawer__desktop-text">
-            <strong>{{ isBn() ? 'অ্যাপ ও এক্সটেনশন ডাউনলোড' : 'Download Official Apps' }}</strong>
-            <span>{{ isBn() ? 'Android APK • Windows PC • Extension' : 'Android APK • Windows PC • Extension' }}</span>
-          </div>
-        </a>
+      <li class="drawer__section-label" aria-hidden="true">
+        {{ isBn() ? 'ইসলামিক সেবা ও টুলস' : 'Spiritual Tools & Utilities' }}
       </li>
-    }
+      @for (item of secondaryNavItems; track item.path) {
+        @if (item.path !== '/download') {
+          <li>
+            <a
+              [routerLink]="item.path"
+              routerLinkActive="is-active"
+              (click)="closeDrawer()"
+            >
+              <aq-icon [name]="item.icon" [size]="20" />
+              <span>{{ isBn() ? item.labelBn : item.label }}</span>
+              @if (item.path === '/ruqyah') {
+                <span class="drawer__badge">{{ isBn() ? 'অডিও ও শিফা' : 'Audio & Shifa' }}</span>
+              }
+              <aq-icon name="chevronRight" [size]="16" />
+            </a>
+          </li>
+        }
+      }
 
-    @if (pwa.canInstall()) {
-      <li class="drawer__install-item">
-        <button
-          type="button"
-          class="drawer__install-btn"
-          (click)="installApp(); closeDrawer()"
-        >
-          <aq-icon name="download" [size]="20" />
-          <span>{{ isBn() ? 'অ্যাপ ইনস্টল করুন' : 'Install Al-Quran App' }}</span>
-        </button>
-      </li>
-    }
-  </ul>
+      @if (!isDesktopApp()) {
+        <li class="drawer__desktop-item">
+          <a
+            routerLink="/download"
+            (click)="closeDrawer()"
+            class="drawer__desktop-btn"
+          >
+            <aq-icon name="download" [size]="20" />
+            <div class="drawer__desktop-text">
+              <strong>{{ isBn() ? 'অ্যাপ ও এক্সটেনশন ডাউনলোড' : 'Download Official Apps' }}</strong>
+              <span>{{ isBn() ? 'Android APK • Windows PC • Extension' : 'Android APK • Windows PC • Extension' }}</span>
+            </div>
+          </a>
+        </li>
+      }
+
+      @if (pwa.canInstall()) {
+        <li class="drawer__install-item">
+          <button
+            type="button"
+            class="drawer__install-btn"
+            (click)="installApp(); closeDrawer()"
+          >
+            <aq-icon name="download" [size]="20" />
+            <span>{{ isBn() ? 'অ্যাপ ইনস্টল করুন' : 'Install Al-Quran App' }}</span>
+          </button>
+        </li>
+      }
+    </ul>
+  </div>
 </nav>
