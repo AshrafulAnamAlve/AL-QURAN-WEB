@@ -37,7 +37,22 @@
   <!-- Header Section -->
   <header class="prayer-header">
     <div class="prayer-header__info">
-      <h1 class="prayer-header__title">{{ isBn() ? 'নামাজের সময়সূচি' : 'Prayer Times' }}</h1>
+      <div class="prayer-header__title-row">
+        <h1 class="prayer-header__title">{{ isBn() ? 'নামাজের সময়সূচি' : 'Prayer Times' }}</h1>
+
+        @if (timetable(); as table) {
+          <div class="prayer-header__dates">
+            <span class="gregorian-date">
+              <aq-icon name="calendar" [size]="14" />
+              <span>{{ table.readableDate }}</span>
+            </span>
+            @if (table.hijri; as hijri) {
+              <span class="hijri-date aq-chip aq-chip--gold">{{ hijri.formatted }}</span>
+            }
+          </div>
+        }
+      </div>
+
       <div class="prayer-header__location-row">
         <button
           type="button"
@@ -45,7 +60,7 @@
           (click)="openLocationPicker()"
           [attr.aria-label]="(isBn() ? 'অবস্থান পরিবর্তন করুন, বর্তমান অবস্থান: ' : 'Change location, current location is ') + location().displayName"
         >
-          <aq-icon name="mapPin" [size]="18" />
+          <aq-icon name="mapPin" [size]="15" />
           <span class="location-btn__name">{{ location().displayName }}</span>
           <span class="location-btn__sep" aria-hidden="true">&bull;</span>
           <span class="location-btn__change">{{ isBn() ? 'পরিবর্তন' : 'Change' }}</span>
@@ -58,25 +73,11 @@
           (click)="useMyLocation()"
           [title]="isBn() ? 'আমার বর্তমান অবস্থান শনাক্ত করুন' : 'Detect my current location'"
         >
-          <aq-icon name="crosshair" [size]="16" />
+          <aq-icon name="crosshair" [size]="14" />
           <span>{{ isDetectingLocation() ? (isBn() ? 'শনাক্ত হচ্ছে…' : 'Locating…') : (isBn() ? 'জিপিএস' : 'Use GPS') }}</span>
         </button>
       </div>
     </div>
-
-    @if (timetable(); as table) {
-      <div class="prayer-header__dates">
-        <p class="gregorian-date">
-          <aq-icon name="calendar" [size]="15" />
-          <span>{{ table.readableDate }}</span>
-        </p>
-        @if (table.hijri; as hijri) {
-          <p class="hijri-date">
-            <span class="aq-chip aq-chip--gold">{{ hijri.formatted }}</span>
-          </p>
-        }
-      </div>
-    }
   </header>
 
   <!-- Loading State -->
