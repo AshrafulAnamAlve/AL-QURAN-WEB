@@ -98,7 +98,8 @@ try {
   const homeScss = read('src/app/features/home/home.scss');
   assert(
     homeScss.includes('.explore-grid') &&
-    homeScss.includes('grid-template-columns: repeat(2, 1fr)'),
+    (homeScss.includes('grid-template-columns: repeat(2, minmax(0, 1fr))') ||
+     homeScss.includes('grid-template-columns: repeat(2, 1fr)')),
     'Explore shortcuts on mobile are formatted as an ergonomic 2-column touch grid'
   );
 } catch (e) {
