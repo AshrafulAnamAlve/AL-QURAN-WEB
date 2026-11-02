@@ -15,11 +15,19 @@
 // --- Hero Section ---------------------------------------------------------
 .hero {
   position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   background: linear-gradient(175deg, var(--aq-primary-soft) 0%, var(--aq-bg) 75%);
   border-bottom: 1px solid var(--aq-border);
   overflow: hidden;
 
   &__inner {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     padding-block: 2.25rem 2.5rem;
     text-align: center;
 
@@ -373,11 +381,15 @@
 // --- Main Container & Section Grid ----------------------------------------
 .sections {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   gap: 1.25rem;
   padding-block: 1.75rem;
 
   @media (min-width: 1024px) {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: stretch;
     gap: 1.5rem;
     padding-block: 2.5rem;
@@ -385,6 +397,10 @@
 }
 
 .panel {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   background: var(--aq-surface);
   border: 1px solid var(--aq-border);
   border-radius: var(--aq-radius-lg);
@@ -484,7 +500,10 @@
     }
   }
 
-  &__meta { flex: 1 1 auto; }
+  &__meta {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
 
   &__title {
     display: flex;
@@ -549,6 +568,7 @@
 
     .prayer-home-btn {
       flex: 1 1 0;
+      min-width: 0;
       justify-content: center;
       min-height: 42px;
       white-space: nowrap;
@@ -615,6 +635,8 @@
   display: flex;
   align-items: flex-start;
   gap: 0.65rem;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .prayer-home-status-icon {
@@ -627,6 +649,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+  min-width: 0;
 }
 
 .prayer-home-status-title {
@@ -636,7 +659,7 @@
 }
 
 .prayer-home-status-desc {
-    @media (max-width: 640px) { display: none; }
+  @media (max-width: 639px) { display: none; }
   font-size: 0.8125rem;
   color: var(--aq-text-muted);
   line-height: 1.35;
@@ -646,12 +669,17 @@
   flex-shrink: 0;
   min-height: 42px;
   justify-content: center;
+  max-width: 100%;
+  box-sizing: border-box;
 
-  @media (max-width: 640px) {
+  @media (max-width: 639px) {
     width: 100%;
   }
 
-  @media (min-width: 640px) { min-height: 36px; }
+  @media (min-width: 640px) {
+    width: auto;
+    min-height: 36px;
+  }
 }
 
 .prayer-home-strip-item {
@@ -659,6 +687,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
   padding: 0.5rem 0.25rem;
   background: var(--aq-surface-2);
   border-radius: var(--aq-radius-md);
@@ -1116,6 +1148,10 @@
 
 // --- Explore Services Grid ------------------------------------------------
 .explore-section {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   margin-top: 1.25rem;
 
   &__header {
@@ -1144,6 +1180,9 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
   gap: 1.15rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .explore-card {
@@ -1151,6 +1190,9 @@
   align-items: flex-start;
   gap: 1rem;
   padding: 1.25rem;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
   background: var(--aq-surface);
   border: 1px solid var(--aq-border);
   border-radius: var(--aq-radius-lg);
@@ -1361,6 +1403,10 @@
 
 @media (max-width: 768px) {
   .explore-section {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     margin-top: 1rem;
     &__header {
       margin-bottom: 0.75rem;
@@ -1371,11 +1417,23 @@
   }
 
   .explore-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 0.5rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+
+    @media (max-width: 340px) {
+      grid-template-columns: minmax(0, 1fr) !important;
+    }
   }
 
   .explore-card {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
     padding: 0.65rem 0.75rem !important;
     border-radius: var(--aq-radius-md) !important;
     gap: 0.5rem !important;
@@ -1385,10 +1443,13 @@
       width: 36px !important;
       height: 36px !important;
       border-radius: var(--aq-radius-sm) !important;
+      flex-shrink: 0 !important;
     }
 
     &__content {
-      min-width: 0;
+      min-width: 0 !important;
+      max-width: 100% !important;
+      overflow: hidden !important;
     }
 
     &__title {
@@ -1397,6 +1458,8 @@
       white-space: nowrap !important;
       overflow: hidden !important;
       text-overflow: ellipsis !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
     }
 
     &__desc {
@@ -1405,6 +1468,9 @@
 
     &__badge-row {
       margin-bottom: 0 !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
+      overflow: hidden !important;
     }
 
     &__badge {
@@ -1421,11 +1487,19 @@
 // Mobile padding & card refinements
 @media (max-width: 640px) {
   .sections {
+    grid-template-columns: minmax(0, 1fr) !important;
     gap: 0.875rem !important;
     padding-block: 1rem 1.5rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .panel {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
     padding: 1rem 0.875rem !important;
     border-radius: var(--aq-radius-lg) !important;
   }

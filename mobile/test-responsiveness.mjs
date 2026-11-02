@@ -94,6 +94,10 @@ check('Calendar: .calendar-toolbar wraps into clean mobile column',
   calendarScss.includes('.calendar-toolbar') && calendarScss.includes('flex-direction: column'));
 check('Prayer: .prayer-page bounded with overflow-x: hidden', prayerScss.includes('overflow-x: hidden'));
 check('Home: :host bounded with overflow-x: hidden and width: 100%', homeScss.includes('overflow-x: hidden'));
+check('Home: .sections has minmax(0, 1fr) grid columns to prevent flex blowout', homeScss.includes('grid-template-columns: minmax(0, 1fr)'));
+check('Home: .explore-grid bounded with repeat(2, minmax(0, 1fr)) on mobile', homeScss.includes('repeat(2, minmax(0, 1fr))'));
+check('Home: .explore-card has overflow: hidden and min-width: 0 protection', homeScss.includes('.explore-card') && homeScss.includes('overflow: hidden !important'));
+check('Home: .prayer-home-status-btn adapts between 100% and auto without overflow', homeScss.includes('.prayer-home-status-btn') && homeScss.includes('width: auto'));
 check('Qibla: .qibla-container bounded with overflow-x: hidden', qiblaScss.includes('overflow-x: hidden'));
 check('Ruqyah: .ruqyah-container bounded with overflow-x: hidden', ruqyahScss.includes('overflow-x: hidden'));
 check('Settings: .settings-page bounded with overflow-x: hidden', settingsScss.includes('overflow-x: hidden'));
