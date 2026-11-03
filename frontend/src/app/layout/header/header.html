@@ -227,23 +227,22 @@
         {{ isBn() ? 'ইসলামিক সেবা ও টুলস' : 'Spiritual Tools & Utilities' }}
       </li>
       @for (item of secondaryNavItems; track item.path) {
-        <li>
-          <a
-            [routerLink]="item.path"
-            routerLinkActive="is-active"
-            (click)="closeDrawer()"
-          >
-            <aq-icon [name]="item.icon" [size]="20" />
-            <span>{{ isBn() ? item.labelBn : item.label }}</span>
-            @if (item.path === '/ruqyah') {
-              <span class="drawer__badge">{{ isBn() ? 'অডিও ও শিফা' : 'Audio & Shifa' }}</span>
-            }
-            @if (item.path === '/download') {
-              <span class="drawer__badge drawer__badge--gold">APK • PC</span>
-            }
-            <aq-icon name="chevronRight" [size]="16" />
-          </a>
-        </li>
+        @if (item.path !== '/download') {
+          <li>
+            <a
+              [routerLink]="item.path"
+              routerLinkActive="is-active"
+              (click)="closeDrawer()"
+            >
+              <aq-icon [name]="item.icon" [size]="20" />
+              <span>{{ isBn() ? item.labelBn : item.label }}</span>
+              @if (item.path === '/ruqyah') {
+                <span class="drawer__badge">{{ isBn() ? 'অডিও ও শিফা' : 'Audio & Shifa' }}</span>
+              }
+              <aq-icon name="chevronRight" [size]="16" />
+            </a>
+          </li>
+        }
       }
 
       @if (!isDesktopApp()) {
