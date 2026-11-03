@@ -5,7 +5,7 @@
     class="perm-modal__dialog"
     role="dialog"
     aria-modal="true"
-    [attr.aria-label]="isBn() ? 'নামাজের ওয়াক্ত ও আযান নোটিফিকেশন অনুমতি' : 'Prayer Times & Adhan Notification Permission'"
+    [attr.aria-label]="isBn() ? 'হাইয়া আলাস-সালাহ — সালাতের অনুমতি' : 'Prayer Times & Adhan Notification Permission'"
   >
     <!-- Top decorative accent line -->
     <div class="perm-modal__accent-bar"></div>
@@ -39,14 +39,14 @@
           {{ isBn() ? 'আলহামদুলিল্লাহ! নোটিফিকেশন সক্রিয় হয়েছে' : 'Alhamdulillah! Notifications Enabled' }}
         </h2>
         <p class="perm-modal__desc">
-          {{ isBn() ? 'প্রতিটি ওয়াক্তে সঠিক সময়ে আযান ও অ্যালার্ট আপনার ডিভাইসে বাজবে।' : 'Real-time Adhan audio and alerts are now scheduled on your device.' }}
+          {{ isBn() ? 'প্রতিটি ওয়াক্তে সঠিক সময়ে আযান ও সালাতের অ্যালার্ট আপনার ডিভাইসে বাজবে।' : 'Real-time Adhan audio and prayer alerts are now scheduled on your device.' }}
         </p>
       } @else {
         <h2 class="perm-modal__title">
-          {{ isBn() ? 'নামাজের ওয়াক্ত ও আযান নোটিফিকেশন' : 'Prayer Times & Adhan Alerts' }}
+          {{ isBn() ? 'হাইয়া আলাস-সালাহ — সালাতের দিকে আসুন' : 'Hayya \'Alas-Salah — Come to Prayer' }}
         </h2>
         <p class="perm-modal__desc">
-          {{ isBn() ? 'ওয়াক্ত হওয়ার সাথে সাথে সঠিক সময়ে আযান শুনতে ও রিয়েল-টাইম নোটিফিকেশন পেতে অনুমতি প্রয়োজন।' : 'Enable notifications to hear the Adhan recitation and receive precise prayer alerts at every Waqt.' }}
+          {{ isBn() ? 'ব্যস্ত জীবনের মাঝেও যেন কোনো সালাত কাজা না হয়, সেজন্য সময়মতো আযান ও ওয়াক্তের নোটিফিকেশন চালু রাখুন।' : 'Never miss a prayer amidst your daily routine. Enable exact-time Adhan audio and prayer alerts.' }}
         </p>
 
         <!-- Feature List -->
@@ -56,8 +56,8 @@
               <aq-icon name="volume2" [size]="18" />
             </div>
             <div class="perm-modal__feature-text">
-              <strong>{{ isBn() ? 'রিয়েল-টাইম আযান অডিও' : 'Exact-Time Adhan Audio' }}</strong>
-              <span>{{ isBn() ? 'ফজর, যোহর, আসর, মাগরিব ও এশার সুমধুর আযান' : 'Sweet Adhan recitation at the exact minute of all 5 prayers' }}</span>
+              <strong>{{ isBn() ? 'ওয়াক্তমতো সুমধুর আযান' : 'Exact-Time Adhan Audio' }}</strong>
+              <span>{{ isBn() ? 'ফজর থেকে এশা—প্রতিটি নামাজের শুরুতে সুমধুর আযানের ধ্বনি' : 'Heartfelt Adhan recitation at the beginning of each prayer' }}</span>
             </div>
           </li>
 
@@ -66,8 +66,8 @@
               <aq-icon name="clock" [size]="18" />
             </div>
             <div class="perm-modal__feature-text">
-              <strong>{{ isBn() ? 'লক স্ক্রিন ও ব্যাকগ্রাউন্ড অ্যালার্ট' : 'Lock Screen & Sleep Mode' }}</strong>
-              <span>{{ isBn() ? 'ফোন স্লিপ বা লক থাকলেও সঠিক সময়ে আযান বাজবে (ব্যাটারি সেভার অফ রাখুন)' : 'Reliably rings even when your phone is locked or asleep' }}</span>
+              <strong>{{ isBn() ? 'নির্ভরযোগ্য ওয়াক্ত অ্যালার্ট' : 'Reliable Background Alerts' }}</strong>
+              <span>{{ isBn() ? 'ফোন লক বা স্লিপ মোডে থাকলেও সঠিক সময়ে আযান ও রিমাইন্ডার বাজবে' : 'Rings on schedule even when your phone is locked or asleep' }}</span>
             </div>
           </li>
 
@@ -76,8 +76,8 @@
               <aq-icon name="sparkles" [size]="18" />
             </div>
             <div class="perm-modal__feature-text">
-              <strong>{{ isBn() ? '৭ দিনের অফলাইন অ্যালার্ম' : '7-Day Offline Multi-Alarm' }}</strong>
-              <span>{{ isBn() ? 'ইন্টারনেট বন্ধ থাকলেও আগামী ৭ দিনের ওয়াক্ত সচল থাকবে' : 'Alarms remain scheduled in Android for upcoming days' }}</span>
+              <strong>{{ isBn() ? 'অফলাইন সালাত শিডিউল' : '7-Day Offline Multi-Alarm' }}</strong>
+              <span>{{ isBn() ? 'ইন্টারনেট সংযোগ না থাকলেও ডিভাইসে আগামী ৭ দিনের অ্যালার্ম সচল থাকবে' : 'Alarms remain reliably active even without an internet connection' }}</span>
             </div>
           </li>
         </ul>
@@ -92,10 +92,10 @@
           >
             @if (isLoading()) {
               <span class="perm-modal__spinner" aria-hidden="true"></span>
-              <span>{{ isBn() ? 'অনুমতি নেওয়া হচ্ছে...' : 'Requesting...' }}</span>
+              <span>{{ isBn() ? 'অনুমতি নেওয়া হচ্ছে...' : 'Enabling Alerts...' }}</span>
             } @else {
               <aq-icon name="bell" [size]="18" />
-              <span>{{ isBn() ? 'অনুমতি দিন (নোটিফিকেশন চালু করুন)' : 'Allow Notifications' }}</span>
+              <span>{{ isBn() ? 'সালাতের অ্যালার্ট চালু করুন' : 'Enable Prayer Alerts' }}</span>
             }
           </button>
 

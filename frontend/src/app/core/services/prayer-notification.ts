@@ -439,16 +439,16 @@ export class PrayerNotificationService implements OnDestroy {
       const isBn = this.language.isBn();
       const isFajr = prayer.key.toLowerCase() === 'fajr';
       const title = isBn
-        ? (isFajr ? `🕌 ফজরের ওয়াক্ত হয়েছে (${time12hBn})` : `🕌 ${prayer.banglaName} নামাজের সময় হয়েছে (${time12hBn})`)
+        ? (isFajr ? `🕌 ফজরের ওয়াক্ত হয়েছে (${time12hBn})` : `🕌 ${prayer.banglaName} নামাজের ওয়াক্ত হয়েছে (${time12hBn})`)
         : (isFajr ? `🕌 Fajr Prayer Time (${time12h})` : `🕌 It is now time for ${prayer.name} prayer (${time12h})`);
 
       const body = isBn
         ? (isFajr
-            ? `${city}-এ ফজরের নামাজের ওয়াক্ত হয়েছে (${time12hBn})। আস-সালাতু খাইরুম মিনান নাওম।`
-            : `${city}-এ এখন ${prayer.banglaName} নামাজের সময় (${time12hBn})।`)
+            ? `আস-সালাতু খাইরুম মিনান নাওম — ঘুম থেকে সালাত উত্তম।`
+            : `হাইয়া আলাস-সালাহ — সালাতের দিকে আসুন। (${city})`)
         : (isFajr
-            ? `It is now time for Fajr prayer in ${city} (${time12h}). Prayer is better than sleep.`
-            : `It is now time for ${prayer.name} prayer in ${city} (${time12h}).`);
+            ? `As-Salatu Khayrun Minan Nawm — Prayer is better than sleep.`
+            : `Hayya 'Alas-Salah — Come to prayer. (${city})`);
 
       this.desktopService.sendNotification(title, body);
       return null;
@@ -464,16 +464,16 @@ export class PrayerNotificationService implements OnDestroy {
       const isBn = this.language.isBn();
       const isFajr = prayer.key.toLowerCase() === 'fajr';
       const title = isBn
-        ? (isFajr ? `🕌 ফজরের ওয়াক্ত হয়েছে (${time12hBn})` : `🕌 ${prayer.banglaName} নামাজের সময় হয়েছে (${time12hBn})`)
+        ? (isFajr ? `🕌 ফজরের ওয়াক্ত হয়েছে (${time12hBn})` : `🕌 ${prayer.banglaName} নামাজের ওয়াক্ত হয়েছে (${time12hBn})`)
         : (isFajr ? `🕌 Fajr Prayer Time (${time12h})` : `🕌 It is now time for ${prayer.name} prayer (${time12h})`);
 
       const body = isBn
         ? (isFajr
-            ? `${city}-এ ফজরের নামাজের ওয়াক্ত হয়েছে (${time12hBn})। আস-সালাতু খাইরুম মিনান নাওম। আযান শুনুন।`
-            : `${city}-এ এখন ${prayer.banglaName} নামাজের সময় (${time12hBn})। আযান শুনতে ট্যাপ করুন।`)
+            ? `আস-সালাতু খাইরুম মিনান নাওম — ঘুম থেকে সালাত উত্তম। আযান শুনতে ট্যাপ করুন।`
+            : `হাইয়া আলাস-সালাহ — সালাতের দিকে আসুন। আযান শুনতে ট্যাপ করুন।`)
         : (isFajr
-            ? `It is now time for Fajr in ${city} (${time12h}). Prayer is better than sleep. Tap to hear Adhan.`
-            : `It is now time for ${prayer.name} in ${city} (${time12h}). Tap to hear Adhan.`);
+            ? `As-Salatu Khayrun Minan Nawm — Prayer is better than sleep. Tap to hear Adhan.`
+            : `Hayya 'Alas-Salah — Come to prayer. Tap to hear Adhan.`);
 
       void this.mobileHardware.sendImmediateNotification(title, body, {
         waqtName: prayer.key,
@@ -795,11 +795,11 @@ export class PrayerNotificationService implements OnDestroy {
             : `🕌 It is now time for ${t.name} prayer (${time12h})`;
 
           const bodyBn = isFajr
-            ? `${city}-এ ফজরের নামাজের ওয়াক্ত হয়েছে (${time12hBn})। আস-সালাতু খাইরুম মিনান নাওম। আযান শুনুন।`
-            : `${city}-এ এখন ${t.banglaName} নামাজের সময় (${time12hBn})। আল্লাহু আকবার। আযান শুনতে ট্যাপ করুন।`;
+            ? `আস-সালাতু খাইরুম মিনান নাওম — ঘুম থেকে সালাত উত্তম। আযান শুনতে ট্যাপ করুন।`
+            : `হাইয়া আলাস-সালাহ — সালাতের দিকে আসুন। আযান শুনতে ট্যাপ করুন।`;
           const bodyEn = isFajr
-            ? `It is now time for Fajr in ${city} (${time12h}). Prayer is better than sleep. Tap to hear Adhan.`
-            : `It is now time for ${t.name} prayer in ${city} (${time12h}). Allahu Akbar. Tap to listen.`;
+            ? `As-Salatu Khayrun Minan Nawm — Prayer is better than sleep. Tap to hear Adhan.`
+            : `Hayya 'Alas-Salah — Come to prayer. Tap to listen to Adhan.`;
 
           alarms.push({
             id,
