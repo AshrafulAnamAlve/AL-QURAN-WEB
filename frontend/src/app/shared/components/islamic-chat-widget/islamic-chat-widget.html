@@ -5,7 +5,7 @@
   [class.chat-launcher--active]="isOpen()"
   (click)="toggle()"
   [attr.aria-label]="isBn() ? 'কুরআন ও হাদিস এআই চ্যাট খুলুন' : 'Open Quran & Hadith AI Chat'"
-  [title]="isBn() ? 'নূর এআই - কুরআন ও হাদিস সম্পর্কিত প্রশ্ন করুন' : 'Noor AI - Ask about Quran & Hadith'"
+  [title]="isBn() ? 'নূর এআই - ইসলাম ও কুরআন-হাদিস সম্পর্কিত প্রশ্ন করুন' : 'Noor AI - Ask about Islam, Quran & Hadith'"
 >
   <span class="chat-launcher__glow" aria-hidden="true"></span>
   <span class="chat-launcher__icon-wrap">
@@ -45,7 +45,7 @@
             {{ isBn() ? 'নূর এআই (Noor AI)' : 'Noor AI' }}
           </h2>
           <p class="chat-header__subtitle">
-            {{ isBn() ? 'কুরআন ও সহিহ হাদিস জিজ্ঞাসা' : 'Quran & Hadith Assistant' }}
+            {{ isBn() ? 'ইসলাম ও কুরআন-হাদিস জিজ্ঞাসা' : 'Islamic Knowledge & Faith Assistant' }}
           </p>
         </div>
       </div>
@@ -83,7 +83,7 @@
     <div class="chat-rules-bar">
       <aq-icon name="info" [size]="14" />
       <span>
-        {{ isBn() ? 'শুধুমাত্র পবিত্র কুরআন ও সহিহ হাদিস সম্পর্কিত প্রশ্ন করুন।' : 'Strictly for questions about the Holy Quran & Hadith only.' }}
+        {{ isBn() ? 'ইসলাম ও কুরআন-সুন্নাহ সম্পর্কিত যেকোনো প্রশ্ন জিজ্ঞাসা করুন।' : 'Ask any question related to Islam, the Quran, and authentic Sunnah.' }}
       </span>
     </div>
 
@@ -96,7 +96,7 @@
             {{ isBn() ? 'অপ্রাসঙ্গিক প্রশ্ন সতর্কতা (' + toBanglaDigits(strikes()) + '/৩)' : 'Off-topic Warning (' + strikes() + '/3)' }}
           </strong>
           <p>
-            {{ isBn() ? 'কুরআন-হাদিসের বাইরের প্রশ্ন ৩ বার করলে চ্যাট সাময়িকভাবে নিষিদ্ধ (Ban) হবে।' : 'Asking off-topic questions 3 times will temporarily ban chat access.' }}
+            {{ isBn() ? 'ইসলাম বা কুরআন-হাদিসের বাইরের প্রশ্ন ৩ বার করলে চ্যাট সাময়িক বিরতিতে যাবে।' : 'Asking non-Islamic questions 3 times will temporarily pause chat.' }}
           </p>
         </div>
       </div>
@@ -142,7 +142,7 @@
             {{ isBn() ? 'আসসালামু আলাইকুম ওয়া রাহমাতুল্লাহ' : 'Assalamu Alaikum wa Rahmatullah' }}
           </h3>
           <p class="chat-welcome__desc">
-            {{ isBn() ? 'পবিত্র কুরআন ও সহিহ হাদিসের আলোকে যেকোনো প্রশ্ন জিজ্ঞাসা করুন। প্রতিটি উত্তরের সাথে আয়াত বা হাদিসের স্পষ্ট রেফারেন্স প্রদান করা হবে।' : 'Ask any question based on the Holy Quran and authentic Hadith. Every response includes verified references.' }}
+            {{ isBn() ? 'পবিত্র কুরআন, সহিহ হাদিস এবং ইসলামি জীবনবিধান সম্পর্কিত যেকোনো প্রশ্ন জিজ্ঞাসা করুন। প্রতিটি উত্তরের সাথে নির্ভরযোগ্য আয়াত বা হাদিসের রেফারেন্স প্রদান করা হবে।' : 'Ask any question based on the Holy Quran, authentic Hadith, and Islamic faith. Every response includes verified references.' }}
           </p>
 
           <div class="chat-welcome__prompts">
