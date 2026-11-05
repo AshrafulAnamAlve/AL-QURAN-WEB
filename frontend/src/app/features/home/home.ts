@@ -54,6 +54,8 @@ export class HomePage {
   protected readonly mobileHardware = inject(MobileHardwareService);
   private readonly shareService = inject(ShareService);
 
+  readonly downloadLinks = this.desktop.downloadLinks;
+
   readonly quickActions = [
     { path: '/quran', icon: 'bookOpen' as const, label: 'Quran', labelBn: 'কুরআন', color: '#10b981' },
     { path: '/hadith', icon: 'sparkles' as const, label: 'Hadith', labelBn: 'হাদিস', color: '#f59e0b', badge: '৩৬k+' },

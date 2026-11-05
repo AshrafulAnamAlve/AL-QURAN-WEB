@@ -712,9 +712,157 @@
         </div>
         <span class="explore-card__arrow" aria-hidden="true">&rarr;</span>
       </a>
+
+      <!-- Download All Apps Explore Card -->
+      <a routerLink="/download" class="explore-card explore-card--download">
+        <div class="explore-card__icon-wrap">
+          <aq-icon name="download" [size]="22" />
+        </div>
+        <div class="explore-card__content">
+          <div class="explore-card__header-row">
+            <h3 class="explore-card__title">{{ isBn() ? 'অ্যাপ ও এক্সটেনশন ডাউনলোড' : 'Download All Apps' }}</h3>
+            <span class="explore-card__badge explore-card__badge--download">{{ isBn() ? 'অফিসিয়াল' : 'Official' }}</span>
+          </div>
+          <p class="explore-card__desc">
+            {{ isBn()
+              ? 'অ্যান্ড্রয়েড APK, উইন্ডোজ ডেস্কটপ ও হালাল শিল্ড ব্রাউজার এক্সটেনশন ডাউনলোড করুন'
+              : 'Download Android APK, Windows Desktop app, and Halal Shield browser extension' }}
+          </p>
+        </div>
+        <span class="explore-card__arrow" aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Dedicated All Apps Download Section -->
+  <section class="home-download-section" id="download-apps" aria-labelledby="dl-section-heading">
+    <div class="home-dl-header">
+      <span class="home-dl-badge">
+        <aq-icon name="download" [size]="14" />
+        {{ isBn() ? 'অফিসিয়াল অ্যাপ ও সফটওয়্যার' : 'Official Apps & Software' }}
+      </span>
+      <h2 id="dl-section-heading" class="home-dl-title">
+        {{ isBn() ? 'সব ডিভাইসের জন্য আল-কুরআন ডাউনলোড করুন' : 'Download Al-Quran for All Your Devices' }}
+      </h2>
+      <p class="home-dl-subtitle">
+        {{ isBn()
+          ? 'মোবাইল, কম্পিউটার এবং ওয়েব ব্রাউজারে উপভোগ করুন বিজ্ঞাপনহীন ও দ্রুততম ইসলামিক অভিজ্ঞতা'
+          : 'Enjoy 100% free, high-performance Quran recitation and study across Android, Windows, and Web' }}
+      </p>
     </div>
 
-    
+    <div class="home-dl-grid">
+      <!-- Android Mobile App (.apk) -->
+      <div class="home-dl-card home-dl-card--android">
+        <div class="home-dl-card__top">
+          <span class="home-dl-platform">Android</span>
+          <span class="home-dl-pill home-dl-pill--green">v1.1.0 • ~27.5 MB</span>
+        </div>
+        <div class="home-dl-card__body">
+          <div class="home-dl-card__icon-box">
+            <span class="home-dl-card__emoji" aria-hidden="true">📱</span>
+          </div>
+          <h3 class="home-dl-card__name">
+            {{ isBn() ? 'অ্যান্ড্রয়েড মোবাইল অ্যাপ' : 'Android Mobile App' }}
+          </h3>
+          <p class="home-dl-card__info">
+            {{ isBn()
+              ? 'সম্পূর্ণ অফলাইন অডিও, তাজবীদ, নামাজের ওয়াক্ত, কিবলা ও নোটিফিকেশন সহ সরাসরি APK।'
+              : 'Direct APK installation with offline audio, Tajweed, prayer notifications, and Qibla compass.' }}
+          </p>
+        </div>
+        <div class="home-dl-card__footer">
+          <a
+            [href]="downloadLinks.androidApk"
+            download="AlQuran-Android.apk"
+            class="home-dl-action-btn home-dl-action-btn--primary"
+            [attr.aria-label]="isBn() ? 'অ্যান্ড্রয়েড APK সরাসরি ডাউনলোড করুন' : 'Download Android APK directly'"
+          >
+            <aq-icon name="download" [size]="18" />
+            <span>{{ isBn() ? 'APK ডাউনলোড (~২৭.৫ MB)' : 'Download APK (~27.5 MB)' }}</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Windows Desktop App -->
+      <div class="home-dl-card home-dl-card--windows">
+        <div class="home-dl-card__top">
+          <span class="home-dl-platform">Windows</span>
+          <span class="home-dl-pill home-dl-pill--blue">64-bit • v1.1.0</span>
+        </div>
+        <div class="home-dl-card__body">
+          <div class="home-dl-card__icon-box">
+            <span class="home-dl-card__emoji" aria-hidden="true">💻</span>
+          </div>
+          <h3 class="home-dl-card__name">
+            {{ isBn() ? 'উইন্ডোজ ডেস্কটপ অ্যাপ' : 'Windows Desktop App' }}
+          </h3>
+          <p class="home-dl-card__info">
+            {{ isBn()
+              ? 'সিস্টেম-ওয়াইড হালাল শিল্ড ফিল্টার, ফুলস্ক্রিন মুসহাফ ও পিসি শর্টকাট সহ অফিসিয়াল অ্যাপ।'
+              : 'Full desktop experience with Halal Shield content filter, Mus’haf view, and native shortcuts.' }}
+          </p>
+        </div>
+        <div class="home-dl-card__footer home-dl-card__footer--dual">
+          <a
+            [href]="downloadLinks.portableExe"
+            class="home-dl-action-btn home-dl-action-btn--primary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <aq-icon name="download" [size]="18" />
+            <span>{{ isBn() ? 'পোর্টেবল ভার্সন' : 'Portable Edition' }}</span>
+          </a>
+          <a
+            [href]="downloadLinks.setupExe"
+            class="home-dl-action-btn home-dl-action-btn--outline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span>{{ isBn() ? 'সেটআপ ইনস্টলার' : 'Setup Installer' }}</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Halal Shield Browser Extension (.zip) -->
+      <div class="home-dl-card home-dl-card--extension">
+        <div class="home-dl-card__top">
+          <span class="home-dl-platform">Extension</span>
+          <span class="home-dl-pill home-dl-pill--gold">Chrome • Edge • Brave</span>
+        </div>
+        <div class="home-dl-card__body">
+          <div class="home-dl-card__icon-box">
+            <span class="home-dl-card__emoji" aria-hidden="true">🛡️</span>
+          </div>
+          <h3 class="home-dl-card__name">
+            {{ isBn() ? 'হালাল শিল্ড এক্সটেনশন' : 'Halal Shield Extension' }}
+          </h3>
+          <p class="home-dl-card__info">
+            {{ isBn()
+              ? 'হারাম সাইট ও কনটেন্ট ব্লকার, নামাজের ওয়াক্ত এবং কুরআনের বাণী সরাসরি আপনার ব্রাউজারে।'
+              : 'Web content protection, automatic prayer reminders, and Quran verses inside your browser.' }}
+          </p>
+        </div>
+        <div class="home-dl-card__footer">
+          <a
+            [href]="downloadLinks.extensionZip"
+            download="al-quran-halal-shield-latest.zip"
+            class="home-dl-action-btn home-dl-action-btn--gold"
+          >
+            <aq-icon name="download" [size]="18" />
+            <span>{{ isBn() ? 'এক্সটেনশন জিপ (.zip)' : 'Download Extension (.zip)' }}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hub Link -->
+    <div class="home-dl-more">
+      <a routerLink="/download" class="home-dl-more-btn">
+        <span>{{ isBn() ? 'বিস্তারিত ইনস্টলেশন গাইড ও ডাউনলোড হাব দেখুন' : 'Explore Full Download Hub & Setup Guides' }}</span>
+        <aq-icon name="chevronRight" [size]="18" />
+      </a>
+    </div>
   </section>
 </div>
 
