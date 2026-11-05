@@ -121,119 +121,22 @@
     color: var(--aq-text-muted);
   }
 
-  &__waqt-card {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.45rem 0.75rem;
-    padding: 0.45rem 1rem;
-    background: color-mix(in srgb, var(--aq-surface) 90%, var(--aq-primary));
-    border: 1.5px solid color-mix(in srgb, var(--aq-primary) 38%, var(--aq-border));
-    border-radius: var(--aq-radius-pill);
-    box-shadow: 0 4px 16px rgba(15, 81, 50, 0.08);
-    text-decoration: none;
-    color: var(--aq-text);
-    font-size: 0.8125rem;
-    line-height: 1.4;
-    cursor: pointer;
-    touch-action: manipulation;
-    transition: all 0.2s ease;
+  &__prayer-card {
+    margin: 1.25rem auto 1.5rem;
+    max-width: 880px;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    background: color-mix(in srgb, var(--aq-surface) 94%, var(--aq-primary));
+    border: 1px solid color-mix(in srgb, var(--aq-primary) 22%, var(--aq-border));
+    border-radius: var(--aq-radius-xl, 16px);
+    box-shadow: 0 6px 24px rgba(15, 81, 50, 0.08);
 
-    &:hover,
-    &:focus-visible {
-      background: color-mix(in srgb, var(--aq-primary-soft) 85%, var(--aq-surface));
-      border-color: var(--aq-primary);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 22px rgba(16, 185, 129, 0.2);
-
-      .hero__waqt-action {
-        transform: translateX(3px);
-        color: var(--aq-primary);
-      }
+    @media (max-width: 639px) {
+      margin: 0.85rem auto 1.15rem;
+      padding: 0.85rem;
+      border-radius: var(--aq-radius-lg, 12px);
     }
-
-    @media (max-width: 540px) {
-      width: 100%;
-      max-width: 390px;
-      padding: 0.5rem 0.85rem;
-      border-radius: var(--aq-radius-lg);
-      flex-wrap: wrap;
-      gap: 0.35rem 0.6rem;
-    }
-  }
-
-  &__waqt-current {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-  }
-
-  &__waqt-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--aq-primary);
-    animation: aq-waqt-pulse 2s infinite ease-in-out;
-  }
-
-  &__waqt-label {
-    color: var(--aq-text-muted);
-    font-weight: 500;
-  }
-
-  &__waqt-name {
-    color: var(--aq-primary);
-    font-weight: 700;
-    font-size: 0.875rem;
-  }
-
-  &__waqt-time {
-    color: var(--aq-text-muted);
-    font-size: 0.8125rem;
-  }
-
-  &__waqt-divider {
-    display: none;
-    width: 1px;
-    height: 14px;
-    background: color-mix(in srgb, var(--aq-primary) 30%, var(--aq-border));
-
-    @media (min-width: 540px) {
-      display: inline-block;
-    }
-  }
-
-  &__waqt-next {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    color: var(--aq-text-muted);
-  }
-
-  &__waqt-next-label,
-  &__waqt-next-time {
-    font-weight: 600;
-    color: var(--aq-text);
-  }
-
-  &__waqt-remaining {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.125rem 0.5rem;
-    background: color-mix(in srgb, var(--aq-primary) 14%, var(--aq-surface));
-    border: 1px solid color-mix(in srgb, var(--aq-primary) 30%, transparent);
-    border-radius: var(--aq-radius-pill);
-    color: var(--aq-primary);
-    font-weight: 700;
-    font-size: 0.725rem;
-  }
-
-  &__waqt-action {
-    display: inline-flex;
-    align-items: center;
-    color: var(--aq-text-subtle);
-    transition: all 0.2s ease;
   }
 
   &__streak-pill {
@@ -414,7 +317,6 @@
 
 .task-reminder-banner,
 .task-celebration-toast,
-.prayer-home-card,
 .daily-task-home-card,
 .continue-card,
 .explore-section {
@@ -484,6 +386,7 @@
 
 // --- Prayer Times Home Card -----------------------------------------------
 .prayer-home-card {
+  text-align: left;
   background: color-mix(in srgb, var(--aq-primary) 6%, var(--aq-surface));
   border: 1px solid color-mix(in srgb, var(--aq-primary) 24%, var(--aq-border));
 
@@ -1492,74 +1395,7 @@
 }
 
 
-// Mobile padding & card refinements
-@media (max-width: 640px) {
-  .sections {
-    grid-template-columns: minmax(0, 1fr) !important;
-    gap: 0.875rem !important;
-    padding-block: 1rem 1.5rem !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
 
-  .panel {
-    min-width: 0 !important;
-    max-width: 100% !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    padding: 1rem 0.875rem !important;
-    border-radius: var(--aq-radius-lg) !important;
-  }
-
-  .hero__inner {
-    padding-block: 0.75rem 1rem !important;
-  }
-
-  .prayer-home-card {
-    &__title {
-      font-size: 1.05rem !important;
-    }
-
-    &__timer {
-      font-size: 1.65rem !important;
-    }
-  }
-
-  .daily-task-home-card {
-    &__header {
-      margin-bottom: 0.75rem !important;
-    }
-
-    &__title {
-      font-size: 1.05rem !important;
-    }
-  }
-
-  .daily-ayah-card {
-    &__title {
-      font-size: 1.05rem !important;
-    }
-
-    &__arabic {
-      font-size: 1.35rem !important;
-      line-height: 1.9 !important;
-      padding: 0.35rem 0 0.5rem !important;
-    }
-  }
-
-  .daily-hadith-home-card {
-    &__title {
-      font-size: 1.05rem !important;
-    }
-
-    &__arabic {
-      font-size: 1.2rem !important;
-      line-height: 1.85 !important;
-      padding: 0.35rem 0 0.5rem !important;
-    }
-  }
-}
 
 // =========================================================================
 // Home Page Download Apps Section & Explore Card

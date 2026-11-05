@@ -15,39 +15,6 @@
         <span>{{ today() }}</span>
       </p>
 
-      @if (currentWaqt(); as waqt) {
-        <a
-          routerLink="/prayer"
-          class="hero__waqt-card"
-          [attr.aria-label]="isBn() ? 'বর্তমান নামাজের ওয়াক্ত ' + waqt.banglaName + ', সময় ' + formatTime12h(waqt.time) : 'Current prayer waqt ' + waqt.name + ', time ' + formatTime12h(waqt.time)"
-        >
-          <div class="hero__waqt-current">
-            <span class="hero__waqt-dot" aria-hidden="true"></span>
-            <span class="hero__waqt-label">{{ isBn() ? 'বর্তমান ওয়াক্ত:' : 'Current Waqt:' }}</span>
-            <strong class="hero__waqt-name">{{ isBn() ? waqt.banglaName : waqt.name }}</strong>
-            <span class="hero__waqt-time aq-numeral">({{ formatTime12h(waqt.time) }})</span>
-          </div>
-
-          @if (nextPrayer(); as next) {
-            <span class="hero__waqt-divider" aria-hidden="true"></span>
-            <div class="hero__waqt-next">
-              <span class="hero__waqt-next-label">
-                {{ isBn() ? (next.isTomorrow ? 'পরবর্তী ফজর' : 'পরবর্তী ' + next.prayer.banglaName) : (next.isTomorrow ? 'Next: Fajr' : 'Next: ' + next.prayer.name) }}
-              </span>
-              <span class="hero__waqt-next-time aq-numeral">({{ formatTime12h(next.prayer.time) }})</span>
-              <span class="hero__waqt-remaining">
-                <aq-icon name="clock" [size]="12" aria-hidden="true" />
-                <span>{{ formatRemaining(next.hours, next.minutes) }}</span>
-              </span>
-            </div>
-          }
-
-          <span class="hero__waqt-action" aria-hidden="true">
-            <aq-icon name="chevronRight" [size]="14" />
-          </span>
-        </a>
-      }
-
       <!-- Live Streak & Daily Goal Pill in Hero Meta -->
       <a
         routerLink="/calendar"
@@ -62,6 +29,120 @@
         <span class="hero__streak-progress aq-numeral">{{ isBn() ? toBnDigits(taskService.readingProgressPercent()) : taskService.readingProgressPercent() }}% {{ isBn() ? 'সম্পন্ন' : 'done' }}</span>
       </a>
     </div>
+
+    <!-- 6-Waqt Connected Day-Timeline Progress Card (Main Section: Top of all menu buttons) -->
+    @if (nextPrayer(); as next) {
+      <section class="panel prayer-home-card hero__prayer-card" aria-labelledby="prayer-home-heading">
+        <!-- 1. Header: Active Waqt with Live Dot & Countdown Timer -->
+        <div class="prayer-home-card__header">
+          <div class="prayer-home-card__meta">
+            <p class="aq-eyebrow">{{ isBn() ? 'নামাজের সময়সূচি' : 'Prayer Times' }} &middot; {{ currentLocation().displayName }}</p>
+            <h2 id="prayer-home-heading" class="prayer-home-card__title">
+              <span class="prayer-home-pulse-dot" aria-hidden="true"></span>
+              @if (activeWaqtSummary(); as active) {
+                <span class="prayer-home-active-name">{{ isBn() ? active.banglaName : active.name }}</span>
+                <span class="prayer-home-active-span aq-numeral">({{ formatTime12h(active.startTime) }} &ndash; {{ formatTime12h(active.endTime) }})</span>
+              } @else {
+                <span>{{ isBn() ? 'পরবর্তী ওয়াক্ত: ' : 'Next: ' }}{{ next.isTomorrow ? (isBn() ? 'আগামীকালের ফজর' : "Tomorrow's Fajr") : (isBn() ? next.prayer.banglaName : next.prayer.name) }}</span>
+                <span class="prayer-home-card__time aq-numeral">{{ formatTime12h(next.prayer.time) }}</span>
+              }
+            </h2>
+          </div>
+
+          <div class="prayer-home-card__actions">
+            <div class="prayer-home-card__timer-block">
+              <span class="prayer-home-card__timer-label">
+                {{ isBn() ? 'আজান বাজতে বাকি' : 'Time until Adhan' }}
+              </span>
+              <div class="prayer-home-card__timer aq-numeral" role="timer" aria-live="off">
+                {{ isBn() ? toBnDigits(next.formattedCountdown) : next.formattedCountdown }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. 6-Waqt Connected Day-Timeline (Design 2: Interactive Segments with Live Progress Bar) -->
+        <div class="prayer-timeline" role="list" [attr.aria-label]="isBn() ? 'সারাদিনের ৬-ওয়াক্ত প্রগ্রেস টাইমলাইন' : 'Daily 6-waqt progress timeline'">
+          @for (item of dayTimeline(); track item.key) {
+            <a
+              routerLink="/prayer"
+              class="prayer-timeline__item"
+              [class.is-passed]="item.status === 'passed'"
+              [class.is-active]="item.status === 'active'"
+              [class.is-upcoming]="item.status === 'upcoming'"
+              role="listitem"
+              [attr.aria-label]="isBn() ? (item.banglaName + ' ' + formatTime12h(item.time)) : (item.name + ' ' + formatTime12h(item.time))"
+            >
+              <!-- Progress Bar Track -->
+              <div class="prayer-timeline__track">
+                @if (item.status === 'passed') {
+                  <div class="prayer-timeline__fill is-full"></div>
+                } @else if (item.status === 'active') {
+                  <div
+                    class="prayer-timeline__fill is-active"
+                    [style.width.%]="item.progressPercent"
+                  >
+                    <span class="prayer-timeline__shimmer" aria-hidden="true"></span>
+                  </div>
+                } @else {
+                  <div class="prayer-timeline__fill is-empty"></div>
+                }
+              </div>
+
+              <!-- Segment Info -->
+              <div class="prayer-timeline__info">
+                <span class="prayer-timeline__name">
+                  {{ isBn() ? item.banglaName : item.name }}
+                  @if (item.status === 'passed') {
+                    <span class="prayer-timeline__check" aria-hidden="true">✓</span>
+                  }
+                </span>
+                <span class="prayer-timeline__time aq-numeral">
+                  @if (item.status === 'active') {
+                    <span class="prayer-timeline__percent">{{ isBn() ? toBnDigits(item.progressPercent) : item.progressPercent }}%</span>
+                  } @else {
+                    {{ formatTime12h(item.time) }}
+                  }
+                </span>
+              </div>
+            </a>
+          }
+        </div>
+
+        <!-- 3. Clean Action Bar (Zero verbose/faltu text) -->
+        <div class="prayer-home-footer">
+          <div class="prayer-home-footer__left">
+            <button
+              type="button"
+              class="aq-btn aq-btn--sm prayer-home-status-btn"
+              [class.aq-btn--secondary]="isNextAdhanActive()"
+              [class.aq-btn--primary]="!isNextAdhanActive()"
+              (click)="toggleNextPrayerAlert()"
+              [title]="isNextAdhanActive() ? (isBn() ? 'স্বয়ংক্রিয় আজান অ্যালার্ট বন্ধ করুন' : 'Mute auto-adhan') : (isBn() ? 'স্বয়ংক্রিয় আজান অ্যালার্ট চালু করুন' : 'Enable auto-adhan')"
+              [attr.aria-label]="isNextAdhanActive() ? (isBn() ? 'আজান অ্যালার্ট বন্ধ করুন' : 'Mute Adhan') : (isBn() ? 'আজান অ্যালার্ট চালু করুন' : 'Enable Adhan')"
+            >
+              <aq-icon [name]="isNextAdhanActive() ? 'bell' : 'volumeOff'" [size]="14" />
+              <span>{{ isNextAdhanActive() ? (isBn() ? 'আজান অ্যালার্ট: চালু' : 'Adhan Alert: ON') : (isBn() ? 'আজান অ্যালার্ট: বন্ধ' : 'Adhan Alert: OFF') }}</span>
+            </button>
+
+            <button
+              type="button"
+              class="aq-btn aq-btn--ghost aq-btn--sm prayer-home-listen-btn"
+              (click)="openAdhanPlayer()"
+              [title]="isBn() ? 'যেকোনো সময় আজান শুনুন' : 'Listen to Adhan on demand'"
+            >
+              <aq-icon name="volume2" [size]="14" />
+              <span>{{ isBn() ? 'আজান শুনুন' : 'Play Adhan' }}</span>
+            </button>
+          </div>
+
+          <a routerLink="/prayer" class="prayer-home-footer__link">
+            <span>{{ isBn() ? 'পূর্ণ সময়সূচি' : 'Full Timetable' }}</span>
+            <span aria-hidden="true">&rarr;</span>
+          </a>
+        </div>
+      </section>
+    }
 
     <!-- Quick Actions App Grid (Pillars / Muslim Pro Standard) -->
     <nav class="quick-app-grid" [attr.aria-label]="isBn() ? 'প্রধান ফিচারসমূহ' : 'Quick Actions'">
@@ -132,119 +213,6 @@
         {{ isBn() ? 'শুকরিয়া (ঠিক আছে)' : 'Close' }}
       </button>
     </aside>
-  }
-
-  @if (nextPrayer(); as next) {
-    <section class="panel prayer-home-card" aria-labelledby="prayer-home-heading">
-      <!-- 1. Header: Active Waqt with Live Dot & Countdown Timer -->
-      <div class="prayer-home-card__header">
-        <div class="prayer-home-card__meta">
-          <p class="aq-eyebrow">{{ isBn() ? 'নামাজের সময়সূচি' : 'Prayer Times' }} &middot; {{ currentLocation().displayName }}</p>
-          <h2 id="prayer-home-heading" class="prayer-home-card__title">
-            <span class="prayer-home-pulse-dot" aria-hidden="true"></span>
-            @if (activeWaqtSummary(); as active) {
-              <span class="prayer-home-active-name">{{ isBn() ? active.banglaName : active.name }}</span>
-              <span class="prayer-home-active-span aq-numeral">({{ formatTime12h(active.startTime) }} &ndash; {{ formatTime12h(active.endTime) }})</span>
-            } @else {
-              <span>{{ isBn() ? 'পরবর্তী ওয়াক্ত: ' : 'Next: ' }}{{ next.isTomorrow ? (isBn() ? 'আগামীকালের ফজর' : "Tomorrow's Fajr") : (isBn() ? next.prayer.banglaName : next.prayer.name) }}</span>
-              <span class="prayer-home-card__time aq-numeral">{{ formatTime12h(next.prayer.time) }}</span>
-            }
-          </h2>
-        </div>
-
-        <div class="prayer-home-card__actions">
-          <div class="prayer-home-card__timer-block">
-            <span class="prayer-home-card__timer-label">
-              {{ isBn() ? 'আজান বাজতে বাকি' : 'Time until Adhan' }}
-            </span>
-            <div class="prayer-home-card__timer aq-numeral" role="timer" aria-live="off">
-              {{ isBn() ? toBnDigits(next.formattedCountdown) : next.formattedCountdown }}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 2. 6-Waqt Connected Day-Timeline (Design 2: Interactive Segments with Live Progress Bar) -->
-      <div class="prayer-timeline" role="list" [attr.aria-label]="isBn() ? 'সারাদিনের ৬-ওয়াক্ত প্রগ্রেস টাইমলাইন' : 'Daily 6-waqt progress timeline'">
-        @for (item of dayTimeline(); track item.key) {
-          <a
-            routerLink="/prayer"
-            class="prayer-timeline__item"
-            [class.is-passed]="item.status === 'passed'"
-            [class.is-active]="item.status === 'active'"
-            [class.is-upcoming]="item.status === 'upcoming'"
-            role="listitem"
-            [attr.aria-label]="isBn() ? (item.banglaName + ' ' + formatTime12h(item.time)) : (item.name + ' ' + formatTime12h(item.time))"
-          >
-            <!-- Progress Bar Track -->
-            <div class="prayer-timeline__track">
-              @if (item.status === 'passed') {
-                <div class="prayer-timeline__fill is-full"></div>
-              } @else if (item.status === 'active') {
-                <div
-                  class="prayer-timeline__fill is-active"
-                  [style.width.%]="item.progressPercent"
-                >
-                  <span class="prayer-timeline__shimmer" aria-hidden="true"></span>
-                </div>
-              } @else {
-                <div class="prayer-timeline__fill is-empty"></div>
-              }
-            </div>
-
-            <!-- Segment Info -->
-            <div class="prayer-timeline__info">
-              <span class="prayer-timeline__name">
-                {{ isBn() ? item.banglaName : item.name }}
-                @if (item.status === 'passed') {
-                  <span class="prayer-timeline__check" aria-hidden="true">✓</span>
-                }
-              </span>
-              <span class="prayer-timeline__time aq-numeral">
-                @if (item.status === 'active') {
-                  <span class="prayer-timeline__percent">{{ isBn() ? toBnDigits(item.progressPercent) : item.progressPercent }}%</span>
-                } @else {
-                  {{ formatTime12h(item.time) }}
-                }
-              </span>
-            </div>
-          </a>
-        }
-      </div>
-
-      <!-- 3. Clean Action Bar (Zero verbose/faltu text) -->
-      <div class="prayer-home-footer">
-        <div class="prayer-home-footer__left">
-          <button
-            type="button"
-            class="aq-btn aq-btn--sm prayer-home-status-btn"
-            [class.aq-btn--secondary]="isNextAdhanActive()"
-            [class.aq-btn--primary]="!isNextAdhanActive()"
-            (click)="toggleNextPrayerAlert()"
-            [title]="isNextAdhanActive() ? (isBn() ? 'স্বয়ংক্রিয় আজান অ্যালার্ট বন্ধ করুন' : 'Mute auto-adhan') : (isBn() ? 'স্বয়ংক্রিয় আজান অ্যালার্ট চালু করুন' : 'Enable auto-adhan')"
-            [attr.aria-label]="isNextAdhanActive() ? (isBn() ? 'আজান অ্যালার্ট বন্ধ করুন' : 'Mute Adhan') : (isBn() ? 'আজান অ্যালার্ট চালু করুন' : 'Enable Adhan')"
-          >
-            <aq-icon [name]="isNextAdhanActive() ? 'bell' : 'volumeOff'" [size]="14" />
-            <span>{{ isNextAdhanActive() ? (isBn() ? 'আজান অ্যালার্ট: চালু' : 'Adhan Alert: ON') : (isBn() ? 'আজান অ্যালার্ট: বন্ধ' : 'Adhan Alert: OFF') }}</span>
-          </button>
-
-          <button
-            type="button"
-            class="aq-btn aq-btn--ghost aq-btn--sm prayer-home-listen-btn"
-            (click)="openAdhanPlayer()"
-            [title]="isBn() ? 'যেকোনো সময় আজান শুনুন' : 'Listen to Adhan on demand'"
-          >
-            <aq-icon name="volume2" [size]="14" />
-            <span>{{ isBn() ? 'আজান শুনুন' : 'Play Adhan' }}</span>
-          </button>
-        </div>
-
-        <a routerLink="/prayer" class="prayer-home-footer__link">
-          <span>{{ isBn() ? 'পূর্ণ সময়সূচি' : 'Full Timetable' }}</span>
-          <span aria-hidden="true">&rarr;</span>
-        </a>
-      </div>
-    </section>
   }
 
   <!-- Daily Quran Task Tracker & Habit Mini-Card (Phase 13) -->
