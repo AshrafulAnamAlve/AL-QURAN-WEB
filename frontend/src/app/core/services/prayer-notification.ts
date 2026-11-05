@@ -181,7 +181,7 @@ export class PrayerNotificationService implements OnDestroy {
         if (!this.isPermissionGranted()) {
           this.openPermissionModal();
         }
-      }, 1800);
+      }, 2800);
     }
   }
 

@@ -98,6 +98,7 @@
     <!--
       Initial App Splash & Golden Quran Opening Animation
     -->
+    <!-- Splash Screen Styles: Pure Hardware-Accelerated Declarative CSS Keyframes -->
     <style>
       .app-splash {
         position: fixed;
@@ -112,12 +113,14 @@
         user-select: none;
         cursor: pointer;
         opacity: 1;
-        transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.65s ease;
+        transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.45s ease;
+        will-change: opacity, transform;
       }
       .app-splash.is-dismissed {
         opacity: 0;
-        visibility: hidden;
+        transform: scale(1.03);
         pointer-events: none;
+        visibility: hidden;
       }
       .app-splash__backdrop {
         position: absolute;
@@ -147,93 +150,133 @@
       }
       .app-splash__svg {
         overflow: visible;
-        filter: drop-shadow(0 14px 28px rgba(4, 32, 20, 0.45));
-      }
-      .splash-badge-bg {
-        opacity: 0;
-        transform: scale(0.85);
-        transform-origin: 256px 256px;
-        transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-      }
-      .splash-badge-border {
-        opacity: 0;
-        stroke-dasharray: 1800;
-        stroke-dashoffset: 1800;
-        transition: stroke-dashoffset 1.3s ease, opacity 0.6s ease;
-      }
-      .splash-ambient-glow {
-        opacity: 0;
-        transition: opacity 1.2s ease;
-      }
-      .splash-arch {
-        stroke-dasharray: 800;
-        stroke-dashoffset: 800;
-        opacity: 0;
-        transition: stroke-dashoffset 1.2s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease;
-      }
-      .splash-book {
-        stroke-dasharray: 1200;
-        stroke-dashoffset: 1200;
-        opacity: 0;
-        transition: stroke-dashoffset 1.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease;
-      }
-      .splash-spine {
-        opacity: 0;
-        transition: opacity 0.6s ease;
-      }
-      .splash-page-inner {
-        opacity: 0;
-        transition: opacity 0.8s ease;
-      }
-      .splash-rosette {
-        opacity: 0;
-        transform: scale(0);
-        transform-origin: 256px 335px;
-        transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
+        filter: drop-shadow(0 14px 28px rgba(4, 32, 20, 0.5));
       }
 
-      /* Animated states triggered by controller */
-      .state-badge .splash-badge-bg {
-        opacity: 1;
-        transform: scale(1);
+      /* 1. Squircle Background */
+      .splash-badge-bg {
+        transform-origin: 256px 256px;
+        animation: splashBadgeEnter 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
       }
-      .state-badge .splash-badge-border {
-        opacity: 0.65;
-        stroke-dashoffset: 0;
+      @keyframes splashBadgeEnter {
+        0% { opacity: 0; transform: scale(0.86); }
+        100% { opacity: 1; transform: scale(1); }
       }
-      .state-badge .splash-ambient-glow {
-        opacity: 0.3;
+
+      /* 2. Inset Thin Gold Rounded Border */
+      .splash-badge-border {
+        stroke-dasharray: 1570;
+        stroke-dashoffset: 1570;
+        animation: splashBorderDraw 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
       }
-      .state-arch .splash-arch {
-        opacity: 1;
-        stroke-dashoffset: 0;
+      @keyframes splashBorderDraw {
+        0% { stroke-dashoffset: 1570; opacity: 0; }
+        25% { opacity: 0.7; }
+        100% { stroke-dashoffset: 0; opacity: 0.7; }
       }
-      .state-book .splash-book {
-        opacity: 1;
-        stroke-dashoffset: 0;
-      }
-      .state-book .splash-spine {
-        opacity: 1;
-      }
-      .state-book .splash-page-inner {
-        opacity: 0.85;
-      }
-      .state-rosette .splash-rosette {
-        opacity: 1;
-        transform: scale(1);
-      }
-      .app-splash__brand {
+
+      /* 3. Ambient Backlight Glow */
+      .splash-ambient-glow {
         opacity: 0;
-        transform: translateY(18px);
-        transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        transform-origin: 256px 265px;
+        animation: splashGlowEnter 0.9s ease-out 0.25s forwards, splashGlowPulse 2.4s ease-in-out 1.1s infinite alternate;
+      }
+      @keyframes splashGlowEnter {
+        0% { opacity: 0; transform: scale(0.75); }
+        100% { opacity: 0.35; transform: scale(1); }
+      }
+      @keyframes splashGlowPulse {
+        0% { opacity: 0.35; transform: scale(1); }
+        100% { opacity: 0.52; transform: scale(1.08); }
+      }
+
+      /* 4. Mihrab Arch (peaks down simultaneously with normalized pathLength) */
+      .splash-arch-l,
+      .splash-arch-r {
+        stroke-dasharray: 1.01;
+        stroke-dashoffset: 1.01;
+        animation: splashDrawPath 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.22s forwards;
+      }
+      @keyframes splashDrawPath {
+        0% { stroke-dashoffset: 1.01; opacity: 0; }
+        15% { opacity: 1; }
+        100% { stroke-dashoffset: 0; opacity: 1; }
+      }
+
+      /* 5. Open Holy Quran Outer Shell (wings glide outward from spine) */
+      .splash-book-l,
+      .splash-book-r {
+        stroke-dasharray: 1.01;
+        stroke-dashoffset: 1.01;
+        animation: splashDrawBook 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.38s forwards;
+      }
+      @keyframes splashDrawBook {
+        0% { stroke-dashoffset: 1.01; opacity: 0; }
+        15% { opacity: 1; }
+        100% { stroke-dashoffset: 0; opacity: 1; }
+      }
+
+      /* 6. Center Spine Valley Line */
+      .splash-spine {
+        stroke-dasharray: 1.01;
+        stroke-dashoffset: 1.01;
+        animation: splashDrawSpine 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+      }
+      @keyframes splashDrawSpine {
+        0% { stroke-dashoffset: 1.01; opacity: 0; }
+        100% { stroke-dashoffset: 0; opacity: 1; }
+      }
+
+      /* 7. Inner Page Borders */
+      .splash-page-l,
+      .splash-page-r {
+        stroke-dasharray: 1.01;
+        stroke-dashoffset: 1.01;
+        animation: splashDrawPage 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.56s forwards;
+      }
+      @keyframes splashDrawPage {
+        0% { stroke-dashoffset: 1.01; opacity: 0; }
+        100% { stroke-dashoffset: 0; opacity: 0.85; }
+      }
+
+      /* 8. Center Arabesque Rosette Medallion (spring pop bloom from center (0,0)) */
+      .splash-rosette {
+        transform-origin: 0 0;
+        animation: splashRosetteBloom 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) 0.72s forwards;
+      }
+      @keyframes splashRosetteBloom {
+        0% { transform: scale(0); opacity: 0; }
+        40% { opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
+      }
+
+      /* 9. Warm Divine Glow on Completed Master Emblem */
+      .splash-emblem-group {
+        transform-origin: 256px 265px;
+        animation: splashEmblemBloom 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both,
+                   splashEmblemShine 1.8s ease-in-out 0.2s both;
+      }
+      @keyframes splashEmblemBloom {
+        0% { opacity: 0; transform: scale(0.92); }
+        100% { opacity: 1; transform: scale(1); }
+      }
+      @keyframes splashEmblemShine {
+        0% { filter: drop-shadow(0 0 0 rgba(250, 228, 157, 0)); }
+        70% { filter: drop-shadow(0 0 10px rgba(250, 228, 157, 0.65)); }
+        100% { filter: drop-shadow(0 0 5px rgba(250, 228, 157, 0.35)); }
+      }
+
+      /* Brand Section Entrance */
+      .app-splash__brand {
         margin-top: 1rem;
         display: flex;
         flex-direction: column;
         align-items: center;
+        animation: splashBrandRise 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.75s both;
       }
-      .app-splash__brand.show-brand {
-        opacity: 1;
-        transform: translateY(0);
+      @keyframes splashBrandRise {
+        0% { opacity: 0; transform: translateY(16px); }
+        100% { opacity: 1; transform: translateY(0); }
       }
       .app-splash__title {
         margin: 0;
@@ -298,7 +341,13 @@
         width: 0%;
         border-radius: 9999px;
         background: linear-gradient(90deg, #9a7a1c, #f5d77f, #d4af37);
-        transition: width 1.8s cubic-bezier(0.1, 0.8, 0.2, 1);
+        animation: splashProgressFill 1.85s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s forwards;
+      }
+      @keyframes splashProgressFill {
+        0% { width: 0%; }
+        45% { width: 50%; }
+        80% { width: 88%; }
+        100% { width: 100%; }
       }
     </style>
   </head>
@@ -333,7 +382,7 @@
               </linearGradient>
 
               <radialGradient id="splashEmblemGlow" cx="50%" cy="52%" r="45%">
-                <stop offset="0%" stop-color="#dfbd58" stop-opacity="0.28"/>
+                <stop offset="0%" stop-color="#dfbd58" stop-opacity="0.32"/>
                 <stop offset="60%" stop-color="#dfbd58" stop-opacity="0.08"/>
                 <stop offset="100%" stop-color="#dfbd58" stop-opacity="0"/>
               </radialGradient>
@@ -343,48 +392,56 @@
             <rect class="splash-badge-bg" x="16" y="16" width="480" height="480" rx="116" fill="url(#splashBg)"/>
 
             <!-- 2. Inset Thin Gold Rounded Border -->
-            <rect class="splash-badge-border" x="42" y="42" width="428" height="428" rx="88" fill="none" stroke="url(#splashGoldBorder)" stroke-width="4" opacity="0.65"/>
+            <rect class="splash-badge-border" pathLength="1" x="42" y="42" width="428" height="428" rx="88" fill="none" stroke="url(#splashGoldBorder)" stroke-width="3.5" opacity="0.7"/>
 
             <!-- 3. Ambient Gold Backlight -->
             <circle class="splash-ambient-glow" cx="256" cy="265" r="170" fill="url(#splashEmblemGlow)"/>
 
-            <!-- 4. Master Emblem (Zero black lines, zero dashed marks) -->
+            <!-- 4. Master Golden Quran Emblem -->
             <g class="splash-emblem-group">
-              <!-- A. The Teardrop Dome / Mihrab Arch -->
-              <path class="splash-arch"
-                    d="M256 122 C278 170 326 218 326 264 C326 298 304 322 278 328 M256 122 C234 170 186 218 186 264 C186 298 208 322 234 328"
+              <!-- A. Symmetrical Teardrop Dome / Mihrab Arch (peaks down simultaneously) -->
+              <path class="splash-arch-l" pathLength="1"
+                    d="M256 122 C234 170 186 218 186 264 C186 298 208 322 234 328"
+                    fill="none" stroke="url(#splashGold)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+              <path class="splash-arch-r" pathLength="1"
+                    d="M256 122 C278 170 326 218 326 264 C326 298 304 322 278 328"
                     fill="none" stroke="url(#splashGold)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
 
-              <!-- B. The Open Holy Quran Outer Shell -->
-              <path class="splash-book"
-                    d="M116 274 C136 256 172 244 206 250 C228 254 246 266 256 284 C266 266 284 254 306 250 C340 244 376 256 396 274 L396 348 C376 332 338 326 304 336 C282 342 266 358 256 396 C246 358 230 342 208 336 C174 326 136 332 116 348 Z"
+              <!-- B. The Open Holy Quran Outer Shell (wings draw outward and down from spine simultaneously) -->
+              <path class="splash-book-l" pathLength="1"
+                    d="M256 284 C246 266 228 254 206 250 C172 244 136 256 116 274 L116 348 C136 332 174 326 208 336 C230 342 246 358 256 396"
+                    fill="none" stroke="url(#splashGold)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+              <path class="splash-book-r" pathLength="1"
+                    d="M256 284 C266 266 284 254 306 250 C340 244 376 256 396 274 L396 348 C376 332 338 326 304 336 C282 342 266 358 256 396"
                     fill="none" stroke="url(#splashGold)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
 
               <!-- Center Spine Valley Line -->
-              <line class="splash-spine" x1="256" y1="284" x2="256" y2="396" stroke="url(#splashGold)" stroke-width="9" stroke-linecap="round"/>
+              <line class="splash-spine" pathLength="1" x1="256" y1="284" x2="256" y2="396" stroke="url(#splashGold)" stroke-width="9" stroke-linecap="round"/>
 
               <!-- C. Left Page Inner Border -->
-              <path class="splash-page-inner"
+              <path class="splash-page-l" pathLength="1"
                     d="M132 284 C150 270 180 260 206 266 C224 270 238 280 246 294 L246 364 C238 350 224 342 206 346 C180 352 150 342 132 334 Z"
                     fill="none" stroke="url(#splashGold)" stroke-width="3.5" opacity="0.85"/>
 
               <!-- D. Right Page Inner Border -->
-              <path class="splash-page-inner"
+              <path class="splash-page-r" pathLength="1"
                     d="M380 284 C362 270 332 260 306 266 C288 270 274 280 266 294 L266 364 C274 350 288 342 306 346 C332 352 362 342 380 334 Z"
                     fill="none" stroke="url(#splashGold)" stroke-width="3.5" opacity="0.85"/>
 
-              <!-- E. Center Arabesque Rosette Medallion -->
-              <g class="splash-rosette" transform="translate(256, 335)">
-                <circle cx="0" cy="0" r="14" fill="none" stroke="url(#splashGold)" stroke-width="3"/>
-                <circle cx="0" cy="0" r="4.5" fill="url(#splashGold)"/>
-                <path d="M0 -14 C-3.5 -8 -3.5 -3 0 0 C3.5 -3 3.5 -8 0 -14 Z" fill="url(#splashGold)"/>
-                <path d="M0 14 C-3.5 8 -3.5 3 0 0 C3.5 3 3.5 8 0 14 Z" fill="url(#splashGold)"/>
-                <path d="M-14 0 C-8 -3.5 -3 -3.5 0 0 C-3 3.5 -8 3.5 -14 0 Z" fill="url(#splashGold)"/>
-                <path d="M14 0 C8 -3.5 3 -3.5 0 0 C3 3.5 8 3.5 14 0 Z" fill="url(#splashGold)"/>
-                <circle cx="-7.5" cy="-7.5" r="2.5" fill="url(#splashGold)"/>
-                <circle cx="7.5" cy="-7.5" r="2.5" fill="url(#splashGold)"/>
-                <circle cx="-7.5" cy="7.5" r="2.5" fill="url(#splashGold)"/>
-                <circle cx="7.5" cy="7.5" r="2.5" fill="url(#splashGold)"/>
+              <!-- E. Center Arabesque Rosette Medallion (Translate on outer, scale pop on inner) -->
+              <g transform="translate(256, 335)">
+                <g class="splash-rosette">
+                  <circle cx="0" cy="0" r="14" fill="none" stroke="url(#splashGold)" stroke-width="3"/>
+                  <circle cx="0" cy="0" r="4.5" fill="url(#splashGold)"/>
+                  <path d="M0 -14 C-3.5 -8 -3.5 -3 0 0 C3.5 -3 3.5 -8 0 -14 Z" fill="url(#splashGold)"/>
+                  <path d="M0 14 C-3.5 8 -3.5 3 0 0 C3.5 3 3.5 8 0 14 Z" fill="url(#splashGold)"/>
+                  <path d="M-14 0 C-8 -3.5 -3 -3.5 0 0 C-3 3.5 -8 3.5 -14 0 Z" fill="url(#splashGold)"/>
+                  <path d="M14 0 C8 -3.5 3 -3.5 0 0 C3 3.5 8 3.5 14 0 Z" fill="url(#splashGold)"/>
+                  <circle cx="-7.5" cy="-7.5" r="2.5" fill="url(#splashGold)"/>
+                  <circle cx="7.5" cy="-7.5" r="2.5" fill="url(#splashGold)"/>
+                  <circle cx="-7.5" cy="7.5" r="2.5" fill="url(#splashGold)"/>
+                  <circle cx="7.5" cy="7.5" r="2.5" fill="url(#splashGold)"/>
+                </g>
               </g>
             </g>
           </svg>
@@ -414,52 +471,35 @@
     <script>
       (function () {
         var splash = document.getElementById('app-splash-overlay');
-        var stage = document.getElementById('splashStage');
-        var brand = document.getElementById('splashBrand');
-        var progress = document.getElementById('splashProgress');
         if (!splash) return;
 
-        // Step 1: Squircle Badge with emerald glow appears
-        setTimeout(function () {
-          if (stage) stage.classList.add('state-badge');
-          if (progress) progress.style.width = '30%';
-        }, 80);
+        console.log('[Splash] Mounted at ' + performance.now());
 
-        // Step 2: Teardrop Arch draws in
-        setTimeout(function () {
-          if (stage) stage.classList.add('state-arch');
-          if (progress) progress.style.width = '55%';
-        }, 550);
+        // Dismiss native Capacitor Android splash immediately so animated splash is seen smoothly
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.SplashScreen) {
+          try {
+            window.Capacitor.Plugins.SplashScreen.hide();
+          } catch (e) {}
+        }
 
-        // Step 3: Sacred Quran pages and spine outline glide in
-        setTimeout(function () {
-          if (stage) stage.classList.add('state-book');
-          if (progress) progress.style.width = '75%';
-        }, 950);
-
-        // Step 4: Arabesque Rosette Medallion blossoms at spine
-        setTimeout(function () {
-          if (stage) stage.classList.add('state-rosette');
-          if (brand) brand.classList.add('show-brand');
-          if (progress) progress.style.width = '100%';
-        }, 1450);
-
-        // Step 5: Smooth fade out overlay and unmount
+        var isDismissed = false;
         function dismissSplash() {
-          if (!splash || splash.classList.contains('is-dismissed')) return;
+          if (isDismissed) return;
+          isDismissed = true;
+          console.log('[Splash] Dismissing at ' + performance.now());
           splash.classList.add('is-dismissed');
           setTimeout(function () {
             if (splash && splash.parentNode) {
               splash.parentNode.removeChild(splash);
             }
-          }, 600);
+          }, 500);
         }
 
         // Tap/click to skip immediately
         splash.addEventListener('click', dismissSplash);
 
-        // Auto dismiss after sequence finishes
-        setTimeout(dismissSplash, 2700);
+        // Auto dismiss smoothly after full animation sequence
+        setTimeout(dismissSplash, 2300);
       })();
     </script>
 

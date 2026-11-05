@@ -168,7 +168,7 @@ describe('PrayerNotificationService', () => {
     service.checkPermissionPromptOnStartup();
     expect(service.showPermissionModal()).toBe(false);
 
-    vi.advanceTimersByTime(2000);
+    vi.advanceTimersByTime(3000);
     expect(service.showPermissionModal()).toBe(true);
 
     vi.useRealTimers();
