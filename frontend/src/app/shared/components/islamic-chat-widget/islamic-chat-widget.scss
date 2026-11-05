@@ -35,11 +35,17 @@
   }
 
   @media (max-width: 768px) {
-    bottom: 84px; // safely above bottom navigation bar
+    bottom: 80px; // safely above bottom navigation dock
     right: 16px;
-    height: 44px;
-    padding: 0 14px 0 12px;
-    font-size: 0.875rem;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+
+    .chat-launcher__label {
+      display: none;
+    }
   }
 }
 

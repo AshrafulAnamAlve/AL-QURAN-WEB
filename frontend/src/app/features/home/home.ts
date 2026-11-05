@@ -17,6 +17,16 @@ import { IconComponent } from '../../shared/components/icon/icon';
 import { TaskGoalModalComponent } from '../../shared/components/task-goal-modal/task-goal-modal';
 import { DailyHadithModalComponent } from '../../shared/components/daily-hadith-modal/daily-hadith-modal';
 
+export interface TimelineWaqtItem {
+  key: string;
+  name: string;
+  banglaName: string;
+  time: string;
+  isPrayer: boolean;
+  status: 'passed' | 'active' | 'upcoming';
+  progressPercent: number;
+}
+
 /**
  * Landing page.
  *
@@ -88,6 +98,144 @@ export class HomePage {
     const next = this.nextPrayer();
     if (!next) return false;
     return this.notificationService.isPrayerAlertActive(next.prayer.key);
+  });
+
+  /** 6-Waqt Connected Day-Timeline with active waqt progress calculations */
+  readonly dayTimeline = computed<TimelineWaqtItem[]>(() => {
+    const table = this.prayerTimes.timetable();
+    if (!table || table.times.length === 0) return [];
+
+    const now = this.prayerTimes.currentTime().getTime();
+    const parse = (key: string) => {
+      const item = table.times.find((t) => t.key.toLowerCase() === key);
+      return item?.at ? new Date(item.at).getTime() : null;
+    };
+
+    const fajrAt = parse('fajr');
+    const sunriseAt = parse('sunrise');
+    const dhuhrAt = parse('dhuhr');
+    const asrAt = parse('asr');
+    const maghribAt = parse('maghrib');
+    const ishaAt = parse('isha');
+
+    if (!fajrAt || !sunriseAt || !dhuhrAt || !asrAt || !maghribAt || !ishaAt) {
+      return this.prayerTimes.coreTimings().map((t) => ({
+        key: t.key,
+        name: t.name,
+        banglaName: t.banglaName,
+        time: t.time,
+        isPrayer: t.isPrayer,
+        status: 'upcoming' as const,
+        progressPercent: 0,
+      }));
+    }
+
+    // Determine current active interval
+    let activeKey = 'fajr';
+    let intervalStart = fajrAt;
+    let intervalEnd = sunriseAt;
+
+    if (now >= fajrAt && now < sunriseAt) {
+      activeKey = 'fajr';
+      intervalStart = fajrAt;
+      intervalEnd = sunriseAt;
+    } else if (now >= sunriseAt && now < dhuhrAt) {
+      activeKey = 'sunrise';
+      intervalStart = sunriseAt;
+      intervalEnd = dhuhrAt;
+    } else if (now >= dhuhrAt && now < asrAt) {
+      activeKey = 'dhuhr';
+      intervalStart = dhuhrAt;
+      intervalEnd = asrAt;
+    } else if (now >= asrAt && now < maghribAt) {
+      activeKey = 'asr';
+      intervalStart = asrAt;
+      intervalEnd = maghribAt;
+    } else if (now >= maghribAt && now < ishaAt) {
+      activeKey = 'maghrib';
+      intervalStart = maghribAt;
+      intervalEnd = ishaAt;
+    } else if (now >= ishaAt) {
+      activeKey = 'isha';
+      intervalStart = ishaAt;
+      intervalEnd = fajrAt + 24 * 60 * 60 * 1000;
+    } else {
+      // Early morning before today's Fajr
+      activeKey = 'isha';
+      intervalStart = ishaAt - 24 * 60 * 60 * 1000;
+      intervalEnd = fajrAt;
+    }
+
+    const order = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'];
+    const activeIndex = order.indexOf(activeKey);
+    const isEarlyMorningBeforeFajr = now < fajrAt;
+
+    const elapsed = Math.max(0, now - intervalStart);
+    const total = Math.max(1, intervalEnd - intervalStart);
+    const activeProgress = Math.min(100, Math.max(0, Math.round((elapsed / total) * 100)));
+
+    return this.prayerTimes.coreTimings().map((t) => {
+      const idx = order.indexOf(t.key.toLowerCase());
+      let status: 'passed' | 'active' | 'upcoming' = 'upcoming';
+      let progressPercent = 0;
+
+      if (isEarlyMorningBeforeFajr) {
+        if (t.key.toLowerCase() === 'isha') {
+          status = 'active';
+          progressPercent = activeProgress;
+        } else {
+          status = 'upcoming';
+          progressPercent = 0;
+        }
+      } else {
+        if (idx < activeIndex) {
+          status = 'passed';
+          progressPercent = 100;
+        } else if (idx === activeIndex) {
+          status = 'active';
+          progressPercent = activeProgress;
+        } else {
+          status = 'upcoming';
+          progressPercent = 0;
+        }
+      }
+
+      return {
+        key: t.key,
+        name: t.name,
+        banglaName: t.banglaName,
+        time: t.time,
+        isPrayer: t.isPrayer,
+        status,
+        progressPercent,
+      };
+    });
+  });
+
+  /** Summary details for the currently active waqt span */
+  readonly activeWaqtSummary = computed<{
+    name: string;
+    banglaName: string;
+    startTime: string;
+    endTime: string;
+    nextName: string;
+    nextBanglaName: string;
+    progressPercent: number;
+  } | null>(() => {
+    const timeline = this.dayTimeline();
+    const active = timeline.find((t) => t.status === 'active');
+    if (!active) return null;
+    const activeIndex = timeline.indexOf(active);
+    const nextItem = timeline[(activeIndex + 1) % timeline.length];
+    return {
+      name: active.name,
+      banglaName: active.banglaName,
+      startTime: active.time,
+      endTime: nextItem.time,
+      nextName: nextItem.name,
+      nextBanglaName: nextItem.banglaName,
+      progressPercent: active.progressPercent,
+    };
   });
 
   /** Current active waqt (or Duha/Ishraq between sunrise and dhuhr). */

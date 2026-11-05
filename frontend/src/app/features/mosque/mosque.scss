@@ -275,19 +275,19 @@
 
 .radius-pills {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
   gap: 0.35rem;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   @media (max-width: 768px) {
-    flex-wrap: nowrap;
-    overflow-x: auto;
     gap: 0.25rem;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
   }
 }
 
