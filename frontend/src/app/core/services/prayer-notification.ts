@@ -749,7 +749,8 @@ export class PrayerNotificationService implements OnDestroy {
     }
 
     const sortedDays = Array.from(daysMap.values()).sort((a, b) => a.date.localeCompare(b.date));
-    const targetDays = sortedDays.slice(0, 7);
+    // Schedule up to 14 upcoming days ahead for robust offline and deep-sleep resilience
+    const targetDays = sortedDays.slice(0, 14);
 
     const alarms: PrayerAlarmItem[] = [];
     const nowMs = Date.now();

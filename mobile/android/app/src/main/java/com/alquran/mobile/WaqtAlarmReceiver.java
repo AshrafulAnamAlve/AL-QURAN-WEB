@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioAttributes;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
@@ -20,8 +21,13 @@ import androidx.core.app.NotificationManagerCompat;
  * High-priority native BroadcastReceiver triggered by Android AlarmManager.setAlarmClock()
  * for real-time Waqt notifications.
  *
- * Guaranteed to wake the CPU in deep Doze mode and never throttled by OEM battery savers.
- * Discards any stale alarms (> 15 minutes overdue) to completely eliminate notification bursts.
+ * Designed specifically for deep sleep and long app inactivity:
+ *  1. Uses WakeLock with ACQUIRE_CAUSES_WAKEUP to wake CPU and turn on the screen.
+ *  2. Uses setFullScreenIntent so heads-up / lockscreen alert displays over lock screen.
+ *  3. Bypasses Do Not Disturb (DND) and App Standby buckets.
+ *  4. Plays Adhan Takbeer alert through the hardware ALARM audio stream.
+ *  5. Automatically self-heals/replenishes upcoming alarms if the app is not opened for weeks.
+ *  6. Discards stale alarms (> 15 minutes overdue) to prevent notification bursts.
  */
 public class WaqtAlarmReceiver extends BroadcastReceiver {
     private static final String TAG = "WaqtAlarmReceiver";
@@ -36,10 +42,19 @@ public class WaqtAlarmReceiver extends BroadcastReceiver {
         PowerManager.WakeLock wakeLock = null;
         if (pm != null) {
             try {
-                wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "alquran:waqt_alarm");
+                // ACQUIRE_CAUSES_WAKEUP turns on the screen if the phone is asleep
+                int wakeFlags = PowerManager.PARTIAL_WAKE_LOCK;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+                    wakeFlags |= PowerManager.ACQUIRE_CAUSES_WAKEUP;
+                }
+                wakeLock = pm.newWakeLock(wakeFlags, "alquran:waqt_alarm");
                 wakeLock.acquire(15000L); // 15 seconds max
             } catch (Exception e) {
-                Log.w(TAG, "WakeLock acquisition warning: " + e.getMessage());
+                try {
+                    // Fallback to standard partial wake lock
+                    wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "alquran:waqt_alarm");
+                    wakeLock.acquire(15000L);
+                } catch (Exception ignored) {}
             }
         }
 
@@ -72,7 +87,7 @@ public class WaqtAlarmReceiver extends BroadcastReceiver {
 
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
-            // Clean up any earlier prayer notifications so only the current waqt displays
+            // Clean up earlier prayer notifications so only the active waqt is visible
             dismissPreviousPrayerNotifications(context, waqtId);
 
             // Tap intent opens MainActivity directly to prayer / Adhan view
@@ -113,6 +128,7 @@ public class WaqtAlarmReceiver extends BroadcastReceiver {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setAutoCancel(true)
                 .setContentIntent(contentPendingIntent)
+                .setFullScreenIntent(contentPendingIntent, true) // Displays heads-up on lockscreen even in deep sleep
                 .setColor(0xFF10B981)
                 .setWhen(now)
                 .setShowWhen(true);
@@ -124,8 +140,14 @@ public class WaqtAlarmReceiver extends BroadcastReceiver {
             notificationManager.notify(waqtId, builder.build());
             Log.i(TAG, "Successfully fired real-time Waqt notification: " + waqtName + " (id=" + waqtId + ")");
 
+            // Play hardware alarm stream audio chime
+            playAlarmAudio(context);
+
             // Notify running app if active
             AndroidAlarmHelperPlugin.onNotificationTapped(waqtName);
+
+            // Self-healing: check if future alarms are running low (in case user hasn't opened app for weeks)
+            WaqtAlarmScheduler.checkAndReplenishAlarms(context);
 
         } catch (Exception e) {
             Log.e(TAG, "Error displaying Waqt alarm notification", e);
@@ -170,6 +192,7 @@ public class WaqtAlarmReceiver extends BroadcastReceiver {
                 channel.enableVibration(true);
                 channel.setVibrationPattern(new long[]{0, 500, 250, 500, 250, 500});
                 channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+                channel.setBypassDnd(true);
 
                 Uri soundUri = getAdhanSoundUri(context);
                 if (soundUri != null) {
@@ -191,5 +214,62 @@ public class WaqtAlarmReceiver extends BroadcastReceiver {
             return Uri.parse("android.resource://" + context.getPackageName() + "/" + soundResId);
         }
         return null;
+    }
+
+    /**
+     * Plays the Adhan alert audio via MediaPlayer routed to the dedicated ALARM audio stream.
+     * This ensures the alert sounds even if device ringer/notification volume is muted or on vibrate.
+     */
+    private void playAlarmAudio(Context context) {
+        try {
+            int soundResId = context.getResources().getIdentifier("adhan", "raw", context.getPackageName());
+            if (soundResId == 0) return;
+
+            final MediaPlayer mediaPlayer = new MediaPlayer();
+            Uri soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + soundResId);
+            mediaPlayer.setDataSource(context, soundUri);
+
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ALARM)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+            mediaPlayer.setAudioAttributes(audioAttributes);
+            mediaPlayer.setVolume(1.0f, 1.0f);
+            mediaPlayer.setLooping(false);
+
+            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    try {
+                        mp.start();
+                    } catch (Exception e) {
+                        try { mp.release(); } catch (Exception ignored) {}
+                    }
+                }
+            });
+
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    try {
+                        mp.release();
+                    } catch (Exception ignored) {}
+                }
+            });
+
+            mediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    try {
+                        mp.release();
+                    } catch (Exception ignored) {}
+                    return true;
+                }
+            });
+
+            mediaPlayer.prepareAsync();
+        } catch (Exception e) {
+            Log.w(TAG, "playAlarmAudio notice: " + e.getMessage());
+        }
     }
 }

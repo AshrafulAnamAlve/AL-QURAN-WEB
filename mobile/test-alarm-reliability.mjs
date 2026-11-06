@@ -21,12 +21,16 @@ function check(title, fn) {
 }
 
 // 1. WaqtAlarmReceiver.java checks
-check('WaqtAlarmReceiver exists and implements stale alarm protection & WakeLock', () => {
+check('WaqtAlarmReceiver implements deep-sleep screen wakeup, full-screen intent, DND bypass & stale check', () => {
   const receiverPath = path.resolve('android/app/src/main/java/com/alquran/mobile/WaqtAlarmReceiver.java');
   assert(fs.existsSync(receiverPath), 'WaqtAlarmReceiver.java does not exist');
   const content = fs.readFileSync(receiverPath, 'utf8');
 
   assert(content.includes('PARTIAL_WAKE_LOCK'), 'Missing PARTIAL_WAKE_LOCK in WaqtAlarmReceiver');
+  assert(content.includes('ACQUIRE_CAUSES_WAKEUP'), 'Missing ACQUIRE_CAUSES_WAKEUP to light up screen in deep sleep');
+  assert(content.includes('setFullScreenIntent'), 'Missing setFullScreenIntent for heads-up lockscreen display');
+  assert(content.includes('setBypassDnd'), 'Missing setBypassDnd for Do Not Disturb override');
+  assert(content.includes('playAlarmAudio'), 'Missing playAlarmAudio hardware alarm stream playback');
   assert(content.includes('15 * 60 * 1000L'), 'Missing 15-minute stale alarm rejection check');
   assert(content.includes('adhan_prayer_channel'), 'Missing adhan_prayer_channel channel id');
   assert(content.includes('dismissPreviousPrayerNotifications'), 'Missing dismissPreviousPrayerNotifications method');
@@ -45,7 +49,7 @@ check('WaqtBootReceiver exists and handles boot actions', () => {
 });
 
 // 3. WaqtAlarmScheduler.java checks
-check('WaqtAlarmScheduler uses AlarmManager.setAlarmClock for Doze immunity', () => {
+check('WaqtAlarmScheduler uses AlarmManager.setAlarmClock & self-healing auto-replenish engine', () => {
   const schedPath = path.resolve('android/app/src/main/java/com/alquran/mobile/WaqtAlarmScheduler.java');
   assert(fs.existsSync(schedPath), 'WaqtAlarmScheduler.java does not exist');
   const content = fs.readFileSync(schedPath, 'utf8');
@@ -53,12 +57,13 @@ check('WaqtAlarmScheduler uses AlarmManager.setAlarmClock for Doze immunity', ()
   assert(content.includes('setAlarmClock'), 'Missing setAlarmClock() in scheduler');
   assert(content.includes('AlarmClockInfo'), 'Missing AlarmClockInfo in scheduler');
   assert(content.includes('setExactAndAllowWhileIdle'), 'Missing fallback to setExactAndAllowWhileIdle');
+  assert(content.includes('checkAndReplenishAlarms'), 'Missing self-healing checkAndReplenishAlarms engine');
   assert(content.includes('saveAlarmsToPrefs'), 'Missing saveAlarmsToPrefs persistence');
   assert(content.includes('restoreAlarms'), 'Missing restoreAlarms implementation');
 });
 
 // 4. AndroidManifest.xml registration
-check('AndroidManifest.xml registers receivers and exact alarm permissions', () => {
+check('AndroidManifest.xml registers receivers, exact alarm & full-screen permissions', () => {
   const manifestPath = path.resolve('android/app/src/main/AndroidManifest.xml');
   const content = fs.readFileSync(manifestPath, 'utf8');
 
@@ -66,6 +71,7 @@ check('AndroidManifest.xml registers receivers and exact alarm permissions', () 
   assert(content.includes('WaqtBootReceiver'), 'WaqtBootReceiver not registered in AndroidManifest.xml');
   assert(content.includes('SCHEDULE_EXACT_ALARM'), 'Missing SCHEDULE_EXACT_ALARM');
   assert(content.includes('USE_EXACT_ALARM'), 'Missing USE_EXACT_ALARM');
+  assert(content.includes('USE_FULL_SCREEN_INTENT'), 'Missing USE_FULL_SCREEN_INTENT for deep sleep lockscreen display');
   assert(content.includes('RECEIVE_BOOT_COMPLETED'), 'Missing RECEIVE_BOOT_COMPLETED');
   assert(content.includes('WAKE_LOCK'), 'Missing WAKE_LOCK');
 });
@@ -92,6 +98,14 @@ check('MobileHardwareService routes Android alarms to native setAlarmClock and p
   assert(content.includes('LocalNotifications.getPending()'), 'Missing LocalNotifications queue cleanup');
   assert(content.includes('waqtAlarmTapped'), 'Missing waqtAlarmTapped listener');
   assert(content.includes('isExactAlarmGranted'), 'Missing isExactAlarmGranted check in interface');
+});
+
+// 7. Multi-Day 14-Day Advance Scheduling
+check('PrayerNotificationService schedules up to 14 days ahead for long-term inactivity protection', () => {
+  const notifPath = path.resolve('../frontend/src/app/core/services/prayer-notification.ts');
+  const content = fs.readFileSync(notifPath, 'utf8');
+
+  assert(content.includes('slice(0, 14)'), 'PrayerNotificationService must schedule 14 upcoming days ahead');
 });
 
 console.log('\n======================================================');

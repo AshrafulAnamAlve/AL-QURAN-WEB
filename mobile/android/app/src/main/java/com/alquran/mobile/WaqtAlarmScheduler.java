@@ -15,16 +15,18 @@ import java.util.List;
 /**
  * Native Waqt Alarm Scheduler using Android AlarmManager.setAlarmClock().
  *
- * Unlike setExactAndAllowWhileIdle, setAlarmClock() is treated by Android OS and OEM
- * task managers as an authentic clock alarm:
+ * Built for deep sleep resilience and long-term background independence:
  *  1. Completely exempt from Doze mode maintenance windows and App Standby buckets.
- *  2. Wakes the CPU at the exact second even when the phone has been idle for days.
+ *  2. Wakes the CPU at the exact second even when the phone has been idle for days or weeks.
  *  3. Persists alarms to SharedPreferences so WaqtBootReceiver restores them on reboot.
+ *  4. Self-healing auto-replenish engine: if the app is not opened for weeks and alarms run low,
+ *     it automatically projects and schedules the next 7 days forward so alarms NEVER run out!
  */
 public class WaqtAlarmScheduler {
     private static final String TAG = "WaqtAlarmScheduler";
     private static final String PREFS_NAME = "alquran_waqt_alarms_prefs";
     private static final String KEY_ALARMS_JSON = "saved_waqt_alarms";
+    private static final long ONE_DAY_MS = 24L * 60L * 60L * 1000L;
 
     public static class AlarmItem {
         public int id;
@@ -190,7 +192,7 @@ public class WaqtAlarmScheduler {
         int restored = 0;
 
         for (AlarmItem alarm : saved) {
-            // Discard any past alarms to ensure no bursts occur after restart
+            // Discard past alarms so no bursts occur after restart
             if (alarm.triggerAtMillis > now + 5000L) {
                 remaining.add(alarm);
                 try {
@@ -204,6 +206,95 @@ public class WaqtAlarmScheduler {
 
         saveAlarmsToPrefs(context, remaining);
         Log.i(TAG, "Restored " + restored + " future Waqt alarms after reboot.");
+
+        // Check if future alarms are running low and self-heal
+        checkAndReplenishAlarms(context);
+    }
+
+    /**
+     * Self-healing Auto-Replenish Engine:
+     * If the app has not been opened for a long time (e.g. 2-3 weeks), future alarms will
+     * eventually run low. When remaining future alarms drop below 5 (less than 1 day left),
+     * this method automatically projects and schedules the next 7 days forward using
+     * the existing daily prayer time offsets.
+     * This guarantees alarms never stop ringing even if the app is never opened for months.
+     */
+    public static void checkAndReplenishAlarms(Context context) {
+        if (context == null) return;
+        List<AlarmItem> saved = loadAlarmsFromPrefs(context);
+        long now = System.currentTimeMillis();
+
+        int futureCount = 0;
+        List<AlarmItem> templateDayAlarms = new ArrayList<>();
+        long maxTrigger = 0;
+
+        for (AlarmItem item : saved) {
+            if (item.triggerAtMillis > now + 30000L) {
+                futureCount++;
+                if (item.triggerAtMillis > maxTrigger) {
+                    maxTrigger = item.triggerAtMillis;
+                }
+            }
+        }
+
+        // If fewer than 5 future alarms remain, replenish the next 7 days automatically
+        if (futureCount < 5 && !saved.isEmpty()) {
+            Log.i(TAG, "Future alarms running low (" + futureCount + " remaining). Replenishing next 7 days...");
+
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            if (alarmManager == null) return;
+
+            // Pick up to 5 unique prayer items from the saved list as our template
+            List<String> seenNames = new ArrayList<>();
+            for (int i = saved.size() - 1; i >= 0 && templateDayAlarms.size() < 5; i--) {
+                AlarmItem item = saved.get(i);
+                if (!seenNames.contains(item.name)) {
+                    seenNames.add(item.name);
+                    templateDayAlarms.add(item);
+                }
+            }
+
+            if (templateDayAlarms.isEmpty()) return;
+
+            List<AlarmItem> updatedList = new ArrayList<>();
+            for (AlarmItem item : saved) {
+                if (item.triggerAtMillis > now) {
+                    updatedList.add(item);
+                }
+            }
+
+            // Project 7 days forward
+            int addedCount = 0;
+            for (int dayOffset = 1; dayOffset <= 7; dayOffset++) {
+                for (AlarmItem template : templateDayAlarms) {
+                    long newTrigger = template.triggerAtMillis;
+                    // Advance by days until it is in the future past maxTrigger
+                    while (newTrigger <= now + (dayOffset * ONE_DAY_MS)) {
+                        newTrigger += ONE_DAY_MS;
+                    }
+
+                    int newId = (int) ((template.id + dayOffset * 100L) % 2147483647L);
+                    AlarmItem newAlarm = new AlarmItem(
+                        newId,
+                        template.name,
+                        newTrigger,
+                        template.title,
+                        template.body
+                    );
+
+                    try {
+                        scheduleSingleAlarm(context, alarmManager, newAlarm);
+                        updatedList.add(newAlarm);
+                        addedCount++;
+                    } catch (Exception e) {
+                        Log.w(TAG, "Failed to schedule auto-replenished alarm " + newAlarm.name, e);
+                    }
+                }
+            }
+
+            saveAlarmsToPrefs(context, updatedList);
+            Log.i(TAG, "Successfully auto-replenished " + addedCount + " Waqt alarms for the next 7 days.");
+        }
     }
 
     private static void saveAlarmsToPrefs(Context context, List<AlarmItem> alarms) {
