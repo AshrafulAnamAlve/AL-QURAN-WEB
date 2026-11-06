@@ -1,5 +1,6 @@
 package com.alquran.mobile;
 
+import android.app.AlarmManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -7,18 +8,162 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.util.Log;
+import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Native Android helper plugin to ensure 100% reliable real-time Waqt notifications
- * by managing Battery Optimization whitelist, Exact Alarms permissions, and OEM autostart.
+ * by managing Battery Optimization whitelist, Exact Alarms permissions, OEM autostart,
+ * and high-priority AlarmManager.setAlarmClock() scheduling.
  */
 @CapacitorPlugin(name = "AndroidAlarmHelper")
 public class AndroidAlarmHelperPlugin extends Plugin {
+    private static final String TAG = "AndroidAlarmHelper";
+
+    private static String pendingTappedWaqt = null;
+    private static AndroidAlarmHelperPlugin activeInstance = null;
+
+    @Override
+    public void load() {
+        super.load();
+        activeInstance = this;
+        if (pendingTappedWaqt != null) {
+            JSObject ret = new JSObject();
+            ret.put("waqtName", pendingTappedWaqt);
+            notifyListeners("waqtAlarmTapped", ret);
+            pendingTappedWaqt = null;
+        }
+    }
+
+    /**
+     * Broadcasts notification tap event to TypeScript listeners.
+     */
+    public static void onNotificationTapped(String waqtName) {
+        if (waqtName == null || waqtName.isEmpty()) return;
+        if (activeInstance != null) {
+            JSObject ret = new JSObject();
+            ret.put("waqtName", waqtName);
+            activeInstance.notifyListeners("waqtAlarmTapped", ret);
+        } else {
+            pendingTappedWaqt = waqtName;
+        }
+    }
+
+    /**
+     * Returns the Waqt name from the notification that launched or brought the app to foreground.
+     */
+    @PluginMethod
+    public void getLaunchNotification(PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("waqtName", pendingTappedWaqt != null ? pendingTappedWaqt : "");
+        pendingTappedWaqt = null;
+        call.resolve(ret);
+    }
+
+    /**
+     * Schedules native Waqt alarms using AlarmManager.setAlarmClock()
+     * for guaranteed on-time delivery even in deep Doze mode.
+     */
+    @PluginMethod
+    public void scheduleWaqtAlarms(PluginCall call) {
+        try {
+            JSArray alarmsArray = call.getArray("alarms");
+            if (alarmsArray == null) {
+                call.reject("alarms array is required");
+                return;
+            }
+
+            List<WaqtAlarmScheduler.AlarmItem> list = new ArrayList<>();
+            for (int i = 0; i < alarmsArray.length(); i++) {
+                JSONObject obj = alarmsArray.getJSONObject(i);
+                int id = obj.getInt("id");
+                String name = obj.optString("name", "");
+                long triggerAtMillis = obj.getLong("time");
+                String title = obj.optString("title", "");
+                String body = obj.optString("body", "");
+                list.add(new WaqtAlarmScheduler.AlarmItem(id, name, triggerAtMillis, title, body));
+            }
+
+            int scheduled = WaqtAlarmScheduler.scheduleAlarms(getContext(), list);
+            JSObject ret = new JSObject();
+            ret.put("success", true);
+            ret.put("count", scheduled);
+            call.resolve(ret);
+        } catch (Exception e) {
+            Log.e(TAG, "Error scheduling Waqt alarms", e);
+            call.reject("Failed to schedule Waqt alarms: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Cancels all native Waqt alarms.
+     */
+    @PluginMethod
+    public void cancelWaqtAlarms(PluginCall call) {
+        try {
+            WaqtAlarmScheduler.cancelAllAlarms(getContext());
+            JSObject ret = new JSObject();
+            ret.put("success", true);
+            call.resolve(ret);
+        } catch (Exception e) {
+            Log.e(TAG, "Error cancelling Waqt alarms", e);
+            call.reject("Failed to cancel alarms: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Triggers an immediate native test notification with Adhan sound to verify alarm delivery.
+     */
+    @PluginMethod
+    public void sendImmediateTestAlarm(PluginCall call) {
+        try {
+            String title = call.getString("title", "🕌 পরীক্ষা: আযান ও নোটিফিকেশন");
+            String body = call.getString("body", "আল-কুরআন ব্যাকগ্রাউন্ড নোটিফিকেশন সফলভাবে কাজ করছে।");
+            String waqtName = call.getString("waqtName", "asr");
+
+            Intent intent = new Intent(getContext(), WaqtAlarmReceiver.class);
+            intent.setAction(WaqtAlarmReceiver.ACTION_WAQT_ALARM);
+            intent.putExtra("waqt_id", 9999);
+            intent.putExtra("waqt_name", waqtName);
+            intent.putExtra("waqt_title", title);
+            intent.putExtra("waqt_body", body);
+            intent.putExtra("scheduled_time", System.currentTimeMillis());
+
+            getContext().sendBroadcast(intent);
+
+            JSObject ret = new JSObject();
+            ret.put("success", true);
+            call.resolve(ret);
+        } catch (Exception e) {
+            Log.e(TAG, "Error sending test alarm", e);
+            call.reject("Failed to send test alarm: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Checks if exact alarm permission is granted (Android 12+).
+     */
+    @PluginMethod
+    public void isExactAlarmGranted(PluginCall call) {
+        boolean isGranted = true;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            AlarmManager am = (AlarmManager) getContext().getSystemService(Context.ALARM_SERVICE);
+            if (am != null) {
+                isGranted = am.canScheduleExactAlarms();
+            }
+        }
+        JSObject ret = new JSObject();
+        ret.put("isGranted", isGranted);
+        call.resolve(ret);
+    }
 
     /**
      * Checks if the app is whitelisted from Android battery optimizations.
@@ -151,7 +296,6 @@ public class AndroidAlarmHelperPlugin extends Plugin {
             context.startActivity(intent);
             opened = true;
         } catch (Exception e) {
-            // Fallback to app details
             openAppSettingsInternal(context);
         }
 

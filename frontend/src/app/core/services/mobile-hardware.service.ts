@@ -11,6 +11,27 @@ export interface AndroidAlarmHelperPlugin {
   openExactAlarmSettings(): Promise<void>;
   openAppSettings(): Promise<void>;
   openAutoStartSettings(): Promise<{ opened: boolean }>;
+  isExactAlarmGranted(): Promise<{ isGranted: boolean }>;
+  scheduleWaqtAlarms(options: {
+    alarms: Array<{
+      id: number;
+      name: string;
+      time: number;
+      title: string;
+      body: string;
+    }>;
+  }): Promise<{ success: boolean; count: number }>;
+  cancelWaqtAlarms(): Promise<{ success: boolean }>;
+  sendImmediateTestAlarm(options: {
+    title: string;
+    body: string;
+    waqtName?: string;
+  }): Promise<{ success: boolean }>;
+  getLaunchNotification(): Promise<{ waqtName: string }>;
+  addListener(
+    eventName: 'waqtAlarmTapped',
+    listenerFunc: (data: { waqtName: string }) => void,
+  ): Promise<any>;
 }
 
 const AndroidAlarmHelper = registerPlugin<AndroidAlarmHelperPlugin>('AndroidAlarmHelper');
@@ -499,6 +520,14 @@ export class MobileHardwareService {
   async checkExactAlarmPermission(): Promise<boolean> {
     if (!this.isNativeMobile() || !this.isAndroid()) return true;
     try {
+      const res = await AndroidAlarmHelper.isExactAlarmGranted();
+      if (res && typeof res.isGranted === 'boolean') {
+        return res.isGranted;
+      }
+    } catch {
+      // Fallback below
+    }
+    try {
       const res = await LocalNotifications.checkExactNotificationSetting();
       return res.exact_alarm === 'granted';
     } catch {
@@ -589,8 +618,11 @@ export class MobileHardwareService {
   private isSchedulingAlarms = false;
 
   /**
-   * Schedules precise Waqt Adhan notifications via Capacitor LocalNotifications
-   * Uses Android AlarmManager (allowWhileIdle: true) to fire in real time even when device is asleep.
+   * Schedules precise Waqt Adhan notifications.
+   * On Android, uses native WaqtAlarmScheduler with AlarmManager.setAlarmClock()
+   * which completely bypasses Doze mode, app standby, and OEM killing, delivering alarms
+   * at the exact second even if the app has not been opened in days.
+   * Also cancels legacy Capacitor LocalNotifications to eliminate burst-on-open.
    */
   async schedulePrayerAlarms(prayers: PrayerAlarmItem[]): Promise<void> {
     if (!this.isNativeMobile()) return;
@@ -603,41 +635,64 @@ export class MobileHardwareService {
       // Clean up past expired alarms and delivered notifications so old ones never pile up
       await this.cleanupExpiredPendingAlarms();
 
-      // Cancel previous scheduled alarms
-      const pending = await LocalNotifications.getPending();
-      if (pending && pending.notifications.length > 0) {
-        await LocalNotifications.cancel({
-          notifications: pending.notifications.map((n) => ({ id: n.id })),
-        });
+      // Cancel legacy Capacitor LocalNotifications to prevent TimedNotificationPublisher
+      // from holding inexact alarms that burst when app opens
+      try {
+        const pending = await LocalNotifications.getPending();
+        if (pending && pending.notifications.length > 0) {
+          await LocalNotifications.cancel({
+            notifications: pending.notifications.map((n) => ({ id: n.id })),
+          });
+        }
+      } catch {
+        // Non-critical
       }
 
       const now = Date.now();
-      // Ensure we only schedule alarms at least 20 seconds into the future
-      const upcoming = prayers.filter((p) => p.time.getTime() > now + 20000);
+      // Ensure we only schedule alarms at least 15 seconds into the future
+      const upcoming = prayers.filter((p) => p.time.getTime() > now + 15000);
 
       if (upcoming.length === 0) {
+        if (this.isAndroid()) {
+          await AndroidAlarmHelper.cancelWaqtAlarms().catch(() => {});
+        }
         this.isSchedulingAlarms = false;
         return;
       }
 
-      const notifications = upcoming.map((p) => ({
-        id: p.id,
-        title: p.titleBn,
-        body: p.bodyBn,
-        largeBody: p.bodyBn,
-        schedule: { at: p.time, allowWhileIdle: true },
-        channelId: MobileHardwareService.ADHAN_CHANNEL_ID,
-        sound: 'adhan.wav',
-        smallIcon: 'ic_stat_quran',
-        iconColor: '#10b981',
-        extra: {
-          waqtName: p.name,
-          timeStr: p.time.toISOString(),
-        },
-      }));
+      // Android: Native AlarmManager.setAlarmClock()
+      if (this.isAndroid()) {
+        const nativeAlarms = upcoming.map((p) => ({
+          id: p.id,
+          name: p.name,
+          time: p.time.getTime(),
+          title: p.titleBn,
+          body: p.bodyBn,
+        }));
 
-      await LocalNotifications.schedule({ notifications });
-      console.info(`[MobileHardware] Successfully scheduled ${notifications.length} prayer alarms in Android AlarmManager.`);
+        const result = await AndroidAlarmHelper.scheduleWaqtAlarms({ alarms: nativeAlarms });
+        console.info(`[MobileHardware] Native setAlarmClock scheduled ${result.count} Waqt alarms.`);
+      } else {
+        // iOS / Non-Android fallback via Capacitor LocalNotifications
+        const notifications = upcoming.map((p) => ({
+          id: p.id,
+          title: p.titleBn,
+          body: p.bodyBn,
+          largeBody: p.bodyBn,
+          schedule: { at: p.time, allowWhileIdle: true },
+          channelId: MobileHardwareService.ADHAN_CHANNEL_ID,
+          sound: 'adhan.wav',
+          smallIcon: 'ic_stat_quran',
+          iconColor: '#10b981',
+          extra: {
+            waqtName: p.name,
+            timeStr: p.time.toISOString(),
+          },
+        }));
+
+        await LocalNotifications.schedule({ notifications });
+        console.info(`[MobileHardware] Scheduled ${notifications.length} alarms via LocalNotifications.`);
+      }
     } catch (err) {
       console.warn('[MobileHardware] Error scheduling prayer alarms:', err);
     } finally {
@@ -651,13 +706,16 @@ export class MobileHardwareService {
   async cancelAllPrayerAlarms(): Promise<void> {
     if (!this.isNativeMobile()) return;
     try {
+      if (this.isAndroid()) {
+        await AndroidAlarmHelper.cancelWaqtAlarms().catch(() => {});
+      }
       const pending = await LocalNotifications.getPending();
       if (pending && pending.notifications.length > 0) {
         await LocalNotifications.cancel({
           notifications: pending.notifications.map((n) => ({ id: n.id })),
         });
-        console.info('[MobileHardware] All prayer alarms cancelled.');
       }
+      console.info('[MobileHardware] All prayer alarms cancelled.');
     } catch (err) {
       console.warn('Failed to cancel prayer alarms:', err);
     }
@@ -674,6 +732,17 @@ export class MobileHardwareService {
     if (!this.isNativeMobile()) return;
     try {
       await this.initNotificationChannel();
+
+      if (this.isAndroid()) {
+        await AndroidAlarmHelper.sendImmediateTestAlarm({
+          title,
+          body,
+          waqtName: (extra?.['waqtName'] as string) || 'asr',
+        });
+        console.info('[MobileHardware] Immediate native test alarm triggered');
+        return;
+      }
+
       const testId = Math.floor(Math.random() * 90000) + 10000;
       await LocalNotifications.schedule({
         notifications: [
@@ -703,6 +772,23 @@ export class MobileHardwareService {
   initNotificationListener(onTap: (waqtName?: string) => void): void {
     if (!this.isNativeMobile()) return;
     try {
+      // 1. Listen to native AndroidAlarmHelper notification tap
+      if (this.isAndroid()) {
+        void AndroidAlarmHelper.addListener('waqtAlarmTapped', (data) => {
+          if (data?.waqtName) {
+            onTap(data.waqtName);
+          }
+        });
+
+        // Also check if app was opened/resumed via notification tap
+        void AndroidAlarmHelper.getLaunchNotification().then((data) => {
+          if (data?.waqtName) {
+            onTap(data.waqtName);
+          }
+        });
+      }
+
+      // 2. LocalNotifications action listener for iOS / fallback
       void LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
         const extra = notification.notification?.extra;
         onTap(extra?.waqtName);
