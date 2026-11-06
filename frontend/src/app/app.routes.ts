@@ -205,6 +205,27 @@ export const routes: Routes = [
     },
   },
   {
+    path: 'prophets',
+    loadComponent: () => import('./features/prophets/prophets').then((m) => m.ProphetsPage),
+    data: {
+      meta: {
+        title: 'Stories of the Prophets — কাসাসুল আম্বিয়া (২৫ জন নবীজির জীবনী)',
+        description:
+          'Biographies of all 25 Prophets mentioned in the Holy Quran with Arabic calligraphy, Bangla and English text, lessons, and audio narration.',
+      },
+    },
+  },
+  {
+    path: 'nobiji-jiboni',
+    redirectTo: 'prophets',
+    pathMatch: 'full',
+  },
+  {
+    path: 'seerah',
+    redirectTo: 'prophets',
+    pathMatch: 'full',
+  },
+  {
     path: 'download',
     loadComponent: () => import('./features/download/download').then((m) => m.DownloadPage),
     data: {

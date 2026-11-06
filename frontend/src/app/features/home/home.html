@@ -588,6 +588,23 @@
         <span class="explore-card__arrow" aria-hidden="true">&rarr;</span>
       </a>
 
+      <!-- Stories of the Prophets / নবীগণের জীবনী Explore Card -->
+      <a routerLink="/prophets" class="explore-card explore-card--prophets">
+        <div class="explore-card__icon-wrap">
+          <aq-icon name="bookOpen" [size]="22" />
+        </div>
+        <div class="explore-card__content">
+          <div class="explore-card__badge-row">
+            <h3 class="explore-card__title">{{ isBn() ? 'নবীগণের জীবনী' : 'Stories of the Prophets' }}</h3>
+            <span class="explore-card__badge explore-card__badge--prophets">{{ isBn() ? '২৫ জন নবী · অডিও' : '25 Prophets · Audio' }}</span>
+          </div>
+          <p class="explore-card__desc">
+            {{ isBn() ? 'কুরআনে বর্ণিত সকল ২৫ জন নবীর প্রামাণ্য কাহিনী, অলৌকিক নিদর্শন, শিক্ষা ও বাংলা-ইংরেজি অডিও পাঠ।' : 'Authentic biographies of all 25 Quranic Prophets with historical eras, miracles, lessons, and dual-language narration.' }}
+          </p>
+        </div>
+        <span class="explore-card__arrow" aria-hidden="true">&rarr;</span>
+      </a>
+
       <a routerLink="/ruqyah" class="explore-card explore-card--ruqyah">
         <div class="explore-card__icon-wrap">
           <aq-icon name="shield" [size]="22" />

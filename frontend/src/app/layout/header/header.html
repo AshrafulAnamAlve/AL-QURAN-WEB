@@ -238,6 +238,9 @@
             @if (item.path === '/ruqyah') {
               <span class="drawer__badge">{{ isBn() ? 'অডিও ও শিফা' : 'Audio & Shifa' }}</span>
             }
+            @if (item.path === '/prophets') {
+              <span class="drawer__badge drawer__badge--gold">{{ isBn() ? '২৫ জন নবী' : '25 Prophets' }}</span>
+            }
             @if (item.path === '/download') {
               <span class="drawer__badge drawer__badge--gold">APK • PC</span>
             }

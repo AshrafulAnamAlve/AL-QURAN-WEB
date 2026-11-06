@@ -1,0 +1,467 @@
+<div class="prophets-page">
+  <!-- Top Header / Hero Section -->
+  <header class="prophets-hero aq-pattern">
+    <div class="aq-container prophets-hero__inner">
+      <div class="prophets-hero__top-row">
+        <div class="prophets-hero__brand">
+          <span class="prophets-hero__badge">
+            <aq-icon name="bookOpen" [size]="14" />
+            {{ isBn() ? 'কাসাসুল আম্বিয়া • ২৫ জন নবী' : 'Stories of the Prophets • 25 Prophets' }}
+          </span>
+          <h1 class="prophets-hero__title">
+            {{ isBn() ? 'নবীগণের জীবনী ও অডিও' : 'Biographies of the Prophets & Audio' }}
+          </h1>
+          <p class="prophets-hero__subtitle">
+            {{ isBn()
+              ? 'পবিত্র কুরআনে বর্ণিত সকল ২৫ জন নবীর প্রামাণ্য জীবনী, শিক্ষা এবং বাংলা ও ইংরেজি অডিও পাঠ'
+              : 'Authentic biographies of all 25 Prophets in the Quran with moral lessons, verses & audio narration' }}
+          </p>
+        </div>
+
+        <!-- Language & Font Controls -->
+        <div class="prophets-controls">
+          <div class="prophets-lang-toggle" role="group" aria-label="Language selection">
+            <button
+              type="button"
+              class="prophets-lang-btn"
+              [class.prophets-lang-btn--active]="isBn()"
+              (click)="setLang('bn')"
+            >
+              বাংলা
+            </button>
+            <button
+              type="button"
+              class="prophets-lang-btn"
+              [class.prophets-lang-btn--active]="!isBn()"
+              (click)="setLang('en')"
+            >
+              English
+            </button>
+          </div>
+
+          @if (prophetService.activeProphet()) {
+            <div class="prophets-font-toggle" role="group" aria-label="Font size">
+              <button
+                type="button"
+                class="prophets-font-btn"
+                [class.prophets-font-btn--active]="fontSize() === 'sm'"
+                (click)="setFontSize('sm')"
+                title="Small text"
+              >
+                A-
+              </button>
+              <button
+                type="button"
+                class="prophets-font-btn"
+                [class.prophets-font-btn--active]="fontSize() === 'md'"
+                (click)="setFontSize('md')"
+                title="Medium text"
+              >
+                A
+              </button>
+              <button
+                type="button"
+                class="prophets-font-btn"
+                [class.prophets-font-btn--active]="fontSize() === 'lg'"
+                (click)="setFontSize('lg')"
+                title="Large text"
+              >
+                A+
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Search & Era Tabs (Visible on List View) -->
+      @if (!prophetService.activeProphet()) {
+        <div class="prophets-search-box">
+          <div class="prophets-input-wrap">
+            <aq-icon name="search" [size]="18" />
+            <input
+              type="search"
+              class="prophets-input"
+              [(ngModel)]="prophetService.searchQuery"
+              [placeholder]="isBn() ? 'নবীর নাম বা পরিচয় খুঁজুন (যেমন: মূসা, ইউসুফ, Ibrahim...)' : 'Search Prophet by name (e.g. Musa, Yusuf, Ibrahim...)'"
+              [attr.aria-label]="isBn() ? 'নবীর নাম খুঁজুন' : 'Search prophet'"
+            />
+            @if (prophetService.searchQuery()) {
+              <button
+                type="button"
+                class="prophets-input-clear"
+                (click)="prophetService.searchQuery.set('')"
+                aria-label="Clear search"
+              >
+                <aq-icon name="close" [size]="16" />
+              </button>
+            }
+          </div>
+
+          <div class="prophets-era-tabs" role="tablist" aria-label="Era tabs">
+            @for (tab of filterEras; track tab.id) {
+              <button
+                type="button"
+                class="prophets-era-pill"
+                [class.prophets-era-pill--active]="prophetService.selectedEra() === tab.id"
+                (click)="selectEra(tab.id)"
+                role="tab"
+                [attr.aria-selected]="prophetService.selectedEra() === tab.id"
+              >
+                {{ isBn() ? tab.labelBn : tab.labelEn }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="aq-container prophets-container">
+    <!-- ================================================================= -->
+    <!-- 1. DETAIL / BIOGRAPHY READER VIEW                                -->
+    <!-- ================================================================= -->
+    @if (prophetService.activeProphet(); as prophet) {
+      <div class="prophet-reader" [attr.data-size]="fontSize()">
+        <!-- Navigation Top Bar -->
+        <div class="prophet-reader__top-nav">
+          <button type="button" class="prophet-back-btn" (click)="backToList()">
+            <aq-icon name="chevronLeft" [size]="18" />
+            <span>{{ isBn() ? 'সকল ২৫ জন নবীর তালিকা' : 'Back to All Prophets' }}</span>
+          </button>
+
+          <button
+            type="button"
+            class="prophet-bookmark-btn"
+            [class.prophet-bookmark-btn--active]="prophetService.isBookmarked(prophet.number)"
+            (click)="toggleBookmark(prophet.number, $event)"
+            [title]="isBn() ? 'বুকমার্ক করুন' : 'Bookmark'"
+          >
+            <aq-icon [name]="prophetService.isBookmarked(prophet.number) ? 'star' : 'bookmark'" [size]="18" />
+            <span>{{ prophetService.isBookmarked(prophet.number) ? (isBn() ? 'সংরক্ষিত' : 'Saved') : (isBn() ? 'বুকমার্ক' : 'Save') }}</span>
+          </button>
+        </div>
+
+        <!-- Sticky Floating Audio Player Dock -->
+        <div class="prophet-audio-dock" role="region" aria-label="Audio player">
+          <div class="prophet-audio-dock__info">
+            <div class="prophet-audio-dock__icon-wrap" [class.prophet-audio-dock__icon-wrap--pulse]="prophetService.isAudioPlaying() && !prophetService.isAudioPaused()">
+              <aq-icon name="headphones" [size]="20" />
+            </div>
+            <div class="prophet-audio-dock__text">
+              <strong class="prophet-audio-dock__title">
+                {{ isBn() ? 'জীবনী অডিও পাঠ' : 'Audio Narration' }} &middot;
+                <span class="prophet-audio-dock__lang">{{ isBn() ? 'বাংলা কণ্ঠ' : 'English Voice' }}</span>
+              </strong>
+              <span class="prophet-audio-dock__sub">
+                @if (prophetService.isAudioPlaying()) {
+                  {{ isBn()
+                    ? 'বাক্য ' + toBanglaDigits(prophetService.currentSentenceIndex() + 1) + ' / ' + toBanglaDigits(prophetService.sentences().length)
+                    : 'Sentence ' + (prophetService.currentSentenceIndex() + 1) + ' / ' + prophetService.sentences().length }}
+                } @else {
+                  {{ isBn() ? 'শুনতে Play বাটনে চাপ দিন' : 'Press Play to listen' }}
+                }
+              </span>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="prophet-audio-dock__controls">
+            <!-- Speed Selector -->
+            <div class="prophet-audio-speed-group">
+              <button
+                type="button"
+                class="prophet-speed-pill"
+                [class.prophet-speed-pill--active]="prophetService.audioSpeed() === 0.75"
+                (click)="setSpeed(0.75)"
+              >
+                0.75x
+              </button>
+              <button
+                type="button"
+                class="prophet-speed-pill"
+                [class.prophet-speed-pill--active]="prophetService.audioSpeed() === 1.0"
+                (click)="setSpeed(1.0)"
+              >
+                1.0x
+              </button>
+              <button
+                type="button"
+                class="prophet-speed-pill"
+                [class.prophet-speed-pill--active]="prophetService.audioSpeed() === 1.25"
+                (click)="setSpeed(1.25)"
+              >
+                1.25x
+              </button>
+            </div>
+
+            <!-- Play / Pause / Stop Buttons -->
+            @if (!prophetService.isAudioPlaying() || prophetService.isAudioPaused()) {
+              <button
+                type="button"
+                class="prophet-audio-btn prophet-audio-btn--play"
+                (click)="playAudio()"
+                [attr.aria-label]="isBn() ? 'অডিও শুনুন' : 'Play audio'"
+              >
+                <aq-icon name="play" [size]="18" />
+                <span>{{ isBn() ? 'শুনুন' : 'Listen' }}</span>
+              </button>
+            } @else {
+              <button
+                type="button"
+                class="prophet-audio-btn prophet-audio-btn--pause"
+                (click)="pauseAudio()"
+                [attr.aria-label]="isBn() ? 'থামান' : 'Pause audio'"
+              >
+                <aq-icon name="pause" [size]="18" />
+                <span>{{ isBn() ? 'বিরতি' : 'Pause' }}</span>
+              </button>
+            }
+
+            @if (prophetService.isAudioPlaying()) {
+              <button
+                type="button"
+                class="prophet-audio-btn prophet-audio-btn--stop"
+                (click)="stopAudio()"
+                [attr.aria-label]="isBn() ? 'বন্ধ করুন' : 'Stop audio'"
+                title="Stop"
+              >
+                <aq-icon name="close" [size]="16" />
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Currently Spoken Sentence Live Bar (If Playing) -->
+        @if (prophetService.isAudioPlaying() && prophetService.currentSentenceText(); as curText) {
+          <div class="prophet-live-sentence" role="status" aria-live="polite">
+            <span class="prophet-live-sentence__label">{{ isBn() ? 'এখন উচ্চারিত হচ্ছে:' : 'Now playing:' }}</span>
+            <p class="prophet-live-sentence__text">“{{ curText }}”</p>
+          </div>
+        }
+
+        <!-- Prophet Profile Card Header -->
+        <article class="prophet-profile-card">
+          <div class="prophet-profile-card__header">
+            <div class="prophet-profile-card__number-wrap">
+              <span class="prophet-number-badge aq-numeral">
+                {{ isBn() ? toBanglaDigits(prophet.number) : prophet.number }}
+              </span>
+              <span class="prophet-era-tag">{{ isBn() ? prophet.eraBn : prophet.eraEn }}</span>
+            </div>
+
+            <div class="prophet-profile-card__arabic aq-arabic" dir="rtl">
+              {{ prophet.nameAr }}
+            </div>
+          </div>
+
+          <h2 class="prophet-profile-card__name">
+            {{ isBn() ? prophet.nameBn : prophet.nameEn }}
+          </h2>
+          <p class="prophet-profile-card__title">
+            {{ isBn() ? prophet.titleBn : prophet.titleEn }}
+          </p>
+
+          <div class="prophet-profile-card__meta-grid">
+            <div class="prophet-meta-pill">
+              <span class="prophet-meta-pill__label">{{ isBn() ? 'কুরআনে উল্লেখ' : 'Quran Mentions' }}</span>
+              <strong class="prophet-meta-pill__val aq-numeral">
+                {{ isBn() ? prophet.quranMentionsBn : prophet.quranMentionsEn }}
+              </strong>
+            </div>
+
+            <div class="prophet-meta-pill">
+              <span class="prophet-meta-pill__label">{{ isBn() ? 'অঞ্চল ও অবস্থান' : 'Location' }}</span>
+              <strong class="prophet-meta-pill__val">
+                {{ isBn() ? prophet.locationBn : prophet.locationEn }}
+              </strong>
+            </div>
+          </div>
+        </article>
+
+        <!-- Summary Section -->
+        <section class="prophet-section-card prophet-section-card--summary">
+          <h3 class="prophet-section-title">
+            <aq-icon name="sparkles" [size]="18" />
+            <span>{{ isBn() ? 'জীবনী সংক্ষেপ' : 'Life Summary' }}</span>
+          </h3>
+          <p class="prophet-summary-text">
+            {{ isBn() ? prophet.summaryBn : prophet.summaryEn }}
+          </p>
+        </section>
+
+        <!-- Miracles & Signs Section -->
+        @if (prophet.miraclesBn.length > 0) {
+          <section class="prophet-section-card">
+            <h3 class="prophet-section-title">
+              <aq-icon name="sparkles" [size]="18" />
+              <span>{{ isBn() ? 'অলৌকিক নিদর্শন ও মুজিযাসমূহ' : 'Miracles & Divine Signs' }}</span>
+            </h3>
+            <ul class="prophet-miracles-list">
+              @for (miracle of (isBn() ? prophet.miraclesBn : prophet.miraclesEn); track $index) {
+                <li class="prophet-miracle-item">
+                  <span class="prophet-miracle-check" aria-hidden="true">&#10003;</span>
+                  <span>{{ miracle }}</span>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+
+        <!-- Detailed Historical Sections -->
+        @for (sec of prophet.sections; track $index) {
+          <section class="prophet-section-card">
+            <h3 class="prophet-section-title">
+              <span class="prophet-section-idx">{{ isBn() ? toBanglaDigits($index + 1) : ($index + 1) }}</span>
+              <span>{{ isBn() ? sec.titleBn : sec.titleEn }}</span>
+            </h3>
+            <div class="prophet-body-text">
+              {{ isBn() ? sec.contentBn : sec.contentEn }}
+            </div>
+          </section>
+        }
+
+        <!-- Quranic Verses Section -->
+        @if (prophet.quranReferences.length > 0) {
+          <section class="prophet-section-card prophet-section-card--quran">
+            <h3 class="prophet-section-title">
+              <aq-icon name="bookOpen" [size]="18" />
+              <span>{{ isBn() ? 'পবিত্র কুরআনের সংশ্লিষ্ট আয়াত' : 'Quranic Verses & References' }}</span>
+            </h3>
+
+            @for (ref of prophet.quranReferences; track ref.surahNumber) {
+              <div class="prophet-quran-box">
+                <div class="prophet-quran-box__header">
+                  <a
+                    [routerLink]="['/quran', ref.surahNumber]"
+                    class="prophet-quran-box__surah-link"
+                    title="Read full surah"
+                  >
+                    <strong>{{ isBn() ? ref.surahNameBn : ref.surahNameEn }}</strong>
+                    <span class="aq-numeral">({{ ref.surahNumber }}:{{ ref.ayahRange }})</span>
+                    <aq-icon name="chevronRight" [size]="14" />
+                  </a>
+                </div>
+
+                <p class="prophet-quran-box__arabic aq-arabic" dir="rtl">
+                  {{ ref.ayahArabic }}
+                </p>
+
+                <p class="prophet-quran-box__trans">
+                  {{ isBn() ? ref.translationBn : ref.translationEn }}
+                </p>
+              </div>
+            }
+          </section>
+        }
+
+        <!-- Lessons for Our Lives -->
+        @if (prophet.lessonsBn.length > 0) {
+          <section class="prophet-section-card prophet-section-card--lessons">
+            <h3 class="prophet-section-title">
+              <aq-icon name="star" [size]="18" />
+              <span>{{ isBn() ? 'আমাদের জীবনের জন্য শিক্ষা' : 'Lessons for Our Daily Lives' }}</span>
+            </h3>
+            <div class="prophet-lessons-grid">
+              @for (lesson of (isBn() ? prophet.lessonsBn : prophet.lessonsEn); track $index) {
+                <div class="prophet-lesson-card">
+                  <span class="prophet-lesson-number">{{ $index + 1 }}</span>
+                  <p class="prophet-lesson-text">{{ lesson }}</p>
+                </div>
+              }
+            </div>
+          </section>
+        }
+
+        <!-- Bottom Reader Actions -->
+        <div class="prophet-reader__bottom-actions">
+          <button type="button" class="prophet-back-btn prophet-back-btn--bottom" (click)="backToList()">
+            <aq-icon name="chevronLeft" [size]="18" />
+            <span>{{ isBn() ? 'সকল ২৫ জন নবীর তালিকায় ফিরুন' : 'Back to All Prophets' }}</span>
+          </button>
+        </div>
+      </div>
+    } @else {
+      <!-- ================================================================= -->
+      <!-- 2. PROPHETS GRID / LIST VIEW                                      -->
+      <!-- ================================================================= -->
+      <div class="prophets-list-view">
+        <div class="prophets-stats-bar">
+          <p class="prophets-count">
+            {{ isBn()
+              ? 'মোট ' + toBanglaDigits(prophetService.filteredProphets().length) + ' জন নবী প্রদর্শিত হচ্ছে'
+              : 'Showing ' + prophetService.filteredProphets().length + ' Prophets' }}
+          </p>
+
+          @if (prophetService.bookmarkedNumbers().length > 0) {
+            <span class="prophets-saved-badge">
+              <aq-icon name="star" [size]="14" />
+              {{ isBn() ? toBanglaDigits(prophetService.bookmarkedNumbers().length) + 'টি সংরক্ষিত' : prophetService.bookmarkedNumbers().length + ' Saved' }}
+            </span>
+          }
+        </div>
+
+        <!-- 25 Prophets Grid -->
+        <div class="prophets-grid">
+          @for (prophet of prophetService.filteredProphets(); track prophet.id) {
+            <div
+              class="prophet-card"
+              (click)="openProphet(prophet)"
+              role="button"
+              tabindex="0"
+              (keydown.enter)="openProphet(prophet)"
+              [attr.aria-label]="isBn() ? prophet.nameBn + ' এর জীবনী পড়ুন ও শুনুন' : 'Read & listen to ' + prophet.nameEn"
+            >
+              <div class="prophet-card__top">
+                <div class="prophet-card__badge-row">
+                  <span class="prophet-order-pill aq-numeral">
+                    {{ isBn() ? toBanglaDigits(prophet.number) : prophet.number }}
+                  </span>
+                  <span class="prophet-card__era">{{ isBn() ? prophet.eraBn : prophet.eraEn }}</span>
+                </div>
+
+                <button
+                  type="button"
+                  class="prophet-card__star-btn"
+                  [class.prophet-card__star-btn--active]="prophetService.isBookmarked(prophet.number)"
+                  (click)="toggleBookmark(prophet.number, $event)"
+                  [title]="isBn() ? 'বুকমার্ক করুন' : 'Bookmark'"
+                >
+                  <aq-icon [name]="prophetService.isBookmarked(prophet.number) ? 'star' : 'bookmark'" [size]="16" />
+                </button>
+              </div>
+
+              <!-- Arabic Calligraphy Name -->
+              <div class="prophet-card__arabic aq-arabic" dir="rtl">
+                {{ prophet.nameAr }}
+              </div>
+
+              <h2 class="prophet-card__name">
+                {{ isBn() ? prophet.nameBn : prophet.nameEn }}
+              </h2>
+              <p class="prophet-card__title">
+                {{ isBn() ? prophet.titleBn : prophet.titleEn }}
+              </p>
+
+              <p class="prophet-card__summary">
+                {{ isBn() ? prophet.summaryBn : prophet.summaryEn }}
+              </p>
+
+              <div class="prophet-card__footer">
+                <span class="prophet-card__mentions">
+                  <aq-icon name="bookOpen" [size]="14" />
+                  {{ isBn() ? prophet.quranMentionsBn : prophet.quranMentionsEn }}
+                </span>
+
+                <span class="prophet-card__action-btn">
+                  <span>{{ isBn() ? 'পড়ুন ও শুনুন' : 'Read & Listen' }}</span>
+                  <aq-icon name="headphones" [size]="14" />
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </main>
+</div>
