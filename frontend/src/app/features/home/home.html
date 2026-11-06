@@ -30,9 +30,81 @@
       </a>
     </div>
 
+
+    <!-- Quick Actions App Grid (Pillars / Muslim Pro Standard) -->
+    <nav class="quick-app-grid" [attr.aria-label]="isBn() ? 'প্রধান ফিচারসমূহ' : 'Quick Actions'">
+      @for (action of quickActions; track action.path) {
+        <a
+          [routerLink]="action.path"
+          [queryParams]="action.queryParams || null"
+          class="quick-app-item"
+          [class.hero__hadith-btn]="action.path === '/hadith'"
+          (click)="onQuickActionTap()"
+        >
+          <div class="quick-app-icon" [style.--action-color]="action.color">
+            <aq-icon [name]="action.icon" [size]="22" />
+            @if (action.badge) {
+              <span class="quick-app-badge">{{ action.badge }}</span>
+            }
+          </div>
+          <span class="quick-app-label">{{ isBn() ? action.labelBn : action.label }}</span>
+        </a>
+      }
+    </nav>
+  </div>
+</section>
+
+<div class="aq-container sections">
+  <!-- In-app Reminder Banner (Phase 13) -->
+  @if (taskService.inAppReminderActive() && !taskService.isTodayGoalCompleted()) {
+    <aside class="task-reminder-banner aq-card" role="alert">
+      <div class="task-reminder-banner__icon">
+        <aq-icon name="bell" [size]="20" />
+      </div>
+      <div class="task-reminder-banner__content">
+        <strong class="task-reminder-banner__title">
+          {{ isBn() ? 'দৈনিক তিলাওয়াতের সময় হয়েছে!' : 'Time for your daily Quran reading!' }}
+        </strong>
+        <p class="task-reminder-banner__text">
+          {{ isBn() ? 'আজকের লক্ষ্য: ' + toBnDigits(taskService.settings().readingGoalAyahs) + 'টি আয়াত তিলাওয়াত করুন।' : 'Your daily goal: Read ' + taskService.settings().readingGoalAyahs + ' ayahs.' }}
+        </p>
+      </div>
+      <div class="task-reminder-banner__actions">
+        <a routerLink="/quran/1" class="aq-btn aq-btn--primary aq-btn--sm">
+          <aq-icon name="bookOpen" [size]="14" />
+          {{ isBn() ? 'এখনই পড়ুন' : 'Read Now' }}
+        </a>
+        <button type="button" class="aq-btn aq-btn--ghost aq-btn--sm" (click)="taskService.dismissReminder()">
+          {{ isBn() ? 'পরে' : 'Dismiss' }}
+        </button>
+      </div>
+    </aside>
+  }
+
+  <!-- Celebration Modal / Toast (Phase 13) -->
+  @if (taskService.celebrationActive()) {
+    <aside class="task-celebration-toast aq-card" role="status" aria-live="polite">
+      <div class="task-celebration-toast__icon">
+        ✨
+      </div>
+      <div class="task-celebration-toast__content">
+        <p class="task-celebration-toast__arabic aq-arabic" dir="rtl">مَا شَاءَ ٱللَّٰهُ تَبَارَكَ ٱللَّٰهُ</p>
+        <strong class="task-celebration-toast__title">
+          {{ isBn() ? 'আলহামদুলিল্লাহ! আজকের লক্ষ্য সম্পন্ন হয়েছে!' : 'Alhamdulillah! Today’s Goal Completed!' }}
+        </strong>
+        <p class="task-celebration-toast__dua">
+          {{ isBn() ? 'আল্লাহ আপনার তিলাওয়াত ও ইবাদাত কবুল করুন। আমীন।' : 'May Allah accept your recitation and bless your efforts. Ameen.' }}
+        </p>
+      </div>
+      <button type="button" class="aq-btn aq-btn--secondary aq-btn--sm" (click)="taskService.dismissCelebration()">
+        {{ isBn() ? 'শুকরিয়া (ঠিক আছে)' : 'Close' }}
+      </button>
+    </aside>
+  }
+
     <!-- 6-Waqt Connected Day-Timeline Progress Card (Main Section: Top of all menu buttons) -->
     @if (nextPrayer(); as next) {
-      <section class="panel prayer-home-card hero__prayer-card" aria-labelledby="prayer-home-heading">
+      <section class="panel prayer-home-card" aria-labelledby="prayer-home-heading">
         <!-- 1. Header: Active Waqt with Live Dot & Countdown Timer -->
         <div class="prayer-home-card__header">
           <div class="prayer-home-card__meta">
@@ -143,77 +215,6 @@
         </div>
       </section>
     }
-
-    <!-- Quick Actions App Grid (Pillars / Muslim Pro Standard) -->
-    <nav class="quick-app-grid" [attr.aria-label]="isBn() ? 'প্রধান ফিচারসমূহ' : 'Quick Actions'">
-      @for (action of quickActions; track action.path) {
-        <a
-          [routerLink]="action.path"
-          [queryParams]="action.queryParams || null"
-          class="quick-app-item"
-          [class.hero__hadith-btn]="action.path === '/hadith'"
-          (click)="onQuickActionTap()"
-        >
-          <div class="quick-app-icon" [style.--action-color]="action.color">
-            <aq-icon [name]="action.icon" [size]="22" />
-            @if (action.badge) {
-              <span class="quick-app-badge">{{ action.badge }}</span>
-            }
-          </div>
-          <span class="quick-app-label">{{ isBn() ? action.labelBn : action.label }}</span>
-        </a>
-      }
-    </nav>
-  </div>
-</section>
-
-<div class="aq-container sections">
-  <!-- In-app Reminder Banner (Phase 13) -->
-  @if (taskService.inAppReminderActive() && !taskService.isTodayGoalCompleted()) {
-    <aside class="task-reminder-banner aq-card" role="alert">
-      <div class="task-reminder-banner__icon">
-        <aq-icon name="bell" [size]="20" />
-      </div>
-      <div class="task-reminder-banner__content">
-        <strong class="task-reminder-banner__title">
-          {{ isBn() ? 'দৈনিক তিলাওয়াতের সময় হয়েছে!' : 'Time for your daily Quran reading!' }}
-        </strong>
-        <p class="task-reminder-banner__text">
-          {{ isBn() ? 'আজকের লক্ষ্য: ' + toBnDigits(taskService.settings().readingGoalAyahs) + 'টি আয়াত তিলাওয়াত করুন।' : 'Your daily goal: Read ' + taskService.settings().readingGoalAyahs + ' ayahs.' }}
-        </p>
-      </div>
-      <div class="task-reminder-banner__actions">
-        <a routerLink="/quran/1" class="aq-btn aq-btn--primary aq-btn--sm">
-          <aq-icon name="bookOpen" [size]="14" />
-          {{ isBn() ? 'এখনই পড়ুন' : 'Read Now' }}
-        </a>
-        <button type="button" class="aq-btn aq-btn--ghost aq-btn--sm" (click)="taskService.dismissReminder()">
-          {{ isBn() ? 'পরে' : 'Dismiss' }}
-        </button>
-      </div>
-    </aside>
-  }
-
-  <!-- Celebration Modal / Toast (Phase 13) -->
-  @if (taskService.celebrationActive()) {
-    <aside class="task-celebration-toast aq-card" role="status" aria-live="polite">
-      <div class="task-celebration-toast__icon">
-        ✨
-      </div>
-      <div class="task-celebration-toast__content">
-        <p class="task-celebration-toast__arabic aq-arabic" dir="rtl">مَا شَاءَ ٱللَّٰهُ تَبَارَكَ ٱللَّٰهُ</p>
-        <strong class="task-celebration-toast__title">
-          {{ isBn() ? 'আলহামদুলিল্লাহ! আজকের লক্ষ্য সম্পন্ন হয়েছে!' : 'Alhamdulillah! Today’s Goal Completed!' }}
-        </strong>
-        <p class="task-celebration-toast__dua">
-          {{ isBn() ? 'আল্লাহ আপনার তিলাওয়াত ও ইবাদাত কবুল করুন। আমীন।' : 'May Allah accept your recitation and bless your efforts. Ameen.' }}
-        </p>
-      </div>
-      <button type="button" class="aq-btn aq-btn--secondary aq-btn--sm" (click)="taskService.dismissCelebration()">
-        {{ isBn() ? 'শুকরিয়া (ঠিক আছে)' : 'Close' }}
-      </button>
-    </aside>
-  }
 
   <!-- Daily Quran Task Tracker & Habit Mini-Card (Phase 13) -->
   <section class="panel daily-task-home-card" aria-labelledby="daily-task-heading">

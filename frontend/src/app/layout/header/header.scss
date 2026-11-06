@@ -71,11 +71,11 @@
   gap: 0.5rem;
   color: var(--aq-text);
   text-decoration: none;
-  flex: 0 0 auto;
+  flex: 0 1 auto;
   min-width: 0;
   z-index: 2;
   position: relative;
-  flex-shrink: 0;
+  overflow: hidden;
 
   @media (max-width: 480px) {
     gap: 0.35rem;
@@ -297,13 +297,13 @@
   align-items: center;
   gap: 0.25rem;
   margin-left: auto;
-  flex: 0 0 auto;
-  flex-shrink: 0;
+  flex: 0 1 auto;
+  min-width: 0;
   z-index: 2;
   position: relative;
 
-  @media (max-width: 380px) {
-    gap: 0.15rem;
+  @media (max-width: 640px) {
+    gap: 0.2rem;
 
     .aq-icon-btn {
       width: 36px;
@@ -311,6 +311,21 @@
       min-width: 36px;
       min-height: 36px;
       padding: 0;
+    }
+  }
+
+  @media (max-width: 440px) {
+    gap: 0.15rem;
+
+    .header-search-btn {
+      display: none !important; // Accessible in drawer & bottom dock
+    }
+
+    .aq-icon-btn {
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      min-height: 34px;
     }
 
     .lang-pill {
@@ -442,6 +457,7 @@
   white-space: nowrap;
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
   transition: all 0.2s ease;
+  flex-shrink: 0;
 
   &:hover {
     background: linear-gradient(135deg, #059669, #047857);
@@ -451,15 +467,23 @@
   }
 
   @media (max-width: 640px) {
-    padding: 0.3rem 0.55rem;
-    font-size: 0.72rem;
-    gap: 0.25rem;
+    padding: 0;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 50%;
+    justify-content: center;
+    gap: 0;
+
+    .header-download-label {
+      display: none;
+    }
   }
 
-  @media (max-width: 380px) {
-    padding: 0.25rem 0.45rem;
-    font-size: 0.68rem;
-    gap: 0.2rem;
+  @media (max-width: 340px) {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
   }
 }
 
@@ -556,9 +580,11 @@
   position: fixed;
   top: calc(var(--aq-header-height) + env(safe-area-inset-top, 0px));
   bottom: 0;
+  left: 0;
   right: 0;
   width: 100%;
   max-width: 100%;
+  box-sizing: border-box;
   height: calc(100dvh - var(--aq-header-height) - env(safe-area-inset-top, 0px));
   max-height: calc(100dvh - var(--aq-header-height) - env(safe-area-inset-top, 0px));
   background: color-mix(in srgb, var(--aq-surface) 97%, transparent);
