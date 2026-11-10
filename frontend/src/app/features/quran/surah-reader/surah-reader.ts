@@ -342,7 +342,7 @@ export class SurahReaderPage {
     requestAnimationFrame(() => {
       const target = this.document.getElementById(`ayah-${ayahNum}`);
       if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        target.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
         target.classList.add('ayah--resumed');
         setTimeout(() => target.classList.remove('ayah--resumed'), 2500);
       }

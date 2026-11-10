@@ -54,8 +54,8 @@ export const DESKTOP_DOWNLOAD_LINKS = {
   extensionZipVersioned: 'downloads/al-quran-halal-shield-v1.1.0.zip',
   extensionGitHub: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/tree/main/extension',
   androidApk: 'downloads/AlQuran-Android.apk',
-  androidApkGitHub: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/download/v1.3.0-mobile/AlQuran-Android.apk',
-  mobileVersion: '1.3.0',
+  androidApkGitHub: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/download/v1.4.0-mobile/AlQuran-Android.apk',
+  mobileVersion: '1.4.0',
 };
 
 export interface MobileVersionRelease {
@@ -71,9 +71,30 @@ export interface MobileVersionRelease {
 
 export const MOBILE_VERSION_HISTORY: MobileVersionRelease[] = [
   {
+    version: 'v1.4.0',
+    date: '10 Nov 2026',
+    isLatest: true,
+    apkSize: '~27.5 MB',
+    titleBn: 'নবীগণের জীবনী, ডিপ-স্লিপ ওয়াক্ত আজান ও মোবাইল ইউআই রিফ্রেশ',
+    titleEn: 'Stories of the Prophets, Deep-Sleep Adhan Alarms & UI Refresh',
+    highlightsBn: [
+      'পবিত্র কুরআনে বর্ণিত সকল ২৫ জন নবীর প্রামাণ্য জীবনী ও দ্বিভাষিক (বাংলা ও ইংরেজি) অডিও পাঠ',
+      'ডিপ-স্লিপ স্ক্রিন ওয়েক ও লকস্ক্রিন ফুল-স্ক্রিন ওয়াক্ত আজান অ্যালার্ম ডেলিভারি',
+      'হার্ডওয়্যার অ্যালার্ম অডিও স্ট্রিম ও ১৪ দিনের স্বয়ংক্রিয় ওয়াক্ত রিনিউয়াল ইঞ্জিন',
+      'হোম স্ক্রিনে ৩x৩ কুইক অ্যাকশন গ্রিড ও অপ্টিমাইজড জিরো-কাটঅফ মোবাইল মেনু ড্রয়ার',
+      'ইউনিভার্সাল ইসলামিক নূর AI চ্যাট সিস্টেম ও নির্ভুল প্রশ্ন অনুধাবন নির্দেশিকা',
+    ],
+    highlightsEn: [
+      'Complete biographies of all 25 Prophets with bilingual Bangla/English text and audio narration',
+      'Deep-sleep screen wake & lockscreen full-screen Adhan alarm delivery intent',
+      'Hardware alarm audio stream playback & self-healing 14-day auto-replenish engine',
+      'Symmetric 3x3 quick action home grid & zero-blowout mobile navigation drawer',
+      'Universal Islamic Noor AI companion with smart question intent understanding',
+    ],
+  },
+  {
     version: 'v1.3.0',
     date: '1 Nov 2026',
-    isLatest: true,
     apkSize: '~5.9 MB',
     titleBn: 'নতুন অর্থবহ লোগো ও ব্র্যান্ডিং রিফ্রেশ',
     titleEn: 'Official Logo & Complete Brand Redesign',

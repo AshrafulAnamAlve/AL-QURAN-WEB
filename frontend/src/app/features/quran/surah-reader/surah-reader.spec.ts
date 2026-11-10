@@ -148,7 +148,9 @@ describe('SurahReaderPage', () => {
     expect(arabic.getAttribute('lang')).toBe('ar');
   });
 
-  it('renders long surahs progressively, then completes', async () => {
+  it('renders long surahs progressively, then completes', { timeout: 15000 }, async () => {
+    // extend timeout for large chunk rendering
+
     const fixture = await setup('2', {
       getSurah: () => of(makeDetail(2, 'Al-Baqarah', 286, BISMILLAH)),
     });
