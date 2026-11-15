@@ -280,7 +280,17 @@ public class AndroidAlarmHelperPlugin extends Plugin {
 
         Intent intent = new Intent();
         try {
-            if (manufacturer.contains("xiaomi") || manufacturer.contains("redmi") || manufacturer.contains("poco")) {
+            if (manufacturer.contains("tecno") || manufacturer.contains("infinix") || manufacturer.contains("transsion") || manufacturer.contains("itel")) {
+                try {
+                    intent.setComponent(new ComponentName("com.transsion.phonemaster", "com.transsion.phonemaster.permission.startup.StartupAppListActivity"));
+                } catch (Exception e1) {
+                    try {
+                        intent.setComponent(new ComponentName("com.transsion.phonemaster", "com.transsion.phonemaster.autostart.AutoStartActivity"));
+                    } catch (Exception e2) {
+                        intent.setComponent(new ComponentName("com.transsion.poweranalyzer", "com.transsion.poweranalyzer.activity.PowerAnalyzerActivity"));
+                    }
+                }
+            } else if (manufacturer.contains("xiaomi") || manufacturer.contains("redmi") || manufacturer.contains("poco")) {
                 intent.setComponent(new ComponentName("com.miui.securitycenter", "com.miui.permcenter.autostart.AutoStartManagementActivity"));
             } else if (manufacturer.contains("oppo") || manufacturer.contains("realme")) {
                 intent.setComponent(new ComponentName("com.coloros.safecenter", "com.coloros.safecenter.permission.startup.StartupAppListActivity"));

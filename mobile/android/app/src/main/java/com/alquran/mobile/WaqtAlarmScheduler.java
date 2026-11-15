@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 import org.json.JSONArray;
@@ -108,6 +109,7 @@ public class WaqtAlarmScheduler {
     private static void scheduleSingleAlarm(Context context, AlarmManager alarmManager, AlarmItem alarm) {
         Intent intent = new Intent(context, WaqtAlarmReceiver.class);
         intent.setAction(WaqtAlarmReceiver.ACTION_WAQT_ALARM);
+        intent.setData(Uri.parse("waqt://alarm/" + alarm.id + "/" + alarm.triggerAtMillis));
         intent.putExtra("waqt_id", alarm.id);
         intent.putExtra("waqt_name", alarm.name);
         intent.putExtra("waqt_title", alarm.title);
@@ -167,6 +169,7 @@ public class WaqtAlarmScheduler {
             for (AlarmItem item : saved) {
                 Intent intent = new Intent(context, WaqtAlarmReceiver.class);
                 intent.setAction(WaqtAlarmReceiver.ACTION_WAQT_ALARM);
+                intent.setData(Uri.parse("waqt://alarm/" + item.id + "/" + item.triggerAtMillis));
                 PendingIntent pi = PendingIntent.getBroadcast(context, item.id, intent, flags);
                 if (pi != null) {
                     alarmManager.cancel(pi);

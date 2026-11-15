@@ -514,6 +514,44 @@ export class SettingsPage implements OnInit {
     await this.mobileHardware.openAutoStartSettings();
   }
 
+  readonly isDeepSleepTesting = signal<boolean>(false);
+  readonly deepSleepCountdown = signal<number>(0);
+
+  async testDeepSleepAlarm(): Promise<void> {
+    if (this.isDeepSleepTesting()) return;
+    this.isDeepSleepTesting.set(true);
+    this.deepSleepCountdown.set(10);
+
+    const scheduled = await this.mobileHardware.scheduleTestDeepSleepAlarm();
+    if (scheduled) {
+      this.showToast(
+        this.isBn()
+          ? '১০ সেকেন্ডের টেস্ট অ্যালার্ম সেট হয়েছে! এখনই ফোন লক (স্ক্রিন বন্ধ) করে রেখে দিন।'
+          : '10s test alarm scheduled! Lock your phone (turn screen off) now and wait.',
+        'success',
+      );
+
+      const interval = setInterval(() => {
+        const cur = this.deepSleepCountdown();
+        if (cur <= 1) {
+          clearInterval(interval);
+          this.deepSleepCountdown.set(0);
+          this.isDeepSleepTesting.set(false);
+        } else {
+          this.deepSleepCountdown.set(cur - 1);
+        }
+      }, 1000);
+    } else {
+      this.isDeepSleepTesting.set(false);
+      this.showToast(
+        this.isBn()
+          ? 'ডিপ-স্লিপ টেস্ট অ্যালার্ম শিডিউল করা যায়নি। পারমিশন চেক করুন।'
+          : 'Could not schedule deep sleep test alarm. Check permissions.',
+        'error',
+      );
+    }
+  }
+
   private showToast(message: string, type: 'success' | 'error'): void {
     this.toastMessage.set(message);
     this.toastType.set(type);

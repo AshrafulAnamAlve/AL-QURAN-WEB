@@ -660,10 +660,24 @@
                 type="button"
                 class="aq-btn aq-btn--secondary aq-btn--sm"
                 (click)="openAutoStartSettings()"
-                [title]="isBn() ? 'শাওমি, স্যামসাং, ওপ্পো, ভিভো ফোনের জন্য অটো-স্টার্ট সেটিংস' : 'Auto-start settings for Xiaomi, Samsung, Oppo, Vivo'"
+                [title]="isBn() ? 'টেকনো, শাওমি, স্যামসাং, ওপ্পো, ভিভো ফোনের জন্য অটো-স্টার্ট সেটিংস' : 'Auto-start settings for Tecno, Xiaomi, Samsung, Oppo, Vivo'"
               >
                 <aq-icon name="settings" [size]="14" />
                 <span>{{ isBn() ? 'অটো-স্টার্ট সেটিংস' : 'Auto-Start' }}</span>
+              </button>
+
+              <button
+                type="button"
+                class="aq-btn aq-btn--primary aq-btn--sm"
+                [style.background]="isDeepSleepTesting() ? '#059669' : ''"
+                (click)="testDeepSleepAlarm()"
+                [disabled]="isDeepSleepTesting()"
+                [title]="isBn() ? 'ফোন লক করে ১০ সেকেন্ডে ডিপ-স্লিপ আযান পরীক্ষা করুন' : 'Lock phone and test deep-sleep alarm in 10s'"
+              >
+                <aq-icon name="clock" [size]="14" />
+                <span>
+                  {{ isDeepSleepTesting() ? (isBn() ? 'লক করুন: ' + deepSleepCountdown() + 's' : 'Lock phone: ' + deepSleepCountdown() + 's') : (isBn() ? '১০ সে. ডিপ-স্লিপ টেস্ট' : '10s Deep-Sleep Test') }}
+                </span>
               </button>
             </div>
           </div>

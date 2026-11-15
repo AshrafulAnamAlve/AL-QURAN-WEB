@@ -767,6 +767,34 @@ export class MobileHardwareService {
   }
 
   /**
+   * Schedules a real AlarmClock test alarm 10 seconds into the future.
+   * Allows the user to lock their phone and verify that the display turns on,
+   * Adhan sounds, and the notification banner appears in deep sleep.
+   */
+  async scheduleTestDeepSleepAlarm(): Promise<boolean> {
+    if (!this.isNativeMobile() || !this.isAndroid()) return false;
+    try {
+      await this.initNotificationChannel();
+      const now = Date.now();
+      const testAlarm = [
+        {
+          id: 99999,
+          name: 'test',
+          time: now + 10000,
+          title: '🕌 পরীক্ষা: ডিপ-স্লিপ আযান ও নোটিফিকেশন',
+          body: 'আলহামদুলিল্লাহ! ডিপ-স্লিপ মোডেও আযান নোটিফিকেশন সফলভাবে কাজ করছে।',
+        },
+      ];
+      await AndroidAlarmHelper.scheduleWaqtAlarms({ alarms: testAlarm });
+      console.info('[MobileHardware] Scheduled 10-second deep-sleep test alarm in AlarmManager.setAlarmClock');
+      return true;
+    } catch (err) {
+      console.warn('Failed to schedule deep sleep test alarm:', err);
+      return false;
+    }
+  }
+
+  /**
    * Listens for user tapping a prayer notification to open the app and trigger Adhan modal
    */
   initNotificationListener(onTap: (waqtName?: string) => void): void {
