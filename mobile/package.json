@@ -18,7 +18,8 @@
     "test:transformation": "node test-transformation.mjs",
     "test:responsiveness": "node test-responsiveness.mjs",
     "test:alarm": "node test-alarm-reliability.mjs",
-    "test": "node test-transformation.mjs && node test-responsiveness.mjs && node test-alarm-reliability.mjs",
+    "test:deepsleep": "node test-deepsleep-realtime.mjs",
+    "test": "node test-transformation.mjs && node test-responsiveness.mjs && node test-alarm-reliability.mjs && node test-deepsleep-realtime.mjs",
     "serve": "node serve-app.mjs"
   },
   "dependencies": {
