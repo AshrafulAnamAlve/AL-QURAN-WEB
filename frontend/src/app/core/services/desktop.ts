@@ -53,9 +53,9 @@ export const DESKTOP_DOWNLOAD_LINKS = {
   extensionZip: 'downloads/al-quran-halal-shield-latest.zip',
   extensionZipVersioned: 'downloads/al-quran-halal-shield-v1.1.0.zip',
   extensionGitHub: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/tree/main/extension',
-  androidApk: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/download/v1.4.0-mobile/AlQuran-Android.apk',
-  androidApkGitHub: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/download/v1.4.0-mobile/AlQuran-Android.apk',
-  mobileVersion: '1.4.0',
+  androidApk: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/download/v1.4.1-mobile/AlQuran-Android.apk',
+  androidApkGitHub: 'https://github.com/AshrafulAnamAlve/AL-QURAN-WEB/releases/download/v1.4.1-mobile/AlQuran-Android.apk',
+  mobileVersion: '1.4.1',
 };
 
 export interface MobileVersionRelease {
@@ -71,9 +71,29 @@ export interface MobileVersionRelease {
 
 export const MOBILE_VERSION_HISTORY: MobileVersionRelease[] = [
   {
+    version: 'v1.4.1',
+    date: '15 Nov 2026',
+    isLatest: true,
+    apkSize: '~27.5 MB',
+    titleBn: 'ডিপ-স্লিপ আযান ও টেকনো অ্যান্ড্রয়েড ১৪ অপ্টিমাইজেশন',
+    titleEn: 'Deep-Sleep Adhan & Tecno Android 14 Optimization',
+    highlightsBn: [
+      'টেকনো HiOS ও অ্যান্ড্রয়েড ১৪-তে ডিপ-স্লিপ আযান ও স্ক্রিন ওয়েক-আপ',
+      'ইউনিক অ্যালার্ম ইনটেন্ট ও অটো-রিপ্লেনিশ সেলফ-হিলিং ইঞ্জিন',
+      'সেটিংস পেজে ১০ সেকেন্ডের তাৎক্ষণিক ডিপ-স্লিপ টেস্ট বাটন',
+      'টেকনো Phone Master ও Power Marathon অটো-স্টার্ট ইন্টিগ্রেশন',
+    ],
+    highlightsEn: [
+      'Real-time deep-sleep Adhan alarms on Tecno HiOS & Android 14',
+      'Globally unique alarm intent URIs and self-healing replenish engine',
+      'Instant 10-second deep-sleep verification tool in Settings',
+      'Tecno Phone Master & Power Marathon autostart integration',
+    ],
+  },
+  {
     version: 'v1.4.0',
     date: '10 Nov 2026',
-    isLatest: true,
+    isLatest: false,
     apkSize: '~27.5 MB',
     titleBn: 'নবীগণের জীবনী, ডিপ-স্লিপ ওয়াক্ত আজান ও মোবাইল ইউআই রিফ্রেশ',
     titleEn: 'Stories of the Prophets, Deep-Sleep Adhan Alarms & UI Refresh',

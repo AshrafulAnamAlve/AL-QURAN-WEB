@@ -74,17 +74,18 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: github.ref == 'refs/heads/main'
         with:
-          tag_name: v1.4.0-mobile
-          name: 'Al-Quran Mobile Android APK v1.4.0'
+          tag_name: v1.4.1-mobile
+          name: 'Al-Quran Mobile Android APK v1.4.1'
           body: |
-            ### Al-Quran Android Mobile Application v1.4.0 (.apk)
+            ### Al-Quran Android Mobile Application v1.4.1 (.apk)
             
-            #### 🌟 What's New in v1.4.0:
-            - **Stories of the 25 Prophets (কাসাসুল আম্বিয়া)**: Complete authentic biographies of all 25 Prophets in Islam with bilingual Bangla/English text and synchronized audio narration.
+            #### 🌟 What's New in v1.4.1:
+            - **Tecno (HiOS) & Android 14 Deep-Sleep Optimization**: Hardware AlarmClock engine with unique Data URIs and Phone Master autostart integration for guaranteed real-time alerts.
+            - **10-Second Instant Verification Tool**: Built-in interactive test alarm in Settings allowing instant verification of screen wake and Adhan audio in deep sleep.
+            - **Stories of the 25 Prophets (কাসাসুল আম্বিয়া)**: Complete authentic biographies of all 25 Prophets with bilingual Bangla/English text and synchronized audio narration.
             - **Deep-Sleep Screen Wake & Lockscreen Adhan**: Reliable background prayer alerts that light up the display and execute full-screen lock intent even in deep Doze mode.
             - **Hardware Alarm Audio Stream**: Playback through `USAGE_ALARM` with DND bypass and 14-day advance auto-replenishment scheduler.
             - **Balanced Mobile UI & Quick Actions**: Home screen 3x3 quick action pillars (Quran, Hadith, Prophets, Prayer, Qibla, Tasbih, Habits, Ruqyah, Mosques) and zero-blowout header navigation.
-            - **Universal Islamic Noor AI**: Enhanced AI intent guidance ensuring every question related to Islam is answered comprehensively.
           draft: false
           prerelease: false
           files: mobile/android/app/build/outputs/apk/debug/AlQuran-Android.apk
