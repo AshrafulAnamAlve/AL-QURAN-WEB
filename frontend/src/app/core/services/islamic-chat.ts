@@ -12,7 +12,13 @@ const GEMINI_API_KEY =
     ? atob('QVEuQWI4Uk42SUtoT1hkSmgxOGNhc1JIckRVN2FDOURqcld4Y0tEOG1TN3lwbi1xVHlUamc=')
     : '';
 
-const FALLBACK_MODELS = ['gemini-3.5-flash', 'gemini-3.5-flash-lite'];
+const FALLBACK_MODELS = [
+  'gemini-flash-lite-latest',
+  'gemini-3.5-flash-lite',
+  'gemini-3.5-flash',
+  'gemini-3.6-flash',
+  'gemini-flash-latest',
+];
 
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
 const MAX_REQUESTS_PER_MINUTE = 15;
@@ -370,10 +376,11 @@ export class IslamicChatService {
     };
 
     let lastError: Error | null = null;
+    let hadRateLimit = false;
 
     for (const model of FALLBACK_MODELS) {
       try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
         const res = await fetch(url, {
           method: 'POST',
           headers: {
@@ -390,16 +397,24 @@ export class IslamicChatService {
             return text;
           }
         } else if (res.status === 429) {
-          this.triggerRateLimitCooldown(10);
-          throw new Error('API Rate limit encountered. Please wait a few seconds.');
+          hadRateLimit = true;
+          console.warn(`[IslamicChat] Model ${model} returned 429 rate limit. Trying next fallback model...`);
+          continue;
+        } else if (res.status === 503) {
+          console.warn(`[IslamicChat] Model ${model} returned 503 high demand. Trying next fallback model...`);
+          continue;
         } else {
           const errData = await res.json().catch(() => ({}));
           console.warn(`[IslamicChat] Model ${model} returned ${res.status}:`, errData);
         }
       } catch (err: unknown) {
         lastError = err instanceof Error ? err : new Error(String(err));
-        console.warn(`[IslamicChat] Fallback from ${model} due to error:`, err);
+        console.warn(`[IslamicChat] Fallback from ${model} due to network/fetch error:`, err);
       }
+    }
+
+    if (hadRateLimit) {
+      this.triggerRateLimitCooldown(10);
     }
 
     throw lastError || new Error('All AI models unavailable. Please try again.');
