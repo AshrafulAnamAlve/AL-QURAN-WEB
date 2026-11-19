@@ -13,11 +13,12 @@ const GEMINI_API_KEY =
     : '';
 
 const FALLBACK_MODELS = [
+  'gemini-3-flash-preview',
+  'gemini-3.1-flash-lite',
   'gemini-flash-lite-latest',
   'gemini-3.5-flash-lite',
   'gemini-3.5-flash',
   'gemini-3.6-flash',
-  'gemini-flash-latest',
 ];
 
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
@@ -377,8 +378,12 @@ export class IslamicChatService {
 
     let lastError: Error | null = null;
     let hadRateLimit = false;
+    const MODEL_TIMEOUT_MS = 5000;
 
     for (const model of FALLBACK_MODELS) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), MODEL_TIMEOUT_MS);
+
       try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(GEMINI_API_KEY)}`;
         const res = await fetch(url, {
@@ -388,7 +393,9 @@ export class IslamicChatService {
             'X-goog-api-key': GEMINI_API_KEY,
           },
           body: JSON.stringify(payload),
+          signal: controller.signal,
         });
+        clearTimeout(timeoutId);
 
         if (res.ok) {
           const data = await res.json();
@@ -408,8 +415,9 @@ export class IslamicChatService {
           console.warn(`[IslamicChat] Model ${model} returned ${res.status}:`, errData);
         }
       } catch (err: unknown) {
+        clearTimeout(timeoutId);
         lastError = err instanceof Error ? err : new Error(String(err));
-        console.warn(`[IslamicChat] Fallback from ${model} due to network/fetch error:`, err);
+        console.warn(`[IslamicChat] Fallback from ${model} due to timeout/network error:`, err);
       }
     }
 
